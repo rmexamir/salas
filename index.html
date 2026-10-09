@@ -18,10 +18,14 @@ const ACCESS_KEY = "";
 // (اختیاری) لینک Google Sheet برای دکمه «باز کردن Google Sheet» در تب مدیر
 const SHEET_URL = "https://docs.google.com/spreadsheets/d/10i-IGQKyj078M6kJ7YhdAniuJInl6JemwVxAqs7FnrY/edit";
 const DEFAULT_MAX_SCORE = 20;
-// ساعت زنگ‌ها در برنامه هفتگی (تعداد آیتم‌ها = تعداد زنگ‌ها)
 // پیامک خودکار به اولیای غایبین و متأخرین (نیازمند راه‌اندازی sms-addon.gs)
 const SMS_ENABLED = false;
-const PERIOD_TIMES = ["۰۷:۴۵–۰۸:۳۰","۰۸:۳۵–۰۹:۲۰","۰۹:۳۰–۱۰:۱۵","۱۰:۲۰–۱۱:۰۵","۱۱:۲۰–۱۲:۰۵","۱۲:۱۰–۱۲:۵۵"];
+// مدرسه چرخشی: هفته‌ها یک‌درمیان صبح و ظهر. هفته‌ی شروع (شنبه ۱۸ مهر ۱۴۰۵ = ۱۰ اکتبر ۲۰۲۶) شیفت ظهر است.
+const SHIFT_ANCHOR = { y:2026, m:10, d:10, shift:"afternoon" };
+const SHIFT_TIMES = {
+  afternoon: ["۱۳:۰۰–۱۴:۲۰","۱۴:۳۵–۱۵:۵۵","۱۶:۱۰–۱۷:۳۰"],
+  morning:   ["۰۸:۰۰–۰۹:۲۰","۰۹:۳۵–۱۰:۵۵","۱۱:۱۰–۱۲:۳۰"]
+};
 const ASSESSMENT_TYPES = ["کوئیز", "آزمون کلاسی", "فعالیت کلاسی", "میان‌ترم", "پایانی", "سایر"];
 // فهرست پیش‌فرض کلاس‌ها. اسامی دانش‌آموزان از برگه «دانش‌آموزان» در Google Sheets خوانده می‌شود.
 const STUDENTS = {
@@ -369,6 +373,7 @@ footer b{color:var(--ink)}
   <section id="p-sch" hidden>
     <div class="card">
       <div class="field"><label for="schWho">نمایش برنامه برای</label><select id="schWho"></select></div>
+      <div class="field"><span class="lbl">شیفت (ساعت زنگ‌ها)</span><div id="schShift" class="chips" style="grid-template-columns:1fr 1fr"></div></div>
       <div id="schDays" class="days"></div>
       <ul id="schList" class="list"></ul>
       <div id="schEmpty" class="empty" hidden>هنوز برنامه‌ای ثبت نشده است.</div>
@@ -910,9 +915,15 @@ if (typeof SHEET_URL !== 'undefined' && SHEET_URL) { const a = $('#mgOpen'); a.h
 
 /* ======================= برنامه هفتگی ======================= */
 const SCH_KEY = 'sia_sched_v1';
+let PERIOD_TIMES = SHIFT_TIMES.morning;
+function shiftOfDate(d) {                       // جمعه جزو هفته‌ی بعد حساب می‌شود
+  if (d.getDay() === 5) d = new Date(d.getTime() + 864e5);
+  const w = Math.floor((Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) - Date.UTC(SHIFT_ANCHOR.y, SHIFT_ANCHOR.m - 1, SHIFT_ANCHOR.d)) / (7 * 864e5));
+  return (w % 2 === 0) === (SHIFT_ANCHOR.shift === 'afternoon') ? 'afternoon' : 'morning';
+}
 const DAYS = ['شنبه','یکشنبه','دوشنبه','سه‌شنبه','چهارشنبه','پنجشنبه'];
 let SCH = lsGet(SCH_KEY, []);                 // هر ردیف: [کلاس, روز(۰-۵), زنگ(۱..), درس, دبیر]
-const Z = { who:'', day:0 }, ED = { cls:'', day:0, cells:{} };
+const Z = { who:'', day:0, shift:'' }, ED = { cls:'', day:0, cells:{} };
 const todayIdx = () => { const i = (new Date().getDay() + 1) % 7; return i > 5 ? 0 : i; };
 Z.day = todayIdx(); ED.day = Z.day;
 const slotOf = (d, p) => { const k = Z.who.slice(2), m = Z.who[0] === 'c' ? 0 : 4; return SCH.filter(r => r[m] === k && r[1] === d && r[2] === p); };
@@ -933,6 +944,10 @@ function schOpts() {
   w.value = Z.who;
 }
 function renderSch() {
+  const auto = shiftOfDate(new Date()); if (!Z.shift) Z.shift = auto;
+  const sb = $('#schShift'); sb.textContent = '';
+  [['morning', 'صبح'], ['afternoon', 'ظهر']].forEach(q => { const b = el('button', 'chip' + (Z.shift === q[0] ? ' on' : ''), q[1] + (q[0] === auto ? ' · این هفته' : '')); b.type = 'button'; b.addEventListener('click', () => { Z.shift = q[0]; renderSch(); }); sb.append(b); });
+  PERIOD_TIMES = SHIFT_TIMES[Z.shift];
   schOpts(); dayBar($('#schDays'), Z.day, i => { Z.day = i; renderSch(); });
   const isC = Z.who[0] === 'c', ul = $('#schList'); ul.textContent = '';
   PERIOD_TIMES.forEach((tm, i) => {
