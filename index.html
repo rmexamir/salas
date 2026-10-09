@@ -228,6 +228,20 @@ footer b{color:var(--ink)}
 .ed-row input{height:46px}
 .sms-opt{display:flex;align-items:center;gap:10px;padding:2px 4px;font-size:14px;font-weight:700}
 .sms-opt input{width:22px;height:22px;accent-color:var(--primary)}
+.quote{display:flex;align-items:center;gap:12px;padding:14px 16px;margin-bottom:14px;border-radius:18px;color:#fff;border:1px solid rgba(201,162,75,.6);box-shadow:0 6px 18px rgba(15,42,74,.25);background:linear-gradient(120deg,#0F2A4A,#146A6E,#0F2A4A);background-size:200% 100%;animation:qflow 14s ease infinite}
+.q-ic{font-size:28px;flex:none;animation:qfloat 3s ease-in-out infinite}
+.q-lbl{font-size:12px;font-weight:800;color:#E0BC6B;margin-bottom:2px}
+.q-tx{margin:0;font-size:15px;line-height:1.9;font-weight:600;min-height:5.7em}
+.q-tx.typing::after{content:"▍";margin-inline-start:2px;color:#E0BC6B;animation:qblink 1s steps(2) infinite}
+@keyframes qflow{0%,100%{background-position:0 50%}50%{background-position:100% 50%}}
+@keyframes qfloat{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-5px) rotate(8deg)}}
+@keyframes qblink{50%{opacity:0}}
+.now-hd{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:4px}
+.now-t{font-weight:800;font-size:16px}
+.now-sub{font-size:13px;color:var(--muted);margin-bottom:10px}
+.badge{padding:4px 10px;border-radius:999px;font-size:12px;font-weight:800;white-space:nowrap}
+.badge.live{background:#1F7A4D;color:#fff}
+.badge.next{background:var(--gold);color:#1a1405}
 </style>
 </head>
 <body>
@@ -242,6 +256,10 @@ footer b{color:var(--ink)}
 </header>
 
 <main>
+  <div id="quote" class="quote" role="note">
+    <span class="q-ic" aria-hidden="true">✨</span>
+    <div aria-hidden="true"><div class="q-lbl">پیام امروز</div><p id="qText" class="q-tx"></p></div>
+  </div>
   <nav class="tabs" role="tablist" aria-label="بخش‌ها">
     <button class="tab active" type="button" role="tab" data-tab="att" aria-selected="true">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4h6v3H9z"/><path d="M9 14l2 2 4-4"/></svg>
@@ -371,6 +389,10 @@ footer b{color:var(--ink)}
   </section>
 
   <section id="p-sch" hidden>
+    <div class="card">
+      <div class="lbl" style="margin-bottom:8px">زنگ فعلی — همه‌ی کلاس‌ها</div>
+      <div id="nowBody"></div>
+    </div>
     <div class="card">
       <div class="field"><label for="schWho">نمایش برنامه برای</label><select id="schWho"></select></div>
       <div class="field"><span class="lbl">شیفت (ساعت زنگ‌ها)</span><div id="schShift" class="chips" style="grid-template-columns:1fr 1fr"></div></div>
@@ -944,6 +966,7 @@ function schOpts() {
   w.value = Z.who;
 }
 function renderSch() {
+  renderNow();
   const auto = shiftOfDate(new Date()); if (!Z.shift) Z.shift = auto;
   const sb = $('#schShift'); sb.textContent = '';
   [['morning', 'صبح'], ['afternoon', 'ظهر']].forEach(q => { const b = el('button', 'chip' + (Z.shift === q[0] ? ' on' : ''), q[1] + (q[0] === auto ? ' · این هفته' : '')); b.type = 'button'; b.addEventListener('click', () => { Z.shift = q[0]; renderSch(); }); sb.append(b); });
@@ -1017,6 +1040,95 @@ $('#edSave').addEventListener('click', () => {
 $('#edCls').addEventListener('change', e => { ED.cls = e.target.value; edLoadCls(); });
 $('#schWho').addEventListener('change', e => { Z.who = e.target.value; renderSch(); });
 $('#schWeekBtn').addEventListener('click', () => { const w = $('#schWeek'); w.hidden = !w.hidden; $('#schWeekBtn').textContent = w.hidden ? 'نمایش جدول کل هفته' : 'پنهان کردن جدول هفته'; });
+
+/* ======================= زنگ فعلی و پیام روز ======================= */
+const ORD = ['اول','دوم','سوم'];
+const toEn = s => s.replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
+function slotNow(now = new Date()) {      // زنگ در حال برگزاری، یا نزدیک‌ترین زنگ بعدی
+  for (let k = 0; k < 8; k++) {
+    const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() + k);
+    if (d.getDay() === 5) continue;       // جمعه تعطیل
+    const sh = shiftOfDate(d), t = SHIFT_TIMES[sh];
+    for (let i = 0; i < t.length; i++) {
+      const q = t[i].split('–').map(x => { const h = toEn(x).split(':').map(Number); return new Date(d.getFullYear(), d.getMonth(), d.getDate(), h[0], h[1]); });
+      if (q[1] > now) return { day:(d.getDay() + 1) % 7, p:i + 1, shift:sh, time:t[i], live:q[0] <= now, k:k, start:q[0], end:q[1] };
+    }
+  }
+  return null;
+}
+function renderNow() {
+  const box = $('#nowBody'); if (!box) return; box.textContent = '';
+  const n = slotNow(), now = new Date();
+  if (!n) { box.append(el('div', 'empty', 'ساعت زنگ‌ها در دسترس نیست.')); return; }
+  const mins = Math.max(1, Math.ceil(((n.live ? n.end : n.start) - now) / 60000));
+  const dayTxt = n.k === 0 ? 'امروز' : n.k === 1 ? 'فردا' : DAYS[n.day];
+  const hd = el('div', 'now-hd');
+  hd.append(el('div', 'now-t', 'زنگ ' + ORD[n.p - 1] + ' · ' + DAYS[n.day] + (n.k < 2 ? ' (' + dayTxt + ')' : '')), el('span', 'badge ' + (n.live ? 'live' : 'next'), n.live ? 'در حال برگزاری' : 'زنگ بعدی'));
+  const st = n.time.split('–')[0];
+  box.append(hd, el('div', 'now-sub', n.time + ' · شیفت ' + (n.shift === 'morning' ? 'صبح' : 'ظهر') + ' · ' +
+    (n.live ? fa(mins) + ' دقیقه تا پایان زنگ' : mins <= 90 ? fa(mins) + ' دقیقه دیگر شروع می‌شود' : 'شروع ' + dayTxt + ' ساعت ' + st)));
+  const cls = uniq(allClasses().concat(SCH.map(r => r[0]))).sort((a, b) => a.localeCompare(b, 'fa'));
+  if (!cls.length) { box.append(el('div', 'empty', 'هنوز کلاسی ثبت نشده است.')); return; }
+  const ul = el('ul', 'list');
+  cls.forEach(c => {
+    const r = SCH.find(x => x[0] === c && x[1] === n.day && x[2] === n.p), li = el('li'), b = el('button', 'slot' + (r ? '' : ' free')); b.type = 'button';
+    const a = el('span', '', c); a.style.cssText = 'flex:1;font-weight:800';
+    b.append(a, el('span', 'tm', r ? r[3] + ' · ' + r[4] : '—'));
+    if (r) b.addEventListener('click', () => useSlot(r)); li.append(b); ul.append(li);
+  });
+  box.append(ul);
+}
+setInterval(() => { if (!$('#p-sch').hidden) renderNow(); }, 30000);
+
+const QUOTES = [
+  'هر روز یک فرصت تازه است؛ امروز یک قدم از دیروزت جلوتر باش.',
+  'موفقیت یعنی تکرار کارهای کوچک، هر روز، بدون بهانه.',
+  'سؤال پرسیدن نشانه‌ی ضعف نیست؛ نشانه‌ی کنجکاوی و رشد است.',
+  'اشتباه کردن بخشی از یادگیری است؛ از آن نترس، از آن یاد بگیر.',
+  'آینده را کسی می‌سازد که امروز زحمت می‌کشد.',
+  'نمره مهم است، اما فهمیدن مهم‌تر؛ برای فهمیدن درس بخوان.',
+  'هر مسئله‌ی سخت، روزی برایت ساده می‌شود، اگر امروز رهایش نکنی.',
+  'ده دقیقه تمرکز واقعی از یک ساعت مرور بی‌حواس ارزشمندتر است.',
+  'کنار همکلاسی‌ات بایست؛ با هم یاد گرفتن لذت‌بخش‌تر است.',
+  'رؤیای بزرگ داشته باش و برای آن برنامه‌ی کوچک روزانه بچین.',
+  'خسته‌ای؟ استراحت کن، اما تسلیم نشو.',
+  'کتاب، ارزان‌ترین راه سفر به دنیاهای تازه است.',
+  'امروز را برای فردای خودت درس بخوان.',
+  'پشتکار، وقتی استعداد تنبلی می‌کند، جای او را پر می‌کند.',
+  'امتحان مسیر است نه مقصد؛ تو بزرگ‌تر از یک نمره‌ای.',
+  'اگر امروز سخت است، یعنی داری رشد می‌کنی.',
+  'هر متخصصی روزی مثل تو مبتدی بود.',
+  'به خودت باور داشته باش؛ از آنچه فکر می‌کنی تواناتری.',
+  'برنامه بریز، شروع کن، ادامه بده؛ سه کلید ساده‌ی پیشرفت.',
+  'دوست خوب و عادت خوب، دو سرمایه‌ی بزرگ دوران دبیرستان‌اند.',
+  'زمان مثل آب است؛ هر دقیقه‌ای که رفت، برنمی‌گردد.',
+  'به معلمت گوش بده؛ تجربه‌ی سال‌ها در یک ساعت کلاس جمع شده است.',
+  'عادت مطالعه‌ی روزانه، بهترین درمان استرس امتحان است.',
+  'نگران یاد نگرفتن باش، نه نگران نمره؛ نمره خودش دنبالت می‌آید.',
+  'گاهی پیروزی یعنی فقط امروز سر کلاس حاضر بودن و تمرکز کردن.',
+  'هر روز یک کار کوچک را کامل کن؛ جمع این روزها آینده‌ات را می‌سازد.',
+  'شکست یعنی درسی که هنوز تمام نشده است.',
+  'کنجکاو بمان؛ دنیا پر از چیزهایی است که هنوز نمی‌دانی.',
+  'از امروز شروع کن؛ فردا همان امروزِ به تعویق افتاده است.',
+  'تفاوت تو با موفق‌ها، ادامه دادن در روزهای سخت است.',
+  'خواب کافی، آب و ورزش هم بخشی از درس خواندن‌اند.',
+  'یاد بگیر که چطور یاد بگیری؛ این مهم‌ترین مهارت است.',
+  'مهربانی با همکلاسی‌ها هم یک نمره‌ی پنهان دارد: نمره‌ی انسانیت.',
+  'مسیرت را با دیگران مقایسه نکن؛ هر کس زمان‌بندی خودش را دارد.',
+  'انضباط یعنی انجام کار درست، حتی وقتی حالش را نداری.',
+  'یک ایده‌ی خوب و کمی شجاعت می‌تواند چیزی را تغییر دهد.',
+  'امروز کلاس را جدی بگیر؛ فردا از خودت تشکر می‌کنی.',
+  'هدفت را روی کاغذ بنویس؛ هدفِ نوشته‌شده نیمی از راه است.',
+  'کارِ امروزِ تو، افتخارِ فردای توست.',
+  'هر درسی که سخت شد، یک راه آسان‌تر دارد: بپرس!'
+];
+(function () {
+  const q = $('#qText'), t = QUOTES[Math.floor((Date.now() - new Date().getTimezoneOffset() * 6e4) / 864e5) % QUOTES.length];
+  $('#quote').setAttribute('aria-label', 'پیام امروز: ' + t);
+  if (window.matchMedia('(prefers-reduced-motion:reduce)').matches) { q.textContent = t; return; }
+  let i = 0; q.classList.add('typing');
+  const iv = setInterval(() => { q.textContent = t.slice(0, ++i); if (i >= t.length) { clearInterval(iv); setTimeout(() => q.classList.remove('typing'), 1500); } }, 38);
+})();
 
 /* ---------- گزینه پیامک ---------- */
 if (!SMS_ENABLED) $('#smsOpt').hidden = true;
