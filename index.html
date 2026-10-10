@@ -244,6 +244,13 @@ footer b{color:var(--ink)}
 .badge.next{background:var(--gold);color:#1a1405}
 .ed-row{grid-template-columns:48px 1fr 1fr}
 .ed-slot{margin-bottom:12px;padding-bottom:6px;border-bottom:1px dashed var(--line)}
+.dir-it{border:1px solid var(--line);border-radius:14px;margin-bottom:8px;background:var(--input)}
+.dir-it summary{display:flex;justify-content:space-between;gap:8px;align-items:center;min-height:50px;padding:8px 14px;font-weight:800;cursor:pointer}
+.dir-it summary small{color:var(--muted);font-weight:600}
+.dir-b{display:grid;gap:6px;padding:2px 14px 12px;font-size:14px}
+.dir-r{display:flex;justify-content:space-between;align-items:center;gap:8px;min-height:40px}
+.dir-r .k{color:var(--muted);flex:none}
+a.tel{display:inline-flex;align-items:center;min-height:44px;padding:0 14px;border-radius:12px;background:var(--primary);color:var(--on-primary);font-weight:800;text-decoration:none;direction:ltr}
 </style>
 </head>
 <body>
@@ -433,6 +440,12 @@ footer b{color:var(--ink)}
         <div id="edDays" class="days"></div>
         <div id="edRows"></div>
         <button id="edSave" class="send" type="button">ذخیره برنامه این کلاس</button>
+      </div>
+      <div class="card">
+        <div class="lbl" style="margin-bottom:8px">بانک اطلاعات (فقط مدیر)</div>
+        <div id="dirTabs" class="chips" style="grid-template-columns:1fr 1fr;margin-bottom:10px"></div>
+        <div class="field"><input id="dirQ" type="search" placeholder="جست‌وجو: نام، کلاس، کد ملی، شماره..." autocomplete="off" aria-label="جست‌وجو در بانک اطلاعات"></div>
+        <div id="dirList"></div>
       </div>
       <div class="card">
         <div class="lbl" style="margin-bottom:8px">ابلاغ و ساعات دبیران</div>
@@ -922,7 +935,7 @@ async function mgLoad() {
   if (r.net) return toast('اینترنت در دسترس نیست.');
   if (r.status !== 'ok') return toast(r.message || 'خطا در دریافت گزارش.');
   MG.att = r.att || []; MG.gr = r.gr || []; MG.attHead = r.attHead || []; MG.grHead = r.grHead || [];
-  $('#mgLogin').hidden = true; $('#mgBody').hidden = false; edInit();
+  $('#mgLogin').hidden = true; $('#mgBody').hidden = false; edInit(); loadDir();
   mgFillSel($('#mgCls'), 'همه کلاس‌ها', MG.att.map(r => r[3]).concat(MG.gr.map(r => r[3])));
   mgFillSel($('#mgTch'), 'همه دبیران', MG.att.map(r => r[5]).concat(MG.gr.map(r => r[5])));
   mgRender();
@@ -1180,6 +1193,46 @@ const QUOTES = [
   let i = 0; q.classList.add('typing');
   const iv = setInterval(() => { q.textContent = t.slice(0, ++i); if (i >= t.length) { clearInterval(iv); setTimeout(() => q.classList.remove('typing'), 1500); } }, 38);
 })();
+
+/* ======================= بانک اطلاعات (فقط در حافظه؛ ذخیره نمی‌شود) ======================= */
+let DIR = { students:[], teachers:[] }, DT = 's';
+const dn = v => String(v == null ? '' : v).replace(/ي/g, 'ی').replace(/ك/g, 'ک').replace(/\u200c/g, ' ').replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).toLowerCase();
+async function loadDir() {
+  const box = $('#dirList'); box.textContent = 'در حال بارگذاری…';
+  const r = await send({ action:'directory', pin:MG.pin, key:ACCESS_KEY });
+  if (r.net) { box.textContent = 'اینترنت در دسترس نیست.'; return; }
+  if (r.status !== 'ok') { box.textContent = r.message || 'بارگذاری نشد.'; return; }
+  DIR = r; renderDir();
+}
+function telRow(k, name, ph) {          // ردیف با لینک تماس؛ تپ روی شماره صفحه‌ی تماس گوشی را باز می‌کند
+  const row = el('div', 'dir-r'); row.append(el('span', 'k', k + (name ? ' (' + name + ')' : '')));
+  if (ph) { const a = el('a', 'tel', ph); a.href = 'tel:' + ph; a.setAttribute('aria-label', 'تماس با ' + k + ' ' + (name || '')); row.append(a); } else row.append(el('span', '', '—'));
+  return row;
+}
+const infoRow = (k, v) => { const r = el('div', 'dir-r'); r.append(el('span', 'k', k), el('span', '', v || '—')); r.lastChild.style.direction = 'ltr'; return r; };
+function renderDir() {
+  const tb = $('#dirTabs'); tb.textContent = '';
+  [['s', 'دانش‌آموزان (' + fa(DIR.students.length) + ')'], ['t', 'دبیران (' + fa(DIR.teachers.length) + ')']].forEach(q => {
+    const b = el('button', 'chip' + (DT === q[0] ? ' on' : ''), q[1]); b.type = 'button'; b.addEventListener('click', () => { DT = q[0]; renderDir(); }); tb.append(b); });
+  const term = dn($('#dirQ').value).trim(), box = $('#dirList'); box.textContent = '';
+  const src = DT === 's' ? DIR.students : DIR.teachers;
+  const hit = src.filter(x => !term || dn(Object.keys(x).map(k => Array.isArray(x[k]) ? x[k].join(' ') : x[k]).join(' ')).indexOf(term) >= 0);
+  hit.slice(0, 40).forEach(x => {
+    const d = el('details', 'dir-it'), sm = el('summary'), b = el('div', 'dir-b');
+    if (DT === 's') {
+      sm.append(el('span', '', x.n), el('small', '', x.c));
+      b.append(infoRow('کد ملی', x.id), telRow('پدر', x.fn, x.fp), telRow('مادر', x.mn, x.mp), telRow('دانش‌آموز', '', x.sp));
+      if (x.gp && x.gp !== x.fp && x.gp !== x.mp) b.append(telRow('تلفن اولیا', '', x.gp));
+    } else {
+      sm.append(el('span', '', x.n), el('small', '', x.courses.join('، ')));
+      b.append(infoRow('کد پرسنلی', x.pc), infoRow('کد ملی', x.id), infoRow('مدرک تحصیلی', x.deg), telRow('شماره تماس', '', x.ph));
+    }
+    d.append(sm, b); box.append(d);
+  });
+  if (!hit.length) box.append(el('div', 'empty', 'موردی پیدا نشد.'));
+  else if (hit.length > 40) box.append(el('div', 'now-sub', fa(hit.length - 40) + ' مورد دیگر هم هست؛ جست‌وجو را دقیق‌تر کنید.'));
+}
+$('#dirQ').addEventListener('input', renderDir);
 
 /* ---------- گزینه پیامک ---------- */
 if (!SMS_ENABLED) $('#smsOpt').hidden = true;
