@@ -255,8 +255,8 @@ a.tel{display:inline-flex;align-items:center;min-height:44px;padding:0 14px;bord
 .gate-card{width:100%;max-width:420px;margin:auto}
 .who-bar{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px;font-weight:700}
 .who-bar .btn{min-height:40px;padding:0 14px}
-.bar{flex:1;height:12px;border-radius:8px;background:var(--line);overflow:hidden}
-.bar i{display:block;height:100%;border-radius:8px}
+.pbar{flex:1;height:12px;border-radius:8px;background:var(--line);overflow:hidden}
+.pbar i{display:block;height:100%;border-radius:8px}
 </style>
 </head>
 <body>
@@ -1331,7 +1331,7 @@ function stuAtt(box) {
 }
 function stuAvg(box) {
   const mk = (title, me, cl) => { const w = el('div'); w.style.marginBottom = '14px'; w.append(el('div', 'now-t', title));
-    [['شما', me, 'var(--primary)'], ['کلاس', cl, 'var(--gold)']].forEach(q => { const r = el('div', 'dir-r'), b = el('div', 'bar'), i = el('i'); i.style.width = Math.min(100, (q[1] || 0) / 20 * 100) + '%'; i.style.background = q[2]; b.append(i);
+    [['شما', me, 'var(--primary)'], ['کلاس', cl, 'var(--gold)']].forEach(q => { const r = el('div', 'dir-r'), b = el('div', 'pbar'), i = el('i'); i.style.width = Math.min(100, (q[1] || 0) / 20 * 100) + '%'; i.style.background = q[2]; b.append(i);
       const v = el('span', '', f2(q[1])); v.style.minWidth = '46px'; r.append(el('span', 'k', q[0]), b, v); w.append(r); }); return w; };
   const c = el('div', 'card'); c.append(el('div', 'lbl', 'میانگین شما در مقایسه با کلاس (از ۲۰)'));
   if (!SD.courses.length) c.append(el('div', 'empty', 'هنوز نمره‌ای ثبت نشده است.'));
