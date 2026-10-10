@@ -242,6 +242,8 @@ footer b{color:var(--ink)}
 .badge{padding:4px 10px;border-radius:999px;font-size:12px;font-weight:800;white-space:nowrap}
 .badge.live{background:#1F7A4D;color:#fff}
 .badge.next{background:var(--gold);color:#1a1405}
+.ed-row{grid-template-columns:48px 1fr 1fr}
+.ed-slot{margin-bottom:12px;padding-bottom:6px;border-bottom:1px dashed var(--line)}
 </style>
 </head>
 <body>
@@ -398,6 +400,7 @@ footer b{color:var(--ink)}
       <div class="field"><span class="lbl">شیفت (ساعت زنگ‌ها)</span><div id="schShift" class="chips" style="grid-template-columns:1fr 1fr"></div></div>
       <div id="schDays" class="days"></div>
       <ul id="schList" class="list"></ul>
+      <div id="schInfo" class="now-sub" style="margin-top:10px" hidden></div>
       <div id="schEmpty" class="empty" hidden>هنوز برنامه‌ای ثبت نشده است.</div>
       <button id="schWeekBtn" class="btn" type="button" style="width:100%;margin-top:10px">نمایش جدول کل هفته</button>
       <div id="schWeek" class="mg-wrap" hidden style="margin-top:10px"><table class="mg-tbl" id="schTbl"></table></div>
@@ -430,6 +433,10 @@ footer b{color:var(--ink)}
         <div id="edDays" class="days"></div>
         <div id="edRows"></div>
         <button id="edSave" class="send" type="button">ذخیره برنامه این کلاس</button>
+      </div>
+      <div class="card">
+        <div class="lbl" style="margin-bottom:8px">ابلاغ و ساعات دبیران</div>
+        <div class="mg-wrap"><table class="mg-tbl" id="tchTbl"></table></div>
       </div>
       <div class="card"><div class="lbl" style="margin-bottom:8px">خلاصه به تفکیک کلاس</div><div class="mg-wrap" style="max-height:none"><table class="mg-sum" id="mgSum"></table></div></div>
       <div class="card"><div class="lbl" style="margin-bottom:8px">حضور و غیاب (جدیدترین‌ها)</div><div class="mg-wrap"><table class="mg-tbl" id="mgAtt"></table></div></div>
@@ -944,11 +951,12 @@ function shiftOfDate(d) {                       // جمعه جزو هفته‌ی
   return (w % 2 === 0) === (SHIFT_ANCHOR.shift === 'afternoon') ? 'afternoon' : 'morning';
 }
 const DAYS = ['شنبه','یکشنبه','دوشنبه','سه‌شنبه','چهارشنبه','پنجشنبه'];
-let SCH = lsGet(SCH_KEY, []);                 // هر ردیف: [کلاس, روز(۰-۵), زنگ(۱..), درس, دبیر]
+let SCH = lsGet(SCH_KEY, []), TINFO = lsGet('sia_tinfo_v1', {});
+const SH_FA = { morning:'صبح', afternoon:'ظهر' };                 // هر ردیف: [کلاس, روز(۰-۵), زنگ(۱..), درس, دبیر]
 const Z = { who:'', day:0, shift:'' }, ED = { cls:'', day:0, cells:{} };
 const todayIdx = () => { const i = (new Date().getDay() + 1) % 7; return i > 5 ? 0 : i; };
 Z.day = todayIdx(); ED.day = Z.day;
-const slotOf = (d, p) => { const k = Z.who.slice(2), m = Z.who[0] === 'c' ? 0 : 4; return SCH.filter(r => r[m] === k && r[1] === d && r[2] === p); };
+const slotOf = (d, p) => { const k = Z.who.slice(2), m = Z.who[0] === 'c' ? 0 : 4; return SCH.filter(r => r[m] === k && r[1] === d && r[2] === p && (!r[5] || r[5] === SH_FA[Z.shift])); };
 const allClasses = () => Object.keys(STUDENTS).reduce((a, s) => a.concat(Object.keys(STUDENTS[s])), []);
 function dayBar(box, cur, on) {
   box.textContent = '';
@@ -975,7 +983,7 @@ function renderSch() {
   const isC = Z.who[0] === 'c', ul = $('#schList'); ul.textContent = '';
   PERIOD_TIMES.forEach((tm, i) => {
     const r = slotOf(Z.day, i + 1)[0], li = el('li'), b = el('button', 'slot' + (r ? '' : ' free')); b.type = 'button';
-    b.append(el('span', 'pn', fa(i + 1)), el('span', 'nm', r ? r[3] : '—'), el('span', 'tm', (r ? (isC ? r[4] : r[0]) + ' · ' : '') + tm));
+    b.append(el('span', 'pn', fa(i + 1)), el('span', 'nm', r ? r[3] + (r[5] ? ' (تک‌زنگ)' : '') : '—'), el('span', 'tm', (r ? (isC ? r[4] : r[0]) + ' · ' : '') + tm));
     if (r) b.addEventListener('click', () => useSlot(r)); li.append(b); ul.append(li);
   });
   $('#schEmpty').hidden = SCH.length > 0;
@@ -985,6 +993,8 @@ function renderSch() {
   PERIOD_TIMES.forEach((_, p) => { const tr = el('tr'); tr.append(el('td', '', fa(p + 1)));
     DAYS.forEach((__, d) => { const r = slotOf(d, p + 1)[0]; tr.append(el('td', '', r ? r[3] + ' (' + (isC ? r[4] : r[0]) + ')' : '—')); }); tb.append(tr); });
   t.append(tb);
+  const inf = $('#schInfo'); inf.hidden = Z.who[0] !== 't'; if (!inf.hidden) inf.textContent = infoLine(Z.who.slice(2));
+  renderTch();
 }
 function useSlot(r) {   // با تپ روی یک زنگ، مستقیم به حضور و غیاب همان کلاس می‌رود
   const s = Object.keys(STUDENTS).find(k => STUDENTS[k][r[0]]); if (!s) return toast('این کلاس در فهرست کلاس‌ها نیست');
@@ -997,7 +1007,8 @@ async function loadSchedule() {
   try {
     const r = await (await fetch(SCRIPT_URL + '?action=schedule' + (ACCESS_KEY ? '&key=' + encodeURIComponent(ACCESS_KEY) : ''), { redirect:'follow' })).json();
     if (r.status !== 'ok') return;
-    SCH = (r.rows || []).map(x => [String(x[0]), +x[1], +x[2], String(x[3]), String(x[4])]); lsSet(SCH_KEY, SCH);
+    SCH = (r.rows || []).map(x => [String(x[0]), +x[1], +x[2], String(x[3]), String(x[4]), String(x[5] || '')]); lsSet(SCH_KEY, SCH);
+    TINFO = r.info || {}; lsSet('sia_tinfo_v1', TINFO);
     renderSch(); if (!$('#mgBody').hidden) edLoadCls();
   } catch (e) { /* از نسخه ذخیره‌شده استفاده می‌شود */ }
 }
@@ -1007,34 +1018,74 @@ function edInit() {
   allClasses().forEach(c => { const o = el('option', '', c); o.value = c; sel.append(o); });
   ED.cls = allClasses().includes(ED.cls) ? ED.cls : (allClasses()[0] || ''); sel.value = ED.cls; edLoadCls();
 }
+const edCell = k => ED.cells[k] || (ED.cells[k] = { alt:false, all:{ s:'', t:'' }, m:{ s:'', t:'' }, a:{ s:'', t:'' } });
 function edLoadCls() {
-  ED.cells = {}; SCH.filter(r => r[0] === ED.cls).forEach(r => { ED.cells[r[1] + '-' + r[2]] = { s:r[3], t:r[4] }; }); edRender();
+  ED.cells = {};
+  SCH.filter(r => r[0] === ED.cls).forEach(r => {
+    const c = edCell(r[1] + '-' + r[2]), v = r[5] === 'صبح' ? c.m : r[5] === 'ظهر' ? c.a : c.all;
+    if (r[5]) c.alt = true; v.s = r[3]; v.t = r[4];
+  });
+  edRender();
 }
 function edRender() {
   dayBar($('#edDays'), ED.day, i => { ED.day = i; edRender(); });
   const box = $('#edRows'); box.textContent = '';
   PERIOD_TIMES.forEach((tm, i) => {
-    const k = ED.day + '-' + (i + 1), c = ED.cells[k] || { s:'', t:'' }, row = el('div', 'ed-row');
-    const mk = (f, ph, list) => { const x = el('input'); x.type = 'text'; x.placeholder = ph; x.value = c[f]; x.autocomplete = 'off'; x.setAttribute('list', list); x.setAttribute('aria-label', ph + ' زنگ ' + (i + 1));
-      x.addEventListener('input', () => { (ED.cells[k] || (ED.cells[k] = { s:'', t:'' }))[f] = x.value; }); return x; };
-    row.append(el('span', 'num', fa(i + 1)), mk('s', 'درس', 'courseList'), mk('t', 'دبیر', 'teacherList')); box.append(row);
+    const c = edCell(ED.day + '-' + (i + 1)), wrap = el('div', 'ed-slot');
+    (c.alt ? [['صبح', c.m], ['ظهر', c.a]] : [['زنگ ' + fa(i + 1), c.all]]).forEach(pt => {
+      const row = el('div', 'ed-row');
+      const mk = (f, ph, list) => { const x = el('input'); x.type = 'text'; x.placeholder = ph; x.value = pt[1][f]; x.autocomplete = 'off'; x.setAttribute('list', list); x.setAttribute('aria-label', ph + ' ' + pt[0]); x.addEventListener('input', () => { pt[1][f] = x.value; }); return x; };
+      row.append(el('span', 'num', pt[0]), mk('s', 'درس', 'courseList'), mk('t', 'دبیر', 'teacherList')); wrap.append(row);
+    });
+    const lb = el('label', 'sms-opt'), cb = el('input'); cb.type = 'checkbox'; cb.checked = c.alt;
+    cb.addEventListener('change', () => { c.alt = cb.checked; if (c.alt && !c.m.s && !c.m.t) Object.assign(c.m, c.all); edRender(); });
+    lb.append(cb, document.createTextNode('تک‌زنگ (هفته‌ی صبح و ظهر درس متفاوت، ۱ ساعت)')); wrap.append(lb); box.append(wrap);
   });
+}
+const hoursOf = t => SCH.filter(r => r[4] === t).reduce((a, r) => a + (r[5] ? 1 : 2), 0);   // زنگ عادی ۲ ساعت، تک‌زنگ ۱ ساعت
+const daysOf = t => Array.from(new Set(SCH.filter(r => r[4] === t).map(r => r[1]))).sort();
+function infoLine(t) {
+  const i = TINFO[t] || {}, ds = daysOf(t).map(d => DAYS[d]).join('، ');
+  return 'ابلاغ: ' + (i.h ? fa(i.h) + ' ساعت' : 'ثبت نشده') + ' · برنامه‌ی فعلی: ' + fa(hoursOf(t)) + ' ساعت' + (ds ? ' · روزها: ' + ds : '');
+}
+function renderTch() {
+  const t = $('#tchTbl'); if (!t) return; t.textContent = '';
+  const names = Array.from(new Set(Object.keys(TINFO).concat(SCH.map(r => r[4]).filter(Boolean)))).sort((a, b) => a.localeCompare(b, 'fa'));
+  const hr = el('tr'); ['دبیر', 'ابلاغ', 'برنامه', 'وضعیت'].forEach(h => hr.append(el('th', '', h))); const th = el('thead'); th.append(hr); t.append(th);
+  const tb = el('tbody');
+  names.forEach(n => {
+    const i = TINFO[n] || {}, h = hoursOf(n), tr = el('tr'); let st = '—';
+    if (i.h) st = h === i.h ? '✓ مطابق ابلاغ' : h < i.h ? fa(i.h - h) + ' ساعت کمتر' : fa(h - i.h) + ' ساعت بیشتر';
+    if (i.d && daysOf(n).some(d => !i.d.includes(d))) st += ' ⚠ روز غیرمجاز';
+    tr.append(el('td', '', n), el('td', '', i.h ? fa(i.h) : '—'), el('td', '', fa(h)), el('td', '', st)); tb.append(tr);
+  });
+  t.append(tb);
 }
 $('#edSave').addEventListener('click', () => {
   if (!ED.cls) return;
   const rows = [];
-  Object.keys(ED.cells).forEach(k => { const c = ED.cells[k]; if (!c.s.trim() && !c.t.trim()) return; const q = k.split('-').map(Number); rows.push([ED.cls, q[0], q[1], c.s.trim(), c.t.trim()]); });
-  const clash = rows.filter(r => r[4] && SCH.some(o => o[0] !== ED.cls && o[4] === r[4] && o[1] === r[1] && o[2] === r[2]));
+  Object.keys(ED.cells).forEach(k => {
+    const c = ED.cells[k], q = k.split('-').map(Number);
+    const add = (v, sh) => { if (v.s.trim() || v.t.trim()) rows.push([ED.cls, q[0], q[1], v.s.trim(), v.t.trim(), sh]); };
+    if (c.alt) { add(c.m, 'صبح'); add(c.a, 'ظهر'); } else add(c.all, '');
+  });
+  const ov = (a, b) => !a || !b || a === b, warns = [];
+  rows.forEach(r => { if (r[4] && SCH.some(o => o[0] !== ED.cls && o[4] === r[4] && o[1] === r[1] && o[2] === r[2] && ov(o[5], r[5]))) warns.push(r[4] + ' — ' + DAYS[r[1]] + '، زنگ ' + fa(r[2]) + ' در کلاس دیگری هم هست'); });
+  const next = SCH.filter(o => o[0] !== ED.cls).concat(rows), hrs = t => next.filter(o => o[4] === t).reduce((a, o) => a + (o[5] ? 1 : 2), 0);
+  Array.from(new Set(rows.map(r => r[4]).filter(Boolean))).forEach(t => {
+    const i = TINFO[t]; if (!i) return;
+    if (i.h && hrs(t) > i.h) warns.push(t + ': ' + fa(hrs(t)) + ' ساعت، بیش از ابلاغ (' + fa(i.h) + ')');
+    if (i.d) { const bad = rows.filter(r => r[4] === t && !i.d.includes(r[1])).map(r => DAYS[r[1]]); if (bad.length) warns.push(t + ': تدریس در ' + Array.from(new Set(bad)).join('، ') + ' جزو روزهای ابلاغ نیست'); }
+  });
   const go = async () => {
     const b = $('#edSave'); b.disabled = true;
     const r = await send({ action:'saveSchedule', pin:MG.pin, key:ACCESS_KEY, cls:ED.cls, rows });
     b.disabled = false;
     if (r.net) return toast('اینترنت در دسترس نیست.');
     if (r.status !== 'ok') return toast(r.message || 'ذخیره نشد.');
-    SCH = SCH.filter(o => o[0] !== ED.cls).concat(rows); lsSet(SCH_KEY, SCH); renderSch(); toast('برنامه ذخیره شد ✓');
+    SCH = next; lsSet(SCH_KEY, SCH); renderSch(); toast('برنامه ذخیره شد ✓');
   };
-  if (clash.length) showModal({ icon:'warn', title:'تداخل در برنامه دبیر', msg:clash.map(r => r[4] + ' — ' + DAYS[r[1]] + '، زنگ ' + fa(r[2])).join('؛ ') + ' در کلاس دیگری هم ثبت شده است.',
-    buttons:[{ text:'با این حال ذخیره کن', primary:true, onClick:go }, { text:'انصراف' }] });
+  if (warns.length) showModal({ icon:'warn', title:'هشدار در برنامه', msg:warns.join('؛ ') + '.', buttons:[{ text:'با این حال ذخیره کن', primary:true, onClick:go }, { text:'انصراف' }] });
   else go();
 });
 $('#edCls').addEventListener('change', e => { ED.cls = e.target.value; edLoadCls(); });
@@ -1071,7 +1122,7 @@ function renderNow() {
   if (!cls.length) { box.append(el('div', 'empty', 'هنوز کلاسی ثبت نشده است.')); return; }
   const ul = el('ul', 'list');
   cls.forEach(c => {
-    const r = SCH.find(x => x[0] === c && x[1] === n.day && x[2] === n.p), li = el('li'), b = el('button', 'slot' + (r ? '' : ' free')); b.type = 'button';
+    const r = SCH.find(x => x[0] === c && x[1] === n.day && x[2] === n.p && (!x[5] || x[5] === SH_FA[n.shift])), li = el('li'), b = el('button', 'slot' + (r ? '' : ' free')); b.type = 'button';
     const a = el('span', '', c); a.style.cssText = 'flex:1;font-weight:800';
     b.append(a, el('span', 'tm', r ? r[3] + ' · ' + r[4] : '—'));
     if (r) b.addEventListener('click', () => useSlot(r)); li.append(b); ul.append(li);
