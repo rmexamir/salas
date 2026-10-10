@@ -1222,7 +1222,6 @@ function renderDir() {
     if (DT === 's') {
       sm.append(el('span', '', x.n), el('small', '', x.c));
       b.append(infoRow('کد ملی', x.id), telRow('پدر', x.fn, x.fp), telRow('مادر', x.mn, x.mp), telRow('دانش‌آموز', '', x.sp));
-      if (x.gp && x.gp !== x.fp && x.gp !== x.mp) b.append(telRow('تلفن اولیا', '', x.gp));
     } else {
       sm.append(el('span', '', x.n), el('small', '', x.courses.join('، ')));
       b.append(infoRow('کد پرسنلی', x.pc), infoRow('کد ملی', x.id), infoRow('مدرک تحصیلی', x.deg), telRow('شماره تماس', '', x.ph));
