@@ -214,8 +214,8 @@ footer b{color:var(--ink)}
 .mg-tbl td{padding:7px 8px;border-bottom:1px solid var(--line)}
 .mg-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
 .mg-bar select,.mg-bar input{flex:1 1 140px;min-width:0;height:46px;border-radius:12px;border:1.5px solid var(--line);background:var(--input);color:var(--ink);padding:0 10px;font:inherit}
-.tabs{grid-template-columns:repeat(4,1fr);gap:6px}
-.tab{flex-direction:column;gap:2px;font-size:12.5px;min-height:62px;padding:4px}
+.tabs{grid-template-columns:repeat(5,1fr);gap:4px}
+.tab{flex-direction:column;gap:2px;font-size:11.5px;min-height:62px;padding:4px 2px}
 .days{display:flex;gap:6px;overflow-x:auto;margin-bottom:10px;padding-bottom:2px}
 .day{flex:1 0 auto;height:44px;padding:0 14px;border-radius:12px;border:1.5px solid var(--line);background:var(--input);font-weight:700;color:var(--muted)}
 .day.on{background:var(--primary);border-color:var(--primary);color:var(--on-primary)}
@@ -302,6 +302,10 @@ a.tel{display:inline-flex;align-items:center;min-height:44px;padding:0 14px;bord
     <button class="tab" type="button" role="tab" data-tab="sch" aria-selected="false">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4M8 14h2M14 14h2M8 18h2"/></svg>
       برنامه
+    </button>
+    <button class="tab" type="button" role="tab" data-tab="inb" aria-selected="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 13l3-8h10l3 8v6H4z"/><path d="M4 13h5l1 2h4l1-2h5"/></svg>
+      کارتابل
     </button>
     <button class="tab" type="button" role="tab" data-tab="mg" aria-selected="false">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></svg>
@@ -438,6 +442,15 @@ a.tel{display:inline-flex;align-items:center;min-height:44px;padding:0 14px;bord
       <button id="schWeekBtn" class="btn" type="button" style="width:100%;margin-top:10px">نمایش جدول کل هفته</button>
       <div id="schWeek" class="mg-wrap" hidden style="margin-top:10px"><table class="mg-tbl" id="schTbl"></table></div>
     </div>
+  </section>
+
+  <section id="p-inb" hidden>
+    <div class="card">
+      <div class="lbl" style="margin-bottom:8px">کارتابل — حضور و غیاب و نمرات ثبت‌شده‌ی کلاس و درس شما</div>
+      <div class="field"><select id="inbSel" aria-label="کلاس و درس"></select></div>
+      <button id="inbRef" class="btn" type="button" style="width:100%">به‌روزرسانی</button>
+    </div>
+    <div id="inbBody"></div>
   </section>
 
   <section id="p-mg" hidden>
@@ -625,7 +638,7 @@ $('#pin').addEventListener('input', e => { S.pin = e.target.value; P.pin = S.pin
 
 function buildStreams() {
   const box = $('#streams'); box.textContent = '';
-  Object.keys(STUDENTS).forEach(s => {
+  Object.keys(STUDENTS).filter(s => visClasses(s).length).forEach(s => {
     const b = el('button', 'chip', s); b.type = 'button'; b.dataset.stream = s;
     b.addEventListener('click', () => setStream(s)); box.append(b);
   });
@@ -635,19 +648,20 @@ function fillClasses() {
   const sel = $('#clsSel'); sel.textContent = '';
   if (!S.stream) { const o = el('option', '', 'ابتدا رشته را انتخاب کنید'); o.value = ''; sel.append(o); sel.disabled = true; return; }
   sel.disabled = false;
-  const list = Object.keys(STUDENTS[S.stream]);
+  const list = visClasses(S.stream);
   if (list.length > 1) { const o = el('option', '', 'انتخاب کلاس'); o.value = ''; sel.append(o); }
   list.forEach(c => { const o = el('option', '', c); o.value = c; sel.append(o); });
   sel.value = S.cls;
 }
 function setStream(s) {
-  S.stream = s; const list = Object.keys(STUDENTS[s] || {});
+  S.stream = s; const list = visClasses(s);
   S.cls = list.length === 1 ? list[0] : (list.includes(S.cls) ? S.cls : '');
   P.stream = S.stream; P.cls = S.cls; savePrefs(); paintStreams(); fillClasses(); loadClass();
 }
 $('#clsSel').addEventListener('change', e => { S.cls = e.target.value; P.cls = S.cls; savePrefs(); loadClass(); });
 
 function loadClass() {
+  fixCourse();
   const n = students().length;
   S.att = Array.from({ length: n }, () => ({ st:0, note:'', open:false }));
   S.gr = Array.from({ length: n }, () => ({ val:'', absent:false }));
@@ -658,8 +672,8 @@ function loadClass() {
 function setTab(t) {
   S.tab = t; P.tab = t; savePrefs();
   $$('.tab').forEach(b => { const on = b.dataset.tab === t; b.classList.toggle('active', on); b.setAttribute('aria-selected', on); });
-  $('#p-att').hidden = t !== 'att'; $('#p-gr').hidden = t !== 'gr'; $('#p-mg').hidden = t !== 'mg'; $('#p-sch').hidden = t !== 'sch'; $('#common').hidden = t === 'sch';
-  if (t === 'sch') renderSch();
+  $('#p-att').hidden = t !== 'att'; $('#p-gr').hidden = t !== 'gr'; $('#p-mg').hidden = t !== 'mg'; $('#p-sch').hidden = t !== 'sch'; $('#p-inb').hidden = t !== 'inb'; $('#common').hidden = t === 'sch' || t === 'inb';
+  if (t === 'sch') renderSch(); if (t === 'inb') loadInbox();
 }
 $$('.tab').forEach(b => b.addEventListener('click', () => setTab(b.dataset.tab)));
 
@@ -801,6 +815,8 @@ function validateBase() {
   if (!S.course.trim()) { toast('نام درس را وارد کنید'); $('#course').focus(); return false; }
   if (S.authReq && !S.pin.trim()) { toast('کد ورود را وارد کنید'); $('#pin').focus(); return false; }
   if (!S.stream || !S.cls) { toast('رشته و کلاس را انتخاب کنید'); window.scrollTo({ top:0, behavior:'smooth' }); return false; }
+  const pr = myPairs();
+  if (pr && !pr.some(x => x.c === S.cls && normT(x.s) === normT(S.course))) { toast('این کلاس و درس در برنامه‌ی هفتگی شما نیست'); return false; }
   return true;
 }
 async function send(payload) {
@@ -906,7 +922,7 @@ function applyRoster(r) {
   $('#pinField').hidden = !S.authReq;
   fillDatalist('teacherList', uniq((r.teachers || []).concat(P.teachers)));
   fillDatalist('courseList', uniq((r.courses || []).concat(P.courses)));
-  lsSet('sia_rost_t', r.teachers || []); gateFill();
+  lsSet('sia_rost_t', r.teachers || []); lsSet('sia_rost_c', r.courses || []); gateFill();
 }
 async function loadRoster() {
   if (!SCRIPT_URL || !navigator.onLine) return;
@@ -1037,6 +1053,7 @@ function renderSch() {
   renderTch();
 }
 function useSlot(r) {   // با تپ روی یک زنگ، مستقیم به حضور و غیاب همان کلاس می‌رود
+  if (myPairs() && normT(r[4]) !== normT(S.teacher)) return toast('این زنگ مربوط به شما نیست');
   const s = Object.keys(STUDENTS).find(k => STUDENTS[k][r[0]]); if (!s) return toast('این کلاس در فهرست کلاس‌ها نیست');
   S.stream = P.stream = s; S.cls = P.cls = r[0]; S.teacher = P.teacher = r[4]; S.course = P.course = r[3]; savePrefs();
   $('#teacher').value = S.teacher; $('#course').value = S.course;
@@ -1050,6 +1067,7 @@ async function loadSchedule() {
     SCH = (r.rows || []).map(x => [String(x[0]), +x[1], +x[2], String(x[3]), String(x[4]), String(x[5] || '')]); lsSet(SCH_KEY, SCH);
     TINFO = r.info || {}; lsSet('sia_tinfo_v1', TINFO);
     renderSch(); if (!$('#mgBody').hidden) edLoadCls();
+    if (ROLE === 'teacher') refreshRestrict();
   } catch (e) { /* از نسخه ذخیره‌شده استفاده می‌شود */ }
 }
 /* --- ویرایش توسط مدیر --- */
@@ -1261,7 +1279,7 @@ function renderDir() {
 $('#dirQ').addEventListener('input', renderDir);
 
 /* ======================= ورود (دانش‌آموز با کد ملی / دبیر با نام و کد) و پرتال دانش‌آموز ======================= */
-let ROLE = '', SD = null, STU_K = 'sch', GM = 's';
+let ROLE = '', SD = null, STU_K = 'sch', GM = 's', ISMGR = false, INB = null;
 const f2 = v => v == null ? '—' : fa(String(Math.round(v * 100) / 100).replace('.', '٫'));
 function gateFill() {
   const sel = $('#gTeacher'); if (!sel) return; const cur = sel.value || P.teacher; sel.textContent = '';
@@ -1282,7 +1300,7 @@ function applyRole() {
   if (st && SD) {
     ['att', 'gr', 'mg'].forEach(k => { $('#p-' + k).hidden = true; }); $('#common').hidden = true;
     const h = $('#stuHead'); h.textContent = ''; h.append(el('div', 'now-t', SD.name), el('div', 'now-sub', 'کلاس ' + SD.cls)); stuNav(STU_K);
-  } else if (ROLE === 'teacher') { $('#common').hidden = false; setTab(['gr', 'mg', 'sch'].includes(P.tab) ? P.tab : 'att'); }
+  } else if (ROLE === 'teacher') { $('#common').hidden = false; $('#teacher').readOnly = !ISMGR; refreshRestrict(); setTab(['gr', 'mg', 'sch', 'inb'].includes(P.tab) ? P.tab : 'att'); }
 }
 $('#gGo').addEventListener('click', async () => {
   const b = $('#gGo'), err = $('#gErr'); err.hidden = true; b.disabled = true;
@@ -1296,14 +1314,14 @@ $('#gGo').addEventListener('click', async () => {
     const t = $('#gTeacher').value, pin = $('#gPin').value.trim(); if (!t) return fail('نام خود را انتخاب کنید.');
     const r = await send({ action:'login', teacher:t, pin:pin, key:ACCESS_KEY });
     if (r.net) return fail('اینترنت در دسترس نیست.'); if (r.status !== 'ok') return fail(r.message || 'ورود ناموفق بود.');
-    S.teacher = P.teacher = t; S.pin = P.pin = pin; savePrefs(); $('#teacher').value = t; $('#pin').value = pin; ROLE = 'teacher'; lsSet('sia_role', { role:'teacher' });
+    S.teacher = P.teacher = t; S.pin = P.pin = pin; savePrefs(); $('#teacher').value = t; $('#pin').value = pin; ISMGR = !!r.manager; ROLE = 'teacher'; lsSet('sia_role', { role:'teacher', mgr:ISMGR });
   }
   b.disabled = false; $('#gNid').value = ''; $('#gPin').value = ''; applyRole();
 });
 ['#gNid', '#gPin'].forEach(q => $(q).addEventListener('keydown', e => { if (e.key === 'Enter') $('#gGo').click(); }));
 $('#logoutBtn').addEventListener('click', () => {
   if (ROLE === 'teacher') { S.pin = P.pin = ''; $('#pin').value = ''; savePrefs(); }
-  ROLE = ''; SD = null; try { sessionStorage.removeItem('sia_sess'); } catch (e) {} lsSet('sia_role', {});
+  ROLE = ''; SD = null; ISMGR = false; INB = null; $('#teacher').readOnly = false; try { sessionStorage.removeItem('sia_sess'); } catch (e) {} lsSet('sia_role', {});
   const w = $('#schWho'); if (w) w.closest('.field').hidden = false; applyRole(); gateFill();
 });
 function tbl(head, rows) {
@@ -1342,8 +1360,54 @@ setTimeout(() => {          // بازگرداندن نشست قبلی بعد ا�
   GM = lsGet('sia_role', {}).role === 'teacher' ? 't' : 's'; gateMode(); gateFill();
   let ss = null; try { ss = JSON.parse(sessionStorage.getItem('sia_sess') || 'null'); } catch (e) {}
   if (ss && ss.nid) send({ action:'student', nid:ss.nid, key:ACCESS_KEY }).then(r => { if (r.status === 'ok') { SD = r; ROLE = 'student'; applyRole(); } });
-  else if (lsGet('sia_role', {}).role === 'teacher' && P.teacher) { ROLE = 'teacher'; applyRole(); }
+  else if (lsGet('sia_role', {}).role === 'teacher' && P.teacher) { ISMGR = !!lsGet('sia_role', {}).mgr; ROLE = 'teacher'; applyRole(); }
 }, 0);
+
+/* ======================= دسترسی دبیر فقط به کلاس و درس خودش + کارتابل ======================= */
+const normT = v => String(v == null ? '' : v).replace(/ي/g, 'ی').replace(/ك/g, 'ک').replace(/\u200c/g, ' ').replace(/\s+/g, ' ').trim();
+function myPairs() {            // null = بدون محدودیت (مدیر، یا هنوز برنامه‌ای ثبت نشده)
+  if (ROLE !== 'teacher' || ISMGR || !SCH.length) return null;
+  const m = {}; SCH.filter(r => r[3] && normT(r[4]) === normT(S.teacher)).forEach(r => { m[r[0] + '|' + normT(r[3])] = { c:r[0], s:r[3] }; });
+  return Object.keys(m).map(k => m[k]);
+}
+function visClasses(st) { const pr = myPairs(), l = Object.keys(STUDENTS[st] || {}); return pr ? l.filter(c => pr.some(x => x.c === c)) : l; }
+function fixCourse() {
+  const pr = myPairs();
+  if (!pr) { fillDatalist('courseList', uniq(lsGet('sia_rost_c', []).concat(P.courses))); return; }
+  const cs = uniq(pr.filter(x => x.c === S.cls).map(x => x.s));
+  fillDatalist('courseList', cs);
+  if (cs.length === 1) S.course = cs[0]; else if (!cs.some(c => normT(c) === normT(S.course))) S.course = '';
+  P.course = S.course; $('#course').value = S.course;
+}
+function refreshRestrict() {
+  buildStreams();
+  const vc = visClasses(S.stream);
+  if (!S.stream || !vc.length) { S.stream = ''; S.cls = ''; }
+  else if (!vc.includes(S.cls)) S.cls = vc.length === 1 ? vc[0] : '';
+  P.stream = S.stream; P.cls = S.cls; savePrefs(); paintStreams(); fillClasses(); loadClass();
+}
+async function loadInbox() {
+  const box = $('#inbBody'); if (!INB) box.textContent = 'در حال بارگذاری…';
+  const r = await send({ action:'inbox', teacher:S.teacher.trim(), pin:S.pin.trim(), key:ACCESS_KEY });
+  if (r.net) { box.textContent = 'اینترنت در دسترس نیست.'; return; }
+  if (r.status !== 'ok') { box.textContent = r.message || 'بارگذاری نشد.'; return; }
+  INB = r.items; const sel = $('#inbSel'), cur = +sel.value || 0; sel.textContent = '';
+  INB.forEach((x, i) => { const o = el('option', '', x.c + ' — ' + x.s); o.value = i; sel.append(o); }); sel.value = INB[cur] ? cur : 0; renderInb();
+}
+function renderInb() {
+  const box = $('#inbBody'); box.textContent = '';
+  if (!INB || !INB.length) { box.append(el('div', 'empty', 'برای شما در برنامه‌ی هفتگی کلاس و درسی ثبت نشده است.')); return; }
+  const x = INB[+$('#inbSel').value || 0], sm = el('div', 'card');
+  sm.append(el('div', 'now-t', x.c + ' · ' + x.s), el('div', 'now-sub', 'جلسات ثبت‌شده: ' + fa(x.sessions) + ' · میانگین کلاس: ' + f2(x.avg) + ' (از ۲۰)')); box.append(sm);
+  x.students.forEach(st => {
+    const d = el('details', 'dir-it'), h = el('summary'), b = el('div', 'dir-b');
+    h.append(el('span', '', st.n), el('small', '', 'غ ' + fa(st.ab) + ' · ت ' + fa(st.lt) + ' · میانگین ' + f2(st.avg)));
+    b.append(el('div', 'lbl', 'حضور و غیاب'), st.att.length ? tbl(['تاریخ', 'ساعت', 'وضعیت'], st.att.map(a => [a.d, a.t, a.s])) : el('div', 'now-sub', 'غیبت یا تأخیری ثبت نشده.'),
+      el('div', 'lbl', 'نمرات'), st.gr.length ? tbl(['تاریخ', 'آزمون', 'نمره', 'از ۲۰', 'میانگین کلاس'], st.gr.map(g => [g.d, g.e, g.a ? 'غایب' : fa(g.s) + ' از ' + fa(g.m), g.a ? '—' : f2(g.n), f2(g.ca)])) : el('div', 'now-sub', 'نمره‌ای ثبت نشده.'));
+    d.append(h, b); box.append(d);
+  });
+}
+$('#inbSel').addEventListener('change', renderInb); $('#inbRef').addEventListener('click', loadInbox);
 
 /* ---------- گزینه پیامک ---------- */
 if (!SMS_ENABLED) $('#smsOpt').hidden = true;
@@ -1358,7 +1422,7 @@ function init() {
   buildStreams(); buildAssess(); refreshNow(true);
   S.stream = STUDENTS[P.stream] ? P.stream : ''; S.cls = S.stream && STUDENTS[S.stream][P.cls] ? P.cls : '';
   if (S.stream && !S.cls) { const l = Object.keys(STUDENTS[S.stream]); if (l.length === 1) S.cls = l[0]; }
-  paintStreams(); fillClasses(); loadClass(); setTab(location.hash === '#schedule' ? 'sch' : ['gr','mg','sch'].includes(P.tab) ? P.tab : 'att');
+  paintStreams(); fillClasses(); loadClass(); setTab(location.hash === '#schedule' ? 'sch' : ['gr','mg','sch','inb'].includes(P.tab) ? P.tab : 'att');
   renderQueue(); flushQ(); loadRoster(); loadSchedule();
   $('#modal').addEventListener('click', e => { if (e.target.id === 'modal') closeModal(); });
 }
