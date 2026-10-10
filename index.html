@@ -251,6 +251,12 @@ footer b{color:var(--ink)}
 .dir-r{display:flex;justify-content:space-between;align-items:center;gap:8px;min-height:40px}
 .dir-r .k{color:var(--muted);flex:none}
 a.tel{display:inline-flex;align-items:center;min-height:44px;padding:0 14px;border-radius:12px;background:var(--primary);color:var(--on-primary);font-weight:800;text-decoration:none;direction:ltr}
+.gate{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:16px;background:var(--bg);overflow:auto}
+.gate-card{width:100%;max-width:420px;margin:auto}
+.who-bar{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px;font-weight:700}
+.who-bar .btn{min-height:40px;padding:0 14px}
+.bar{flex:1;height:12px;border-radius:8px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;border-radius:8px}
 </style>
 </head>
 <body>
@@ -264,7 +270,22 @@ a.tel{display:inline-flex;align-items:center;min-height:44px;padding:0 14px;bord
   </div>
 </header>
 
+<div id="gate" class="gate">
+  <div class="card gate-card">
+    <h2 style="margin:0 0 12px;font-size:20px">ورود به سامانه</h2>
+    <div id="gRole" class="chips" style="grid-template-columns:1fr 1fr;margin-bottom:12px"></div>
+    <div id="gS"><div class="field"><label for="gNid">کد ملی دانش‌آموز</label><input id="gNid" type="text" inputmode="numeric" maxlength="12" autocomplete="off" placeholder="کد ملی ۱۰ رقمی" style="direction:ltr;text-align:center"></div></div>
+    <div id="gT" hidden>
+      <div class="field"><label for="gTeacher">نام و نام خانوادگی</label><select id="gTeacher"></select></div>
+      <div class="field"><label for="gPin">کد ورود</label><input id="gPin" type="password" autocomplete="off" placeholder="کدی که مدرسه به شما داده است"></div>
+    </div>
+    <button id="gGo" class="send" type="button">ورود</button>
+    <div id="gErr" class="empty" role="alert" hidden style="color:var(--absent);padding:12px 4px 0"></div>
+  </div>
+</div>
+
 <main>
+  <div id="whoBar" class="who-bar" hidden><span id="whoName"></span><button id="logoutBtn" class="btn" type="button">خروج</button></div>
   <div id="quote" class="quote" role="note">
     <span class="q-ic" aria-hidden="true">✨</span>
     <div aria-hidden="true"><div class="q-lbl">پیام امروز</div><p id="qText" class="q-tx"></p></div>
@@ -397,9 +418,14 @@ a.tel{display:inline-flex;align-items:center;min-height:44px;padding:0 14px;bord
     </div>
   </section>
 
+  <section id="p-stu" hidden>
+    <div class="card"><div id="stuHead" style="margin-bottom:10px"></div><div id="stuNav" class="chips" style="grid-template-columns:1fr 1fr"></div></div>
+    <div id="stuBody" hidden></div>
+  </section>
+
   <section id="p-sch" hidden>
     <div class="card">
-      <div class="lbl" style="margin-bottom:8px">زنگ فعلی — همه‌ی کلاس‌ها</div>
+      <div id="nowLbl" class="lbl" style="margin-bottom:8px">زنگ فعلی — همه‌ی کلاس‌ها</div>
       <div id="nowBody"></div>
     </div>
     <div class="card">
@@ -880,6 +906,7 @@ function applyRoster(r) {
   $('#pinField').hidden = !S.authReq;
   fillDatalist('teacherList', uniq((r.teachers || []).concat(P.teachers)));
   fillDatalist('courseList', uniq((r.courses || []).concat(P.courses)));
+  lsSet('sia_rost_t', r.teachers || []); gateFill();
 }
 async function loadRoster() {
   if (!SCRIPT_URL || !navigator.onLine) return;
@@ -997,7 +1024,7 @@ function renderSch() {
   PERIOD_TIMES.forEach((tm, i) => {
     const r = slotOf(Z.day, i + 1)[0], li = el('li'), b = el('button', 'slot' + (r ? '' : ' free')); b.type = 'button';
     b.append(el('span', 'pn', fa(i + 1)), el('span', 'nm', r ? r[3] + (r[5] ? ' (تک‌زنگ)' : '') : '—'), el('span', 'tm', (r ? (isC ? r[4] : r[0]) + ' · ' : '') + tm));
-    if (r) b.addEventListener('click', () => useSlot(r)); li.append(b); ul.append(li);
+    if (r && ROLE !== 'student') b.addEventListener('click', () => useSlot(r)); li.append(b); ul.append(li);
   });
   $('#schEmpty').hidden = SCH.length > 0;
   const t = $('#schTbl'); t.textContent = '';
@@ -1131,14 +1158,14 @@ function renderNow() {
   const st = n.time.split('–')[0];
   box.append(hd, el('div', 'now-sub', n.time + ' · شیفت ' + (n.shift === 'morning' ? 'صبح' : 'ظهر') + ' · ' +
     (n.live ? fa(mins) + ' دقیقه تا پایان زنگ' : mins <= 90 ? fa(mins) + ' دقیقه دیگر شروع می‌شود' : 'شروع ' + dayTxt + ' ساعت ' + st)));
-  const cls = uniq(allClasses().concat(SCH.map(r => r[0]))).sort((a, b) => a.localeCompare(b, 'fa'));
+  const cls = ROLE === 'student' && SD ? [SD.cls] : uniq(allClasses().concat(SCH.map(r => r[0]))).sort((a, b) => a.localeCompare(b, 'fa'));
   if (!cls.length) { box.append(el('div', 'empty', 'هنوز کلاسی ثبت نشده است.')); return; }
   const ul = el('ul', 'list');
   cls.forEach(c => {
     const r = SCH.find(x => x[0] === c && x[1] === n.day && x[2] === n.p && (!x[5] || x[5] === SH_FA[n.shift])), li = el('li'), b = el('button', 'slot' + (r ? '' : ' free')); b.type = 'button';
     const a = el('span', '', c); a.style.cssText = 'flex:1;font-weight:800';
     b.append(a, el('span', 'tm', r ? r[3] + ' · ' + r[4] : '—'));
-    if (r) b.addEventListener('click', () => useSlot(r)); li.append(b); ul.append(li);
+    if (r && ROLE !== 'student') b.addEventListener('click', () => useSlot(r)); li.append(b); ul.append(li);
   });
   box.append(ul);
 }
@@ -1232,6 +1259,91 @@ function renderDir() {
   else if (hit.length > 40) box.append(el('div', 'now-sub', fa(hit.length - 40) + ' مورد دیگر هم هست؛ جست‌وجو را دقیق‌تر کنید.'));
 }
 $('#dirQ').addEventListener('input', renderDir);
+
+/* ======================= ورود (دانش‌آموز با کد ملی / دبیر با نام و کد) و پرتال دانش‌آموز ======================= */
+let ROLE = '', SD = null, STU_K = 'sch', GM = 's';
+const f2 = v => v == null ? '—' : fa(String(Math.round(v * 100) / 100).replace('.', '٫'));
+function gateFill() {
+  const sel = $('#gTeacher'); if (!sel) return; const cur = sel.value || P.teacher; sel.textContent = '';
+  const o0 = el('option', '', '— نام خود را انتخاب کنید —'); o0.value = ''; sel.append(o0);
+  lsGet('sia_rost_t', []).slice().sort((a, b) => a.localeCompare(b, 'fa')).forEach(t => { const o = el('option', '', t); o.value = t; sel.append(o); });
+  sel.value = cur || '';
+}
+function gateMode() {
+  const rb = $('#gRole'); rb.textContent = '';
+  [['s', 'دانش‌آموز'], ['t', 'دبیر']].forEach(q => { const b = el('button', 'chip' + (GM === q[0] ? ' on' : ''), q[1]); b.type = 'button'; b.addEventListener('click', () => { GM = q[0]; $('#gErr').hidden = true; gateMode(); }); rb.append(b); });
+  $('#gS').hidden = GM !== 's'; $('#gT').hidden = GM !== 't';
+}
+function applyRole() {
+  const st = ROLE === 'student';
+  $('#gate').hidden = !!ROLE; $('#whoBar').hidden = !ROLE; $('#p-stu').hidden = !st; document.querySelector('.tabs').hidden = st;
+  $('#schWho').closest('.field').hidden = st; $('#nowLbl').textContent = st ? 'زنگ فعلی کلاس شما' : 'زنگ فعلی — همه‌ی کلاس‌ها';
+  $('#whoName').textContent = st && SD ? SD.name + ' · ' + SD.cls : ROLE === 'teacher' ? 'دبیر: ' + S.teacher : '';
+  if (st && SD) {
+    ['att', 'gr', 'mg'].forEach(k => { $('#p-' + k).hidden = true; }); $('#common').hidden = true;
+    const h = $('#stuHead'); h.textContent = ''; h.append(el('div', 'now-t', SD.name), el('div', 'now-sub', 'کلاس ' + SD.cls)); stuNav(STU_K);
+  } else if (ROLE === 'teacher') { $('#common').hidden = false; setTab(['gr', 'mg', 'sch'].includes(P.tab) ? P.tab : 'att'); }
+}
+$('#gGo').addEventListener('click', async () => {
+  const b = $('#gGo'), err = $('#gErr'); err.hidden = true; b.disabled = true;
+  const fail = m => { err.textContent = m; err.hidden = false; b.disabled = false; };
+  if (GM === 's') {
+    const nid = en($('#gNid').value).replace(/\D/g, ''); if (nid.length !== 10) return fail('کد ملی باید ۱۰ رقم باشد.');
+    const r = await send({ action:'student', nid:nid, key:ACCESS_KEY });
+    if (r.net) return fail('اینترنت در دسترس نیست.'); if (r.status !== 'ok') return fail(r.message || 'ورود ناموفق بود.');
+    SD = r; ROLE = 'student'; STU_K = 'sch'; try { sessionStorage.setItem('sia_sess', JSON.stringify({ nid:nid })); } catch (e) {}
+  } else {
+    const t = $('#gTeacher').value, pin = $('#gPin').value.trim(); if (!t) return fail('نام خود را انتخاب کنید.');
+    const r = await send({ action:'login', teacher:t, pin:pin, key:ACCESS_KEY });
+    if (r.net) return fail('اینترنت در دسترس نیست.'); if (r.status !== 'ok') return fail(r.message || 'ورود ناموفق بود.');
+    S.teacher = P.teacher = t; S.pin = P.pin = pin; savePrefs(); $('#teacher').value = t; $('#pin').value = pin; ROLE = 'teacher'; lsSet('sia_role', { role:'teacher' });
+  }
+  b.disabled = false; $('#gNid').value = ''; $('#gPin').value = ''; applyRole();
+});
+['#gNid', '#gPin'].forEach(q => $(q).addEventListener('keydown', e => { if (e.key === 'Enter') $('#gGo').click(); }));
+$('#logoutBtn').addEventListener('click', () => {
+  if (ROLE === 'teacher') { S.pin = P.pin = ''; $('#pin').value = ''; savePrefs(); }
+  ROLE = ''; SD = null; try { sessionStorage.removeItem('sia_sess'); } catch (e) {} lsSet('sia_role', {});
+  const w = $('#schWho'); if (w) w.closest('.field').hidden = false; applyRole(); gateFill();
+});
+function tbl(head, rows) {
+  const w = el('div', 'mg-wrap'), t = el('table', 'mg-tbl'), hr = el('tr'); head.forEach(h => hr.append(el('th', '', h))); const th = el('thead'); th.append(hr); t.append(th);
+  const tb = el('tbody'); rows.forEach(r => { const tr = el('tr'); r.forEach(c => tr.append(el('td', '', c))); tb.append(tr); }); t.append(tb); w.append(t); return w;
+}
+function stuNav(k) {
+  STU_K = k; const nv = $('#stuNav'); nv.textContent = '';
+  [['sch', 'برنامه هفتگی'], ['kar', 'کارنامه'], ['att', 'حضور و غیاب'], ['avg', 'میانگین کلاس']].forEach(q => { const b = el('button', 'chip' + (k === q[0] ? ' on' : ''), q[1]); b.type = 'button'; b.addEventListener('click', () => stuNav(q[0])); nv.append(b); });
+  const sch = k === 'sch'; $('#p-sch').hidden = !sch; $('#stuBody').hidden = sch;
+  if (sch) { Z.who = 'c:' + SD.cls; renderSch(); return; }
+  const box = $('#stuBody'); box.textContent = ''; ({ kar:stuKar, att:stuAtt, avg:stuAvg })[k](box);
+}
+function stuKar(box) {
+  const c1 = el('div', 'card'), c2 = el('div', 'card'); c1.append(el('div', 'lbl', 'کارنامه — میانگین هر درس (از ۲۰)')); c2.append(el('div', 'lbl', 'نمره‌های هر آزمون'));
+  c1.append(SD.courses.length ? tbl(['درس', 'میانگین شما', 'میانگین کلاس'], SD.courses.map(x => [x.c, f2(x.me), f2(x.cls)]).concat([['معدل کل', f2(SD.overall.me), f2(SD.overall.cls)]])) : el('div', 'empty', 'هنوز نمره‌ای ثبت نشده است.'));
+  c2.append(SD.grades.length ? tbl(['تاریخ', 'درس', 'آزمون', 'نمره', 'از ۲۰', 'میانگین کلاس'], SD.grades.slice().reverse().map(g => [g.d, g.c, g.e, g.a ? 'غایب' : fa(g.s) + ' از ' + fa(g.m), g.a ? '—' : f2(g.n), f2(g.ca)])) : el('div', 'empty', '—'));
+  box.append(c1, c2);
+}
+function stuAtt(box) {
+  const a = SD.att, c = el('div', 'card'), g = el('div'); c.append(el('div', 'lbl', 'وضعیت حضور و غیاب'));
+  g.style.cssText = 'display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:10px 0';
+  [['کل جلسات', a.sessions], ['حاضر', a.present], ['غایب', a.absent], ['تأخیر', a.late], ['غیبت موجه', a.excused]].forEach(q => { const d = el('div', 'dir-it'); d.style.padding = '10px 14px'; d.append(el('div', 'now-sub', q[0]), el('div', 'now-t', fa(q[1]))); g.append(d); });
+  c.append(g, SD.list.length ? tbl(['تاریخ', 'درس', 'وضعیت'], SD.list.map(x => [x.d, x.c, x.s])) : el('div', 'empty', 'غیبت یا تأخیری ثبت نشده است.')); box.append(c);
+}
+function stuAvg(box) {
+  const mk = (title, me, cl) => { const w = el('div'); w.style.marginBottom = '14px'; w.append(el('div', 'now-t', title));
+    [['شما', me, 'var(--primary)'], ['کلاس', cl, 'var(--gold)']].forEach(q => { const r = el('div', 'dir-r'), b = el('div', 'bar'), i = el('i'); i.style.width = Math.min(100, (q[1] || 0) / 20 * 100) + '%'; i.style.background = q[2]; b.append(i);
+      const v = el('span', '', f2(q[1])); v.style.minWidth = '46px'; r.append(el('span', 'k', q[0]), b, v); w.append(r); }); return w; };
+  const c = el('div', 'card'); c.append(el('div', 'lbl', 'میانگین شما در مقایسه با کلاس (از ۲۰)'));
+  if (!SD.courses.length) c.append(el('div', 'empty', 'هنوز نمره‌ای ثبت نشده است.'));
+  else { c.append(mk('معدل کل', SD.overall.me, SD.overall.cls)); SD.courses.forEach(x => c.append(mk(x.c, x.me, x.cls))); }
+  box.append(c);
+}
+setTimeout(() => {          // بازگرداندن نشست قبلی بعد از اجرای راه‌اندازی اصلی
+  GM = lsGet('sia_role', {}).role === 'teacher' ? 't' : 's'; gateMode(); gateFill();
+  let ss = null; try { ss = JSON.parse(sessionStorage.getItem('sia_sess') || 'null'); } catch (e) {}
+  if (ss && ss.nid) send({ action:'student', nid:ss.nid, key:ACCESS_KEY }).then(r => { if (r.status === 'ok') { SD = r; ROLE = 'student'; applyRole(); } });
+  else if (lsGet('sia_role', {}).role === 'teacher' && P.teacher) { ROLE = 'teacher'; applyRole(); }
+}, 0);
 
 /* ---------- گزینه پیامک ---------- */
 if (!SMS_ENABLED) $('#smsOpt').hidden = true;
