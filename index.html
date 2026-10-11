@@ -309,6 +309,10 @@ a.tel{display:inline-flex;align-items:center;min-height:44px;padding:0 14px;bord
 .bc.ok{background:var(--present-bg);color:var(--present)} .bc.miss{background:var(--absent-bg);color:var(--absent)} .bc.pend{background:var(--late-bg);color:var(--late)}
 .dir-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
 .dir-grid .dir-it{margin-bottom:0} .dir-grid .dir-it[open],.dir-grid .empty,.dir-grid .now-sub{grid-column:1/-1}
+.bc.miss{background:#C93C42;color:#fff} .bc.miss b,.bc.miss span,.bc.miss em{color:#fff}
+.red-it{background:#C93C42!important;border-color:#C93C42!important;color:#fff;padding:10px 14px} .red-it .now-t,.red-it .now-sub{color:#fff}
+.red-it a.tel{background:#fff;color:#C93C42;margin-top:6px}
+.credit{margin-top:12px;font-size:12.5px;color:var(--muted);line-height:1.9;text-align:center} .credit a{color:var(--primary);font-weight:700}
 </style>
 </head>
 <body>
@@ -327,7 +331,7 @@ a.tel{display:inline-flex;align-items:center;min-height:44px;padding:0 14px;bord
     <img id="gateLogo" class="gate-logo" alt="لوگوی دبیرستان صلاح‌الدین ایوبی" hidden>
     <h2 style="margin:0 0 2px;font-size:20px">ورود به سامانه</h2>
     <div class="now-sub" style="margin-bottom:12px">دبیرستان صلاح‌الدین ایوبی</div>
-    <div id="gRole" class="chips" style="grid-template-columns:1fr 1fr;margin-bottom:12px"></div>
+    <div id="gRole" class="chips" style="grid-template-columns:repeat(3,1fr);margin-bottom:12px"></div>
     <div id="gS"><div class="field"><label for="gNid">کد ملی دانش‌آموز</label><input id="gNid" type="text" inputmode="numeric" maxlength="12" autocomplete="off" placeholder="کد ملی ۱۰ رقمی" style="direction:ltr;text-align:center"></div></div>
     <div id="gT" hidden>
       <div class="field"><label for="gTeacher">نام و نام خانوادگی</label><select id="gTeacher"></select></div>
@@ -335,6 +339,7 @@ a.tel{display:inline-flex;align-items:center;min-height:44px;padding:0 14px;bord
     </div>
     <button id="gGo" class="send" type="button">ورود</button>
     <div id="gErr" class="empty" role="alert" hidden style="color:var(--absent);padding:12px 4px 0"></div>
+    <div class="credit">طراح و گردآورنده برنامه: <b>محسن محمودی</b><br>آیدی تلگرام و روبیکا: <b dir="ltr">@salas6992</b><br><a href="https://t.me/salas6992" target="_blank" rel="noopener">تلگرام</a> · <a href="https://rubika.ir/salas6992" target="_blank" rel="noopener">روبیکا</a></div>
   </div>
 </div>
 
@@ -596,7 +601,7 @@ a.tel{display:inline-flex;align-items:center;min-height:44px;padding:0 14px;bord
   </section>
 </main>
 
-<footer><b id="ftName"></b><br><span id="ftYear"></span></footer>
+<footer><b id="ftName"></b><br><span id="ftYear"></span><div class="credit">طراح و گردآورنده برنامه: <b>محسن محمودی</b><br>آیدی تلگرام و روبیکا: <b dir="ltr">@salas6992</b><br><a href="https://t.me/salas6992" target="_blank" rel="noopener">تلگرام</a> · <a href="https://rubika.ir/salas6992" target="_blank" rel="noopener">روبیکا</a></div></footer>
 
 <div id="modal" class="modal" hidden><div class="sheet" id="sheet" role="dialog" aria-modal="true"></div></div>
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
@@ -1402,18 +1407,24 @@ function gateFill() {
 }
 function gateMode() {
   const rb = $('#gRole'); rb.textContent = '';
-  [['s', 'دانش‌آموز'], ['t', 'دبیر']].forEach(q => { const b = el('button', 'chip' + (GM === q[0] ? ' on' : ''), q[1]); b.type = 'button'; b.addEventListener('click', () => { GM = q[0]; $('#gErr').hidden = true; gateMode(); }); rb.append(b); });
-  $('#gS').hidden = GM !== 's'; $('#gT').hidden = GM !== 't';
+  [['s', 'دانش‌آموز'], ['t', 'دبیر'], ['m', 'مدیر']].forEach(q => { const b = el('button', 'chip' + (GM === q[0] ? ' on' : ''), q[1]); b.type = 'button'; b.addEventListener('click', () => { GM = q[0]; $('#gErr').hidden = true; gateMode(); }); rb.append(b); });
+  $('#gS').hidden = GM !== 's'; $('#gT').hidden = GM === 's'; $('#gTeacher').closest('.field').hidden = GM === 'm'; document.querySelector('label[for="gPin"]').textContent = GM === 'm' ? 'رمز مدیر' : 'کد ورود';
 }
 function applyRole() {
-  const st = ROLE === 'student';
-  $('#gate').hidden = !!ROLE; $('#whoBar').hidden = !ROLE; $('#p-stu').hidden = !st; document.querySelector('.tabs').hidden = st;
+  const st = ROLE === 'student', mgr = ROLE === 'manager', staff = ROLE === 'teacher' || mgr;
+  $('#gate').hidden = !!ROLE; $('#whoBar').hidden = !ROLE; $('#p-stu').hidden = !st;
+  const tb = document.querySelector('.tabs'); tb.hidden = st; tb.style.gridTemplateColumns = 'repeat(' + (mgr ? 5 : 4) + ',1fr)';
+  document.querySelector('.tab[data-tab="mg"]').hidden = !mgr;        // کارتابل مدیر فقط با ورود مدیر
   $('#schWho').closest('.field').hidden = st; $('#nowLbl').textContent = st ? 'زنگ فعلی کلاس شما' : 'زنگ فعلی — همه‌ی کلاس‌ها';
-  $('#whoName').textContent = st && SD ? SD.name + ' · ' + SD.cls : ROLE === 'teacher' ? 'دبیر: ' + S.teacher : '';
+  $('#whoName').textContent = st && SD ? SD.name + ' · ' + SD.cls : mgr ? 'مدیر مدرسه' : ROLE === 'teacher' ? 'دبیر: ' + S.teacher : '';
   if (st && SD) {
     ['att', 'gr', 'mg'].forEach(k => { $('#p-' + k).hidden = true; }); $('#common').hidden = true;
     const h = $('#stuHead'); h.textContent = ''; h.append(el('div', 'now-t', SD.name), el('div', 'now-sub', 'کلاس ' + SD.cls)); stuNav(STU_K);
-  } else if (ROLE === 'teacher') { $('#common').hidden = false; $('#teacher').readOnly = !ISMGR; refreshRestrict(); setTab(['gr', 'mg', 'sch', 'inb'].includes(P.tab) ? P.tab : 'att'); }
+  } else if (staff) {
+    $('#common').hidden = false; $('#teacher').readOnly = !ISMGR; refreshRestrict();
+    if (mgr) { setTab('mg'); $('#mgLogin').hidden = true; if ($('#mgBody').hidden) mgLoad(); }
+    else setTab(['gr', 'sch', 'inb'].includes(P.tab) ? P.tab : 'att');
+  }
 }
 $('#gGo').addEventListener('click', async () => {
   const b = $('#gGo'), err = $('#gErr'); err.hidden = true; b.disabled = true;
@@ -1423,6 +1434,11 @@ $('#gGo').addEventListener('click', async () => {
     const r = await send({ action:'student', nid:nid, ym:dateStr().slice(0, 7), key:ACCESS_KEY });
     if (r.net) return fail('اینترنت در دسترس نیست.'); if (r.status !== 'ok') return fail(r.message || 'ورود ناموفق بود.');
     SD = r; SD.nid = nid; ROLE = 'student'; STU_K = 'sch'; try { sessionStorage.setItem('sia_sess', JSON.stringify({ nid:nid })); } catch (e) {}
+  } else if (GM === 'm') {
+    const pin = $('#gPin').value.trim(); if (!pin) return fail('رمز مدیر را بنویسید.');
+    const r = await send({ action:'mlogin', pin:pin, key:ACCESS_KEY });
+    if (r.net) return fail('اینترنت در دسترس نیست.'); if (r.status !== 'ok') return fail(r.message || 'رمز مدیر نادرست است.');
+    S.pin = pin; MG.pin = pin; ISMGR = true; ROLE = 'manager'; try { sessionStorage.setItem('sia_mgr', pin); } catch (e) {}
   } else {
     const t = $('#gTeacher').value, pin = $('#gPin').value.trim(); if (!t) return fail('نام خود را انتخاب کنید.');
     const r = await send({ action:'login', teacher:t, pin:pin, key:ACCESS_KEY });
@@ -1433,6 +1449,7 @@ $('#gGo').addEventListener('click', async () => {
 });
 ['#gNid', '#gPin'].forEach(q => $(q).addEventListener('keydown', e => { if (e.key === 'Enter') $('#gGo').click(); }));
 $('#logoutBtn').addEventListener('click', () => {
+  if (ROLE === 'manager') { MG.pin = ''; S.pin = ''; $('#pin').value = ''; $('#mgBody').hidden = true; $('#mgLogin').hidden = false; try { sessionStorage.removeItem('sia_mgr'); } catch (e) {} }
   if (ROLE === 'teacher') { S.pin = P.pin = ''; $('#pin').value = ''; savePrefs(); }
   ROLE = ''; SD = null; ISMGR = false; INB = null; $('#teacher').readOnly = false; try { sessionStorage.removeItem('sia_sess'); } catch (e) {} lsSet('sia_role', {});
   const w = $('#schWho'); if (w) w.closest('.field').hidden = false; applyRole(); gateFill();
@@ -1488,7 +1505,9 @@ function stuAvg(box) {
 setTimeout(() => {          // بازگرداندن نشست قبلی بعد از اجرای راه‌اندازی اصلی
   GM = lsGet('sia_role', {}).role === 'teacher' ? 't' : 's'; gateMode(); gateFill();
   let ss = null; try { ss = JSON.parse(sessionStorage.getItem('sia_sess') || 'null'); } catch (e) {}
-  if (ss && ss.nid) send({ action:'student', nid:ss.nid, ym:dateStr().slice(0, 7), key:ACCESS_KEY }).then(r => { if (r.status === 'ok') { SD = r; SD.nid = ss.nid; ROLE = 'student'; applyRole(); } });
+  let mp = ''; try { mp = sessionStorage.getItem('sia_mgr') || ''; } catch (e) {}
+  if (mp) send({ action:'mlogin', pin:mp, key:ACCESS_KEY }).then(r => { if (r.status === 'ok') { S.pin = mp; MG.pin = mp; ISMGR = true; ROLE = 'manager'; applyRole(); } });
+  else if (ss && ss.nid) send({ action:'student', nid:ss.nid, ym:dateStr().slice(0, 7), key:ACCESS_KEY }).then(r => { if (r.status === 'ok') { SD = r; SD.nid = ss.nid; ROLE = 'student'; applyRole(); } });
   else if (lsGet('sia_role', {}).role === 'teacher' && P.teacher) { ISMGR = !!lsGet('sia_role', {}).mgr; ROLE = 'teacher'; applyRole(); }
 }, 0);
 
@@ -1629,8 +1648,8 @@ function renderAlerts() {
   const tab = document.querySelector('.tab[data-tab="mg"]'), card = $('#alertCard'), list = MG.pin && !$('#mgBody').hidden ? missing() : [], box = $('#alertList');
   card.hidden = !list.length; tab.classList.toggle('alert', list.length > 0); box.textContent = ''; let fresh = false;
   list.forEach(x => {
-    const r = el('div', 'dir-it'); r.style.cssText = 'padding:10px 14px;background:var(--absent-bg)';
-    r.append(el('div', 'now-t', x.n + ' — ' + x.c + ' · ' + x.s), el('div', 'now-sub', 'زنگ ' + ORD[x.p - 1] + ' (' + x.t + ') · حضور و غیاب ثبت نشده'));
+    const r = el('div', 'dir-it red-it');
+    r.append(el('div', 'now-t', x.n + ' — ' + x.c + ' · ' + x.s), el('div', 'now-sub', 'زنگ ' + ORD[x.p - 1] + ' (' + x.t + ') · ✗ انجام نشده'));
     const t = DIR.teachers.find(q => normT(q.n) === normT(x.n)); if (t && t.ph) { const a = el('a', 'tel', 'تماس با دبیر'); a.href = 'tel:' + t.ph; r.append(a); }
     box.append(r); const k = dateStr() + '|' + x.p + '|' + x.c + '|' + x.s; if (!SEEN[k]) { SEEN[k] = 1; fresh = true; }
   });
@@ -1672,7 +1691,7 @@ const INST = ['ماز', 'قلمچی', 'راه موفقیت', 'خیلی سبز', 
 const SUBJ = { exp:['زیست‌شناسی', 'فیزیک', 'شیمی', 'ریاضی', 'زمین‌شناسی'], hum:['علوم و فنون ادبی', 'ریاضی و آمار', 'جامعه‌شناسی', 'عربی', 'تاریخ و جغرافیا', 'فلسفه و منطق', 'روانشناسی', 'اقتصاد'] };
 // --- دبیر: دانش‌آموزان دارای غیبت موجه‌ی ثبت‌شده توسط مدیر، قفل و غیرقابل تغییر می‌شوند
 async function loadExc() {
-  if (!S.cls || ROLE !== 'teacher' || !S.att.length) return;
+  if (!S.cls || (ROLE !== 'teacher' && ROLE !== 'manager') || !S.att.length) return;
   const r = await send({ action:'excFor', teacher:S.teacher.trim(), pin:S.pin.trim(), cls:S.cls, date:dateStr(), key:ACCESS_KEY });
   if (r.status !== 'ok') return;
   S.att.forEach((a, i) => { if (a.lock) S.att[i] = { st:0, note:'', open:false }; });
@@ -1812,18 +1831,18 @@ function renderBoard() {
   const box = $('#boardBody'); if (!box) return; box.textContent = '';
   const now = new Date(), ps = periodsOf(now);
   if (!ps.length) { box.append(el('div', 'empty', 'امروز جمعه است؛ کلاسی برگزار نمی‌شود.')); return; }
-  const day = (now.getDay() + 1) % 7, sh = ps[0].sh, cls = uniq(allClasses().concat(SCH.map(r => r[0]))).sort((a, b) => a.localeCompare(b, 'fa'));
+  const day = (now.getDay() + 1) % 7, sh = ps[0].sh, cls = uniq(allClasses().concat(SCH.map(r => r[0])).concat(TODAY.map(x => x.c))).sort((a, b) => a.localeCompare(b, 'fa'));
   if (!cls.length) { box.append(el('div', 'empty', 'کلاسی ثبت نشده است.')); return; }
   const g = el('div', 'brd'); g.append(el('span'));
   ps.forEach(P => g.append(el('div', 'bh', 'زنگ ' + fa(P.p) + ' · ' + P.t.split('–')[0])));
   cls.forEach(c => {
-    g.append(el('div', 'bc-name', c));
+    const any = SCH.some(x => x[0] === c && x[1] === day && (!x[5] || x[5] === sh)); g.append(el('div', 'bc-name', c));
     ps.forEach(P => {
       const r = SCH.find(x => x[0] === c && x[1] === day && x[2] === P.p && (!x[5] || x[5] === sh));
-      if (!r) { g.append(el('div', 'bc', '—')); return; }
-      const done = TODAY.some(x => normT(x.c) === normT(c) && normT(x.s) === normT(r[3]) && (!x.p || +x.p === P.p));
-      const st = done ? 'ok' : now < P.a ? 'wait' : now < new Date(P.a.getTime() + ATT_GRACE_MIN * 6e4) ? 'pend' : 'miss', cell = el('div', 'bc ' + st);
-      cell.append(el('b', '', r[4]), el('span', '', r[3]), el('em', '', { ok:'✓ انجام شد', miss:'✗ انجام نشد', pend:'⏳ در مهلت', wait:'⏳ هنوز شروع نشده' }[st])); g.append(cell);
+      const rec = TODAY.find(x => normT(x.c) === normT(c) && (r ? (!x.p || +x.p === P.p) && normT(x.s) === normT(r[3]) : x.p && +x.p === P.p));
+      if (!r && !rec) { g.append(el('div', 'bc', any ? '—' : 'برنامه ثبت نشده')); return; }
+      const st = rec ? 'ok' : now < P.a ? 'wait' : now < new Date(P.a.getTime() + ATT_GRACE_MIN * 6e4) ? 'pend' : 'miss', cell = el('div', 'bc ' + st);
+      cell.append(el('b', '', r ? r[4] : (rec.t || 'دبیر')), el('span', '', r ? r[3] : rec.s), el('em', '', { ok:'✓ انجام شد', miss:'✗ انجام نشده', pend:'⏳ در مهلت', wait:'⏳ هنوز شروع نشده' }[st])); g.append(cell);
     });
   });
   box.append(g);
