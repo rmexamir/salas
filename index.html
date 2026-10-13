@@ -2586,11 +2586,25 @@ function stfPaint() {
   $('#stfIn').disabled = !!r.in; $('#stfOut').disabled = !r.in;
   const h = $('#stfHist'); h.textContent = ''; h.append(r.hist.length ? tbl(['تاریخ', 'ورود', 'خروج'], r.hist.map(x => [fa(x.d), x.i ? fa(x.i) : '—', x.o ? fa(x.o) : '—'])) : el('div', 'now-sub', 'هنوز سابقه‌ای ثبت نشده است.'));
 }
+function stfLocate() {
+  return new Promise(res => {
+    if (!navigator.geolocation) return res({ err:'مرورگر شما از موقعیت مکانی پشتیبانی نمی‌کند.' });
+    navigator.geolocation.getCurrentPosition(
+      p => res({ lat:p.coords.latitude, lng:p.coords.longitude, acc:p.coords.accuracy }),
+      e => res({ err: e.code === 1 ? 'اجازه‌ی دسترسی به موقعیت مکانی داده نشده است. در تنظیمات مرورگر/گوشی آن را فعال کنید.' : 'موقعیت مکانی دریافت نشد. GPS را روشن کنید و دوباره تلاش کنید.' }),
+      { enableHighAccuracy:true, timeout:15000, maximumAge:0 });
+  });
+}
+let STF_BUSY = false;
 async function stfMark(isIn) {
-  if (!S.teacher.trim()) return toast('نام دبیر مشخص نیست');
-  const r = await send({ action:isIn ? 'staffIn' : 'staffOut', teacher:S.teacher.trim(), pin:S.pin.trim(), key:ACCESS_KEY });
-  if (r.net) return toast('اینترنت در دسترس نیست'); if (r.status !== 'ok') return toast(r.message || 'ثبت نشد');
-  STF = r; stfPaint(); toast(r.message || (isIn ? 'حضور شما ثبت شد ✓' : 'خروج شما ثبت شد ✓'));
+  if (STF_BUSY) return; if (!S.teacher.trim()) return toast('نام دبیر مشخص نیست');
+  STF_BUSY = true; const bi = $('#stfIn'), bo = $('#stfOut'), di = bi.disabled, dout = bo.disabled; bi.disabled = bo.disabled = true; toast('در حال تعیین موقعیت…');
+  try {
+    const g = await stfLocate(); if (g.err) return toast(g.err);
+    const r = await send({ action:isIn ? 'staffIn' : 'staffOut', teacher:S.teacher.trim(), pin:S.pin.trim(), key:ACCESS_KEY, lat:g.lat, lng:g.lng, acc:g.acc });
+    if (r.net) return toast('اینترنت در دسترس نیست'); if (r.status !== 'ok') return toast(r.message || 'ثبت نشد');
+    STF = r; toast(r.message || (isIn ? 'حضور شما ثبت شد ✓' : 'خروج شما ثبت شد ✓'));
+  } finally { STF_BUSY = false; if (STF) stfPaint(); else { bi.disabled = di; bo.disabled = dout; } }
 }
 $('#stfIn').addEventListener('click', () => stfMark(true)); $('#stfOut').addEventListener('click', () => stfMark(false));
 
