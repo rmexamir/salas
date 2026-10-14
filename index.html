@@ -1832,7 +1832,7 @@ function missing(now) {
   now = now || new Date(); const day = (now.getDay() + 1) % 7, out = [];
   periodsOf(now).forEach(P => {
     if (now < new Date(P.a.getTime() + ATT_GRACE_MIN * 6e4)) return;
-    SCH.filter(r => r[1] === day && r[2] === P.p && (!r[5] || r[5] === P.sh)).forEach(r => {
+    SCH.filter(r => r[1] === day && r[2] === P.p && (!r[5] || r[5] === SH_FA[P.sh])).forEach(r => {
       if (!TODAY.some(x => normT(x.c) === normT(r[0]) && normT(x.s) === normT(r[3]) && (!x.p || +x.p === P.p))) out.push({ p:P.p, t:P.t, c:r[0], s:r[3], n:subName(r[0], P.p, r[4]) }); }); });
   return out;
 }
@@ -2035,9 +2035,9 @@ function renderBoard() {
   const g = el('div', 'brd'); g.append(el('span'));
   ps.forEach(P => g.append(el('div', 'bh', 'زنگ ' + fa(P.p) + ' · ' + P.t.split('–')[0])));
   cls.forEach(c => {
-    const any = SCH.some(x => x[0] === c && x[1] === day && (!x[5] || x[5] === sh)); g.append(el('div', 'bc-name', c));
+    const any = SCH.some(x => x[0] === c && x[1] === day && (!x[5] || x[5] === SH_FA[sh])); g.append(el('div', 'bc-name', c));
     ps.forEach(P => {
-      const r = SCH.find(x => x[0] === c && x[1] === day && x[2] === P.p && (!x[5] || x[5] === sh));
+      const r = SCH.find(x => x[0] === c && x[1] === day && x[2] === P.p && (!x[5] || x[5] === SH_FA[sh]));
       const rec = TODAY.find(x => normT(x.c) === normT(c) && (r ? (!x.p || +x.p === P.p) && normT(x.s) === normT(r[3]) : x.p && +x.p === P.p));
       if (!r && !rec) { g.append(el('div', 'bc', any ? '—' : 'برنامه ثبت نشده')); return; }
       const st = rec ? 'ok' : now < P.a ? 'wait' : now < new Date(P.a.getTime() + ATT_GRACE_MIN * 6e4) ? 'pend' : 'miss', cell = el('div', 'bc ' + st);
