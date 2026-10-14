@@ -347,6 +347,62 @@ a.tel{display:inline-flex;align-items:center;min-height:44px;padding:0 14px;bord
 .cns-note{margin:6px 0;padding:8px 10px;border-radius:10px;background:var(--late-bg);color:var(--late);font-weight:800;font-size:14px}
 .cns-it .now-sub{line-height:1.8}
 .btn.primary{background:var(--primary);color:var(--on-primary);border-color:var(--primary)}
+/* ---------- برنامه‌ریز مطالعه‌ی دانش‌آموز ---------- */
+.card.pl-still{animation:none}
+.pl-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:4px 0 12px}
+.pl-stat{border:1px solid var(--line);border-radius:14px;background:var(--input);padding:10px 6px;text-align:center;min-width:0}
+.pl-stat b{display:block;font-size:20px;font-weight:900;line-height:1.35;white-space:nowrap}
+.pl-stat span{font-size:12px;color:var(--muted);font-weight:700}
+.pl-stat b small{font-size:12px;font-weight:700;color:var(--muted)}
+.pl-undo{color:var(--muted)}
+.pl-note{margin-top:10px;font-size:14px;font-weight:700;line-height:1.8}
+.pl-it{display:flex;gap:12px;align-items:flex-start;padding:12px;border-radius:14px;border:1.5px solid var(--line);background:var(--input);margin-bottom:10px;transition:opacity .2s,border-color .2s}
+.pl-it.rev{border-style:dashed}
+.pl-it.done{opacity:.62;border-color:var(--present)}
+.pl-pn{width:32px;height:32px;flex:none;border-radius:50%;background:var(--primary);color:var(--on-primary);display:grid;place-items:center;font-weight:800;font-size:15px;margin-top:2px}
+.pl-it.rev .pl-pn{background:var(--card);border:1.5px solid var(--line);font-size:14px}
+.pl-it.done .pl-pn{background:var(--present);border-color:var(--present);color:#fff}
+.pl-body{flex:1;min-width:0}
+.pl-top{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:2px 10px}
+.pl-c{font-weight:900;font-size:17px}
+.pl-tm{font-size:12px;color:var(--muted);font-weight:700;white-space:nowrap}
+.pl-task{font-size:14px;font-weight:600;margin:2px 0 8px;line-height:1.8}
+.pl-why{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.pl-why span{font-size:12px;font-weight:700;line-height:1.6;padding:3px 10px;border-radius:999px;background:var(--card);border:1px solid var(--line);color:var(--muted)}
+.pl-why span.hot{background:var(--absent-bg);border-color:transparent;color:var(--absent)}
+.pl-it.done .pl-why{display:none}
+.pl-act{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.pl-act.one{display:block}
+.pl-act .btn{height:44px;padding:0 10px;font-size:14px}
+.pl-tools{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px}
+.pl-tools .btn{height:46px;font-size:14px}
+.pl-set{margin-top:12px;padding:12px;border-radius:14px;border:1px dashed var(--line)}
+.pl-set .chip{height:44px;font-size:14px}
+.pl-cd{display:flex;justify-content:space-between;align-items:center;gap:10px;min-height:44px;padding:6px 0;border-bottom:1px solid var(--line);font-weight:700;font-size:14px}
+.pl-cd:last-child{border-bottom:0}
+.pl-dd{flex:none;font-size:12px;font-weight:800;padding:3px 10px;border-radius:999px;background:var(--input);border:1px solid var(--line);color:var(--muted)}
+.pl-dd.hot{background:var(--absent-bg);border-color:transparent;color:var(--absent)}
+.pl-tip{font-size:15px;font-weight:600;line-height:1.9;margin:4px 0 8px}
+.focus-ov{position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;padding:calc(env(safe-area-inset-top,0px) + 20px) 20px calc(env(safe-area-inset-bottom,0px) + 20px);
+  background:radial-gradient(circle at 50% 28%,#1A6B47 0%,#0D3B26 48%,#07140D 100%);color:#fff;animation:fade .2s ease;overflow-y:auto}
+.focus-ov.brk{background:radial-gradient(circle at 50% 28%,#2A5470 0%,#13324A 48%,#08141F 100%)}
+.focus-box{width:min(100%,380px);text-align:center}
+.focus-lbl{font-size:14px;font-weight:800;color:#E0BC6B}
+.focus-c{font-size:clamp(22px,7vw,28px);font-weight:900;margin:2px 0 14px;line-height:1.5}
+.focus-ring{position:relative;width:min(70vw,250px);aspect-ratio:1;margin:0 auto 16px}
+.focus-ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.focus-ring circle{fill:none;stroke-width:7}
+.focus-ring .fr-bg{stroke:rgba(255,255,255,.14)}
+.focus-ring .fr-fg{stroke:#E0BC6B;stroke-linecap:round;transition:stroke-dashoffset .5s linear}
+.focus-t{position:absolute;inset:0;display:grid;place-items:center;font-size:clamp(42px,13vw,58px);font-weight:900;letter-spacing:1px}
+.focus-tip{font-size:14px;color:#D5E8DC;line-height:1.9;min-height:3.8em;margin-bottom:16px}
+.focus-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.focus-btns .btn{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.3);color:#fff}
+.focus-btns .btn.primary{background:#E0BC6B;border-color:#E0BC6B;color:#0B1510}
+.focus-btns .btn.ghost{grid-column:1/-1;height:44px;background:transparent;border-color:transparent;color:#CFE3D6;font-weight:600}
+.focus-btns .btn.full{grid-column:1/-1}
+@media print{.focus-ov{display:none!important}}
+@media (prefers-reduced-motion:reduce){.focus-ring .fr-fg{transition:none}}
 </style>
 </head>
 <body>
@@ -891,7 +947,7 @@ function addHist(key, val) {
 }
 $('#teacher').addEventListener('input', e => { S.teacher = e.target.value; P.teacher = S.teacher; savePrefs(); });
 $('#course').addEventListener('input', e => { S.course = e.target.value; P.course = S.course; savePrefs(); });
-$('#pin').addEventListener('input', e => { S.pin = e.target.value; P.pin = S.pin; savePrefs(); });
+$('#pin').addEventListener('input', e => { S.pin = e.target.value; try { sessionStorage.setItem('sia_tpin', S.pin); } catch (x) {} });
 
 function buildStreams() {
   const box = $('#streams'); box.textContent = '';
@@ -1266,7 +1322,7 @@ async function mgLoad() {
   mgRender(); absInit(); pollToday(); { const n = new Date(); $('#mgStamp').textContent = 'آخرین بازخوانی: ساعت ' + fa(pad(n.getHours()) + ':' + pad(n.getMinutes())); }
 }
 function mgCsv(name, head, rows) {
-  const q = v => '"' + String(v).replace(/"/g, '""') + '"';
+  const q = v => { let s = String(v); if (/^[=+\-@\t\r]/.test(s) && !/^[+-]?\d+(\.\d+)?$/.test(s)) s = "'" + s; return '"' + s.replace(/"/g, '""') + '"'; };   // جلوگیری از اجرای فرمول در Excel
   const txt = '﻿' + [head].concat(rows).map(r => r.map(q).join(',')).join('\r\n');
   const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([txt], { type:'text/csv;charset=utf-8' }));
   a.download = name; document.body.append(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
@@ -1636,7 +1692,7 @@ $('#gGo').addEventListener('click', async () => {
     const t = $('#gTeacher').value, pin = $('#gPin').value.trim(); if (!t) return fail('نام خود را انتخاب کنید.');
     const r = await send({ action:'login', teacher:t, pin:pin, key:ACCESS_KEY });
     if (r.net) return fail('اینترنت در دسترس نیست.'); if (r.status !== 'ok') return fail(r.message || 'ورود ناموفق بود.');
-    S.teacher = P.teacher = t; S.pin = P.pin = pin; savePrefs(); $('#teacher').value = t; $('#pin').value = pin; ISMGR = !!r.manager; ROLE = 'teacher'; lsSet('sia_role', { role:'teacher', mgr:ISMGR });
+    S.teacher = P.teacher = t; S.pin = pin; P.pin = ''; savePrefs(); try { sessionStorage.setItem('sia_tpin', pin); } catch (x) {} $('#teacher').value = t; $('#pin').value = pin; ISMGR = !!r.manager; ROLE = 'teacher'; lsSet('sia_role', { role:'teacher', mgr:ISMGR });
   }
   b.disabled = false; $('#gNid').value = ''; $('#gSec').value = ''; $('#gPin').value = ''; applyRole();
 });
@@ -1644,7 +1700,7 @@ $('#gGo').addEventListener('click', async () => {
 $('#logoutBtn').addEventListener('click', () => {
   if (ROLE === 'counselor') { CPIN = ''; CNSL = []; try { sessionStorage.removeItem('sia_cns'); } catch (e) {} }
   if (ROLE === 'manager') { MG.pin = ''; S.pin = ''; $('#pin').value = ''; $('#mgBody').hidden = true; $('#mgLogin').hidden = false; try { sessionStorage.removeItem('sia_mgr'); } catch (e) {} }
-  if (ROLE === 'teacher') { S.pin = P.pin = ''; $('#pin').value = ''; savePrefs(); }
+  if (ROLE === 'teacher') { S.pin = P.pin = ''; $('#pin').value = ''; savePrefs(); try { sessionStorage.removeItem('sia_tpin'); } catch (x) {} }
   ROLE = ''; SD = null; ISMGR = false; INB = null; $('#teacher').readOnly = false; try { sessionStorage.removeItem('sia_sess'); } catch (e) {} lsSet('sia_role', {});
   const w = $('#schWho'); if (w) w.closest('.field').hidden = false; applyRole(); gateFill();
 });
@@ -1654,10 +1710,10 @@ function tbl(head, rows) {
 }
 function stuNav(k) {
   STU_K = k; const nv = $('#stuNav'); nv.textContent = '';
-  [['sch', 'برنامه هفتگی'], ['kar', 'کارنامه'], ['att', 'حضور و غیاب'], ['avg', 'میانگین کلاس'], ['mock', 'آزمون‌های آزمایشی'], ['cal', 'تقویم آزمون و تکلیف'], ['leave', 'درخواست مرخصی']].forEach(q => { const b = el('button', 'chip' + (k === q[0] ? ' on' : ''), q[1]); b.type = 'button'; b.addEventListener('click', () => stuNav(q[0])); nv.append(b); });
+  [['sch', 'برنامه هفتگی'], ['plan', '📖 برنامه مطالعه'], ['kar', 'کارنامه'], ['att', 'حضور و غیاب'], ['avg', 'میانگین کلاس'], ['mock', 'آزمون‌های آزمایشی'], ['cal', 'تقویم آزمون و تکلیف'], ['leave', 'درخواست مرخصی']].forEach(q => { const b = el('button', 'chip' + (k === q[0] ? ' on' : ''), q[1]); b.type = 'button'; b.addEventListener('click', () => stuNav(q[0])); nv.append(b); });
   const sch = k === 'sch'; $('#p-sch').hidden = !sch; $('#stuBody').hidden = sch;
   if (sch) { Z.who = 'c:' + SD.cls; renderSch(); return; }
-  const box = $('#stuBody'); box.textContent = ''; ({ kar:stuKar, att:stuAtt, avg:stuAvg, mock:stuMock, cal:stuCal, leave:stuLeave })[k](box);
+  const box = $('#stuBody'); box.textContent = ''; ({ plan:stuPlan, kar:stuKar, att:stuAtt, avg:stuAvg, mock:stuMock, cal:stuCal, leave:stuLeave })[k](box);
 }
 function stuKar(box) {
   const c1 = el('div', 'card'), c2 = el('div', 'card'); c1.append(el('div', 'lbl', 'کارنامه — میانگین هر درس (از ۲۰)')); c2.append(el('div', 'lbl', 'نمره‌های هر آزمون'));
@@ -1704,7 +1760,10 @@ setTimeout(() => {          // بازگرداندن نشست قبلی بعد ا�
   if (cp) send({ action:'cnsLogin', cpin:cp, key:ACCESS_KEY }).then(r => { if (r.status === 'ok') { CPIN = cp; ROLE = 'counselor'; applyRole(); } });
   else if (mp) send({ action:'mlogin', pin:mp, key:ACCESS_KEY }).then(r => { if (r.status === 'ok') { S.pin = mp; MG.pin = mp; ISMGR = true; ROLE = 'manager'; applyRole(); } });
   else if (ss && ss.nid) send({ action:'student', nid:ss.nid, secret:ss.sec || '', today:dateStr(), ym:dateStr().slice(0, 7), key:ACCESS_KEY }).then(r => { if (r.status === 'ok' && !r.first) { SD = r; SD.nid = ss.nid; SD.sec = ss.sec || ''; ROLE = 'student'; applyRole(); } });
-  else if (lsGet('sia_role', {}).role === 'teacher' && P.teacher) { ISMGR = !!lsGet('sia_role', {}).mgr; ROLE = 'teacher'; applyRole(); }
+  else if (lsGet('sia_role', {}).role === 'teacher' && P.teacher) {      // رمز فقط در حافظه‌ی نشست می‌ماند؛ با بستن برنامه دوباره وارد شوید
+    let tp = null; try { tp = sessionStorage.getItem('sia_tpin'); } catch (e) {}
+    if (tp !== null) { S.pin = tp; $('#pin').value = tp; ISMGR = !!lsGet('sia_role', {}).mgr; ROLE = 'teacher'; applyRole(); }
+  }
 }, 0);
 
 /* ======================= دسترسی دبیر فقط به کلاس و درس خودش + کارتابل ======================= */
@@ -2133,6 +2192,291 @@ function stuLeave(box) {
   else SD.leaves.forEach(x => { const q = card1(); q.append(el('div', 'now-t', fa(x.d) + ' · ' + x.r), el('div', 'now-sub', ({ 'در انتظار':'⏳ در انتظار تصمیم مدیر', 'تأیید':'✓ تأیید شد؛ غیبت موجه ثبت شد', 'رد':'✗ رد شد' })[x.s] + (x.n ? ' — ' + x.n : ''))); h.append(q); });
   box.append(c, h);
 }
+/* ======================= دانش‌آموز: برنامه‌ریز مطالعه‌ی هوشمند («امروز چی بخونم؟») =======================
+   برنامه از داده‌هایی ساخته می‌شود که سامانه همین حالا برای دانش‌آموز می‌فرستد: تقویم آزمون و تکلیف، نمره‌ها و میانگین کلاس،
+   غیبت‌ها و برنامه‌ی هفتگی کلاس. تیک‌ها، زنجیره و سابقه‌ی مطالعه فقط روی همین دستگاه ذخیره می‌شود (Code.gs تغییری لازم ندارد). */
+const PL_WD = ['ش', 'ی', 'د', 'س', 'چ', 'پ', 'ج'], PL_C = 2 * Math.PI * 54;
+const PL_TIPS = [
+  '🧠 یادآوری فعال: بعد از خواندن هر بخش، کتاب را ببند و آنچه یادت مانده را بنویس؛ این از چند بار دوباره‌خواندن مؤثرتر است.',
+  '📆 مرور فاصله‌دار: درس امروز را فردا، سه روز بعد و یک هفته بعد کوتاه مرور کن تا در حافظه‌ی بلندمدت بماند.',
+  '🔀 درس‌ها را یک‌درمیان بخوان؛ جابه‌جا شدن بین درس‌ها یادگیری را عمیق‌تر می‌کند.',
+  '😴 خواب کافی شب قبل از آزمون از بیدار ماندن تا صبح مفیدتر است؛ حافظه در خواب تثبیت می‌شود.',
+  '📵 هنگام مطالعه گوشی را دور از دسترس بگذار؛ هر بار نگاه کردن به آن، تمرکز را از نو می‌شکند.',
+  '✍️ برای هر درس یک برگه‌ی خلاصه بساز و شب قبل از آزمون همان را مرور کن.',
+  '❓ مثل معلم فکر کن: اگر طراح سؤال بودی، از این بخش چه می‌پرسیدی؟ همان را جواب بده.',
+  '👥 درس را برای کسی توضیح بده؛ هر جا گیر کردی، همان‌جا را دوباره بخوان.',
+  '📝 اشتباه‌های آزمون‌ها را در یک دفتر جدا بنویس و هر هفته مرورشان کن.',
+  '🎯 قبل از شروع هر نوبت، هدفش را دقیق بنویس: «۱۰ تمرین صفحه‌ی ۴۲»، نه فقط «ریاضی».',
+  '🏃 بین نوبت‌ها چند دقیقه راه برو و از صفحه‌ی گوشی دور باش؛ ذهن تازه می‌شود.',
+  '🌅 سخت‌ترین درس را وقتی بخوان که ذهنت از همه تازه‌تر است.'
+];
+const PL_FOCUS_TIPS = ['📵 گوشی را بی‌صدا کن و رو به پایین بگذار.', '✍️ با دست خلاصه بنویس؛ بهتر در ذهن می‌ماند.', '🧠 بعد از هر بخش، کتاب را ببند و از حفظ بگو چه خواندی.', '💧 یک لیوان آب کنار دستت باشد.'];
+const PL_BREAK_TIPS = ['🚶 کمی راه برو و از صفحه‌ی گوشی دور باش.', '🪟 به دوردست نگاه کن تا چشم‌هایت استراحت کنند.', '💧 آب بنوش و کمی کش‌وقوس بیا.'];
+const plMid = d => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+const plAdd = (d, n) => new Date(d.getFullYear(), d.getMonth(), d.getDate() + n);
+const plJ = d => { const j = g2j(d.getFullYear(), d.getMonth() + 1, d.getDate()); return j[0] + '/' + pad(j[1]) + '/' + pad(j[2]); };
+const plDays = s => { const q = jParse(s); return q ? Math.round((jGreg(q[0], q[1], q[2]) - plMid(new Date())) / 864e5) : null; };
+const plWhen = n => n === 0 ? 'امروز' : n === 1 ? 'فردا' : n === 2 ? 'پس‌فردا' : fa(n) + ' روز دیگر';
+const plWdOf = d => { const i = (d.getDay() + 1) % 7; return i > 5 ? 'جمعه' : DAYS[i]; };
+const plDayName = s => { const q = jParse(s); return q ? plWdOf(jGreg(q[0], q[1], q[2])) + ' ' + fa(q[2]) + ' ' + JM[q[1] - 1] : fa(s); };
+const plHM = m => fa(pad(Math.floor(m / 60) % 24) + ':' + pad(m % 60));
+const plDur = m => m < 60 ? fa(m) + ' دقیقه' : fa(Math.floor(m / 60)) + ' ساعت' + (m % 60 ? ' و ' + fa(m % 60) + ' دقیقه' : '');
+const plMins = s => { const m = /(\d{1,2}):(\d{2})/.exec(s); return m ? +m[1] * 60 + +m[2] : null; };
+let PLS = null, PLI = null, PLA = null, PLW = null, PL_SET_OPEN = false;
+function plKey() { let h = 5381; const s = String(SD.nid || (SD.name + '|' + SD.cls)); for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) >>> 0; return 'sia_study_v1:' + h.toString(36); }
+function plLoad() { const st = lsGet(plKey(), {}); st.set = Object.assign({ n:3, len:45 }, st.set); st.days = st.days || {}; st.last = st.last || {}; PLS = st; return st; }
+function plSave(st) { const ks = Object.keys(st.days).sort(); ks.slice(0, Math.max(0, ks.length - 90)).forEach(k => { delete st.days[k]; }); lsSet(plKey(), st); }
+const plRows = (di, sh) => { const c = normT(SD.cls); return SCH.filter(r => normT(r[0]) === c && (di == null || r[1] === di) && (!sh || !r[5] || r[5] === SH_FA[sh])); };
+function plNext() { let d = plAdd(plMid(new Date()), 1); if (d.getDay() === 5) d = plAdd(d, 1); return d; }   // روز درسی بعد (جمعه رد می‌شود)
+function plTomorrow() { const d = plNext(), r = plRows((d.getDay() + 1) % 7, shiftOfDate(d)).sort((a, b) => a[2] - b[2]), seen = {};
+  return { lbl:plDays(plJ(d)) === 1 ? 'فردا' : plWdOf(d), list:r.map(x => x[3]).filter(c => { const k = normT(c); if (!k || seen[k]) return false; seen[k] = 1; return true; }) }; }
+
+/* زمان مطالعه بر اساس شیفت چرخشی همین هفته */
+function plWindow() {
+  const n = new Date(), now = n.getHours() * 60 + n.getMinutes(), sh = shiftOfDate(n), T = SHIFT_TIMES[sh] || SHIFT_TIMES.morning;
+  const ts = (en(T.join('|')).match(/\d{1,2}:\d{2}/g) || []).map(plMins), sS = ts[0] || 480, sE = ts[ts.length - 1] || 750;
+  const fri = n.getDay() === 5, any = plRows().length, school = !fri && (!any || plRows((n.getDay() + 1) % 7, sh).length > 0);
+  let segs, msg, examToday = false;
+  if (!school) { segs = [[570, 750], [960, 1350]]; msg = 'امروز مدرسه نداری؛ فرصت خوبی برای جبران و جلو افتادن است 🌿'; }
+  else if (sh === 'afternoon') { segs = [[510, sS - 45], [sE + 60, 1350]]; examToday = now < sS - 45;
+    msg = examToday ? 'این هفته شیفت ظهر است؛ بهترین زمان مطالعه صبح‌هاست ☀️' : 'امروز بعد از مدرسه و کمی استراحت، وقت مطالعه است 🌙'; }
+  else { segs = [[sE + 210, 1350]]; msg = 'این هفته شیفت صبح است؛ بعد از ناهار و کمی استراحت، عصر درس بخوان 🌇'; }
+  return { segs:segs, msg:msg, examToday:examToday, now:now, from:Math.ceil((now + 5) / 15) * 15 };
+}
+function plSlots(win, lens) {
+  const S2 = win.segs, out = []; let si = 0, t = win.from;
+  lens.forEach(len => { while (si < S2.length && Math.max(t, S2[si][0]) + len > S2[si][1]) si++; if (si < S2.length) t = Math.max(t, S2[si][0]); out.push(t); t += len + 10; });
+  return out;
+}
+
+/* موتور اولویت‌بندی: هر درس امتیاز می‌گیرد و دلیل هر امتیاز کنارش نوشته می‌شود */
+function plScore(st, win) {
+  const K = normT, M = {};
+  const get = c => { const k = K(c); if (!k) return null; return M[k] = M[k] || { k:k, c:String(c).trim(), s:0, why:[], task:'', tp:-1 }; };
+  const add = (o, pts, why, task, hot) => { if (!o) return; o.s += pts; o.why.push({ t:why, hot:!!hot }); if (task && pts > o.tp) { o.tp = pts; o.task = task; } };
+  // ۱) آزمون و تکلیف پیش‌رو (هرچه نزدیک‌تر، مهم‌تر)
+  (SD.cal || []).forEach(x => {
+    const dd = plDays(x.d); if (dd == null || dd < 0 || dd > 14 || (dd === 0 && !win.examToday)) return;
+    const ex = x.k !== 'تکلیف', pts = ex ? ([60, 60, 45, 45, 25, 25, 25, 25][dd] || 10) : ([35, 35, 20, 20, 10, 10, 10, 10][dd] || 0); if (!pts) return;
+    const tt = x.t ? ' «' + x.t + '»' : '';
+    add(get(x.s), pts, (ex ? '📝 آزمون' : '📚 تکلیف') + tt + ' — ' + plWhen(dd), ex ? (dd <= 1 ? 'جمع‌بندی و حل نمونه‌سؤال' : 'مرور نکته‌ها و حل تمرین') + ' برای' + (tt || ' آزمون') : 'انجام تکلیف' + tt, ex && dd <= 3);
+  });
+  // ۲) جبران غیبت‌های دو هفته‌ی اخیر (اگر بعد از آن، این درس را نخوانده باشد)
+  (SD.list || []).forEach(x => {
+    if (!/غایب|موجه/.test(String(x.s))) return; const dd = plDays(x.d); if (dd == null || dd > 0 || dd < -14) return;
+    const o = get(x.c); if (!o || o.ab) return; const ls = st.last[o.k]; if (ls && ls >= en(x.d)) return;
+    o.ab = 1; add(o, 22, '🗓 ' + plDayName(x.d) + ' سر این کلاس نبودی', 'گرفتن جزوه‌ی جلسه‌ی ' + plDayName(x.d) + ' و خواندن آن');
+  });
+  // ۳) فاصله با میانگین کلاس
+  (SD.courses || []).forEach(x => {
+    if (x.me == null) return; const gap = x.cls == null ? 0 : x.cls - x.me;
+    if (gap >= 0.5) add(get(x.c), Math.min(30, Math.round(gap * 10)), '📉 ' + f2(gap) + ' نمره زیر میانگین کلاس', 'مرور درس‌نامه و حل ۱۰ تمرین یا تست');
+    else if (x.me < 12) add(get(x.c), 15, '⚠️ میانگینت ' + f2(x.me) + ' است', 'مرور درس‌نامه و حل ۱۰ تمرین یا تست');
+  });
+  // ۴) افت نمره‌ی آخر نسبت به قبلی
+  const by = {}; (SD.grades || []).filter(g => g.n != null && !g.a).slice().sort(byDate).forEach(g => { (by[K(g.c)] = by[K(g.c)] || []).push(g); });
+  Object.keys(by).forEach(k => { const a = by[k]; if (a.length < 2) return; const p = a[a.length - 2].n, l = a[a.length - 1].n;
+    if (p - l >= 2) add(get(a[0].c), 15, '↘️ نمره‌ی آخر از ' + f2(p) + ' به ' + f2(l) + ' رسید', 'پیدا کردن اشتباه‌های آزمون آخر و رفع اشکال'); });
+  // ۵) تازگی مطالعه: درسی که امروز یا دیروز خوانده شده عقب می‌رود؛ درسی که مدتی رها شده جلو می‌آید
+  Object.keys(M).forEach(k => { const o = M[k], ls = st.last[k]; if (!ls) { o.s += 3; return; } const dd = plDays(ls);
+    if (dd === 0) o.s -= 25; else if (dd === -1) o.s -= 10; else if (dd != null && dd <= -7 && o.s > 0) add(o, 6, '⏳ ' + fa(-dd) + ' روز است سراغش نرفته‌ای'); });
+  return Object.keys(M).map(k => M[k]).filter(o => o.s > 0 && o.why.length).sort((a, b) => b.s - a.s);
+}
+/* اگر درس فوری کم بود: پیش‌خوانی کلاس‌های فردا، بعد درس‌هایی که مدت بیشتری خوانده نشده‌اند */
+function plFill(st, used) {
+  const K = normT, tm = plTomorrow(), out = [], has = k => used[k] || out.some(o => o.k === k);
+  tm.list.forEach(c => { const k = K(c); if (!has(k)) out.push({ k:k, c:c, why:[{ t:'🔔 ' + tm.lbl + ' کلاسش را داری' }], task:'پیش‌خوانی درس جلسه‌ی بعد' }); });
+  const all = plRows().map(r => r[3]).concat((SD.courses || []).map(x => x.c)), seen = {};
+  all.filter(c => { const k = K(c); if (!k || seen[k] || has(k)) return false; seen[k] = 1; return true; })
+    .sort((a, b) => (st.last[K(a)] || '') < (st.last[K(b)] || '') ? -1 : (st.last[K(a)] || '') > (st.last[K(b)] || '') ? 1 : 0)
+    .forEach(c => out.push({ k:K(c), c:c, why:[{ t:st.last[K(c)] ? '🔄 مرور منظم' : '🔄 مرور منظم — هنوز در برنامه نبوده' }], task:'مرور درس‌های این هفته و خلاصه‌نویسی' }));
+  return out;
+}
+function plBuild(st, keep) {
+  const win = plWindow(), today = plJ(new Date()), len = st.set.len;
+  const old = keep && st.plan && st.plan.d === today ? st.plan.items.filter(x => x.done) : [];
+  const used = {}; old.forEach(x => { if (x.k) used[x.k] = 1; });
+  const sc = plScore(st, win).filter(o => !used[o.k]), su = Object.assign({}, used); sc.forEach(o => { su[o.k] = 1; });
+  const cand = sc.concat(plFill(st, su)), want = Math.max(0, st.set.n - old.filter(x => x.kind === 'b').length), picks = [];
+  const top = cand[0], dbl = top && top.s >= 60 && want >= 3;
+  cand.slice(0, dbl ? want - 1 : want).forEach(o => picks.push({ kind:'b', k:o.k, c:o.c, task:o.task || 'مرور درس‌نامه و حل تمرین', why:o.why.slice(0, 3), len:len }));
+  if (dbl) picks.push({ kind:'b', k:top.k, c:top.c, task:'آزمون‌واره: حل نمونه‌سؤال با زمان‌سنج', why:[{ t:'🔁 نوبت دوم برای آزمون نزدیک', hot:true }], len:len });
+  const tm = plTomorrow(), inB = {}; old.concat(picks).forEach(x => { if (x.k) inB[x.k] = 1; });
+  const rv = tm.list.filter(c => !inB[normT(c)]);
+  if (!old.some(x => x.kind === 'r') && rv.length) picks.push({ kind:'r', c:'مرور کلاس‌های ' + tm.lbl, task:rv.join('، '), why:[{ t:'🔔 پیش‌خوانی کوتاه؛ سر کلاس بهتر می‌فهمی' }], len:15 });
+  const t0 = plSlots(win, picks.map(x => x.len)); picks.forEach((x, i) => { x.t0 = t0[i]; x.done = false; });
+  // دیروقت: چیزی بعد از ۲۳:۱۵ چیده نمی‌شود؛ اگر هیچ نوبتی جا نشد، فقط مهم‌ترین نوبت می‌ماند
+  let fit = picks.filter(x => x.t0 + x.len <= 1395); if (!fit.some(x => x.kind === 'b') && picks.some(x => x.kind === 'b')) fit = [picks.find(x => x.kind === 'b')];
+  st.plan = { d:today, items:old.concat(fit) };
+}
+function plDone(st, i, on) {
+  const x = st.plan.items[i]; if (!x || !!x.done === on) return; x.done = on; const d = st.plan.d;
+  st.days[d] = Math.max(0, (st.days[d] || 0) + (on ? x.len : -x.len));
+  if (x.kind === 'b' && x.k) { if (on) { if (st.last[x.k] !== d) x.pl = st.last[x.k] || ''; st.last[x.k] = d; }
+    else if (!st.plan.items.some(y => y !== x && y.done && y.k === x.k)) { if (x.pl) st.last[x.k] = x.pl; else delete st.last[x.k]; } }
+  plSave(st);
+}
+function plStreak(st) {   // روزهای پیاپی با مطالعه؛ جمعه‌ی بی‌مطالعه زنجیره را نمی‌شکند
+  let c = 0; const n = plMid(new Date());
+  for (let i = 0; i < 400; i++) { const d = plAdd(n, -i); if ((st.days[plJ(d)] || 0) > 0) c++; else if (i === 0 || d.getDay() === 5) continue; else break; }
+  return c;
+}
+
+/* --- نمای برنامه --- */
+function stuPlan(box, still) {
+  const st = plLoad(), today = plJ(new Date());
+  if (!st.plan || st.plan.d !== today) { plBuild(st, false); plSave(st); }
+  const win = plWindow(), items = st.plan.items, done = items.filter(x => x.done).length;
+  const mins = st.days[today] || 0, goal = items.reduce((a, x) => a + x.len, 0), streak = plStreak(st), cards = [];
+  const mk = t => { const c = el('div', 'card' + (still ? ' pl-still' : '')); if (t) c.append(el('div', 'lbl', t)); cards.push(c); return c; };
+  const rr = () => { box.textContent = ''; stuPlan(box, true); };
+  // سربرگ: آمار امروز
+  const hc = mk('📖 برنامه‌ی مطالعه‌ی امروز');
+  hc.append(el('div', 'now-sub', plDayName(today) + '؛ ' + win.msg));
+  const sg = el('div', 'pl-stats');
+  [['🔥 ' + fa(streak), '', 'روز پیاپی'], [fa(mins), goal ? ' از ' + fa(goal) : '', 'دقیقه‌ی امروز'], [fa(done), ' از ' + fa(items.length), 'نوبت انجام‌شده']].forEach(q => { const d = el('div', 'pl-stat'), v = el('b', '', q[0]); if (q[1]) v.append(el('small', '', q[1])); d.append(v, el('span', '', q[2])); sg.append(d); });
+  const pb = el('div', 'pbar'), pi = el('i'); pi.style.cssText = 'width:' + (goal ? Math.min(100, mins / goal * 100) : 0) + '%;background:var(--primary)'; pb.append(pi); pb.setAttribute('aria-hidden', 'true');
+  const all = items.length && done === items.length;
+  const note = el('div', 'pl-note', all ? '🎉 برنامه‌ی امروز کامل شد! به خودت افتخار کن؛ استراحت حقّ توست.'
+    : streak >= 3 ? '🔥 ' + fa(streak) + ' روز پیاپی درس خوانده‌ای؛ زنجیره را نشکن!'
+    : done ? 'عالی پیش می‌روی؛ فقط ' + fa(items.length - done) + ' مورد دیگر مانده 💪' : 'از نوبت اول شروع کن؛ شروع کردن سخت‌ترین قسمت است 💪');
+  hc.append(sg, pb); if (items.length) hc.append(note);
+  if (win.now >= 1290 && !all) hc.append(el('div', 'cns-note', '🌙 دیروقت است؛ امشب یک نوبت مرور کافی است. خواب کافی هم بخشی از درس خواندن است.'));
+  // نوبت‌ها
+  const lc = mk('نوبت‌های امروز');
+  if (!items.length) lc.append(el('div', 'empty', 'هنوز برنامه‌ی هفتگی، نمره یا آزمونی برای کلاس شما ثبت نشده است. به محض ثبت، برنامه‌ی مطالعه‌ات اینجا ساخته می‌شود 🌱'));
+  let bn = 0;
+  items.forEach((x, i) => {
+    const rv = x.kind === 'r', it = el('div', 'pl-it' + (x.done ? ' done' : '') + (rv ? ' rev' : '')), body = el('div', 'pl-body'), top = el('div', 'pl-top');
+    if (!rv) bn++;
+    it.append(el('div', 'pl-pn', x.done ? '✓' : rv ? '🔔' : fa(bn)));
+    top.append(el('span', 'pl-c', x.c), el('span', 'pl-tm', 'ساعت ' + plHM(x.t0) + ' تا ' + plHM(x.t0 + x.len)));
+    body.append(top, el('div', 'pl-task', x.task));
+    if (x.why && x.why.length) { const w = el('div', 'pl-why'); x.why.forEach(q => w.append(el('span', q.hot ? 'hot' : '', q.t))); body.append(w); }
+    const ac = el('div', 'pl-act');
+    if (x.done) { const u = el('button', 'link-btn pl-undo', '↩ هنوز انجام نداده‌ام'); u.type = 'button'; u.addEventListener('click', () => { plDone(st, i, false); rr(); }); ac.classList.add('one'); ac.append(u); }
+    else {
+      const go = el('button', 'btn primary', '▶ شروع تمرکز'), ok = el('button', 'btn', '✓ انجام دادم'); go.type = ok.type = 'button';
+      go.addEventListener('click', () => plStart(i, false));
+      ok.addEventListener('click', () => { vib(); plDone(st, i, true); rr(); if (st.plan.items.every(y => y.done)) { toast('🎉 برنامه‌ی امروز کامل شد!'); } else toast('آفرین! ✓'); });
+      ac.append(go, ok);
+    }
+    body.append(ac); it.append(body); lc.append(it);
+  });
+  // تنظیمات و چیدن دوباره
+  const tools = el('div', 'pl-tools'), re = el('button', 'btn', '🔄 چیدن دوباره'), sb = el('button', 'btn', '⚙️ تنظیم برنامه'); re.type = sb.type = 'button';
+  re.addEventListener('click', () => { plBuild(st, true); plSave(st); rr(); toast('برنامه با آخرین اطلاعات دوباره چیده شد ✓'); });
+  const set = el('div', 'pl-set'); set.hidden = !PL_SET_OPEN;
+  sb.addEventListener('click', () => { PL_SET_OPEN = !PL_SET_OPEN; set.hidden = !PL_SET_OPEN; });
+  const chipRow = (lbl, vals, cur, fmt, on) => { const f = el('div', 'field'), ch = el('div', 'chips'); f.append(el('span', 'lbl', lbl));
+    vals.forEach(v => { const b = el('button', 'chip' + (v === cur ? ' on' : ''), fmt(v)); b.type = 'button'; b.setAttribute('aria-pressed', String(v === cur)); b.addEventListener('click', () => on(v)); ch.append(b); }); f.append(ch); return f; };
+  const apply = () => { plBuild(st, true); plSave(st); rr(); };
+  set.append(chipRow('تعداد نوبت در روز', [2, 3, 4], st.set.n, v => fa(v) + ' نوبت', v => { st.set.n = v; apply(); }),
+    chipRow('مدت هر نوبت', [30, 45, 60], st.set.len, v => fa(v) + ' دقیقه', v => { st.set.len = v; apply(); }),
+    el('div', 'now-sub', 'بین نوبت‌ها ۱۰ دقیقه استراحت در نظر گرفته می‌شود. نوبت‌های انجام‌شده‌ی امروز دست نمی‌خورند.'));
+  tools.append(re, sb);
+  const nx = items.find(x => !x.done); if (nx && win.now > nx.t0 + 60) lc.append(el('div', 'cns-note', '⏰ زمان نوبت‌ها گذشته است؟ «چیدن دوباره» را بزن تا باقی برنامه از همین حالا چیده شود.'));
+  lc.append(tools, set);
+  // شمارش معکوس
+  const up = (SD.cal || []).map(x => Object.assign({ dd:plDays(x.d) }, x)).filter(x => x.dd != null && x.dd >= 0 && x.dd <= 14).sort((a, b) => a.dd - b.dd).slice(0, 5);
+  if (up.length) { const cc = mk('⏳ دو هفته‌ی پیش‌رو');
+    up.forEach(x => { const r = el('div', 'pl-cd'), s = el('span', 'pl-dd' + (x.dd <= 2 ? ' hot' : ''), plWhen(x.dd)); r.append(el('span', '', (x.k === 'تکلیف' ? '📚 ' : '📝 ') + x.s + (x.t ? ' — ' + x.t : '')), s); cc.append(r); }); }
+  // نمودار هفته
+  const wc = mk('📊 مطالعه‌ی این هفته'); wc.append(plWeek(st, goal));
+  // نکته‌ی روز
+  const n0 = new Date(), doy = Math.floor((plMid(n0) - new Date(n0.getFullYear(), 0, 1)) / 864e5), tc = mk('💡 نکته‌ی مطالعه‌ی امروز');
+  tc.append(el('div', 'pl-tip', PL_TIPS[doy % PL_TIPS.length]), el('div', 'now-sub', '🔒 این برنامه و سابقه‌ی مطالعه‌ات فقط روی همین گوشی ذخیره می‌شود.'));
+  box.append.apply(box, cards);
+  // تایمری که قبل از بستن برنامه در جریان بود
+  if (st.run && $('#plOv') && !$('#plOv').hidden) return;
+  if (st.run) { if (st.run.left != null || st.run.end > Date.now()) plOpen(); else plFinish(true); }
+}
+function plWeek(st, goal) {
+  const n = plMid(new Date()), di = (n.getDay() + 1) % 7, W = 320, H = 156, L = 10, R = 10, T = 18, B = 26, wrap = el('div'), days = [];
+  for (let i = 0; i < 7; i++) { const d = plAdd(n, i - di), j = plJ(d); days.push({ j:j, m:st.days[j] || 0, i:i }); }
+  const tot = days.reduce((a, d) => a + d.m, 0), mx = Math.max(goal || 0, 30, ...days.map(d => d.m)), cw = (W - L - R) / 7, bw = Math.min(28, cw - 12), base = H - B, Y = v => T + (1 - v / mx) * (base - T);
+  wrap.append(el('div', 'now-sub', 'جمع این هفته: ' + (tot ? plDur(tot) : 'هنوز شروع نکرده‌ای') + (goal ? '؛ هدف روزانه: ' + plDur(goal) : '')));
+  const svg = sv('svg', { viewBox:'0 0 ' + W + ' ' + H, width:'100%', role:'img', 'aria-label':'نمودار دقیقه‌های مطالعه در روزهای این هفته' }), cap = el('div', 'now-sub');
+  cap.style.cssText = 'text-align:center;margin:4px 0 0;min-height:1.6em';
+  svg.append(sv('line', { x1:L, x2:W - R, y1:base, y2:base, style:'stroke:var(--line);stroke-width:1' }));
+  if (goal) { svg.append(sv('line', { x1:L, x2:W - R, y1:Y(goal), y2:Y(goal), style:'stroke:var(--muted);stroke-width:1;stroke-dasharray:4 4;opacity:.7' }),
+    sv('text', { x:L, y:Y(goal) - 4, 'text-anchor':'start', direction:'ltr', 'font-size':10, style:'fill:var(--muted)' }, 'هدف')); }
+  if (!tot) svg.append(sv('text', { x:W / 2, y:(T + base) / 2 + 12, 'text-anchor':'middle', 'font-size':12, style:'fill:var(--muted)' }, 'با اولین نوبت، نمودارت جان می‌گیرد 🌱'));
+  const show = d => { cap.textContent = plDayName(d.j) + ': ' + (d.m ? plDur(d.m) : 'بدون مطالعه'); };
+  days.forEach(d => {   // شنبه سمت راست
+    const cx = W - R - (d.i + .5) * cw, x = cx - bw / 2, y = Y(d.m), today = d.i === di;
+    if (d.m > 0) { const r = Math.min(4, base - y); svg.append(sv('path', { d:'M' + x + ',' + base + 'V' + (y + r) + 'Q' + x + ',' + y + ' ' + (x + r) + ',' + y + 'H' + (x + bw - r) + 'Q' + (x + bw) + ',' + y + ' ' + (x + bw) + ',' + (y + r) + 'V' + base + 'Z', style:'fill:var(--primary);opacity:' + (today ? 1 : .55) })); }
+    if (today && d.m > 0) svg.append(sv('text', { x:cx, y:y - 5, 'text-anchor':'middle', 'font-size':11, 'font-weight':800, style:'fill:var(--ink)' }, fa(d.m)));
+    svg.append(sv('text', { x:cx, y:H - 8, 'text-anchor':'middle', 'font-size':12, 'font-weight':today ? 900 : 600, style:'fill:' + (today ? 'var(--ink)' : 'var(--muted)') + (d.i > di ? ';opacity:.5' : '') }, PL_WD[d.i]));
+    const hit = sv('rect', { x:cx - cw / 2, y:0, width:cw, height:H, fill:'transparent', style:'cursor:pointer' });
+    hit.append(sv('title', {}, plDayName(d.j) + ': ' + plDur(d.m)));
+    hit.addEventListener('pointerenter', () => show(d)); hit.addEventListener('click', () => show(d)); svg.append(hit);
+  });
+  show(days[di]); wrap.append(svg, cap); return wrap;
+}
+
+/* --- تایمر تمرکز (صفحه‌ی کامل؛ با بسته شدن برنامه هم ادامه پیدا می‌کند) --- */
+function plOvEl() {
+  let ov = $('#plOv'); if (ov) return ov;
+  ov = el('div', 'focus-ov'); ov.id = 'plOv'; ov.hidden = true; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-modal', 'true'); ov.setAttribute('aria-labelledby', 'plOvC');
+  ov.innerHTML = '<div class="focus-box"><div class="focus-lbl" id="plOvL"></div><div class="focus-c" id="plOvC"></div>' +
+    '<div class="focus-ring"><svg viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="54" class="fr-bg"/><circle cx="60" cy="60" r="54" class="fr-fg" id="plOvR"/></svg><div class="focus-t" id="plOvT"></div></div>' +
+    '<div class="focus-tip" id="plOvTip"></div><div class="focus-btns" id="plOvB"></div></div>';
+  document.body.append(ov); $('#plOvR').style.strokeDasharray = PL_C.toFixed(1); return ov;
+}
+async function plWake(on) {
+  try { if (on && !PLW && 'wakeLock' in navigator) { PLW = await navigator.wakeLock.request('screen'); PLW.addEventListener('release', () => { PLW = null; }); }
+    else if (!on && PLW) { const w = PLW; PLW = null; await w.release(); } } catch (e) { PLW = null; }
+}
+function plBeep() {
+  try { if (!PLA) return; PLA.resume && PLA.resume(); [0, .35].forEach(dt => { const o = PLA.createOscillator(), g = PLA.createGain(), t = PLA.currentTime + dt;
+    o.frequency.value = 880; g.gain.setValueAtTime(.18, t); g.gain.exponentialRampToValueAtTime(.001, t + .3); o.connect(g); g.connect(PLA.destination); o.start(t); o.stop(t + .3); }); } catch (e) {}
+}
+function plBtns(list) {
+  const b = $('#plOvB'); b.textContent = '';
+  list.forEach(q => { const x = el('button', 'btn' + (q[2] ? ' primary' : '') + (q[3] ? ' ' + q[3] : ''), q[0]); x.type = 'button'; x.addEventListener('click', q[1]); b.append(x); });
+  const f = b.querySelector('button'); f && f.focus();
+}
+function plStart(i, brk) {
+  const st = PLS, len = brk ? 10 : st.plan.items[i].len;
+  try { if (!PLA) { const AC = window.AudioContext || window.webkitAudioContext; if (AC) PLA = new AC(); } } catch (e) {}
+  st.run = { i:i, brk:!!brk, end:Date.now() + len * 6e4, left:null, tot:len * 6e4 }; plSave(st); plOpen();
+}
+function plOpen() {
+  const st = PLS, r = st.run; if (!r) return; const ov = plOvEl(), x = r.brk ? null : st.plan.items[r.i];
+  ov.hidden = false; ov.classList.toggle('brk', r.brk);
+  $('#plOvL').textContent = r.brk ? '☕ استراحت' : r.left != null ? '⏸ مکث' : '🎯 نوبت تمرکز';
+  $('#plOvC').textContent = r.brk ? 'ذهنت را تازه کن' : x ? x.c : '';
+  const tips = r.brk ? PL_BREAK_TIPS : PL_FOCUS_TIPS; $('#plOvTip').textContent = (x && !r.brk ? x.task + ' — ' : '') + tips[Math.floor(Math.random() * tips.length)];
+  const pz = r.left != null;
+  plBtns(r.brk ? [[pz ? '▶ ادامه' : '⏸️ مکث', plPause, true], ['پایان استراحت', plCancel]]
+    : [[pz ? '▶ ادامه' : '⏸️ مکث', plPause, true], ['✓ تمام کردم', () => plFinish(false)], ['انصراف', plCancel, false, 'ghost']]);
+  clearInterval(PLI); PLI = setInterval(plTick, 500); plTick(); plWake(!pz);
+}
+function plTick() {
+  const r = PLS && PLS.run; if (!r) { clearInterval(PLI); return; }
+  const left = r.left != null ? r.left : r.end - Date.now(); if (left <= 0) return plFinish(false);
+  const s = Math.ceil(left / 1000); $('#plOvT').textContent = fa(pad(Math.floor(s / 60)) + ':' + pad(s % 60));
+  $('#plOvR').style.strokeDashoffset = (PL_C * (1 - left / r.tot)).toFixed(1);
+}
+function plPause() { const r = PLS.run; if (!r) return; if (r.left == null) r.left = Math.max(0, r.end - Date.now()); else { r.end = Date.now() + r.left; r.left = null; } plSave(PLS); plOpen(); }
+function plCancel() { PLS.run = null; plSave(PLS); plClose(); }
+function plFinish(silent) {
+  clearInterval(PLI); const st = PLS, r = st.run; if (!r) return plClose(); st.run = null;
+  const x = r.brk ? null : st.plan.items[r.i]; if (x && st.plan.d === plJ(new Date())) plDone(st, r.i, true); else plSave(st);
+  if (silent) { if (x) toast('نوبت «' + x.c + '» کامل ثبت شد ✓'); plRefresh(); return; }
+  try { navigator.vibrate && navigator.vibrate([200, 100, 200]); } catch (e) {} plBeep(); plWake(false);
+  const ov = plOvEl(); ov.hidden = false; $('#plOvT').textContent = '✓'; $('#plOvR').style.strokeDashoffset = '0';
+  const nx = st.plan.items.findIndex(y => !y.done);
+  if (r.brk) { $('#plOvL').textContent = '⏰ استراحت تمام شد'; $('#plOvC').textContent = nx >= 0 ? 'آماده‌ی نوبت بعدی: ' + st.plan.items[nx].c : 'برنامه‌ی امروز تمام است';
+    $('#plOvTip').textContent = ''; plBtns(nx >= 0 ? [['▶ شروع نوبت بعدی', () => plStart(nx, false), true, 'full'], ['بستن', plClose, false, 'full']] : [['بستن', plClose, true, 'full']]); }
+  else { $('#plOvL').textContent = nx < 0 ? '🎉 برنامه‌ی امروز کامل شد!' : '🎉 آفرین!'; $('#plOvC').textContent = 'نوبت «' + (x ? x.c : '') + '» تمام شد';
+    $('#plOvTip').textContent = nx < 0 ? 'به خودت افتخار کن؛ امروز همه‌ی برنامه را انجام دادی.' : 'یک استراحت کوتاه، ذهنت را برای نوبت بعد آماده می‌کند.';
+    plBtns(nx >= 0 ? [['☕ ۱۰ دقیقه استراحت', () => plStart(r.i, true), true, 'full'], ['بستن', plClose, false, 'full']] : [['بستن', plClose, true, 'full']]); }
+}
+function plClose() { clearInterval(PLI); const ov = $('#plOv'); if (ov) ov.hidden = true; plWake(false); plRefresh(); }
+function plRefresh() { if (ROLE === 'student' && SD && STU_K === 'plan' && !$('#stuBody').hidden) { const b = $('#stuBody'); b.textContent = ''; stuPlan(b, true); } }
+document.addEventListener('visibilitychange', () => { const ov = $('#plOv'); if (!document.hidden && ov && !ov.hidden && PLS && PLS.run) { if (PLS.run.left == null) plWake(true); plTick(); } });
 /* --- آزمون آزمایشی: نمودار تراز و هدف (هدف روی همین دستگاه ذخیره می‌شود) --- */
 function valSvg(vals, target) {
   const W = 320, H = 170, L = 40, R = 10, T = 12, B = 22, wrap = el('div');
@@ -2664,7 +3008,8 @@ function srPrint() {
 /* ---------- شروع ---------- */
 function init() {
   initHeader();
-  S.teacher = P.teacher; S.course = P.course; S.pin = P.pin; $('#teacher').value = S.teacher; $('#course').value = S.course; $('#pin').value = S.pin;
+  if (P.pin) { P.pin = ''; savePrefs(); }   // پاک‌کردن رمزی که نسخه‌های قبلی روی دستگاه نگه داشته بودند
+  S.teacher = P.teacher; S.course = P.course; S.pin = ''; $('#teacher').value = S.teacher; $('#course').value = S.course; $('#pin').value = S.pin;
   applyRoster(lsGet(R_KEY, null));
   fillDatalist('teacherList', P.teachers); fillDatalist('courseList', P.courses);
   buildStreams(); buildAssess(); refreshNow(true);
