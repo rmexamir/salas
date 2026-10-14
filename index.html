@@ -452,7 +452,8 @@ body.qz-lock{overflow:hidden}
 .qz-st.over{background:var(--card);border-color:var(--line);color:var(--muted)} .qz-st.done{background:var(--present-bg);color:var(--present)}
 .qz-cnt{font-size:14px;font-weight:700;margin:6px 0}
 .qz-ok{font-size:13px;font-weight:700;color:var(--present);margin-top:8px}
-.qz-act{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.qz-act{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:10px}
+.qz-pap{width:100%;margin-bottom:10px}
 .qz-act .btn,.qz-it>.btn{height:44px;font-size:14px;padding:0 6px}
 .qz-it>.btn{width:100%;margin-top:8px}
 .qz-q{border:1.5px solid var(--line);border-radius:14px;background:var(--input);padding:12px;margin-bottom:12px}
@@ -504,6 +505,77 @@ body.qz-lock{overflow:hidden}
 .chip.qz-hot{position:relative;border-color:var(--absent)}
 .chip.qz-hot::after{content:"";position:absolute;top:7px;inset-inline-end:9px;width:9px;height:9px;border-radius:50%;background:var(--absent);box-shadow:0 0 0 2px var(--input)}
 @media print{.qz-ov{display:none!important}}
+/* ---------- برگه‌ی امتحان چاپی ---------- */
+@media print{
+  @page{size:A4;margin:12mm 11mm}
+  body.printing>#printArea.paper{padding:0;font-size:12.5px;line-height:1.75}
+  #printArea .pp-break{break-before:page}
+  #printArea .pp-top{text-align:center;font-weight:800;margin-bottom:4px}
+  #printArea .pp-hd{width:100%;border-collapse:collapse}
+  #printArea .pp-hd td{width:33%;vertical-align:middle;line-height:2.05}
+  #printArea .pp-hd td.c{text-align:center}
+  #printArea .pp-hd img{width:58px;height:58px;object-fit:contain;display:block;margin:0 auto 2px}
+  #printArea .pp-hd b{font-size:14px}
+  #printArea .pp-score{display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px 18px;border:1px solid #666;border-top:0;padding:6px 8px;font-size:12px}
+  #printArea .pp-ins{margin:8px 0 6px;font-weight:700}
+  #printArea .pp-q{width:100%;border-collapse:collapse}
+  #printArea .pp-q tr{break-inside:avoid}
+  #printArea .pp-q td{vertical-align:top}
+  #printArea .pp-q .n,#printArea .pp-q .b{width:38px;text-align:center!important}
+  #printArea .pp-qt{font-weight:700;white-space:pre-wrap;margin-bottom:3px}
+  #printArea .pp-opts{display:grid;grid-template-columns:1fr 1fr;gap:1px 18px}
+  #printArea .pp-opts.w4{grid-template-columns:repeat(4,auto);justify-content:start;column-gap:28px}
+  #printArea .pp-grid{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start}
+  #printArea .pp-grid table{width:auto;border-collapse:collapse}
+  #printArea .pp-grid th,#printArea .pp-grid td{padding:2px 9px;text-align:center!important}
+  #printArea .pp-grid td.o{font-size:15px}
+  #printArea .pp-end{margin-top:10px;text-align:center;font-weight:700}
+  #printArea .pp-keyline{word-spacing:4px;font-weight:700}
+}
+/* ---------- پنل مدیر: میز کار و بخش‌ها ---------- */
+.mg-desk{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:14px 16px;margin-bottom:12px}
+.mg-desk-h{display:flex;justify-content:space-between;align-items:baseline;gap:4px 10px;flex-wrap:wrap;margin-bottom:10px}
+.mg-desk-h b{font-size:17px;font-weight:900}
+.mg-desk-h span{font-size:12px;color:var(--muted)}
+.mg-att{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.mg-at{display:flex;align-items:center;gap:10px;min-height:62px;padding:8px 12px;border-radius:14px;border:1.5px solid var(--line);background:var(--input);text-align:start;font:inherit;color:inherit;min-width:0}
+.mg-at b{font-size:22px;font-weight:900;min-width:28px;text-align:center;flex:none}
+.mg-at span{font-size:13px;font-weight:700;line-height:1.55}
+.mg-at.bad{border-color:var(--absent);background:var(--absent-bg)} .mg-at.bad b{color:var(--absent)}
+.mg-at.warn{border-color:var(--late);background:var(--late-bg)} .mg-at.warn b{color:var(--late)}
+.mg-at.ok b{color:var(--present)} .mg-at.ok span{color:var(--muted);font-weight:600}
+.mg-at:active{transform:scale(.98)}
+.mg-nav{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px;scroll-margin-top:calc(env(safe-area-inset-top,0px) + 8px)}
+.mg-nb{flex:1 1 auto;height:44px;padding:0 12px;border-radius:999px;border:1.5px solid var(--line);background:var(--card);font-weight:800;font-size:14px;color:var(--muted);position:relative;white-space:nowrap}
+.mg-nb.on{background:var(--primary);border-color:var(--primary);color:var(--on-primary)}
+.mg-nb.dot::after{content:"";position:absolute;top:5px;inset-inline-end:8px;width:8px;height:8px;border-radius:50%;background:var(--absent);box-shadow:0 0 0 2px var(--card)}
+.mg-sec-d{font-size:13px;color:var(--muted);margin:0 4px 10px}
+.mg-sec .card{scroll-margin-top:calc(env(safe-area-inset-top,0px) + 10px)}
+/* ---------- مدیر: غایبین هر کلاس و زنگ ---------- */
+.ab-date{display:grid;grid-template-columns:minmax(0,2.2fr) repeat(3,minmax(0,1fr));gap:6px;margin-bottom:8px}
+.ab-date input{text-align:center;padding:0 6px;font-size:15px}
+.ab-date .btn{padding:0 4px;font-size:14px}
+.ab-per{margin-bottom:8px}
+.ab-per .chip{height:50px;font-size:13px;padding:0 4px;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.3}
+.ab-per .chip small{font-size:11px;font-weight:600;opacity:.85}
+.ab-s{border:1.5px solid var(--line);border-radius:14px;background:var(--input);padding:10px 12px;margin-top:10px}
+.ab-h{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.ab-h b{font-size:15px;font-weight:900}
+.ab-tag{flex:none;font-size:12px;font-weight:800;padding:3px 10px;border-radius:999px;white-space:nowrap}
+.ab-tag.bad{background:var(--absent-bg);color:var(--absent)}
+.ab-tag.ok{background:var(--present-bg);color:var(--present)}
+.ab-tag.wait{background:var(--excused-bg);color:var(--excused)}
+.ab-tag.miss{background:var(--absent);color:#fff}
+.ab-s .now-sub{margin:2px 0 4px}
+.ab-g{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:6px}
+.ab-gl{font-size:12px;color:var(--muted);font-weight:800;min-width:38px}
+.ab-n{height:36px;padding:0 12px;border-radius:999px;border:1px solid transparent;font-weight:700;font-size:13px}
+.ab-n.ab{background:var(--absent-bg);color:var(--absent);border-color:var(--absent)}
+.ab-n.lt{background:var(--late-bg);color:var(--late)}
+.ab-n.ex{background:var(--excused-bg);color:var(--excused)}
+.ab-c{flex-basis:100%;padding:8px 10px;border-radius:10px;background:var(--card);border:1px dashed var(--line)}
+.ab-c .now-sub{margin:0}
+.ab-cp,.ab-ref{width:100%;margin-top:10px}
 @media print{.focus-ov{display:none!important}}
 @media (prefers-reduced-motion:reduce){.focus-ring .fr-fg{transition:none}}
 </style>
@@ -779,25 +851,89 @@ body.qz-lock{overflow:hidden}
       <button id="mgEnter" class="send" type="button">ورود و دریافت گزارش از Google Sheets</button>
     </div>
     <div id="mgBody" hidden>
+      <div class="mg-desk">
+        <div class="mg-desk-h"><b>میز کار مدیر</b><span id="mgDeskStamp"></span></div>
+        <div class="mg-att" id="mgAttn"></div>
+      </div>
+      <nav class="mg-nav" id="mgNav" aria-label="بخش‌های پنل مدیر"></nav>
+      <div class="mg-sec" data-sec="today" data-t="امروز" hidden>
+      <div class="mg-sec-d">غایبین هر کلاس و زنگ، وضعیت ثبت حضور و غیاب امروز، مرخصی‌ها، دبیر جایگزین و غیبت موجه.</div>
+      <div class="card" id="alertCard" hidden style="border:2px solid var(--absent)">
+        <div class="lbl" style="margin-bottom:8px;color:var(--absent)">⚠️ حضور و غیاب ثبت‌نشده (بیش از ۱۵ دقیقه از شروع زنگ)</div>
+        <div id="alertList"></div>
+      </div>
+      <div class="card" id="abFindCard">
+        <div class="lbl" style="margin-bottom:8px">غایبین هر کلاس و زنگ</div>
+        <div class="ab-date"><input id="abDate" type="text" inputmode="numeric" aria-label="تاریخ" placeholder="۱۴۰۵/۰۷/۲۳"><button id="abPrev" class="btn" type="button">→ قبل</button><button id="abNow" class="btn" type="button">امروز</button><button id="abNext" class="btn" type="button">بعد ←</button></div>
+        <div class="field"><select id="abCls" aria-label="کلاس"></select></div>
+        <div id="abPer" class="chips ab-per"></div>
+        <div id="abSum" class="now-sub" role="status"></div>
+        <div id="abList"></div>
+        <button id="abRef" class="btn ab-ref" type="button">🔄 به‌روزرسانی از Google Sheets</button>
+      </div>
       <div class="card" id="boardCard">
         <div class="lbl" style="margin-bottom:8px">وضعیت حضور و غیاب امروز — کلاس، زنگ و دبیر</div>
         <div id="boardBody"></div>
         <div class="now-sub" style="margin-top:8px">✓ انجام شد · ✗ انجام نشد (بیش از ۱۵ دقیقه از شروع زنگ) · ⏳ در مهلت یا هنوز شروع نشده</div>
       </div>
+      <div class="card" id="leaveCard">
+        <div class="lbl" style="margin-bottom:8px">درخواست‌های مرخصی دانش‌آموزان<span id="leaveCnt"></span></div>
+        <div id="leaveList"></div>
+      </div>
+      <div class="card" id="subCard">
+        <div class="lbl" style="margin-bottom:8px">ثبت دبیر جایگزین</div>
+        <div class="mg-bar"><input id="subDate" type="text" inputmode="numeric" placeholder="تاریخ" aria-label="تاریخ"><select id="subCls" aria-label="کلاس"></select></div>
+        <div class="mg-bar"><select id="subPer" aria-label="زنگ"><option value="1">زنگ ۱</option><option value="2">زنگ ۲</option><option value="3">زنگ ۳</option></select><select id="subCourse" aria-label="درس"></select></div>
+        <div class="field"><select id="subWho" aria-label="دبیر جایگزین"></select></div>
+        <button id="subSave" class="send" type="button">ثبت جایگزین (دبیر برای همان کلاس و درس دسترسی می‌گیرد)</button>
+        <div class="lbl" style="margin:14px 0 6px">جایگزین‌های این تاریخ</div><div id="subList"></div>
+      </div>
+      <div class="card" id="excCard">
+        <div class="lbl" style="margin-bottom:8px">ثبت غیبت موجه (فقط مدیر)</div>
+        <div class="now-sub" style="margin-bottom:8px">غیبت موجه در هر سه زنگ آن روز ثابت می‌شود و دبیر نمی‌تواند آن را تغییر دهد.</div>
+        <div class="mg-bar"><input id="excDate" type="text" inputmode="numeric" placeholder="تاریخ (مثلاً ۱۴۰۵/۰۷/۱۷)" aria-label="تاریخ"><select id="excCls" aria-label="کلاس"></select></div>
+        <div id="excStu"></div>
+        <div class="field"><input id="excWhy" type="text" maxlength="80" placeholder="علت (اختیاری)" aria-label="علت"></div>
+        <button id="excSave" class="send" type="button">ثبت غیبت موجه برای هر سه زنگ</button>
+        <div class="lbl" style="margin:14px 0 6px">ثبت‌شده‌ها در تاریخ بالا</div>
+        <div id="excList"></div>
+      </div>
+      </div>
+      <div class="mg-sec" data-sec="stu" data-t="دانش‌آموزان" hidden>
+      <div class="mg-sec-d">در معرض خطر، پرونده، مشاوره، آزمون‌های آزمایشی و کد ورود.</div>
       <div class="card" id="riskCard">
         <div class="lbl" style="margin-bottom:8px">دانش‌آموزان در معرض خطر (غیبت، افت نمره، افت آزمون آزمایشی)</div>
         <div class="field"><select id="riskCls" aria-label="کلاس"></select></div>
         <div id="riskList"></div>
       </div>
-      <div class="card" id="leaveCard">
-        <div class="lbl" style="margin-bottom:8px">درخواست‌های مرخصی دانش‌آموزان<span id="leaveCnt"></span></div>
-        <div id="leaveList"></div>
+      <div class="card" id="pfCard">
+        <div class="lbl" style="margin-bottom:8px">پرونده‌ی دانش‌آموز — حضور و غیاب، نمرات و مقایسه با کلاس و پایه/رشته</div>
+        <div class="mg-bar"><select id="pfCls" aria-label="کلاس"></select><select id="pfStu" aria-label="دانش‌آموز"></select></div>
+        <div id="pfBody"></div>
       </div>
-      <div class="card" id="alertCard" hidden style="border:2px solid var(--absent)">
-        <div class="lbl" style="margin-bottom:8px;color:var(--absent)">⚠️ حضور و غیاب ثبت‌نشده (بیش از ۱۵ دقیقه از شروع زنگ)</div>
-        <div id="alertList"></div>
+      <div class="card" id="cnsMgCard">
+        <div class="lbl" style="margin-bottom:8px">امور مشاوره‌ی دانش‌آموزان<span id="cmCnt"></span></div>
+        <div id="cmPend"></div>
+        <div class="lbl" style="margin:12px 0 6px">سوابق مشاوره به تفکیک دانش‌آموز</div>
+        <div class="mg-bar"><select id="cmCls" aria-label="کلاس"></select><select id="cmStu" aria-label="دانش‌آموز"></select></div>
+        <div id="cmList"></div>
       </div>
       <div class="card">
+        <div class="lbl" style="margin-bottom:8px">آزمون‌های آزمایشی دانش‌آموزان</div>
+        <div class="mg-bar"><select id="mkInst" aria-label="مؤسسه"></select><select id="mkCls" aria-label="کلاس"></select><button id="mkRef" class="btn" type="button">بازخوانی</button></div>
+        <div id="mkList"></div>
+      </div>
+      <div class="card" id="codeCard">
+        <div class="lbl" style="margin-bottom:8px">کد ورود دانش‌آموزان</div>
+        <div class="field"><select id="cdCls" aria-label="کلاس"></select></div>
+        <div class="mg-bar"><button id="cdGen" class="btn" type="button">ساخت کد برای بدون‌کدها</button><button id="cdPrint" class="btn" type="button">چاپ فهرست</button></div>
+        <div id="cdList"></div>
+      </div>
+      </div>
+      <div class="mg-sec" data-sec="rep" data-t="گزارش‌ها" hidden>
+      <div class="mg-sec-d">گزارش کلاس‌ها، برترین‌ها، نمودار ماهانه، گزارش چاپی و جدول‌های کامل.</div>
+      <div class="card">
+        <div class="lbl" style="margin-bottom:8px">فیلتر گزارش‌ها و خروجی CSV (کلاس، دبیر، تاریخ)</div>
         <div class="mg-bar">
           <select id="mgCls" aria-label="کلاس"></select>
           <select id="mgTch" aria-label="دبیر"></select>
@@ -824,61 +960,21 @@ body.qz-lock{overflow:hidden}
         <div class="field"><select id="absCls" aria-label="کلاس"></select></div>
         <div id="absChart"></div>
       </div>
-      <div class="card" id="subCard">
-        <div class="lbl" style="margin-bottom:8px">ثبت دبیر جایگزین</div>
-        <div class="mg-bar"><input id="subDate" type="text" inputmode="numeric" placeholder="تاریخ" aria-label="تاریخ"><select id="subCls" aria-label="کلاس"></select></div>
-        <div class="mg-bar"><select id="subPer" aria-label="زنگ"><option value="1">زنگ ۱</option><option value="2">زنگ ۲</option><option value="3">زنگ ۳</option></select><select id="subCourse" aria-label="درس"></select></div>
-        <div class="field"><select id="subWho" aria-label="دبیر جایگزین"></select></div>
-        <button id="subSave" class="send" type="button">ثبت جایگزین (دبیر برای همان کلاس و درس دسترسی می‌گیرد)</button>
-        <div class="lbl" style="margin:14px 0 6px">جایگزین‌های این تاریخ</div><div id="subList"></div>
+      <div class="card" id="mrCard">
+        <div class="lbl" style="margin-bottom:8px">گزارش ماهانه (چاپ یا ذخیره‌ی PDF)</div>
+        <div class="mg-bar"><input id="mrMonth" type="text" inputmode="numeric" placeholder="ماه (۱۴۰۵/۰۷)" aria-label="ماه"><button id="mrGo" class="btn" type="button">تهیه‌ی گزارش</button></div>
       </div>
-      <div class="card" id="codeCard">
-        <div class="lbl" style="margin-bottom:8px">کد ورود دانش‌آموزان</div>
-        <div class="field"><select id="cdCls" aria-label="کلاس"></select></div>
-        <div class="mg-bar"><button id="cdGen" class="btn" type="button">ساخت کد برای بدون‌کدها</button><button id="cdPrint" class="btn" type="button">چاپ فهرست</button></div>
-        <div id="cdList"></div>
+      <div class="card"><details><summary class="lbl" style="cursor:pointer">جدول کامل حضور و غیاب (جدیدترین‌ها)</summary><div class="mg-wrap" style="margin-top:8px"><table class="mg-tbl" id="mgAtt"></table></div></details></div>
+      <div class="card"><details><summary class="lbl" style="cursor:pointer">جدول کامل نمرات (جدیدترین‌ها)</summary><div class="mg-wrap" style="margin-top:8px"><table class="mg-tbl" id="mgGr"></table></div></details></div>
       </div>
-      <div class="card" id="cnsMgCard">
-        <div class="lbl" style="margin-bottom:8px">امور مشاوره‌ی دانش‌آموزان<span id="cmCnt"></span></div>
-        <div id="cmPend"></div>
-        <div class="lbl" style="margin:12px 0 6px">سوابق مشاوره به تفکیک دانش‌آموز</div>
-        <div class="mg-bar"><select id="cmCls" aria-label="کلاس"></select><select id="cmStu" aria-label="دانش‌آموز"></select></div>
-        <div id="cmList"></div>
-      </div>
+      <div class="mg-sec" data-sec="tch" data-t="دبیران و برنامه" hidden>
+      <div class="mg-sec-d">حضور و خروج همکاران، ابلاغ و ساعات، و ویرایش برنامه‌ی هفتگی.</div>
       <div class="card" id="stfRepCard">
         <div class="lbl" style="margin-bottom:8px">گزارش حضور و خروج همکاران</div>
         <div id="srKind" class="chips"></div>
         <div class="mg-bar jp" style="margin-top:10px"><select id="srD" aria-label="روز"></select><select id="srM" aria-label="ماه"></select><select id="srY" aria-label="سال"></select></div>
         <div class="mg-bar"><button id="srShow" class="btn" type="button">نمایش</button><button id="srPrint" class="btn" type="button">چاپ</button><button id="srCsv" class="btn" type="button">CSV</button></div>
         <div id="srBody"></div>
-      </div>
-      <div class="card" id="mrCard">
-        <div class="lbl" style="margin-bottom:8px">گزارش ماهانه (چاپ یا ذخیره‌ی PDF)</div>
-        <div class="mg-bar"><input id="mrMonth" type="text" inputmode="numeric" placeholder="ماه (۱۴۰۵/۰۷)" aria-label="ماه"><button id="mrGo" class="btn" type="button">تهیه‌ی گزارش</button></div>
-      </div>
-      <div class="card" id="auCard">
-        <div class="lbl" style="margin-bottom:8px">سابقه‌ی تغییرات (آخرین ۱۲۰ مورد)</div>
-        <button id="auLoad" class="btn" type="button" style="width:100%">بارگذاری</button><div id="auList" style="margin-top:8px"></div>
-      </div>
-      <div class="card" id="pfCard">
-        <div class="lbl" style="margin-bottom:8px">پرونده‌ی دانش‌آموز — حضور و غیاب، نمرات و مقایسه با کلاس و پایه/رشته</div>
-        <div class="mg-bar"><select id="pfCls" aria-label="کلاس"></select><select id="pfStu" aria-label="دانش‌آموز"></select></div>
-        <div id="pfBody"></div>
-      </div>
-      <div class="card" id="excCard">
-        <div class="lbl" style="margin-bottom:8px">ثبت غیبت موجه (فقط مدیر)</div>
-        <div class="now-sub" style="margin-bottom:8px">غیبت موجه در هر سه زنگ آن روز ثابت می‌شود و دبیر نمی‌تواند آن را تغییر دهد.</div>
-        <div class="mg-bar"><input id="excDate" type="text" inputmode="numeric" placeholder="تاریخ (مثلاً ۱۴۰۵/۰۷/۱۷)" aria-label="تاریخ"><select id="excCls" aria-label="کلاس"></select></div>
-        <div id="excStu"></div>
-        <div class="field"><input id="excWhy" type="text" maxlength="80" placeholder="علت (اختیاری)" aria-label="علت"></div>
-        <button id="excSave" class="send" type="button">ثبت غیبت موجه برای هر سه زنگ</button>
-        <div class="lbl" style="margin:14px 0 6px">ثبت‌شده‌ها در تاریخ بالا</div>
-        <div id="excList"></div>
-      </div>
-      <div class="card">
-        <div class="lbl" style="margin-bottom:8px">آزمون‌های آزمایشی دانش‌آموزان</div>
-        <div class="mg-bar"><select id="mkInst" aria-label="مؤسسه"></select><select id="mkCls" aria-label="کلاس"></select><button id="mkRef" class="btn" type="button">بازخوانی</button></div>
-        <div id="mkList"></div>
       </div>
       <div class="card">
         <div class="lbl" style="margin-bottom:8px">ابلاغ و ساعات دبیران</div>
@@ -891,6 +987,9 @@ body.qz-lock{overflow:hidden}
         <div id="edRows"></div>
         <button id="edSave" class="send" type="button">ذخیره برنامه این کلاس</button>
       </div>
+      </div>
+      <div class="mg-sec" data-sec="sys" data-t="اطلاعات و سامانه" hidden>
+      <div class="mg-sec-d">بانک اطلاعات دانش‌آموزان و دبیران، سابقه‌ی تغییرات و ابزارها.</div>
       <div class="card">
         <div class="lbl" style="margin-bottom:8px">بانک اطلاعات (فقط مدیر)</div>
         <div id="dirTabs" class="chips" style="grid-template-columns:1fr 1fr;margin-bottom:10px"></div>
@@ -898,8 +997,10 @@ body.qz-lock{overflow:hidden}
         <div class="field"><input id="dirQ" type="search" placeholder="جست‌وجو: نام، کلاس، کد ملی، شماره..." autocomplete="off" aria-label="جست‌وجو در بانک اطلاعات"></div>
         <div id="dirList"></div>
       </div>
-      <div class="card"><details><summary class="lbl" style="cursor:pointer">جدول کامل حضور و غیاب (جدیدترین‌ها)</summary><div class="mg-wrap" style="margin-top:8px"><table class="mg-tbl" id="mgAtt"></table></div></details></div>
-      <div class="card"><details><summary class="lbl" style="cursor:pointer">جدول کامل نمرات (جدیدترین‌ها)</summary><div class="mg-wrap" style="margin-top:8px"><table class="mg-tbl" id="mgGr"></table></div></details></div>
+      <div class="card" id="auCard">
+        <div class="lbl" style="margin-bottom:8px">سابقه‌ی تغییرات (آخرین ۱۲۰ مورد)</div>
+        <button id="auLoad" class="btn" type="button" style="width:100%">بارگذاری</button><div id="auList" style="margin-top:8px"></div>
+      </div>
       <div class="card" id="mgTools">
         <div class="lbl" style="margin-bottom:10px">ابزارهای سامانه</div>
         <div class="mg-tools">
@@ -907,6 +1008,7 @@ body.qz-lock{overflow:hidden}
           <a id="mgOpen" class="btn" style="display:none" target="_blank" rel="noopener">📊 باز کردن Google Sheet</a>
         </div>
         <div id="mgStamp" class="now-sub" style="margin-top:10px;text-align:center"></div>
+      </div>
       </div>
     </div>
   </section>
@@ -1422,7 +1524,7 @@ async function mgLoad() {
   $('#mgLogin').hidden = true; $('#mgBody').hidden = false; edInit(); loadDir(); excInit(); pfInit(); v3Init(); if (!$('#mrMonth').value) $('#mrMonth').value = dateStr().slice(0, 7);
   mgFillSel($('#mgCls'), 'همه کلاس‌ها', MG.att.map(r => r[3]).concat(MG.gr.map(r => r[3])));
   mgFillSel($('#mgTch'), 'همه دبیران', MG.att.map(r => r[5]).concat(MG.gr.map(r => r[5])));
-  mgRender(); absInit(); pollToday(); { const n = new Date(); $('#mgStamp').textContent = 'آخرین بازخوانی: ساعت ' + fa(pad(n.getHours()) + ':' + pad(n.getMinutes())); }
+  mgRender(); absInit(); pollToday(); abInit(); { const n = new Date(); $('#mgStamp').textContent = 'آخرین بازخوانی: ساعت ' + fa(pad(n.getHours()) + ':' + pad(n.getMinutes())); }
 }
 function mgCsv(name, head, rows) {
   const q = v => { let s = String(v); if (/^[=+\-@\t\r]/.test(s) && !/^[+-]?\d+(\.\d+)?$/.test(s)) s = "'" + s; return '"' + s.replace(/"/g, '""') + '"'; };   // جلوگیری از اجرای فرمول در Excel
@@ -2132,6 +2234,7 @@ function qzItem(x, q, reload) {
   const ac = el('div', 'qz-act'), b = (t, fn, cls) => { const e = el('button', 'btn' + (cls ? ' ' + cls : ''), t); e.type = 'button'; e.addEventListener('click', fn); ac.append(e); };
   b('📊 نتایج', () => qzResults(q.id, reload), 'primary');
   b(q.started ? '⏱ زمان' : '✏️ ویرایش', () => qzEdit(x, q, reload));
+  b('🖨 نسخه‌ی کاغذی', () => qzPaper(x, q.ti, q.qs));
   b('🗑 حذف', () => showModal({ icon:'warn', title:'حذف آزمونک', msg:'«' + q.ti + '» و همه‌ی پاسخ‌هایش حذف می‌شود' + (q.g ? '؛ نمره‌هایی که به برگه‌ی نمرات رفته‌اند باقی می‌مانند.' : '.'),
     buttons:[{ text:'حذف', primary:true, onClick:async () => { const r = await send(Object.assign({ action:'qzDel', id:q.id }, qzAuth())); if (r.status !== 'ok') return toast(r.message || 'حذف نشد'); toast('حذف شد'); reload(); } }, { text:'انصراف' }] }));
   it.append(ac); return it;
@@ -2181,7 +2284,7 @@ function qzEdit(x, q, reload) {
         const r = el('div', 'qz-o' + (z.a === k ? ' ok' : '')), rd = el('input'), inp = el('input');
         rd.type = 'radio'; rd.name = 'qzA' + i; rd.checked = z.a === k; rd.disabled = locked; rd.setAttribute('aria-label', 'گزینه‌ی ' + QZ_L[k] + ' درست است');
         rd.addEventListener('change', () => { z.a = k; keep(); paintQ(); });
-        inp.type = 'text'; inp.maxLength = 200; inp.placeholder = 'گزینه‌ی ' + QZ_L[k] + (k > 1 ? ' (اختیاری)' : ''); inp.value = ov; inp.disabled = locked;
+        inp.type = 'text'; inp.dir = 'auto'; inp.maxLength = 200; inp.placeholder = 'گزینه‌ی ' + QZ_L[k] + (k > 1 ? ' (اختیاری)' : ''); inp.value = ov; inp.disabled = locked;
         inp.addEventListener('input', () => { z.o[k] = inp.value; keep(); }); r.append(rd, el('b', '', QZ_L[k]), inp); c.append(r);
       });
       if (!locked && z.o.length < 5) { const ad = el('button', 'link-btn', '+ گزینه‌ی ' + QZ_L[z.o.length]); ad.type = 'button'; ad.addEventListener('click', () => { z.o.push(''); paintQ(); }); c.append(ad); }
@@ -2234,18 +2337,13 @@ function qzEdit(x, q, reload) {
   const shl = el('label', 'qz-rv'), shc = el('input'); shc.type = 'checkbox'; shc.checked = D.sh; shc.disabled = locked; shc.addEventListener('change', () => { D.sh = shc.checked; keep(); });
   const sht = el('span'); sht.append(el('b', '', 'ترتیب سؤال‌ها و گزینه‌ها برای هر دانش‌آموز جابه‌جا شود'), el('small', '', 'تقلب از روی گوشی بغلی سخت‌تر می‌شود')); shl.append(shc, sht); s4.append(shl);
   // انتشار
-  const pub = el('button', 'send', q ? 'ذخیره‌ی تغییرات' : 'انتشار آزمونک'); pub.type = 'button'; O.body.append(pub);
+  const pap = el('button', 'btn qz-pap', '🖨 نسخه‌ی کاغذی همین سؤال‌ها'); pap.type = 'button';
+  pap.addEventListener('click', () => { if (!D.ti.trim()) return showModal({ icon:'warn', title:'کامل نیست', msg:'عنوان را بنویسید.' }); const cq = qzCollect(D); if (cq.err) return showModal({ icon:'warn', title:'کامل نیست', msg:cq.err }); qzPaper(x, D.ti.trim(), cq.qs); });
+  const pub = el('button', 'send', q ? 'ذخیره‌ی تغییرات' : 'انتشار آزمونک'); pub.type = 'button'; O.body.append(pap, pub);
   pub.addEventListener('click', async () => {
     const fail = m => showModal({ icon:'warn', title:'کامل نیست', msg:m });
     if (!D.ti.trim()) return fail('عنوان آزمونک را بنویسید.');
-    const qs = [];
-    for (let i = 0; i < D.qs.length; i++) {
-      const z = D.qs[i], o = [], map = {}; z.o.forEach((v, k) => { if (String(v).trim()) { map[k] = o.length; o.push(String(v).trim()); } });
-      if (!String(z.q).trim()) return fail('متن سؤال ' + fa(i + 1) + ' خالی است.');
-      if (o.length < 2) return fail('سؤال ' + fa(i + 1) + ' دست‌کم دو گزینه‌ی پر لازم دارد.');
-      if (map[z.a] == null) return fail('گزینه‌ی درست سؤال ' + fa(i + 1) + ' مشخص نشده است.');
-      qs.push({ q:String(z.q).trim(), o:o, a:map[z.a] });
-    }
+    const cq = qzCollect(D); if (cq.err) return fail(cq.err); const qs = cq.qs;
     const st = locked ? D.st : startAt(), enT = rd(E0);
     if (!isFinite(st)) return fail('تاریخ یا ساعت شروع درست نیست (مثلاً ۱۴۰۵/۰۷/۲۳ و ۰۸:۰۰).');
     if (!isFinite(enT)) return fail('تاریخ یا ساعت پایان درست نیست.');
@@ -2357,7 +2455,7 @@ async function qzTake(id) {
       d.addEventListener('click', () => { cur = p; save(); paint(); }); dots.append(d); });
     const qi = ord[cur], z = q.qs[qi]; view.textContent = '';
     view.append(el('div', 'qz-qn', 'سؤال ' + fa(cur + 1) + ' از ' + fa(n)), el('div', 'qz-qt', z.q));
-    opt[qi].forEach((oi, p) => { const b = el('button', 'qz-op' + (ans[qi] === oi ? ' sel' : '')); b.type = 'button'; b.setAttribute('aria-pressed', String(ans[qi] === oi)); b.append(el('b', '', QZ_L[p]), el('span', '', z.o[oi]));
+    opt[qi].forEach((oi, p) => { const b = el('button', 'qz-op' + (ans[qi] === oi ? ' sel' : '')); b.type = 'button'; b.setAttribute('aria-pressed', String(ans[qi] === oi)); b.append(el('b', '', QZ_L[p]), el('bdi', '', z.o[oi]));
       b.addEventListener('click', () => { if (sending) return; ans[qi] = ans[qi] === oi ? -1 : oi; vib(); save(); paint(); }); view.append(b); });
     nav.textContent = ''; const pv = el('button', 'btn', '→ قبلی'), nx = el('button', 'btn' + (cur < n - 1 ? ' primary' : ''), 'بعدی ←'); pv.type = nx.type = 'button';
     pv.disabled = cur === 0 || sending; nx.disabled = cur === n - 1 || sending; pv.addEventListener('click', () => { cur--; save(); paint(); }); nx.addEventListener('click', () => { cur++; save(); paint(); }); nav.append(pv, nx);
@@ -2385,7 +2483,7 @@ async function qzTake(id) {
 function qzReviewList(qs, ans) {
   const w = el('div');
   qs.forEach((z, i) => { const c = el('div', 'qz-q'), my = ans[i], ok = my === z.a; c.append(el('div', 'qz-qh', fa(i + 1) + '. ' + (my == null || my < 0 ? '⚪ بی‌پاسخ' : ok ? '✅ درست' : '❌ نادرست')), el('div', 'qz-qt sm', z.q));
-    z.o.forEach((o, k) => { const r = el('div', 'qz-rvo' + (k === z.a ? ' ok' : k === my ? ' bad' : '')); r.append(el('b', '', k === z.a ? '✓' : k === my ? '✗' : '•'), el('span', '', o + (k === my ? ' (پاسخ تو)' : ''))); c.append(r); }); w.append(c); });
+    z.o.forEach((o, k) => { const r = el('div', 'qz-rvo' + (k === z.a ? ' ok' : k === my ? ' bad' : '')); const sp = el('span'); sp.append(el('bdi', '', o)); if (k === my) sp.append(' (پاسخ تو)'); r.append(el('b', '', k === z.a ? '✓' : k === my ? '✗' : '•'), sp); c.append(r); }); w.append(c); });
   return w;
 }
 async function qzReview(id) {
@@ -2395,6 +2493,90 @@ async function qzReview(id) {
   O.hd.firstChild.textContent = r.ti + ' — مرور پاسخ‌ها';
   const res = el('div', 'qz-res'); res.append(el('div', 'qz-big', f2(r.sc)), el('div', 'now-sub', 'از ۲۰؛ ' + fa(r.ok) + ' از ' + fa(r.tot) + ' درست')); O.body.append(res, qzReviewList(r.qs, r.ans));
 }
+/* --- نسخه‌ی کاغذی آزمونک: برگه‌ی امتحان با سربرگ مدرسه، بارم، نسخه‌ی الف/ب، پاسخ‌برگ و کلید تصحیح --- */
+function qzCollect(D) {           // سؤال‌های ویرایشگر را تمیز و بررسی می‌کند
+  const qs = [];
+  for (let i = 0; i < D.qs.length; i++) {
+    const z = D.qs[i], o = [], map = {}; z.o.forEach((v, k) => { if (String(v).trim()) { map[k] = o.length; o.push(String(v).trim()); } });
+    if (!String(z.q).trim()) return { err:'متن سؤال ' + fa(i + 1) + ' خالی است.' };
+    if (o.length < 2) return { err:'سؤال ' + fa(i + 1) + ' دست‌کم دو گزینه‌ی پر لازم دارد.' };
+    if (map[z.a] == null) return { err:'گزینه‌ی درست سؤال ' + fa(i + 1) + ' مشخص نشده است.' };
+    qs.push({ q:String(z.q).trim(), o:o, a:map[z.a] });
+  }
+  return { qs:qs };
+}
+function qzPaper(x, ti, qs) {
+  const C = Object.assign({ v:1, key:true, grid:true, dur:'', kind:'آزمون کلاسی' }, lsGet('sia_paper_v1', {}));
+  C.ti = ti; C.d = fa(plJ(new Date()));
+  const O = qzOv('نسخه‌ی کاغذی — ' + ti), s = qzSec(O.body, 'برگه‌ی امتحان'), n = qs.length, bar = Math.round(20 / n * 100) / 100;
+  const inp = (lbl, id, val, ph, num) => { const f = el('div', 'field'), l = el('label', '', lbl), i = el('input'); i.type = 'text'; i.id = id; i.value = val; i.placeholder = ph || ''; if (num) i.inputMode = 'numeric'; l.htmlFor = id; f.append(l, i); s.append(f); return i; };
+  const iT = inp('عنوان روی برگه', 'ppTi', C.ti), iK = inp('نوع آزمون', 'ppKind', C.kind, 'مثلاً آزمون کلاسی، میان‌نوبت'), iD = inp('تاریخ آزمون', 'ppDate', C.d, '۱۴۰۵/۰۷/۲۵', true), iM = inp('مدت (دقیقه)', 'ppDur', C.dur, 'مثلاً ۴۵', true);
+  const vc = el('div', 'chips'); vc.style.gridTemplateColumns = '1fr 1fr';
+  [[1, 'یک نسخه'], [2, 'دو نسخه‌ی الف و ب']].forEach(v => { const b = el('button', 'chip' + (C.v === v[0] ? ' on' : ''), v[1]); b.type = 'button';
+    b.addEventListener('click', () => { C.v = v[0]; Array.from(vc.children).forEach(c => c.classList.toggle('on', c === b)); }); vc.append(b); });
+  s.append(el('span', 'lbl', 'تعداد نسخه'), vc, el('div', 'now-sub', 'در نسخه‌ی «ب» ترتیب سؤال‌ها و گزینه‌ها جابه‌جا می‌شود تا نیمکت‌های کنار هم برگه‌ی متفاوت داشته باشند.'));
+  const chk = (lbl, sub, k) => { const l = el('label', 'qz-rv'), c = el('input'), t = el('span'); c.type = 'checkbox'; c.checked = !!C[k]; c.addEventListener('change', () => { C[k] = c.checked; });
+    t.append(el('b', '', lbl), el('small', '', sub)); l.append(c, t); s.append(l); };
+  chk('پاسخ‌برگ جدولی', 'دانش‌آموز گزینه‌ها را در جدول علامت می‌زند و تصحیح با کلید چند ثانیه طول می‌کشد.', 'grid');
+  chk('صفحه‌ی کلید تصحیح برای دبیر', 'یک صفحه‌ی جدا با پاسخ درست هر نسخه.', 'key');
+  s.append(el('div', 'pl-note', fa(n) + ' سؤال؛ بارم هر سؤال ' + f2(bar) + '؛ جمع بارم ۲۰.'));
+  const pb = el('button', 'send', '🖨 چاپ یا ذخیره‌ی PDF'); pb.type = 'button'; O.body.append(pb);
+  pb.addEventListener('click', () => {
+    Object.assign(C, { ti:iT.value.trim() || ti, kind:iK.value.trim(), d:iD.value.trim(), dur:iM.value.trim() });
+    lsSet('sia_paper_v1', { v:C.v, key:C.key, grid:C.grid, dur:C.dur, kind:C.kind });
+    qzPaperPrint(x, C, qs);
+  });
+}
+function qzPaperPrint(x, C, qs) {
+  const pa = $('#printArea'); pa.textContent = ''; pa.classList.add('paper');
+  const n = qs.length, bar = f2(Math.round(20 / n * 100) / 100), nO = Math.max(...qs.map(z => z.o.length)), vers = C.v === 2 ? ['الف', 'ب'] : [''], keys = [];
+  const td = (t, cls) => { const c = el('td', cls || ''); if (t instanceof Node) c.append(t); else if (t != null) c.textContent = t; return c; };
+  const grid = (ord, opt, mark) => {             // پاسخ‌برگ: ستون‌های ۱۰تایی
+    const w = el('div', 'pp-grid');
+    for (let b = 0; b < n; b += 10) {
+      const t = el('table'), hr = el('tr'); hr.append(el('th', '', 'ردیف')); for (let k = 0; k < nO; k++) hr.append(el('th', '', QZ_L[k])); t.append(hr);
+      for (let p = b; p < Math.min(n, b + 10); p++) { const r = el('tr'), qi = ord[p], ok = opt[qi].indexOf(qs[qi].a); r.append(td(fa(p + 1), 'n'));
+        for (let k = 0; k < nO; k++) r.append(td(k < qs[qi].o.length ? (mark && k === ok ? '●' : '○') : '', 'o')); t.append(r); }
+      w.append(t);
+    }
+    return w;
+  };
+  vers.forEach((vn, vi) => {
+    const rnd = qzRng(C.ti + '|' + n + '|' + vi), ord = qs.map((_, i) => i), opt = qs.map(z => z.o.map((_, i) => i));
+    if (vi > 0) { qzShuf(ord, rnd); opt.forEach(o => qzShuf(o, rnd)); }
+    keys.push({ vn:vn, ord:ord, opt:opt });
+    const sh = el('div', 'pp-sheet' + (vi ? ' pp-break' : '')), hd = el('table', 'pp-hd'), tr = el('tr'), mid = el('div');
+    sh.append(el('div', 'pp-top', 'بسمه تعالی'));
+    if (LOGO_BASE64) { const im = el('img'); im.src = $('#logo').src; im.alt = ''; mid.append(im); }
+    mid.append(el('b', '', SCHOOL_NAME), el('div', '', C.ti), el('div', '', 'سال تحصیلی ' + ACADEMIC_YEAR));
+    const L1 = el('div'), L3 = el('div');
+    ['نام و نام خانوادگی: ..............................', 'کلاس: ' + x.c, 'شماره: ..........'].forEach(t => L1.append(el('div', '', t)));
+    ['درس: ' + x.s, 'نوع: ' + (C.kind || '—'), 'تاریخ: ' + (C.d || '..........'), 'مدت: ' + (C.dur ? fa(en(C.dur)) + ' دقیقه' : '..........')].concat(vn ? ['نسخه‌ی ' + vn] : []).forEach(t => L3.append(el('div', '', t)));
+    tr.append(td(L1), td(mid, 'c'), td(L3)); hd.append(tr); sh.append(hd);
+    const sc = el('div', 'pp-score'); ['نمره به عدد: ............', 'نمره به حروف: ............................', 'نام و امضای دبیر: ' + (anaTeacher(x) || '............')].forEach(t => sc.append(el('span', '', t))); sh.append(sc);
+    sh.append(el('div', 'pp-ins', C.grid ? 'در هر سؤال فقط یک گزینه درست است. پاسخ را در «پاسخ‌برگ» پایین برگه علامت بزنید (●).' : 'در هر سؤال فقط یک گزینه درست است؛ دور گزینه‌ی درست را خط بکشید.'));
+    const qt = el('table', 'pp-q'), h = el('tr'); [['ردیف', 'n'], ['سؤال', ''], ['بارم', 'b']].forEach(v => h.append(el('th', v[1], v[0]))); qt.append(h);
+    ord.forEach((qi, p) => {
+      const z = qs[qi], r = el('tr'), body = el('div'), short = z.o.every(o => o.length <= 16), op = el('div', 'pp-opts' + (short && z.o.length >= 3 ? ' w4' : ''));
+      body.append(el('div', 'pp-qt', z.q)); opt[qi].forEach((oi, k) => { const d = el('div', '', QZ_L[k] + ') '); d.append(el('bdi', '', z.o[oi])); op.append(d); }); body.append(op);
+      r.append(td(fa(p + 1), 'n'), td(body), td(bar, 'b')); qt.append(r);
+    });
+    sh.append(qt);
+    if (C.grid) sh.append(el('h2', '', 'پاسخ‌برگ' + (vn ? ' — نسخه‌ی ' + vn : '')), grid(ord, opt, false));
+    sh.append(el('div', 'pp-end', 'موفق باشید 🌱   |   جمع بارم: ۲۰'));
+    pa.append(sh);
+  });
+  if (C.key) {
+    const ks = el('div', 'pp-sheet pp-break');
+    ks.append(el('h1', '', 'کلید تصحیح — ' + C.ti), el('div', '', 'کلاس: ' + x.c + '   |   درس: ' + x.s + '   |   مخصوص دبیر؛ در اختیار دانش‌آموز قرار نگیرد.'));
+    keys.forEach(k => { ks.append(el('h2', '', k.vn ? 'نسخه‌ی ' + k.vn : 'پاسخ‌ها'), grid(k.ord, k.opt, true),
+      el('p', 'pp-keyline', k.ord.map((qi, p) => fa(p + 1) + ': ' + QZ_L[k.opt[qi].indexOf(qs[qi].a)]).join('   ')));
+    });
+    pa.append(ks);
+  }
+  document.body.classList.add('printing'); window.print();
+}
+window.addEventListener('afterprint', () => { const pa = $('#printArea'); if (pa) pa.classList.remove('paper'); });
 
 /* ======================= نمودارها، کارنامه‌ی چاپی و نشان‌ها ======================= */
 const NS = 'http://www.w3.org/2000/svg', JM = ['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'], SCHOOL_NAME = 'دبیرستان صلاح‌الدین ایوبی';
@@ -3124,7 +3306,7 @@ function renderRisk() {
   l.forEach(x => {
     const d = card1(), h = el('div', 'dir-r'), pf = el('button', 'btn', 'پرونده'); pf.type = 'button';
     h.append(el('span', 'now-t', x.n + ' · ' + x.c), el('span', 'badge ' + (x.lv === 'بالا' ? 'bad' : 'next'), 'خطر ' + x.lv));
-    pf.addEventListener('click', () => { $('#pfCls').value = x.c; pfStus(); $('#pfStu').value = x.n; pfLoad(); $('#pfCard').scrollIntoView({ behavior:'smooth' }); });
+    pf.addEventListener('click', () => { $('#pfCls').value = x.c; pfStus(); $('#pfStu').value = x.n; pfLoad(); mgGo('pfCard'); });
     const row = msgBtns(x.fp, 'اولیای گرامی، ' + x.n + ' در ' + SCHOOL_NAME + ': ' + x.why.join('، ') + '. لطفاً برای هماهنگی با مدرسه تماس بگیرید.'); row.append(pf);
     d.append(h, el('div', 'now-sub', x.why.join(' · ')), row); box.append(d);
   });
@@ -3597,6 +3779,126 @@ function init() {
   $('#modal').addEventListener('click', e => { if (e.target.id === 'modal') closeModal(); });
 }
 init();
+/* ======================= مدیر: غایبین هر کلاس و زنگ در یک روز ======================= */
+let AB = { p:0, open:null, init:false };
+const abToday = () => plJ(new Date());
+function abDateOf() { const q = jParse($('#abDate').value); return q ? jGreg(q[0], q[1], q[2]) : null; }
+function abPer(r, ps) {           // زنگ هر ردیف حضور و غیاب؛ ردیف‌های قدیمی که زنگ ندارند از روی ساعت ثبت تخمین زده می‌شوند
+  const p = Number(en(String(r[11] == null ? '' : r[11]))); if (p >= 1 && p <= 3) return p;
+  const m = /(\d{1,2}):(\d{2})/.exec(en(String(r[1] || ''))); if (!m || !ps.length) return 0;
+  const t = +m[1] * 60 + +m[2], mins = d => d.getHours() * 60 + d.getMinutes();
+  const hit = ps.find(P => t >= mins(P.a) - 10 && t <= mins(P.b) + 20); if (hit) return hit.p;
+  let best = 0, bd = 1e9; ps.forEach(P => { const d = Math.abs(t - mins(P.a)); if (d < bd) { bd = d; best = P.p; } }); return best;
+}
+function abInit() {
+  const sel = $('#abCls'); if (!sel) return; const cur = sel.value;
+  const cls = uniq(allClasses().concat(SCH.map(r => r[0])).concat(MG.att.map(r => String(r[3])))).sort((a, b) => a.localeCompare(b, 'fa'));
+  sel.textContent = ''; [''].concat(cls).forEach(c => { const o = el('option', '', c || 'همه کلاس‌ها'); o.value = c; sel.append(o); }); sel.value = cls.includes(cur) ? cur : '';
+  if (!AB.init) {
+    AB.init = true; $('#abDate').value = fa(abToday());
+    const now = new Date(), P = periodsOf(now).find(x => now >= new Date(x.a.getTime() - 10 * 6e4) && now <= x.b); AB.p = P ? P.p : 0;
+    const go = n => { const d = abDateOf() || new Date(); let x = plAdd(d, n); if (x.getDay() === 5) x = plAdd(x, n); $('#abDate').value = fa(plJ(x)); abRender(); };
+    $('#abPrev').addEventListener('click', () => go(-1)); $('#abNext').addEventListener('click', () => go(1));
+    $('#abNow').addEventListener('click', () => { $('#abDate').value = fa(abToday()); abRender(); });
+    $('#abDate').addEventListener('change', abRender); $('#abCls').addEventListener('change', abRender);
+    $('#abRef').addEventListener('click', async () => { const b = $('#abRef'); b.disabled = true; b.textContent = 'در حال دریافت…'; await mgLoad(); b.disabled = false; b.textContent = '🔄 به‌روزرسانی از Google Sheets'; });
+  }
+  abRender();
+}
+function abRender() {
+  const box = $('#abList'), sum = $('#abSum'), pc = $('#abPer'); if (!box) return; box.textContent = ''; pc.textContent = '';
+  const d = abDateOf(); if (!d) { sum.textContent = 'تاریخ را به شکل ۱۴۰۵/۰۷/۲۳ بنویسید.'; return; }
+  const ds = plJ(d), ps = periodsOf(d), day = (d.getDay() + 1) % 7, sh = shiftOfDate(d), cl = $('#abCls').value, now = new Date();
+  [[0, 'همه زنگ‌ها', '']].concat(ps.map(P => [P.p, 'زنگ ' + fa(P.p), fa(P.t.split('–')[0])])).forEach(v => {
+    const b = el('button', 'chip' + (AB.p === v[0] ? ' on' : '')); b.type = 'button'; b.setAttribute('aria-pressed', String(AB.p === v[0])); b.append(el('span', '', v[1])); if (v[2]) b.append(el('small', '', v[2]));
+    b.addEventListener('click', () => { AB.p = v[0]; abRender(); }); pc.append(b); });
+  pc.style.gridTemplateColumns = 'repeat(' + (ps.length + 1) + ',1fr)';
+  if (!ps.length) { sum.textContent = plDayName(ds) + '؛ جمعه است و کلاسی برگزار نمی‌شود.'; return; }
+  // جلسه‌ها: برنامه‌ی همان روز + هر جلسه‌ای که ثبت شده (مثلاً با دبیر جایگزین)
+  const S = {}, key = (c, p, s) => normT(c) + '|' + p + '|' + normT(s);
+  SCH.filter(r => r[1] === day && (!r[5] || r[5] === SH_FA[sh])).forEach(r => { const k = key(r[0], r[2], r[3]); S[k] = S[k] || { c:r[0], p:r[2], s:r[3], t:r[4], rows:[], rec:false }; });
+  MG.att.filter(r => en(String(r[0])) === ds).forEach(r => {
+    const p = abPer(r, ps), k = key(r[3], p, r[4]); const o = S[k] = S[k] || { c:String(r[3]), p:p, s:String(r[4]), t:String(r[5]), rows:[], rec:false };
+    o.rec = true; o.t = String(r[5]) || o.t; o.at = String(r[1] || ''); if (String(r[7]) !== 'همه حاضر') o.rows.push({ n:String(r[6]), st:String(r[7]), why:String(r[8] || '') });
+  });
+  const list = Object.keys(S).map(k => S[k]).filter(o => (!cl || normT(o.c) === normT(cl)) && (!AB.p || o.p === AB.p)).sort((a, b) => a.p - b.p || a.c.localeCompare(b.c, 'fa'));
+  const isAb = s => s === 'غایب', isLt = s => s === 'تأخیر', isEx = s => s.indexOf('موجه') >= 0;
+  let nA = 0, nL = 0, nE = 0, nM = 0; list.forEach(o => { o.rows.forEach(r => { if (isAb(r.st)) nA++; else if (isLt(r.st)) nL++; else if (isEx(r.st)) nE++; }); if (!o.rec) nM++; });
+  sum.textContent = plDayName(ds) + '، شیفت ' + SH_FA[sh] + ' — ' + (list.length ? fa(list.length) + ' جلسه؛ ' + fa(nA) + ' غایب، ' + fa(nL) + ' تأخیر، ' + fa(nE) + ' موجه' + (nM ? '؛ ' + fa(nM) + ' جلسه بدون ثبت' : '') : 'جلسه‌ای پیدا نشد.');
+  if (!list.length) { box.append(el('div', 'empty', cl || AB.p ? 'برای این انتخاب، کلاسی در برنامه یا حضور و غیابی ثبت نشده است.' : 'برای این روز برنامه یا حضور و غیابی ثبت نشده است.')); return; }
+  const P0 = p => ps.find(x => x.p === p), today = ds === abToday();
+  list.forEach(o => {
+    const w = el('div', 'ab-s'), h = el('div', 'ab-h'), P = P0(o.p), a = o.rows.filter(r => isAb(r.st)), l = o.rows.filter(r => isLt(r.st)), e = o.rows.filter(r => isEx(r.st));
+    let tag, cls;
+    if (o.rec) { if (a.length) { tag = fa(a.length) + ' غایب'; cls = 'bad'; } else if (l.length || e.length) { tag = 'بدون غایب'; cls = 'ok'; } else { tag = '✓ همه حاضر'; cls = 'ok'; } }
+    else if (today && P && now < new Date(P.a.getTime() + ATT_GRACE_MIN * 6e4)) { tag = '⏳ هنوز وقت دارد'; cls = 'wait'; }
+    else { tag = '✗ ثبت نشده'; cls = 'miss'; }
+    h.append(el('b', '', (o.p ? 'زنگ ' + fa(o.p) : 'زنگ نامشخص') + ' — ' + o.c), el('span', 'ab-tag ' + cls, tag));
+    w.append(h, el('div', 'now-sub', o.s + (o.t ? ' — ' + o.t : '') + (o.rec && o.at ? '؛ ثبت ساعت ' + fa(o.at) : P ? '؛ ' + fa(P.t) : '')));
+    const grp = (rows, label, kind) => {
+      if (!rows.length) return; const g = el('div', 'ab-g'); g.append(el('span', 'ab-gl', label));
+      rows.forEach(r => {
+        const b = el('button', 'ab-n ' + kind, r.n); b.type = 'button'; b.title = r.why || '';
+        b.addEventListener('click', () => {
+          const k = ds + '|' + o.p + '|' + r.n; if (AB.open === k) { AB.open = null; abRender(); return; } AB.open = k; abRender();
+        }); g.append(b);
+        if (AB.open === ds + '|' + o.p + '|' + r.n) {
+          const s = DIR.students.find(q => normT(q.n) === normT(r.n) && normT(q.c) === normT(o.c)), ph = s ? (s.fp || s.mp) : '';
+          const txt = 'اولیای گرامی، ' + r.n + ' ' + (today ? 'امروز' : 'روز') + ' ' + plDayName(ds) + ' در زنگ ' + (ORD[o.p - 1] || fa(o.p)) + ' (درس ' + o.s + ') ' + (kind === 'lt' ? 'با تأخیر حاضر شد' : 'غایب بود') + '. لطفاً با مدرسه هماهنگ کنید. ' + SCHOOL_NAME;
+          const c = el('div', 'ab-c'); const inf = [s && s.fn ? 'پدر: ' + s.fn : '', r.why ? 'توضیح دبیر: ' + r.why : ''].filter(Boolean).join('؛ '); if (inf) c.append(el('div', 'now-sub', inf)); c.append(msgBtns(ph, txt)); g.append(c);
+        }
+      });
+      w.append(g);
+    };
+    grp(a, 'غایب', 'ab'); grp(l, 'تأخیر', 'lt'); grp(e, 'موجه', 'ex');
+    box.append(w);
+  });
+  const names = list.filter(o => o.rows.some(r => isAb(r.st))), cp = el('button', 'btn ab-cp', '📋 کپی فهرست غایبین'); cp.type = 'button'; cp.disabled = !names.length;
+  cp.addEventListener('click', async () => {
+    const t = 'غایبین ' + plDayName(ds) + ' — ' + SCHOOL_NAME + '\n' + names.map(o => 'زنگ ' + fa(o.p) + '، ' + o.c + ' (' + o.s + '): ' + o.rows.filter(r => isAb(r.st)).map(r => r.n).join('، ')).join('\n');
+    try { await navigator.clipboard.writeText(t); toast('فهرست کپی شد ✓'); } catch (e) { toast('کپی در این مرورگر ممکن نیست'); }
+  });
+  box.append(cp);
+}
+/* ======================= پنل مدیر: میز کار و بخش‌بندی ======================= */
+const MG_SEC_K = 'sia_mg_sec';
+function mgShow(k, scroll) {
+  const secs = $$('#mgBody .mg-sec'); if (!secs.some(x => x.dataset.sec === k)) k = 'today';
+  secs.forEach(x => { x.hidden = x.dataset.sec !== k; });
+  $$('#mgNav button').forEach(b => { const on = b.dataset.sec === k; b.classList.toggle('on', on); b.setAttribute('aria-pressed', String(on)); });
+  try { localStorage.setItem(MG_SEC_K, k); } catch (e) {}
+  if (scroll) { const r = $('#mgNav').getBoundingClientRect(); if (r.top < 0) $('#mgNav').scrollIntoView({ behavior:'smooth', block:'start' }); }
+}
+function mgGo(id) {               // رفتن به یک کارت، حتی اگر در بخش دیگری باشد
+  const c = document.getElementById(id); if (!c) return; const sec = c.closest('.mg-sec'); if (sec) mgShow(sec.dataset.sec);
+  setTimeout(() => c.scrollIntoView({ behavior:'smooth', block:'start' }), 40);
+}
+(function mgDesk() {
+  const nav = $('#mgNav'); if (!nav) return;
+  $$('#mgBody .mg-sec').forEach(sec => { const b = el('button', 'mg-nb', sec.dataset.t); b.type = 'button'; b.dataset.sec = sec.dataset.sec; b.addEventListener('click', () => mgShow(sec.dataset.sec, true)); nav.append(b); });
+  let k = 'today'; try { k = localStorage.getItem(MG_SEC_K) || 'today'; } catch (e) {}
+  mgShow(k);
+  const num = s => { const m = /\d+/.exec(en(s || '')); return m ? +m[0] : 0; };
+  const paint = () => {
+    const al = $('#alertCard').hidden ? 0 : $('#alertList').children.length, lv = num($('#leaveCnt').textContent), cn = num($('#cmCnt').textContent);
+    const hi = RK.filter(x => x.lv === 'بالا').length;
+    const T = [['alertCard', al, 'زنگ بدون حضور و غیاب', 'حضور و غیاب امروز کامل است', 'bad'],
+      ['leaveCard', lv, 'مرخصی در انتظار تصمیم', 'مرخصی در انتظار نیست', 'warn'],
+      ['riskCard', RK.length, 'در معرض خطر' + (hi ? ' (' + fa(hi) + ' خطر بالا)' : ''), 'کسی در معرض خطر نیست', hi ? 'bad' : 'warn'],
+      ['cnsMgCard', cn, 'مشاوره‌ی منتظر تأیید', 'تأیید مشاوره لازم نیست', 'warn']];
+    const box = $('#mgAttn'); box.textContent = '';
+    T.forEach(t => { const b = el('button', 'mg-at ' + (t[1] ? t[4] : 'ok')); b.type = 'button'; b.append(el('b', '', t[1] ? fa(t[1]) : '✓'), el('span', '', t[1] ? t[2] : t[3]));
+      b.addEventListener('click', () => mgGo(t[0])); box.append(b); });
+    $('#mgDeskStamp').textContent = $('#mgStamp').textContent;
+    const dot = { today:al + lv > 0, stu:RK.length + cn > 0 };
+    $$('#mgNav button').forEach(b => b.classList.toggle('dot', !!dot[b.dataset.sec]));
+  };
+  let tm; const later = () => { clearTimeout(tm); tm = setTimeout(paint, 80); };
+  const mo = new MutationObserver(later);
+  ['#alertList', '#leaveCnt', '#cmCnt', '#riskList', '#mgStamp'].forEach(s => { const e = $(s); if (e) mo.observe(e, { childList:true, subtree:true, characterData:true }); });
+  mo.observe($('#alertCard'), { attributes:true, attributeFilter:['hidden'] });
+  paint();
+})();
 })();
 </script>
 </body>
