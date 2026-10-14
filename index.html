@@ -437,6 +437,73 @@ a.tel{display:inline-flex;align-items:center;min-height:44px;padding:0 14px;bord
   #printArea h2{break-after:avoid}
   body.printing{background:#fff!important}
 }
+/* ---------- آزمونک آنلاین ---------- */
+body.qz-lock{overflow:hidden}
+.qz-ov{position:fixed;inset:0;z-index:45;background:var(--bg);overflow-y:auto;-webkit-overflow-scrolling:touch;animation:fade .15s ease}
+.qz-hd{position:sticky;top:0;z-index:2;display:flex;align-items:center;gap:10px;padding:calc(env(safe-area-inset-top,0px) + 10px) 14px 10px;background:var(--card);border-bottom:1px solid var(--line);box-shadow:var(--shadow)}
+.qz-ttl{flex:1;min-width:0;font-weight:900;font-size:16px;line-height:1.5}
+.qz-x{width:42px;height:42px;flex:none;border-radius:50%;border:1px solid var(--line);background:var(--input);font-size:17px;color:var(--muted)}
+.qz-body{max-width:720px;margin:0 auto;padding:14px 14px calc(env(safe-area-inset-bottom,0px) + 28px)}
+.qz-sec{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:12px}
+.qz-sec>.ana-h:first-child{margin-top:0}
+.qz-it{padding:12px 14px;border:1.5px solid var(--line);border-radius:14px;background:var(--input);margin-top:10px}
+.qz-st{flex:none;font-size:12px;font-weight:800;padding:3px 10px;border-radius:999px;white-space:nowrap;border:1px solid transparent}
+.qz-st.live{background:var(--present-bg);color:var(--present)} .qz-st.soon{background:var(--excused-bg);color:var(--excused)}
+.qz-st.over{background:var(--card);border-color:var(--line);color:var(--muted)} .qz-st.done{background:var(--present-bg);color:var(--present)}
+.qz-cnt{font-size:14px;font-weight:700;margin:6px 0}
+.qz-ok{font-size:13px;font-weight:700;color:var(--present);margin-top:8px}
+.qz-act{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.qz-act .btn,.qz-it>.btn{height:44px;font-size:14px;padding:0 6px}
+.qz-it>.btn{width:100%;margin-top:8px}
+.qz-q{border:1.5px solid var(--line);border-radius:14px;background:var(--input);padding:12px;margin-bottom:12px}
+.qz-qh{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px;font-weight:900}
+.qz-qh .link-btn{height:34px;padding:0 10px;color:var(--absent)}
+.qz-q .link-btn{margin-top:8px}
+.qz-o{display:flex;align-items:center;gap:8px;margin-top:8px}
+.qz-o input[type=radio]{width:24px;height:24px;flex:none;accent-color:var(--present)}
+.qz-o b{width:28px;flex:none;text-align:center;color:var(--muted);font-size:13px}
+.qz-o input[type=text]{height:46px}
+.qz-o.ok input[type=text]{border-color:var(--present);background:var(--present-bg)}
+.qz-imp{margin-top:10px}
+.qz-imp .btn{width:100%;margin-top:8px}
+.qz-dt{display:grid;grid-template-columns:1.4fr 1fr;gap:8px;margin-top:6px}
+.qz-dt input[type=time]{direction:ltr;text-align:center}
+.qz-quick{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.qz-quick .btn{height:40px;padding:0 4px;font-size:13px}
+.qz-du{grid-template-columns:repeat(4,1fr);margin:6px 0}
+.qz-du .chip{height:44px;font-size:13px}
+.qz-rv{display:flex;align-items:flex-start;gap:10px;padding:8px 2px;cursor:pointer}
+.qz-rv input{width:22px;height:22px;flex:none;margin-top:3px;accent-color:var(--primary)}
+.qz-rv b{display:block;font-size:14px} .qz-rv small{display:block;color:var(--muted);font-size:12px}
+.qz-grade{margin-top:12px;padding-top:12px;border-top:1px dashed var(--line)}
+.qz-ia{padding:10px 0;border-bottom:1px solid var(--line)} .qz-ia:last-child{border-bottom:0}
+.qz-ia-t{font-weight:700;font-size:14px;line-height:1.8;white-space:pre-wrap}
+.qz-ia .ana-br .k{width:86px}
+.qz-tm{flex:none;font-weight:900;font-size:15px;padding:6px 12px;border-radius:999px;background:var(--input);border:1px solid var(--line);white-space:nowrap}
+.qz-tm.warn{background:var(--absent-bg);color:var(--absent);border-color:transparent}
+.qz-dots{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 14px}
+.qz-dots button{width:40px;height:40px;border-radius:10px;border:1.5px solid var(--line);background:var(--input);font-weight:800;color:var(--muted)}
+.qz-dots .on{background:var(--primary);border-color:var(--primary);color:var(--on-primary)}
+.qz-dots .cur{box-shadow:0 0 0 3px var(--gold)}
+.qz-view{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 14px 6px;margin-bottom:12px}
+.qz-qn{font-size:13px;color:var(--muted);font-weight:800;margin-bottom:6px}
+.qz-qt{font-size:18px;font-weight:800;line-height:1.9;white-space:pre-wrap;margin-bottom:14px}
+.qz-qt.sm{font-size:15px;margin-bottom:8px}
+.qz-op{display:flex;align-items:center;gap:12px;width:100%;min-height:58px;padding:10px 14px;margin-bottom:10px;border-radius:14px;border:1.5px solid var(--line);background:var(--input);text-align:start;font-size:16px;font-weight:600;line-height:1.7}
+.qz-op b{width:36px;height:36px;flex:none;border-radius:50%;display:grid;place-items:center;background:var(--card);border:1px solid var(--line);font-size:13px}
+.qz-op.sel{border-color:var(--primary);background:var(--present-bg)}
+.qz-op.sel b{background:var(--primary);border-color:var(--primary);color:var(--on-primary)}
+.qz-nav{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.qz-res{text-align:center;padding:22px 10px}
+.qz-big{font-size:52px;font-weight:900;line-height:1.3;color:var(--primary)}
+.qz-res .send{margin-top:16px}
+.qz-rvo{display:flex;gap:10px;align-items:flex-start;padding:6px 10px;border-radius:10px;font-size:14px;line-height:1.8}
+.qz-rvo b{width:18px;flex:none;text-align:center}
+.qz-rvo.ok{background:var(--present-bg);color:var(--present);font-weight:800}
+.qz-rvo.bad{background:var(--absent-bg);color:var(--absent);font-weight:700}
+.chip.qz-hot{position:relative;border-color:var(--absent)}
+.chip.qz-hot::after{content:"";position:absolute;top:7px;inset-inline-end:9px;width:9px;height:9px;border-radius:50%;background:var(--absent);box-shadow:0 0 0 2px var(--input)}
+@media print{.qz-ov{display:none!important}}
 @media print{.focus-ov{display:none!important}}
 @media (prefers-reduced-motion:reduce){.focus-ring .fr-fg{transition:none}}
 </style>
@@ -1690,7 +1757,7 @@ function applyRole() {
   $('#cnsC').hidden = !cn; $('#cnsT').hidden = ROLE !== 'teacher';
   if (st && SD) {
     ['att', 'gr', 'mg', 'cns', 'stf'].forEach(k => { $('#p-' + k).hidden = true; }); $('#common').hidden = true;
-    const h = $('#stuHead'); h.textContent = ''; h.append(el('div', 'now-t', SD.name), el('div', 'now-sub', 'کلاس ' + SD.cls)); stuNav(STU_K);
+    const h = $('#stuHead'); h.textContent = ''; h.append(el('div', 'now-t', SD.name), el('div', 'now-sub', 'کلاس ' + SD.cls)); stuNav(STU_K); qzPrefetch();
   } else if (cn) {
     $('#common').hidden = true; setTab('cns');
   } else if (staff) {
@@ -1746,10 +1813,10 @@ function tbl(head, rows) {
 }
 function stuNav(k) {
   STU_K = k; const nv = $('#stuNav'); nv.textContent = '';
-  [['sch', 'برنامه هفتگی'], ['plan', '📖 برنامه مطالعه'], ['kar', 'کارنامه'], ['att', 'حضور و غیاب'], ['avg', 'میانگین کلاس'], ['mock', 'آزمون‌های آزمایشی'], ['cal', 'تقویم آزمون و تکلیف'], ['leave', 'درخواست مرخصی']].forEach(q => { const b = el('button', 'chip' + (k === q[0] ? ' on' : ''), q[1]); b.type = 'button'; b.addEventListener('click', () => stuNav(q[0])); nv.append(b); });
+  [['sch', 'برنامه هفتگی'], ['plan', '📖 برنامه مطالعه'], ['qz', '📝 آزمونک‌ها'], ['kar', 'کارنامه'], ['att', 'حضور و غیاب'], ['avg', 'میانگین کلاس'], ['mock', 'آزمون‌های آزمایشی'], ['cal', 'تقویم آزمون و تکلیف'], ['leave', 'درخواست مرخصی']].forEach(q => { const b = el('button', 'chip' + (k === q[0] ? ' on' : ''), q[1]); b.type = 'button'; b.dataset.k = q[0]; b.addEventListener('click', () => stuNav(q[0])); nv.append(b); }); qzBadge();
   const sch = k === 'sch'; $('#p-sch').hidden = !sch; $('#stuBody').hidden = sch;
   if (sch) { Z.who = 'c:' + SD.cls; renderSch(); return; }
-  const box = $('#stuBody'); box.textContent = ''; ({ plan:stuPlan, kar:stuKar, att:stuAtt, avg:stuAvg, mock:stuMock, cal:stuCal, leave:stuLeave })[k](box);
+  const box = $('#stuBody'); box.textContent = ''; ({ plan:stuPlan, qz:stuQz, kar:stuKar, att:stuAtt, avg:stuAvg, mock:stuMock, cal:stuCal, leave:stuLeave })[k](box);
 }
 function stuKar(box) {
   const c1 = el('div', 'card'), c2 = el('div', 'card'); c1.append(el('div', 'lbl', 'کارنامه — میانگین هر درس (از ۲۰)')); c2.append(el('div', 'lbl', 'نمره‌های هر آزمون'));
@@ -1839,7 +1906,7 @@ function renderInb() {
   if (!INB || !INB.length) { box.append(el('div', 'empty', 'برای شما در برنامه‌ی هفتگی کلاس و درسی ثبت نشده است.')); return; }
   const x = INB[+$('#inbSel').value || 0], sm = el('div', 'card');
   sm.append(el('div', 'now-t', x.c + ' · ' + x.s), el('div', 'now-sub', 'جلسات ثبت‌شده: ' + fa(x.sessions) + ' · میانگین کلاس: ' + f2(x.avg) + ' (از ۲۰)'));
-  if (x.top && x.top.length) sm.append(el('div', 'now-sub', x.top.map((t, i) => ['🥇', '🥈', '🥉'][i] + ' ' + t.n + ' (' + f2(t.avg) + ')').join('  ·  '))); box.append(sm); anaMount(box, x);
+  if (x.top && x.top.length) sm.append(el('div', 'now-sub', x.top.map((t, i) => ['🥇', '🥈', '🥉'][i] + ' ' + t.n + ' (' + f2(t.avg) + ')').join('  ·  '))); box.append(sm); anaMount(box, x); qzMount(box, x);
   x.students.forEach(st => {
     const d = el('details', 'dir-it'), h = el('summary'), b = el('div', 'dir-b');
     h.append(el('span', '', st.n), el('small', '', 'غ ' + fa(st.ab) + ' · ت ' + fa(st.lt) + ' · میانگین ' + f2(st.avg)));
@@ -2011,7 +2078,323 @@ function anaPrint(x, list, A, note) {
   const sg = el('div', 'pa-sign'); sg.append(el('div', '', 'نام و امضای دبیر:'), el('div', '', 'نام و امضای مدیر:')); pa.append(sg);
   document.body.classList.add('printing'); window.print();
 }
+/* ======================= آزمونک آنلاین (دبیر/مدیر: ساخت و نتایج در کارتابل؛ دانش‌آموز: پاسخ‌دادن) ======================= */
+const QZ_L = ['الف', 'ب', 'ج', 'د', 'ه'], QZ_DUR = [0, 5, 10, 15, 20, 30, 45];
+const QZ_RV = [['close', 'نمره و پاسخ‌ها بعد از پایان مهلت', 'پیشنهادی برای آزمون؛ پاسخ‌ها به هم‌کلاسی‌ها نمی‌رسد'], ['score', 'نمره بلافاصله، پاسخ‌ها بعد از پایان مهلت', ''], ['now', 'نمره و پاسخ درست بلافاصله', 'مناسب تمرین و خودآزمایی']];
+let QZ_OFF = 0, QZ_OPEN = false, QZT = null, QZS = null, QZS_T = 0;
+const qzNow = () => Date.now() + QZ_OFF;
+const qzAuth = () => ({ teacher:S.teacher.trim(), pin:S.pin.trim(), key:ACCESS_KEY });
+const qzSAuth = () => ({ nid:SD.nid, secret:SD.sec || '', key:ACCESS_KEY });
+const qzHM = d => fa(pad(d.getHours()) + ':' + pad(d.getMinutes()));
+function qzWhen(ms) {
+  const d = new Date(ms), dd = Math.round((plMid(d) - plMid(new Date(qzNow()))) / 864e5);
+  if (dd === 0) return 'امروز ساعت ' + qzHM(d); if (dd === 1) return 'فردا ساعت ' + qzHM(d); if (dd === -1) return 'دیروز ساعت ' + qzHM(d);
+  const j = g2j(d.getFullYear(), d.getMonth() + 1, d.getDate()); return plWdOf(d) + ' ' + fa(j[2]) + ' ' + JM[j[1] - 1] + '، ساعت ' + qzHM(d);
+}
+const qzClock = ms => { const s = Math.max(0, Math.ceil(ms / 1000)), h = Math.floor(s / 3600); return fa((h ? h + ':' : '') + pad(Math.floor(s % 3600 / 60)) + ':' + pad(s % 60)); };
+const qzState = q => { const n = qzNow(); return n < q.st ? 'soon' : n <= q.en ? 'live' : 'over'; };
+function qzRng(s) { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); }
+  return () => { h = Math.imul(h ^ (h >>> 15), 2246822507); h = Math.imul(h ^ (h >>> 13), 3266489909); h ^= h >>> 16; return (h >>> 0) / 4294967296; }; }
+const qzShuf = (a, r) => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)), t = a[i]; a[i] = a[j]; a[j] = t; } return a; };
+function qzOv(title, onClose) {   // صفحه‌ی تمام‌صفحه
+  let ov = $('#qzOv'); if (!ov) { ov = el('div', 'qz-ov'); ov.id = 'qzOv'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-modal', 'true'); document.body.append(ov); }
+  ov.textContent = ''; ov.hidden = false; document.body.classList.add('qz-lock');
+  const hd = el('div', 'qz-hd'), h = el('div', 'qz-ttl', title), x = el('button', 'qz-x', '✕'); x.type = 'button'; x.setAttribute('aria-label', 'بستن');
+  x.addEventListener('click', () => { if (!onClose || onClose() !== false) qzOvClose(); });
+  hd.append(h, x); const body = el('div', 'qz-body'); ov.append(hd, body); ov.scrollTop = 0; return { ov:ov, hd:hd, body:body };
+}
+function qzOvClose() { clearInterval(QZT); window.onbeforeunload = null; const ov = $('#qzOv'); if (ov) { ov.hidden = true; ov.textContent = ''; } document.body.classList.remove('qz-lock'); }
+const qzSec = (box, t) => { const s = el('div', 'qz-sec'); if (t) s.append(el('div', 'lbl ana-h', t)); box.append(s); return s; };
 
+/* --- دبیر: کارت آزمونک در کارتابل --- */
+function qzMount(box, x) {
+  const card = el('details', 'card ana'), sm = el('summary'), hd = el('div'), sub = el('small', '', 'در حال بارگذاری…'), body = el('div'), list = el('div');
+  hd.append(el('span', 'ana-t', '📝 آزمونک آنلاین'), sub); sm.append(hd); card.open = QZ_OPEN; card.addEventListener('toggle', () => { QZ_OPEN = card.open; });
+  const nb = el('button', 'send', '+ ساخت آزمونک تازه'); nb.type = 'button'; body.append(nb, list); card.append(sm, body); box.append(card);
+  const reload = () => qzLoad(x, list, sub); nb.addEventListener('click', () => qzEdit(x, null, reload)); reload();
+}
+async function qzLoad(x, list, sub) {
+  const r = await send(Object.assign({ action:'qzList', cls:x.c, course:x.s }, qzAuth()));
+  if (r.net || r.status !== 'ok') { sub.textContent = r.net ? 'اینترنت در دسترس نیست' : (r.message || 'بارگذاری نشد'); return; }
+  QZ_OFF = r.now - Date.now(); const live = r.list.filter(q => qzState(q) === 'live').length;
+  sub.textContent = r.list.length ? fa(r.list.length) + ' آزمونک' + (live ? '، ' + fa(live) + ' فعال' : '') : 'هنوز آزمونکی ساخته نشده';
+  list.textContent = '';
+  if (!r.list.length) list.append(el('div', 'now-sub', 'آزمونک چندگزینه‌ای بسازید؛ دانش‌آموزان در همین برنامه پاسخ می‌دهند، تصحیح خودکار است و نمره‌ها با یک دکمه به برگه‌ی نمرات می‌روند.'));
+  r.list.forEach(q => list.append(qzItem(x, q, () => qzLoad(x, list, sub))));
+}
+function qzItem(x, q, reload) {
+  const st = qzState(q), it = el('div', 'qz-it'), top = el('div', 'pl-top');
+  top.append(el('span', 'pl-c', q.ti), el('span', 'qz-st ' + st, st === 'soon' ? '🕒 زمان‌بندی‌شده' : st === 'live' ? '🟢 فعال' : '⏹ پایان‌یافته'));
+  it.append(top, el('div', 'now-sub', fa(q.qs.length) + ' سؤال، ' + (q.du ? fa(q.du) + ' دقیقه' : 'بدون محدودیت زمان') + ' — ' + (st === 'soon' ? 'شروع ' + qzWhen(q.st) : st === 'live' ? 'مهلت تا ' + qzWhen(q.en) : 'پایان ' + qzWhen(q.en))));
+  const pb = el('div', 'pbar'), pi = el('i'); pi.style.cssText = 'width:' + (q.n ? Math.min(100, q.done / q.n * 100) : 0) + '%;background:var(--primary)'; pb.append(pi);
+  it.append(el('div', 'qz-cnt', fa(q.done) + ' از ' + fa(q.n) + ' نفر پاسخ داده‌اند' + (q.avg != null ? '؛ میانگین ' + f2(q.avg) + ' از ۲۰' : '')), pb);
+  if (q.g) it.append(el('div', 'qz-ok', '✓ در نمرات ثبت شد (' + fa(q.g) + ')'));
+  const ac = el('div', 'qz-act'), b = (t, fn, cls) => { const e = el('button', 'btn' + (cls ? ' ' + cls : ''), t); e.type = 'button'; e.addEventListener('click', fn); ac.append(e); };
+  b('📊 نتایج', () => qzResults(q.id, reload), 'primary');
+  b(q.started ? '⏱ زمان' : '✏️ ویرایش', () => qzEdit(x, q, reload));
+  b('🗑 حذف', () => showModal({ icon:'warn', title:'حذف آزمونک', msg:'«' + q.ti + '» و همه‌ی پاسخ‌هایش حذف می‌شود' + (q.g ? '؛ نمره‌هایی که به برگه‌ی نمرات رفته‌اند باقی می‌مانند.' : '.'),
+    buttons:[{ text:'حذف', primary:true, onClick:async () => { const r = await send(Object.assign({ action:'qzDel', id:q.id }, qzAuth())); if (r.status !== 'ok') return toast(r.message || 'حذف نشد'); toast('حذف شد'); reload(); } }, { text:'انصراف' }] }));
+  it.append(ac); return it;
+}
+
+/* --- ساخت/ویرایش آزمونک --- */
+function qzParseText(txt) {       // «۱) متن سؤال» + «الف) گزینه» ؛ گزینه‌ی درست با * یا «پاسخ: ب»
+  const lines = String(txt || '').replace(/ي/g, 'ی').replace(/ك/g, 'ک').split(/\r?\n/).map(s => s.trim()).filter(Boolean), qs = [];
+  const letR = /^[(\[]?\s*(الف|ب|پ|ت|ج|د|ه|[a-eA-E])\s*[)\].:\-–]\s*(.+)$/, numR = /^[(\[]?\s*([0-9۰-۹]{1,2})\s*[)\].:\-–]\s*(.+)$/, ansR = /^(?:پاسخ|جواب|گزینه‌?\s*(?:ی\s*)?(?:درست|صحیح))\s*[:：]?\s*(?:گزینه\s*)?(الف|ب|پ|ت|ج|د|ه|[a-eA-E]|[1-5۱-۵])(?=$|[\s).،:\]])/;
+  const mark = s => { const m = /^\s*[*✓✔]\s*|\s*[*✓✔]\s*$|\s*[(（]\s*(?:صحیح|درست)\s*[)）]\s*$/.exec(s); return m ? { t:s.replace(m[0], '').trim(), ok:true } : { t:s, ok:false }; };
+  const LT = { 'الف':0, 'ب':1, 'پ':2, 'ج':2, 'ت':3, 'د':3, 'ه':4, a:0, b:1, c:2, d:3, e:4 }; let cur = null;
+  const addOpt = s => { const m = mark(s); if (m.ok) cur.a = cur.o.length; cur.o.push(m.t); };
+  lines.forEach(ln => {
+    const an = ansR.exec(ln); if (an && cur) { const v = an[1].toLowerCase(), n = /[0-9۰-۹]/.test(v) ? +en(v) - 1 : LT[v]; if (n >= 0 && n < cur.o.length) cur.a = n; return; }
+    const lm = letR.exec(ln); if (lm && cur) { addOpt(lm[2]); return; }
+    const nm = numR.exec(ln);
+    if (nm && cur && cur.o.length < 2 && cur.q) { addOpt(nm[2]); return; }        // گزینه‌های شماره‌دار
+    if (nm) { cur = { q:nm[2], o:[], a:-1 }; qs.push(cur); return; }
+    const bl = /^[-•▪●○◦]\s*(.+)$/.exec(ln); if (bl && cur) { addOpt(bl[1]); return; }
+    if (cur && !cur.o.length) { cur.q += '\n' + ln; return; }
+    if (cur && cur.o.length >= 2) { cur = { q:ln, o:[], a:-1 }; qs.push(cur); return; }
+    if (cur && cur.o.length) { cur.o[cur.o.length - 1] += ' ' + ln; return; }
+    cur = { q:ln, o:[], a:-1 }; qs.push(cur);
+  });
+  return qs.filter(q => q.q).map(q => ({ q:q.q, o:q.o.slice(0, 5), a:q.a < 5 ? q.a : -1 }));
+}
+function qzEdit(x, q, reload) {
+  const locked = !!(q && q.started), dk = 'sia_qz_draft:' + normT(x.c) + '|' + normT(x.s), now = qzNow();
+  const blank = () => ({ q:'', o:['', '', '', ''], a:-1 });
+  const D = q ? { id:q.id, ti:q.ti, qs:q.qs.map(z => ({ q:z.q, o:z.o.concat(['', '', '', '']).slice(0, Math.max(4, z.o.length)), a:z.a })), st:q.st, en:q.en, du:q.du, rv:q.rv || 'close', sh:q.sh !== false, now:false }
+    : Object.assign({ ti:'', qs:[blank()], st:now, en:now + 864e5, du:15, rv:'close', sh:true, now:true }, lsGet(dk, {}));
+  const O = qzOv((q ? (locked ? 'زمان آزمونک' : 'ویرایش آزمونک') : 'آزمونک تازه') + ' — ' + x.c + '، ' + x.s);
+  let tSave; const keep = () => { if (q) return; clearTimeout(tSave); tSave = setTimeout(() => lsSet(dk, { ti:D.ti, qs:D.qs, du:D.du, rv:D.rv, sh:D.sh }), 400); };
+  // عنوان
+  const s1 = qzSec(O.body), ti = el('input'); ti.type = 'text'; ti.maxLength = 80; ti.placeholder = 'عنوان، مثلاً «آزمونک فصل ۲ — تابع»'; ti.value = D.ti; ti.disabled = locked;
+  ti.addEventListener('input', () => { D.ti = ti.value; keep(); }); const tf = el('div', 'field'), tl = el('label', '', 'عنوان آزمونک'); ti.id = 'qzTi'; tl.htmlFor = 'qzTi'; tf.append(tl, ti); s1.append(tf);
+  // سؤال‌ها
+  const s2 = qzSec(O.body), qbox = el('div'), info = el('div', 'now-sub');
+  const paintQ = () => {
+    qbox.textContent = '';
+    D.qs.forEach((z, i) => {
+      const c = el('div', 'qz-q'), h = el('div', 'qz-qh'); h.append(el('span', '', 'سؤال ' + fa(i + 1)));
+      if (!locked && D.qs.length > 1) { const d = el('button', 'link-btn', '🗑 حذف'); d.type = 'button'; d.addEventListener('click', () => { D.qs.splice(i, 1); keep(); paintQ(); }); h.append(d); }
+      const ta = el('textarea', 'ana-ta'); ta.rows = 2; ta.maxLength = 600; ta.placeholder = 'متن سؤال'; ta.value = z.q; ta.disabled = locked; ta.setAttribute('aria-label', 'متن سؤال ' + (i + 1));
+      ta.addEventListener('input', () => { z.q = ta.value; keep(); }); c.append(h, ta);
+      z.o.forEach((ov, k) => {
+        const r = el('div', 'qz-o' + (z.a === k ? ' ok' : '')), rd = el('input'), inp = el('input');
+        rd.type = 'radio'; rd.name = 'qzA' + i; rd.checked = z.a === k; rd.disabled = locked; rd.setAttribute('aria-label', 'گزینه‌ی ' + QZ_L[k] + ' درست است');
+        rd.addEventListener('change', () => { z.a = k; keep(); paintQ(); });
+        inp.type = 'text'; inp.maxLength = 200; inp.placeholder = 'گزینه‌ی ' + QZ_L[k] + (k > 1 ? ' (اختیاری)' : ''); inp.value = ov; inp.disabled = locked;
+        inp.addEventListener('input', () => { z.o[k] = inp.value; keep(); }); r.append(rd, el('b', '', QZ_L[k]), inp); c.append(r);
+      });
+      if (!locked && z.o.length < 5) { const ad = el('button', 'link-btn', '+ گزینه‌ی ' + QZ_L[z.o.length]); ad.type = 'button'; ad.addEventListener('click', () => { z.o.push(''); paintQ(); }); c.append(ad); }
+      qbox.append(c);
+    });
+    info.textContent = fa(D.qs.length) + ' سؤال؛ هر سؤال ' + f2(20 / Math.max(1, D.qs.length)) + ' نمره از ۲۰. گزینه‌ی درست را با دایره‌ی کنار آن مشخص کنید.';
+  };
+  s2.append(el('div', 'lbl ana-h', 'سؤال‌ها'), info, qbox);
+  if (locked) s2.append(el('div', 'cns-note', 'دانش‌آموزان پاسخ‌دادن را شروع کرده‌اند؛ سؤال‌ها قفل است و فقط زمان را می‌توانید تغییر دهید.'));
+  else {
+    const row = el('div', 'pl-tools'), ad = el('button', 'btn', '+ سؤال تازه'), im = el('button', 'btn', '📋 وارد کردن از متن'); ad.type = im.type = 'button';
+    const ib = el('div', 'qz-imp'); ib.hidden = true; const it = el('textarea', 'ana-ta'); it.rows = 8; it.setAttribute('aria-label', 'متن سؤال‌ها');
+    it.placeholder = '۱) پایتخت ایران کجاست؟\nالف) تهران *\nب) اصفهان\nج) شیراز\nد) تبریز\n\n۲) ۲ + ۳ = ؟\nالف) ۴\nب) ۵\nج) ۶\nپاسخ: ب';
+    const go = el('button', 'btn primary', 'تبدیل به سؤال'); go.type = 'button';
+    ib.append(el('div', 'now-sub', 'سؤال‌ها را از Word یا پیام‌رسان کپی کنید. هر سؤال با شماره، هر گزینه با «الف)، ب)…» و گزینه‌ی درست با * یا یک خط «پاسخ: ب» مشخص شود.'), it, go);
+    ad.addEventListener('click', () => { D.qs.push(blank()); keep(); paintQ(); qbox.lastChild.querySelector('textarea').focus(); });
+    im.addEventListener('click', () => { ib.hidden = !ib.hidden; if (!ib.hidden) it.focus(); });
+    go.addEventListener('click', () => {
+      const ps = qzParseText(it.value).filter(z => z.o.length >= 2); if (!ps.length) return toast('سؤالی پیدا نشد؛ قالب نمونه را ببینید');
+      ps.forEach(z => { while (z.o.length < 4) z.o.push(''); });
+      D.qs = D.qs.filter(z => z.q.trim() || z.o.some(v => v.trim())).concat(ps); keep(); paintQ(); ib.hidden = true; it.value = '';
+      const miss = ps.filter(z => z.a < 0).length; toast(fa(ps.length) + ' سؤال اضافه شد' + (miss ? '؛ گزینه‌ی درست ' + fa(miss) + ' سؤال را مشخص کنید' : ' ✓'));
+    });
+    row.append(ad, im); s2.append(row, ib);
+  }
+  paintQ();
+  // زمان‌بندی
+  const s3 = qzSec(O.body, 'زمان‌بندی'), j0 = d => { const j = g2j(d.getFullYear(), d.getMonth() + 1, d.getDate()); return fa(j[0] + '/' + pad(j[1]) + '/' + pad(j[2])); };
+  const dtRow = (lbl, ms) => { const f = el('div', 'field'), w = el('div', 'qz-dt'), d = el('input'), t = el('input'), dt = new Date(ms); d.type = 'text'; d.inputMode = 'numeric'; d.value = j0(dt); d.setAttribute('aria-label', lbl + ' — تاریخ');
+    t.type = 'time'; t.value = pad(dt.getHours()) + ':' + pad(dt.getMinutes()); t.setAttribute('aria-label', lbl + ' — ساعت'); w.append(d, t); f.append(el('span', 'lbl', lbl), w); return { f:f, d:d, t:t }; };
+  const rd = o => { const p = jParse(o.d.value), m = /^(\d{1,2}):(\d{2})$/.exec(en(o.t.value)); if (!p || !m) return NaN; return jGreg(p[0], p[1], p[2]).getTime() + (+m[1] * 60 + +m[2]) * 6e4; };
+  const wr = (o, ms) => { const dt = new Date(ms); o.d.value = j0(dt); o.t.value = pad(dt.getHours()) + ':' + pad(dt.getMinutes()); };
+  const S0 = dtRow('شروع', Math.max(D.st, now)), E0 = dtRow('پایان مهلت', D.en), sc = el('div', 'chips');
+  const startAt = () => D.now ? qzNow() : rd(S0);
+  if (!locked) { [['همین حالا', true], ['زمان دیگر', false]].forEach(v => { const b = el('button', 'chip' + (D.now === v[1] ? ' on' : ''), v[0]); b.type = 'button';
+    b.addEventListener('click', () => { D.now = v[1]; S0.f.querySelector('.qz-dt').hidden = D.now; Array.from(sc.children).forEach(c => c.classList.toggle('on', c === b)); }); sc.append(b); });
+    sc.style.gridTemplateColumns = '1fr 1fr'; S0.f.insertBefore(sc, S0.f.lastChild); S0.f.querySelector('.qz-dt').hidden = D.now; }
+  else S0.f.querySelectorAll('input').forEach(i => { i.disabled = true; });
+  const qe = el('div', 'qz-quick'); [['۱ ساعت', 36e5], ['۲ ساعت', 72e5], ['۱ روز', 864e5], ['۳ روز', 2592e5], ['۷ روز', 6048e5]].forEach(v => { const b = el('button', 'btn', v[0]); b.type = 'button';
+    b.addEventListener('click', () => { const s = locked ? D.st : startAt(); if (isFinite(s)) wr(E0, Math.max(s, qzNow()) + v[1]); }); qe.append(b); });
+  E0.f.append(el('div', 'now-sub', 'تنظیم سریع پایان (از شروع):'), qe);
+  s3.append(S0.f, E0.f);
+  const du = el('div', 'chips qz-du'); QZ_DUR.forEach(v => { const b = el('button', 'chip' + (D.du === v ? ' on' : ''), v ? fa(v) + ' دقیقه' : 'بدون محدودیت'); b.type = 'button'; b.disabled = locked;
+    b.addEventListener('click', () => { D.du = v; keep(); Array.from(du.children).forEach(c => c.classList.toggle('on', c === b)); }); du.append(b); });
+  s3.append(el('span', 'lbl', 'وقت هر دانش‌آموز بعد از شروع'), du, el('div', 'now-sub', 'زمان هر دانش‌آموز از لحظه‌ای که «شروع» را می‌زند حساب می‌شود و در هر حال از «پایان مهلت» جلوتر نمی‌رود.'));
+  // تنظیمات
+  const s4 = qzSec(O.body, 'نمایش نتیجه به دانش‌آموز');
+  QZ_RV.forEach(v => { const l = el('label', 'qz-rv'), r = el('input'); r.type = 'radio'; r.name = 'qzRv'; r.checked = D.rv === v[0]; r.addEventListener('change', () => { D.rv = v[0]; keep(); });
+    const t = el('span'); t.append(el('b', '', v[1])); if (v[2]) t.append(el('small', '', v[2])); l.append(r, t); s4.append(l); });
+  const shl = el('label', 'qz-rv'), shc = el('input'); shc.type = 'checkbox'; shc.checked = D.sh; shc.disabled = locked; shc.addEventListener('change', () => { D.sh = shc.checked; keep(); });
+  const sht = el('span'); sht.append(el('b', '', 'ترتیب سؤال‌ها و گزینه‌ها برای هر دانش‌آموز جابه‌جا شود'), el('small', '', 'تقلب از روی گوشی بغلی سخت‌تر می‌شود')); shl.append(shc, sht); s4.append(shl);
+  // انتشار
+  const pub = el('button', 'send', q ? 'ذخیره‌ی تغییرات' : 'انتشار آزمونک'); pub.type = 'button'; O.body.append(pub);
+  pub.addEventListener('click', async () => {
+    const fail = m => showModal({ icon:'warn', title:'کامل نیست', msg:m });
+    if (!D.ti.trim()) return fail('عنوان آزمونک را بنویسید.');
+    const qs = [];
+    for (let i = 0; i < D.qs.length; i++) {
+      const z = D.qs[i], o = [], map = {}; z.o.forEach((v, k) => { if (String(v).trim()) { map[k] = o.length; o.push(String(v).trim()); } });
+      if (!String(z.q).trim()) return fail('متن سؤال ' + fa(i + 1) + ' خالی است.');
+      if (o.length < 2) return fail('سؤال ' + fa(i + 1) + ' دست‌کم دو گزینه‌ی پر لازم دارد.');
+      if (map[z.a] == null) return fail('گزینه‌ی درست سؤال ' + fa(i + 1) + ' مشخص نشده است.');
+      qs.push({ q:String(z.q).trim(), o:o, a:map[z.a] });
+    }
+    const st = locked ? D.st : startAt(), enT = rd(E0);
+    if (!isFinite(st)) return fail('تاریخ یا ساعت شروع درست نیست (مثلاً ۱۴۰۵/۰۷/۲۳ و ۰۸:۰۰).');
+    if (!isFinite(enT)) return fail('تاریخ یا ساعت پایان درست نیست.');
+    if (enT <= st) return fail('پایان مهلت باید بعد از شروع باشد.'); if (enT <= qzNow()) return fail('پایان مهلت گذشته است.');
+    pub.disabled = true;
+    const r = await send(Object.assign({ action:'qzSave', id:D.id || '', cls:x.c, course:x.s, title:D.ti.trim(), qs:qs, start:!locked && D.now ? 'now' : st, end:enT, dur:D.du, rv:D.rv, sh:D.sh }, qzAuth()));
+    pub.disabled = false; if (r.net) return fail('اینترنت در دسترس نیست؛ پیش‌نویس روی گوشی ذخیره است.'); if (r.status !== 'ok') return fail(r.message || 'ذخیره نشد.');
+    if (!q) { try { localStorage.removeItem(dk); } catch (e) {} }
+    qzOvClose(); toast(q ? 'تغییرات ذخیره شد ✓' : 'آزمونک منتشر شد ✓'); reload && reload();
+  });
+}
+
+/* --- نتایج و تحلیل سؤال‌ها --- */
+async function qzResults(id, reload) {
+  const O = qzOv('نتایج آزمونک'); O.body.append(el('div', 'empty', 'در حال بارگذاری…'));
+  const r = await send(Object.assign({ action:'qzRes', id:id }, qzAuth())); O.body.textContent = '';
+  if (r.net || r.status !== 'ok') { O.body.append(el('div', 'empty', r.net ? 'اینترنت در دسترس نیست.' : (r.message || 'بارگذاری نشد.'))); return; }
+  QZ_OFF = r.now - Date.now(); const q = r.q, st = qzState(q), done = r.rows.filter(z => z.st === 'done'), sc = done.map(z => z.sc);
+  O.hd.firstChild.textContent = q.ti + ' — ' + q.c;
+  const s0 = qzSec(O.body); s0.append(el('div', 'now-sub', q.s + '؛ ' + fa(q.qs.length) + ' سؤال؛ ' + (st === 'soon' ? 'شروع ' + qzWhen(q.st) : st === 'live' ? '🟢 فعال، مهلت تا ' + qzWhen(q.en) : '⏹ پایان‌یافته ' + qzWhen(q.en))));
+  const g = el('div', 'pl-stats'), avg = sc.length ? sc.reduce((a, b) => a + b, 0) / sc.length : null;
+  [[fa(done.length) + ' از ' + fa(r.rows.length), 'پاسخ داده‌اند'], [f2(avg), 'میانگین از ۲۰'], [sc.length ? f2(Math.min(...sc)) + ' تا ' + f2(Math.max(...sc)) : '—', 'کمترین تا بیشترین']].forEach(v => { const d = el('div', 'pl-stat'); d.append(el('b', '', v[0]), el('span', '', v[1])); g.append(d); });
+  s0.append(g);
+  // اقدام‌ها
+  const ac = el('div', 'qz-act'), ab = (t, fn, cls) => { const e = el('button', 'btn' + (cls ? ' ' + cls : ''), t); e.type = 'button'; e.addEventListener('click', fn); ac.append(e); return e; };
+  const re = () => qzResults(id, reload);
+  ab('🔄 بازخوانی', re);
+  if (st === 'live') ab('⏹ بستن الان', () => showModal({ icon:'warn', title:'بستن آزمونک', msg:'دانش‌آموزانی که هنوز ارسال نکرده‌اند دیگر نمی‌توانند شروع کنند.', buttons:[{ text:'بستن', primary:true, onClick:async () => { const x2 = await send(Object.assign({ action:'qzEnd', id:id, end:'now' }, qzAuth())); if (x2.status !== 'ok') return toast(x2.message || 'انجام نشد'); toast('آزمونک بسته شد'); reload && reload(); re(); } }, { text:'انصراف' }] }));
+  s0.append(ac);
+  if (done.length) {
+    const gw = el('div', 'qz-grade'), cl = el('label', 'qz-rv'), cb = el('input'); cb.type = 'checkbox'; cb.checked = st === 'over';
+    const ct = el('span'); ct.append(el('b', '', 'شرکت‌نکرده‌ها «غایب» ثبت شوند'), el('small', '', 'اگر آزمونک هنوز باز است، این را خاموش بگذارید.')); cl.append(cb, ct);
+    const gb = el('button', 'send', q.g ? '📥 ثبت دوباره در نمرات' : '📥 ثبت نمره‌ها در برگه‌ی نمرات'); gb.type = 'button';
+    const go = async force => { gb.disabled = true; const x2 = await send(Object.assign({ action:'qzGrade', id:id, absentMissing:cb.checked, force:!!force }, qzAuth())); gb.disabled = false;
+      if (x2.status === 'duplicate') return showModal({ icon:'warn', title:'قبلاً ثبت شده', msg:'نمره‌های این آزمونک قبلاً در برگه‌ی نمرات ثبت شده‌اند. با نمره‌های تازه جایگزین شود؟', buttons:[{ text:'جایگزین کن', primary:true, onClick:() => go(true) }, { text:'انصراف' }] });
+      if (x2.net) return toast('اینترنت در دسترس نیست'); if (x2.status !== 'ok') return showModal({ icon:'err', title:'ثبت نشد', msg:x2.message || '' });
+      showModal({ icon:'ok', title:'در نمرات ثبت شد', msg:'نمره‌ها با عنوان «آزمونک — ' + q.ti + '» ثبت شد و در کارتابل و «تحلیل نتایج آزمون» هم دیده می‌شود.' }); reload && reload(); };
+    gb.addEventListener('click', () => go(false)); gw.append(cl, gb); s0.append(gw);
+  }
+  // تحلیل سؤال‌ها
+  if (done.length) {
+    const s1 = qzSec(O.body, 'تحلیل سؤال‌ها'), pct = q.qs.map((z, i) => done.filter(d => d.an[i] === z.a).length / done.length * 100), hard = Math.min(...pct);
+    s1.append(el('div', 'now-sub', 'درصد پاسخ درست هر سؤال؛ سؤال‌های زیر ۴۰٪ احتمالاً نیاز به تدریس دوباره دارند.'));
+    q.qs.forEach((z, i) => {
+      const w = el('div', 'qz-ia'), t = el('div', 'qz-ia-t', fa(i + 1) + '. ' + z.q), br = el('div', 'ana-br'), bar = el('div', 'pbar'), f = el('i');
+      f.style.cssText = 'width:' + pct[i] + '%;background:' + (pct[i] < 40 ? 'var(--absent)' : 'var(--primary)'); bar.append(f);
+      br.append(el('span', 'k', pct[i] === hard && pct[i] < 60 ? '🔥 دشوارترین' : 'درست'), bar, el('span', 'v', anaPct(pct[i])));
+      const cnt = z.o.map((_, k) => done.filter(d => d.an[i] === k).length), bl = done.filter(d => d.an[i] == null || d.an[i] < 0).length;
+      let wk = -1; cnt.forEach((c, k) => { if (k !== z.a && c && (wk < 0 || c > cnt[wk])) wk = k; });
+      const nt = 'پاسخ درست: ' + QZ_L[z.a] + ') ' + z.o[z.a] + (wk >= 0 ? '؛ پرطرفدارترین گزینه‌ی غلط: ' + QZ_L[wk] + ') ' + z.o[wk] + ' (' + anaPct(cnt[wk] / done.length * 100) + ')' : '') + (bl ? '؛ بی‌پاسخ: ' + fa(bl) : '');
+      w.append(t, br, el('div', 'now-sub', nt)); s1.append(w);
+    });
+  }
+  // دانش‌آموزان
+  const s2 = qzSec(O.body, 'دانش‌آموزان'), ord = { done:0, started:1, none:2 };
+  const rows = r.rows.slice().sort((a, b) => ord[a.st] - ord[b.st] || (b.sc || 0) - (a.sc || 0) || a.n.localeCompare(b.n, 'fa'));
+  s2.append(tbl(['نام', 'وضعیت', 'درست', 'از ۲۰'], rows.map(z => [z.n, z.st === 'done' ? '✓ ارسال' + (z.late ? ' (' + fa(z.late) + ')' : '') : z.st === 'started' ? '⏳ در حال پاسخ' : '— شروع نکرده', z.st === 'done' ? fa(z.ok) + ' از ' + fa(q.qs.length) : '', z.st === 'done' ? f2(z.sc) : ''])));
+  const miss = r.rows.filter(z => z.st !== 'done').map(z => z.n);
+  if (miss.length) { const cp = el('button', 'link-btn', '📋 کپی نام ارسال‌نکرده‌ها'); cp.type = 'button'; cp.style.marginTop = '10px';
+    cp.addEventListener('click', async () => { try { await navigator.clipboard.writeText('ارسال‌نکرده‌ها — ' + q.ti + ' (' + q.c + '):\n' + miss.map(n => '• ' + n).join('\n')); toast('کپی شد ✓'); } catch (e) { toast('کپی در این مرورگر ممکن نیست'); } }); s2.append(cp); }
+}
+
+/* --- دانش‌آموز --- */
+async function qzStuLoad(force) {
+  if (!force && QZS && Date.now() - QZS_T < 60000) return QZS;
+  const r = await send(Object.assign({ action:'qzStu' }, qzSAuth())); if (r.net || r.status !== 'ok') return null;
+  QZ_OFF = r.now - Date.now(); QZS = r.list; QZS_T = Date.now(); return QZS;
+}
+const qzPending = () => (QZS || []).filter(q => q.my !== 'done' && qzState(q) === 'live').length;
+function qzBadge() { const b = document.querySelector('#stuNav [data-k="qz"]'); if (!b) return; const n = qzPending(); b.textContent = '📝 آزمونک‌ها' + (n ? ' (' + fa(n) + ')' : ''); b.classList.toggle('qz-hot', n > 0); }
+async function qzPrefetch() { if (ROLE !== 'student' || !SD) return; await qzStuLoad(true); qzBadge(); }
+async function stuQz(box) {
+  const c = el('div', 'card'), ls = el('div', 'empty', 'در حال بارگذاری…'); c.append(el('div', 'lbl', '📝 آزمونک‌های کلاس شما'), ls); box.append(c);
+  const r = await qzStuLoad(true); if (STU_K !== 'qz' || !ls.isConnected) return; ls.className = ''; ls.textContent = ''; qzBadge();
+  if (!r) { ls.append(el('div', 'empty', 'اینترنت در دسترس نیست.')); return; }
+  if (!r.length) { ls.append(el('div', 'empty', 'فعلاً آزمونکی برای کلاس شما ثبت نشده است 🌱')); return; }
+  r.forEach(q => ls.append(qzStuItem(q)));
+}
+function qzStuItem(q) {
+  const st = qzState(q), it = el('div', 'qz-it'), top = el('div', 'pl-top'), b = (t, fn, cls) => { const e = el('button', 'btn' + (cls ? ' ' + cls : ''), t); e.type = 'button'; e.addEventListener('click', fn); return e; };
+  const tag = q.my === 'done' ? ['done', '✓ ارسال شد'] : st === 'soon' ? ['soon', '🕒 به‌زودی'] : st === 'live' ? ['live', q.my === 'started' ? '⏳ نیمه‌تمام' : '🟢 فعال'] : ['over', '⛔ مهلت تمام شد'];
+  top.append(el('span', 'pl-c', q.ti), el('span', 'qz-st ' + tag[0], tag[1])); it.append(top);
+  it.append(el('div', 'now-sub', q.s + '؛ ' + fa(q.nq) + ' سؤال؛ ' + (q.du ? fa(q.du) + ' دقیقه' : 'بدون محدودیت زمان') + ' — ' + (st === 'soon' ? 'شروع ' + qzWhen(q.st) : st === 'live' ? 'مهلت تا ' + qzWhen(q.en) : 'پایان ' + qzWhen(q.en))));
+  if (q.my === 'done') {
+    it.append(el('div', 'qz-cnt', q.sc != null ? 'نمره‌ی شما: ' + f2(q.sc) + ' از ۲۰ (' + fa(q.ok) + ' از ' + fa(q.nq) + ' درست)' : 'نمره بعد از پایان مهلت اعلام می‌شود.'));
+    if (q.review) it.append(b('🔍 مرور پاسخ‌ها', () => qzReview(q.id)));
+  } else if (st === 'live' || (q.my === 'started' && lsGet('sia_qz_ans:' + q.id + ':' + SD.nid, null))) {
+    if (q.my === 'started' && q.dl) it.append(el('div', 'qz-cnt', q.dl > qzNow() ? '⏱ زمان باقی‌مانده: ' + qzClock(q.dl - qzNow()) : 'وقت تمام شده؛ پاسخ‌های ذخیره‌شده‌ات را ارسال کن.'));
+    it.append(b(q.my === 'started' ? '▶ ادامه / ارسال' : '▶ شروع آزمونک', () => q.my === 'started' ? qzTake(q.id) : showModal({ icon:'warn', title:'آماده‌ای؟',
+      msg:fa(q.nq) + ' سؤال' + (q.du ? '، ' + fa(q.du) + ' دقیقه وقت' : '') + '. بعد از شروع، زمان متوقف نمی‌شود؛ اینترنت و شارژ گوشی را بررسی کن.', buttons:[{ text:'شروع', primary:true, onClick:() => qzTake(q.id) }, { text:'بعداً' }] }), 'primary'));
+  } else if (st === 'over') it.append(el('div', 'now-sub', 'در این آزمونک شرکت نکردی.'));
+  return it;
+}
+async function qzTake(id) {
+  const r = await send(Object.assign({ action:'qzStart', id:id }, qzSAuth()));
+  if (r.net) return toast('اینترنت در دسترس نیست'); if (r.status !== 'ok') { showModal({ icon:'err', title:'شروع نشد', msg:r.message || '' }); QZS = null; return; }
+  QZ_OFF = r.now - Date.now();
+  const q = r.q, k = 'sia_qz_ans:' + id + ':' + SD.nid, sv0 = lsGet(k, {}), n = q.qs.length, ans = q.qs.map((_, i) => sv0.a && sv0.a[i] != null ? sv0.a[i] : -1);
+  const rnd = qzRng(id + '|' + SD.nid), ord = q.qs.map((_, i) => i), opt = q.qs.map(z => z.o.map((_, i) => i)); if (q.sh) { qzShuf(ord, rnd); opt.forEach(o => qzShuf(o, rnd)); }
+  let cur = Math.min(sv0.cur || 0, n - 1), sending = false, fired = false, finished = false; const save = () => lsSet(k, { a:ans, cur:cur });
+  save();
+  const leave = () => { qzOvClose(); QZS = null; if (ROLE === 'student' && STU_K === 'qz') stuNav('qz'); };
+  const O = qzOv(q.ti, () => { if (finished) { leave(); return false; } if (sending) return false; showModal({ icon:'warn', title:'آزمونک هنوز ادامه دارد', msg:'پاسخ‌هایت روی گوشی ذخیره شده، ولی زمان متوقف نمی‌شود. از «آزمونک‌ها» می‌توانی ادامه بدهی.', buttons:[{ text:'خروج', primary:true, onClick:leave }, { text:'برگشت به آزمونک' }] }); return false; });
+  const tm = el('div', 'qz-tm'); O.hd.insertBefore(tm, O.hd.lastChild);
+  const dots = el('div', 'qz-dots'), view = el('div', 'qz-view'), nav = el('div', 'qz-nav'), sb = el('button', 'send', 'ارسال پاسخ‌ها'); sb.type = 'button';
+  O.body.append(el('div', 'now-sub', q.s + '؛ ' + fa(n) + ' سؤال'), dots, view, nav, sb);
+  const paint = () => {
+    dots.textContent = ''; ord.forEach((qi, p) => { const d = el('button', (ans[qi] >= 0 ? 'on' : '') + (p === cur ? ' cur' : ''), fa(p + 1)); d.type = 'button'; d.setAttribute('aria-label', 'سؤال ' + (p + 1) + (ans[qi] >= 0 ? '، پاسخ داده شده' : ''));
+      d.addEventListener('click', () => { cur = p; save(); paint(); }); dots.append(d); });
+    const qi = ord[cur], z = q.qs[qi]; view.textContent = '';
+    view.append(el('div', 'qz-qn', 'سؤال ' + fa(cur + 1) + ' از ' + fa(n)), el('div', 'qz-qt', z.q));
+    opt[qi].forEach((oi, p) => { const b = el('button', 'qz-op' + (ans[qi] === oi ? ' sel' : '')); b.type = 'button'; b.setAttribute('aria-pressed', String(ans[qi] === oi)); b.append(el('b', '', QZ_L[p]), el('span', '', z.o[oi]));
+      b.addEventListener('click', () => { if (sending) return; ans[qi] = ans[qi] === oi ? -1 : oi; vib(); save(); paint(); }); view.append(b); });
+    nav.textContent = ''; const pv = el('button', 'btn', '→ قبلی'), nx = el('button', 'btn' + (cur < n - 1 ? ' primary' : ''), 'بعدی ←'); pv.type = nx.type = 'button';
+    pv.disabled = cur === 0 || sending; nx.disabled = cur === n - 1 || sending; pv.addEventListener('click', () => { cur--; save(); paint(); }); nx.addEventListener('click', () => { cur++; save(); paint(); }); nav.append(pv, nx);
+    const left = ans.filter(a => a < 0).length; sb.disabled = sending; sb.textContent = sending ? 'در حال ارسال…' : 'ارسال پاسخ‌ها' + (left ? ' (' + fa(left) + ' بی‌پاسخ)' : ' ✓');
+  };
+  const submit = async () => {
+    if (sending) return; sending = true; paint();
+    const x2 = await send(Object.assign({ action:'qzSubmit', id:id, ans:ans }, qzSAuth())); sending = false;
+    if (x2.net || x2.status !== 'ok') { paint(); showModal({ icon:x2.net ? 'cloud' : 'err', title:'ارسال نشد', msg:(x2.net ? 'اینترنت قطع است. ' : (x2.message || '') + ' ') + 'پاسخ‌هایت روی گوشی ذخیره است؛ دوباره تلاش کن.', buttons:[{ text:'تلاش دوباره', primary:true, onClick:submit }, { text:'بستن' }] }); return; }
+    try { localStorage.removeItem(k); } catch (e) {} clearInterval(QZT); window.onbeforeunload = null; QZS = null; vib();
+    finished = true; O.body.textContent = ''; tm.remove();
+    const res = el('div', 'qz-res');
+    if (x2.sc != null) res.append(el('div', 'qz-big', f2(x2.sc)), el('div', 'now-t', 'از ۲۰'), el('div', 'now-sub', fa(x2.ok) + ' از ' + fa(x2.tot) + ' پاسخ درست' + (x2.sc >= 17 ? ' — عالی بود! 🎉' : x2.sc >= 10 ? ' — خوب بود 👏' : ' — با مرور دوباره بهتر می‌شود 💪')));
+    else res.append(el('div', 'qz-big', '✓'), el('div', 'now-t', 'پاسخ‌هایت ثبت شد'), el('div', 'now-sub', 'نمره بعد از پایان مهلت در همین بخش اعلام می‌شود.'));
+    const bk = el('button', 'send', 'بازگشت به آزمونک‌ها'); bk.type = 'button'; bk.addEventListener('click', leave); res.append(bk); O.body.append(res);
+    if (x2.key) O.body.append(qzReviewList(q.qs.map((z, i) => ({ q:z.q, o:z.o, a:x2.key[i] })), x2.ans || ans));
+  };
+  sb.addEventListener('click', () => { const left = ans.filter(a => a < 0).length;
+    showModal({ icon:left ? 'warn' : 'ok', title:'ارسال پاسخ‌ها؟', msg:left ? fa(left) + ' سؤال بی‌پاسخ مانده است. بعد از ارسال، تغییر ممکن نیست.' : 'به همه‌ی سؤال‌ها پاسخ داده‌ای. بعد از ارسال، تغییر ممکن نیست.', buttons:[{ text:'ارسال', primary:true, onClick:submit }, { text:'برگشت' }] }); });
+  window.onbeforeunload = e => { e.preventDefault(); e.returnValue = ''; return ''; };
+  const tick = () => { const left = r.dl - qzNow(); tm.textContent = '⏱ ' + qzClock(left); tm.classList.toggle('warn', left < 60000);
+    if (left <= 0 && !fired) { fired = true; tm.textContent = '⏰ وقت تمام شد'; setTimeout(submit, Math.random() * 4000); } };
+  paint(); tick(); clearInterval(QZT); QZT = setInterval(tick, 500);
+}
+function qzReviewList(qs, ans) {
+  const w = el('div');
+  qs.forEach((z, i) => { const c = el('div', 'qz-q'), my = ans[i], ok = my === z.a; c.append(el('div', 'qz-qh', fa(i + 1) + '. ' + (my == null || my < 0 ? '⚪ بی‌پاسخ' : ok ? '✅ درست' : '❌ نادرست')), el('div', 'qz-qt sm', z.q));
+    z.o.forEach((o, k) => { const r = el('div', 'qz-rvo' + (k === z.a ? ' ok' : k === my ? ' bad' : '')); r.append(el('b', '', k === z.a ? '✓' : k === my ? '✗' : '•'), el('span', '', o + (k === my ? ' (پاسخ تو)' : ''))); c.append(r); }); w.append(c); });
+  return w;
+}
+async function qzReview(id) {
+  const O = qzOv('مرور پاسخ‌ها'); O.body.append(el('div', 'empty', 'در حال بارگذاری…'));
+  const r = await send(Object.assign({ action:'qzReview', id:id }, qzSAuth())); O.body.textContent = '';
+  if (r.net || r.status !== 'ok') { O.body.append(el('div', 'empty', r.net ? 'اینترنت در دسترس نیست.' : (r.message || 'بارگذاری نشد.'))); return; }
+  O.hd.firstChild.textContent = r.ti + ' — مرور پاسخ‌ها';
+  const res = el('div', 'qz-res'); res.append(el('div', 'qz-big', f2(r.sc)), el('div', 'now-sub', 'از ۲۰؛ ' + fa(r.ok) + ' از ' + fa(r.tot) + ' درست')); O.body.append(res, qzReviewList(r.qs, r.ans));
+}
 
 /* ======================= نمودارها، کارنامه‌ی چاپی و نشان‌ها ======================= */
 const NS = 'http://www.w3.org/2000/svg', JM = ['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'], SCHOOL_NAME = 'دبیرستان صلاح‌الدین ایوبی';
