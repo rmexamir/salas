@@ -342,6 +342,8 @@ a.tel{display:inline-flex;align-items:center;min-height:44px;padding:0 14px;bord
 .tmq.fade{opacity:0}
 .tmq b{display:block;font-size:11px;color:#B8962E;margin-bottom:2px}
 .mg-bar.jp{flex-wrap:nowrap}.mg-bar.jp select{flex:1 1 0;padding-inline:8px;font-size:14px}
+.mg-tools{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+.mg-tools .btn{font:inherit;font-weight:800;width:100%;min-height:52px;display:flex;align-items:center;justify-content:center;text-align:center;text-decoration:none;color:inherit}
 .cns-note{margin:6px 0;padding:8px 10px;border-radius:10px;background:var(--late-bg);color:var(--late);font-weight:800;font-size:14px}
 .cns-it .now-sub{line-height:1.8}
 .btn.primary{background:var(--primary);color:var(--on-primary);border-color:var(--primary)}
@@ -636,11 +638,6 @@ a.tel{display:inline-flex;align-items:center;min-height:44px;padding:0 14px;bord
         <div class="lbl" style="margin-bottom:8px;color:var(--absent)">⚠️ حضور و غیاب ثبت‌نشده (بیش از ۱۵ دقیقه از شروع زنگ)</div>
         <div id="alertList"></div>
       </div>
-      <div class="card" id="bellCard">
-        <div class="lbl" style="margin-bottom:6px">🔔 زنگ مدرسه</div>
-        <div id="bellNext" class="now-sub"></div>
-        <button id="bellBtn" class="btn" type="button" style="width:100%">🔔 روشن کردن زنگ مدرسه</button>
-      </div>
       <div class="card">
         <div class="mg-bar">
           <select id="mgCls" aria-label="کلاس"></select>
@@ -649,10 +646,8 @@ a.tel{display:inline-flex;align-items:center;min-height:44px;padding:0 14px;bord
         </div>
         <div class="mg-bar">
           <button id="mgToday" class="btn" type="button">امروز</button>
-          <button id="mgReload" class="btn" type="button">بازخوانی</button>
           <button id="mgCsvA" class="btn" type="button">دانلود حضور و غیاب (CSV)</button>
           <button id="mgCsvG" class="btn" type="button">دانلود نمرات (CSV)</button>
-          <a id="mgOpen" class="btn" style="display:none;text-decoration:none;text-align:center;line-height:52px" target="_blank" rel="noopener">باز کردن Google Sheet</a>
         </div>
         <div id="mgMsg" class="empty" hidden></div>
       </div>
@@ -746,6 +741,14 @@ a.tel{display:inline-flex;align-items:center;min-height:44px;padding:0 14px;bord
       </div>
       <div class="card"><details><summary class="lbl" style="cursor:pointer">جدول کامل حضور و غیاب (جدیدترین‌ها)</summary><div class="mg-wrap" style="margin-top:8px"><table class="mg-tbl" id="mgAtt"></table></div></details></div>
       <div class="card"><details><summary class="lbl" style="cursor:pointer">جدول کامل نمرات (جدیدترین‌ها)</summary><div class="mg-wrap" style="margin-top:8px"><table class="mg-tbl" id="mgGr"></table></div></details></div>
+      <div class="card" id="mgTools">
+        <div class="lbl" style="margin-bottom:10px">ابزارهای سامانه</div>
+        <div class="mg-tools">
+          <button id="mgReload" class="btn" type="button">🔄 بازخوانی اطلاعات</button>
+          <a id="mgOpen" class="btn" style="display:none" target="_blank" rel="noopener">📊 باز کردن Google Sheet</a>
+        </div>
+        <div id="mgStamp" class="now-sub" style="margin-top:10px;text-align:center"></div>
+      </div>
     </div>
   </section>
   <div class="tmw-host" id="tmMain"></div>
@@ -1260,7 +1263,7 @@ async function mgLoad() {
   $('#mgLogin').hidden = true; $('#mgBody').hidden = false; edInit(); loadDir(); excInit(); pfInit(); v3Init(); if (!$('#mrMonth').value) $('#mrMonth').value = dateStr().slice(0, 7);
   mgFillSel($('#mgCls'), 'همه کلاس‌ها', MG.att.map(r => r[3]).concat(MG.gr.map(r => r[3])));
   mgFillSel($('#mgTch'), 'همه دبیران', MG.att.map(r => r[5]).concat(MG.gr.map(r => r[5])));
-  mgRender(); absInit(); pollToday(); bellNext();
+  mgRender(); absInit(); pollToday(); { const n = new Date(); $('#mgStamp').textContent = 'آخرین بازخوانی: ساعت ' + fa(pad(n.getHours()) + ':' + pad(n.getMinutes())); }
 }
 function mgCsv(name, head, rows) {
   const q = v => '"' + String(v).replace(/"/g, '""') + '"';
@@ -1820,9 +1823,9 @@ function printCard(d) {
 window.addEventListener('afterprint', () => document.body.classList.remove('printing'));
 { const pa = document.createElement('div'); pa.id = 'printArea'; document.body.append(pa); }
 
-/* ======================= گزارش فشرده، زنگ مدرسه و هشدار حضور و غیاب ثبت‌نشده ======================= */
+/* ======================= گزارش فشرده و هشدار حضور و غیاب ثبت‌نشده ======================= */
 const ATT_GRACE_MIN = 15;            // اگر تا ۱۵ دقیقه بعد از شروع زنگ حضور و غیاب ثبت نشود، هشدار می‌آید
-let TODAY = [], SEEN = {}, bellOn = false, actx = null, rung = {};
+let TODAY = [], SEEN = {};
 function periodsOf(d) {              // زنگ‌های امروز با توجه به شیفت هفته
   if (d.getDay() === 5) return [];
   const sh = shiftOfDate(d);
@@ -1851,36 +1854,8 @@ function renderAlerts() {
     const t = DIR.teachers.find(q => normT(q.n) === normT(x.n)); if (t && t.ph) { const a = el('a', 'tel', 'تماس با دبیر'); a.href = 'tel:' + t.ph; r.append(a); }
     box.append(r); const k = dateStr() + '|' + x.p + '|' + x.c + '|' + x.s; if (!SEEN[k]) { SEEN[k] = 1; fresh = true; }
   });
-  if (fresh) { toast('⚠️ ' + fa(list.length) + ' زنگ بدون حضور و غیاب'); ring('beep'); if (navigator.vibrate) navigator.vibrate([300, 100, 300]); }
+  if (fresh) { toast('⚠️ ' + fa(list.length) + ' زنگ بدون حضور و غیاب'); if (navigator.vibrate) navigator.vibrate([300, 100, 300]); }
 }
-function ring(kind) {                // زنگ برقی مدرسه با WebAudio (بدون فایل صوتی)
-  if (!bellOn || !actx) return; const t0 = actx.currentTime;
-  ({ start:[[0, 2.5]], end:[[0, .7], [1, .7], [2, .7]], beep:[[0, .3], [.5, .3]] }[kind] || []).forEach(b => {
-    const o = actx.createOscillator(), g = actx.createGain(), l = actx.createOscillator(), lg = actx.createGain(), out = actx.createGain(), s = t0 + b[0], e = s + b[1];
-    o.type = 'triangle'; o.frequency.value = 1500; l.type = 'square'; l.frequency.value = 24; lg.gain.value = .25; g.gain.value = .3;
-    l.connect(lg); lg.connect(g.gain); o.connect(g); g.connect(out); out.connect(actx.destination);
-    out.gain.setValueAtTime(0, s); out.gain.linearRampToValueAtTime(.9, s + .03); out.gain.setValueAtTime(.9, e - .05); out.gain.linearRampToValueAtTime(0, e);
-    o.start(s); l.start(s); o.stop(e + .05); l.stop(e + .05); });
-  if (navigator.vibrate && kind !== 'beep') navigator.vibrate(kind === 'start' ? [400, 150, 400] : [200, 100, 200]);
-}
-function bellNext() {
-  const now = new Date(); let best = null;
-  periodsOf(now).forEach(P => [['شروع زنگ ', P.a], ['پایان زنگ ', P.b]].forEach(q => { if (q[1] > now && (!best || q[1] < best[1])) best = [q[0] + ORD[P.p - 1], q[1]]; }));
-  $('#bellNext').textContent = !bellOn ? 'صدا خاموش است. برای شنیدن زنگ، دکمه را بزنید و این صفحه را باز نگه دارید.'
-    : best ? 'زنگ بعدی: ' + best[0] + ' · ساعت ' + fa(pad(best[1].getHours()) + ':' + pad(best[1].getMinutes())) : 'امروز زنگ دیگری نیست.';
-}
-$('#bellBtn').addEventListener('click', () => {
-  bellOn = !bellOn;
-  if (bellOn) { actx = actx || new (window.AudioContext || window.webkitAudioContext)(); if (actx.state === 'suspended') actx.resume(); ring('beep'); }
-  $('#bellBtn').textContent = bellOn ? '🔕 خاموش کردن زنگ' : '🔔 روشن کردن زنگ مدرسه'; bellNext();
-});
-setInterval(() => {
-  if (!bellOn) return; const now = new Date();
-  periodsOf(now).forEach(P => [['start', P.a], ['end', P.b]].forEach(q => {
-    const k = dateStr() + q[0] + P.p, dt = now - q[1];
-    if (dt >= 0 && dt < 5000 && !rung[k]) { rung[k] = 1; ring(q[0]); toast('🔔 ' + (q[0] === 'start' ? 'شروع زنگ ' : 'پایان زنگ ') + ORD[P.p - 1]); } }));
-  if (now.getSeconds() % 20 === 0) bellNext();
-}, 1000);
 setInterval(pollToday, 60000); setInterval(renderAlerts, 15000);
 $('#mgToday').addEventListener('click', () => { $('#mgDate').value = dateStr(); mgRender(); });
 
