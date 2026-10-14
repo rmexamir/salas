@@ -401,6 +401,42 @@ a.tel{display:inline-flex;align-items:center;min-height:44px;padding:0 14px;bord
 .focus-btns .btn.primary{background:#E0BC6B;border-color:#E0BC6B;color:#0B1510}
 .focus-btns .btn.ghost{grid-column:1/-1;height:44px;background:transparent;border-color:transparent;color:#CFE3D6;font-weight:600}
 .focus-btns .btn.full{grid-column:1/-1}
+/* ---------- تحلیل نتایج آزمون (کارتابل) ---------- */
+.ana>summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px;min-height:44px}
+.ana>summary::-webkit-details-marker{display:none}
+.ana>summary::after{content:"▾";flex:none;color:var(--muted);font-size:18px;transition:transform .2s}
+.ana[open]>summary::after{transform:rotate(180deg)}
+.ana>summary small{display:block;color:var(--muted);font-size:13px;font-weight:600;margin-top:2px}
+.ana-t{font-weight:900;font-size:16px}
+.ana[open]>summary{margin-bottom:12px}
+.ana-h{display:block;margin:18px 0 8px;font-weight:800;color:var(--ink);font-size:14px}
+.ana-br{display:flex;align-items:center;gap:10px;min-height:34px}
+.ana-br .k{width:66px;flex:none;color:var(--muted);font-size:13px;font-weight:700}
+.ana-br .v{min-width:96px;flex:none;font-size:13px;font-weight:700;text-align:end}
+.ana-cmp{padding:10px 14px;border-radius:12px;background:var(--input);border:1px solid var(--line);font-size:14px;line-height:1.8}
+.ana-cmp b{font-size:16px;font-weight:900}
+.ana-cmp.up b{color:var(--present)} .ana-cmp.down b{color:var(--absent)}
+.pl-why span.good{background:var(--present-bg);border-color:transparent;color:var(--present)}
+.ana .link-btn{margin:2px 0 4px}
+.ana-ta{width:100%;min-height:100px;padding:12px 14px;border-radius:12px;border:1.5px solid var(--line);background:var(--input);color:inherit;font:inherit;font-size:15px;line-height:1.8;resize:vertical;outline:none}
+.ana-ta:focus{border-color:var(--teal);background:var(--card)}
+.ana-sum{font-weight:500}
+.ana-leg{text-align:center;font-size:12px;margin:0}
+@media print{
+  #printArea .pa-two{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:center}
+  #printArea .ana-br{display:flex;align-items:center;gap:8px;min-height:26px}
+  #printArea .ana-br .k{width:62px;flex:none} #printArea .ana-br .v{min-width:86px;text-align:left}
+  #printArea .pbar{flex:1;height:12px;border-radius:6px;background:#e6e6e6!important;overflow:hidden;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  #printArea .pbar i{display:block;height:100%;background:#2f6b4f!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  #printArea .ana-br.low .pbar i{background:#b3373d!important}
+  #printArea p{margin:4px 0}
+  #printArea .pa-lines div{border-bottom:1px dotted #777;height:28px}
+  #printArea .pa-sign{display:flex;justify-content:space-between;gap:24px;margin-top:30px;font-weight:700}
+  #printArea .pa-sign div{flex:1;min-height:60px}
+  #printArea table,#printArea .pa-two,#printArea .pa-sign{break-inside:avoid}
+  #printArea h2{break-after:avoid}
+  body.printing{background:#fff!important}
+}
 @media print{.focus-ov{display:none!important}}
 @media (prefers-reduced-motion:reduce){.focus-ring .fr-fg{transition:none}}
 </style>
@@ -1803,7 +1839,7 @@ function renderInb() {
   if (!INB || !INB.length) { box.append(el('div', 'empty', 'برای شما در برنامه‌ی هفتگی کلاس و درسی ثبت نشده است.')); return; }
   const x = INB[+$('#inbSel').value || 0], sm = el('div', 'card');
   sm.append(el('div', 'now-t', x.c + ' · ' + x.s), el('div', 'now-sub', 'جلسات ثبت‌شده: ' + fa(x.sessions) + ' · میانگین کلاس: ' + f2(x.avg) + ' (از ۲۰)'));
-  if (x.top && x.top.length) sm.append(el('div', 'now-sub', x.top.map((t, i) => ['🥇', '🥈', '🥉'][i] + ' ' + t.n + ' (' + f2(t.avg) + ')').join('  ·  '))); box.append(sm);
+  if (x.top && x.top.length) sm.append(el('div', 'now-sub', x.top.map((t, i) => ['🥇', '🥈', '🥉'][i] + ' ' + t.n + ' (' + f2(t.avg) + ')').join('  ·  '))); box.append(sm); anaMount(box, x);
   x.students.forEach(st => {
     const d = el('details', 'dir-it'), h = el('summary'), b = el('div', 'dir-b');
     h.append(el('span', '', st.n), el('small', '', 'غ ' + fa(st.ab) + ' · ت ' + fa(st.lt) + ' · میانگین ' + f2(st.avg)));
@@ -1818,6 +1854,164 @@ function renderInb() {
   });
 }
 $('#inbSel').addEventListener('change', renderInb); $('#inbRef').addEventListener('click', loadInbox);
+/* ======================= دبیر/مدیر: تحلیل خودکار نتایج آزمون + برگه‌ی چاپی =======================
+   همه‌ی محاسبه‌ها روی داده‌ای انجام می‌شود که کارتابل همین حالا می‌گیرد (نمره‌ی هر دانش‌آموز در هر آزمون)؛ Code.gs تغییری لازم ندارد. */
+const ANA_BANDS = [[0, 10, 'زیر ۱۰'], [10, 12, '۱۰ تا ۱۲'], [12, 15, '۱۲ تا ۱۵'], [15, 17, '۱۵ تا ۱۷'], [17, 20.01, '۱۷ تا ۲۰']];
+let ANA_OPEN = false, ANA_SEL = {};
+const anaPct = v => fa(Math.round(v)) + '٪';
+const anaDelta = v => v == null ? '—' : Math.abs(v) < 0.005 ? 'بدون تغییر' : (v > 0 ? '↑ ' : '↓ ') + f2(Math.abs(v));
+const anaDeltaPct = v => v == null ? '—' : Math.abs(v) < 0.5 ? 'بدون تغییر' : (v > 0 ? '↑ ' : '↓ ') + anaPct(Math.abs(v));
+const anaTeacher = x => { const r = SCH.find(q => normT(q[0]) === normT(x.c) && normT(q[3]) === normT(x.s)); return r ? r[4] : (ROLE === 'teacher' ? S.teacher : ''); };
+function anaExams(x) {            // آزمون‌های این کلاس و درس، از قدیم به جدید
+  const M = {};
+  (x.students || []).forEach(st => (st.gr || []).forEach(g => {
+    const k = g.d + '|' + g.e, o = M[k] = M[k] || { k:k, d:g.d, e:g.e, rows:[], ms:{} };
+    o.rows.push({ n:st.n, a:!!g.a, v:g.n, s:g.s, m:g.m }); if (g.m != null) o.ms[g.m] = (o.ms[g.m] || 0) + 1;
+  }));
+  const list = Object.keys(M).map(k => M[k]).sort((a, b) => a.d < b.d ? -1 : a.d > b.d ? 1 : a.e < b.e ? -1 : 1);
+  list.forEach(o => {
+    const v = o.rows.filter(r => !r.a && r.v != null).map(r => r.v).sort((a, b) => a - b), N = v.length;
+    const mean = N ? v.reduce((a, b) => a + b, 0) / N : null;
+    o.m = +Object.keys(o.ms).sort((a, b) => o.ms[b] - o.ms[a])[0] || null; o.N = N; o.A = o.rows.filter(r => r.a).length; o.vals = v;
+    o.mean = mean; o.med = N ? (N % 2 ? v[(N - 1) / 2] : (v[N / 2 - 1] + v[N / 2]) / 2) : null;
+    o.sd = N ? Math.sqrt(v.reduce((a, b) => a + (b - mean) * (b - mean), 0) / N) : null;
+    o.max = N ? v[N - 1] : null; o.min = N ? v[0] : null; o.pass = N ? v.filter(q => q >= 10).length / N * 100 : null;
+    o.bands = ANA_BANDS.map(b => v.filter(q => q >= b[0] && q < b[1]).length);
+  });
+  return list;
+}
+function anaOf(x, list, k) {      // جزئیات یک آزمون: مقایسه با قبلی، گروه رفع اشکال، غایبین، ثبت‌نشده‌ها
+  const i = list.findIndex(o => o.k === k), o = list[i], prev = i > 0 ? list[i - 1] : null, pv = {};
+  if (prev) prev.rows.forEach(r => { if (!r.a && r.v != null) pv[normT(r.n)] = r.v; });
+  const rows = o.rows.map(r => Object.assign({ dl:!r.a && r.v != null && pv[normT(r.n)] != null ? r.v - pv[normT(r.n)] : null }, r));
+  const has = {}; o.rows.forEach(r => { has[normT(r.n)] = 1; });
+  return { o:o, prev:prev, rows:rows,
+    up:rows.filter(r => r.dl != null && r.dl >= 2).sort((a, b) => b.dl - a.dl).slice(0, 5),
+    down:rows.filter(r => r.dl != null && r.dl <= -3).sort((a, b) => a.dl - b.dl),
+    help:rows.filter(r => !r.a && r.v != null && (r.v < 10 || (r.dl != null && r.dl <= -3))).sort((a, b) => a.v - b.v),
+    abs:rows.filter(r => r.a), miss:(x.students || []).filter(s => !has[normT(s.n)]).map(s => s.n) };
+}
+function anaSummary(A) {
+  const o = A.o, p = A.prev, t = [];
+  t.push('در این آزمون ' + fa(o.N) + ' نفر شرکت کردند' + (o.A ? ' و ' + fa(o.A) + ' نفر غایب ' + (o.A > 1 ? 'بودند.' : 'بود.') : ' و غایبی نداشت.'));
+  if (o.N) t.push('میانگین کلاس ' + f2(o.mean) + ' از ۲۰، میانه ' + f2(o.med) + ' و درصد قبولی ' + anaPct(o.pass) + ' است.');
+  if (p && p.mean != null && o.mean != null) { const d = o.mean - p.mean; t.push('نسبت به آزمون قبلی (' + p.e + '، ' + fa(p.d) + ') میانگین کلاس ' + (Math.abs(d) < 0.05 ? 'تقریباً ثابت ماند.' : f2(Math.abs(d)) + ' نمره ' + (d > 0 ? 'بالا رفت.' : 'پایین آمد.'))); }
+  if (o.N >= 3) t.push(o.sd >= 4 ? 'پراکندگی نمره‌ها زیاد است (انحراف معیار ' + f2(o.sd) + ')؛ سطح یادگیری در کلاس ناهمگن است و آموزش گروهی یا تفکیکی می‌تواند کمک کند.'
+    : o.sd < 2 ? 'نمره‌ها به هم نزدیک‌اند (انحراف معیار ' + f2(o.sd) + ') و کلاس از نظر یادگیری این بخش هم‌سطح است.' : 'پراکندگی نمره‌ها متوسط است (انحراف معیار ' + f2(o.sd) + ').');
+  if (A.help.length) t.push(fa(A.help.length) + ' نفر به رفع اشکال نیاز ' + (A.help.length > 1 ? 'دارند.' : 'دارد.'));
+  if (A.abs.length) t.push(fa(A.abs.length) + ' نفر باید در آزمون جبرانی شرکت ' + (A.abs.length > 1 ? 'کنند.' : 'کند.'));
+  return t.join(' ');
+}
+function anaBars(o, print) {      // توزیع نمرات: میله‌های افقی
+  const w = el('div', print ? 'pa-dist' : 'ana-dist'), mx = Math.max(1, ...o.bands);
+  ANA_BANDS.slice().reverse().forEach((b, j) => {
+    const i = ANA_BANDS.length - 1 - j, c = o.bands[i], r = el('div', 'ana-br' + (i === 0 ? ' low' : '')), bar = el('div', 'pbar'), f = el('i');
+    f.style.cssText = 'width:' + (c / mx * 100) + '%;background:' + (i === 0 ? 'var(--absent)' : 'var(--primary)') + ';-webkit-print-color-adjust:exact;print-color-adjust:exact';
+    bar.append(f); r.append(el('span', 'k', b[2]), bar, el('span', 'v', fa(c) + ' نفر' + (o.N ? ' (' + anaPct(c / o.N * 100) + ')' : '')));
+    w.append(r);
+  });
+  return w;
+}
+function anaTrend(list, k) {      // روند میانگین کلاس؛ قدیمی‌ترین سمت راست
+  const pts = list.filter(o => o.mean != null), wrap = el('div');
+  if (pts.length < 2) { wrap.append(el('div', 'now-sub', 'برای رسم روند، دست‌کم دو آزمون لازم است.')); return wrap; }
+  const W = 320, H = 170, L = 26, R = 12, T = 16, B = 26, X = i => W - R - i * (W - L - R) / (pts.length - 1), Y = v => T + (1 - v / 20) * (H - T - B);
+  const svg = sv('svg', { viewBox:'0 0 ' + W + ' ' + H, width:'100%', role:'img', 'aria-label':'روند میانگین کلاس در آزمون‌ها' }), cap = el('div', 'now-sub');
+  cap.style.cssText = 'text-align:center;margin:2px 0 0;min-height:1.6em';
+  [0, 5, 10, 15, 20].forEach(v => svg.append(sv('line', { x1:L, x2:W - R, y1:Y(v), y2:Y(v), style:'stroke:var(--line);stroke-width:1' + (v === 10 ? ';stroke:var(--absent);stroke-dasharray:4 4;opacity:.6' : '') }),
+    sv('text', { x:L - 6, y:Y(v) + 4, 'text-anchor':'end', direction:'ltr', 'font-size':10, style:'fill:var(--muted)' }, fa(v))));
+  svg.append(sv('polyline', { points:pts.map((o, i) => X(i) + ',' + Y(o.mean)).join(' '), fill:'none', style:'stroke:var(--primary);stroke-width:2' }));
+  const show = o => { cap.textContent = fa(o.d) + ' — ' + o.e + ': میانگین ' + f2(o.mean) + '، قبولی ' + anaPct(o.pass); };
+  pts.forEach((o, i) => {
+    const on = o.k === k; svg.append(sv('circle', { cx:X(i), cy:Y(o.mean), r:on ? 6 : 4, style:'fill:var(--primary);stroke:var(--card);stroke-width:2' }));
+    if (on) { const edge = X(i) < L + 34; svg.append(sv('text', { x:edge ? X(i) + 10 : X(i), y:Y(o.mean) - 10, 'text-anchor':edge ? 'start' : 'middle', direction:'ltr', 'font-size':11, 'font-weight':800, style:'fill:var(--ink)' }, f2(o.mean))); }
+    const hw = (W - L - R) / Math.max(1, pts.length - 1) / 2, hit = sv('rect', { x:X(i) - hw, y:0, width:hw * 2, height:H, fill:'transparent', style:'cursor:pointer' });
+    hit.append(sv('title', {}, fa(o.d) + ' — ' + o.e + ': ' + f2(o.mean))); hit.addEventListener('pointerenter', () => show(o)); hit.addEventListener('click', () => show(o)); svg.append(hit);
+  });
+  [0, pts.length - 1].forEach(i => svg.append(sv('text', { x:X(i), y:H - 8, 'text-anchor':'middle', 'font-size':10, style:'fill:var(--muted)' }, fa(String(pts[i].d).slice(5)))));
+  show(pts.find(o => o.k === k) || pts[pts.length - 1]); wrap.append(svg, cap, el('div', 'now-sub ana-leg', 'خط‌چین قرمز: حد قبولی (۱۰)')); return wrap;
+}
+const anaNoteKey = (x, k) => normT(x.c) + '|' + normT(x.s) + '|' + k;
+function anaMount(box, x) {
+  const list = anaExams(x); if (!list.length) return;
+  const pk = normT(x.c) + '|' + normT(x.s), k = list.some(o => o.k === ANA_SEL[pk]) ? ANA_SEL[pk] : list[list.length - 1].k, A = anaOf(x, list, k), o = A.o;
+  const card = el('details', 'card ana'), sm = el('summary'), body = el('div');
+  card.open = ANA_OPEN; card.addEventListener('toggle', () => { ANA_OPEN = card.open; });
+  const hd = el('div'); hd.append(el('span', 'ana-t', '📊 تحلیل نتایج آزمون'), el('small', '', o.e + ' ' + fa(o.d) + '، میانگین ' + f2(o.mean) + '، قبولی ' + (o.N ? anaPct(o.pass) : '—'))); sm.append(hd);
+  const sel = el('select'); sel.setAttribute('aria-label', 'انتخاب آزمون');
+  list.slice().reverse().forEach(q => { const op = el('option', '', fa(q.d) + ' — ' + q.e + ' (' + fa(q.N) + ' نفر)'); op.value = q.k; sel.append(op); }); sel.value = k;
+  sel.addEventListener('change', () => { ANA_SEL[pk] = sel.value; ANA_OPEN = true; const nx = anaMountEl(x); card.replaceWith(nx); });
+  const fd = el('div', 'field'); fd.append(sel); body.append(fd);
+  if (!o.N) { body.append(el('div', 'empty', 'برای این آزمون نمره‌ای ثبت نشده است' + (o.A ? '؛ همه‌ی ' + fa(o.A) + ' نفر غایب بوده‌اند.' : '.'))); card.append(sm, body); box.append(card); return card; }
+  // شاخص‌ها
+  const g = el('div', 'pl-stats ana-kpi');
+  [[f2(o.mean), 'میانگین (از ۲۰)'], [anaPct(o.pass), 'درصد قبولی'], [fa(o.N), 'شرکت‌کننده' + (o.A ? '، ' + fa(o.A) + ' غایب' : '')],
+   [f2(o.med), 'میانه'], [f2(o.sd), 'انحراف معیار'], [f2(o.min) + ' تا ' + f2(o.max), 'کمترین تا بیشترین']].forEach(q => { const d = el('div', 'pl-stat'); d.append(el('b', '', q[0]), el('span', '', q[1])); g.append(d); });
+  body.append(g);
+  if (o.m && o.m !== 20) body.append(el('div', 'now-sub', 'نمره‌ی این آزمون از ' + fa(o.m) + ' گرفته شده و همه‌ی شاخص‌ها بر مبنای ۲۰ محاسبه شده‌اند.'));
+  // توزیع
+  body.append(el('div', 'lbl ana-h', 'توزیع نمرات'), anaBars(o));
+  // مقایسه با آزمون قبلی
+  if (A.prev && A.prev.mean != null) {
+    const d = o.mean - A.prev.mean, c = el('div', 'ana-cmp ' + (d > 0.05 ? 'up' : d < -0.05 ? 'down' : ''));
+    c.append(el('b', '', anaDelta(d)), el('span', '', ' میانگین نسبت به ' + A.prev.e + ' ' + fa(A.prev.d.slice(5)) + ' (' + f2(A.prev.mean) + ')')); body.append(el('div', 'lbl ana-h', 'مقایسه با آزمون قبلی'), c);
+    if (A.up.length) { const w = el('div', 'pl-why'); A.up.forEach(r => w.append(el('span', 'good', '↑ ' + r.n + '، ' + f2(r.dl) + ' نمره'))); body.append(el('div', 'now-sub', 'بیشترین پیشرفت:'), w); }
+    if (A.down.length) { const w = el('div', 'pl-why'); A.down.forEach(r => w.append(el('span', 'hot', '↓ ' + r.n + '، ' + f2(-r.dl) + ' نمره'))); body.append(el('div', 'now-sub', 'افت دست‌کم ۳ نمره:'), w); }
+  }
+  // گروه رفع اشکال و غایبین
+  const lst = (title, names, note, empty) => {
+    body.append(el('div', 'lbl ana-h', title));
+    if (!names.length) { body.append(el('div', 'now-sub', empty)); return; }
+    const w = el('div', 'pl-why'); names.forEach(q => w.append(el('span', q[1] || '', q[0]))); body.append(w);
+    const cp = el('button', 'link-btn', '📋 کپی فهرست'); cp.type = 'button';
+    cp.addEventListener('click', async () => { const t = title + ' — ' + x.c + ' · ' + x.s + ' (' + o.e + ' ' + fa(o.d) + '):\n' + names.map(q => '• ' + q[0]).join('\n');
+      try { await navigator.clipboard.writeText(t); toast('فهرست کپی شد ✓'); } catch (e) { toast('کپی در این مرورگر ممکن نیست'); } });
+    if (note) body.append(el('div', 'now-sub', note)); body.append(cp);
+  };
+  lst('گروه رفع اشکال پیشنهادی', A.help.map(r => [r.n + ': ' + f2(r.v) + (r.dl != null && r.dl <= -3 ? ' (افت ' + f2(-r.dl) + ')' : ''), r.v < 10 ? 'hot' : '']), 'نمره‌ی زیر ۱۰ یا افت دست‌کم ۳ نمره نسبت به آزمون قبلی.', '✓ کسی زیر ۱۰ نیست و افت جدی هم دیده نمی‌شود.');
+  lst('غایبین — نیازمند آزمون جبرانی', A.abs.map(r => [r.n]), '', 'غایبی نداشت.');
+  if (A.miss.length) body.append(el('div', 'cns-note', '⚠️ برای ' + fa(A.miss.length) + ' نفر در این آزمون نمره یا غیبت ثبت نشده: ' + A.miss.join('، ')));
+  // روند و جمع‌بندی
+  body.append(el('div', 'lbl ana-h', 'روند میانگین کلاس در آزمون‌ها'), anaTrend(list, k));
+  body.append(el('div', 'lbl ana-h', 'جمع‌بندی خودکار'), el('div', 'pl-tip ana-sum', anaSummary(A)));
+  // فهرست کامل
+  const det = el('details', 'dir-it'), ds = el('summary'); ds.append(el('span', '', 'فهرست کامل نمره‌ها'), el('small', '', fa(o.rows.length) + ' نفر'));
+  const rws = A.rows.slice().sort((a, b) => (a.a ? 1 : 0) - (b.a ? 1 : 0) || (b.v || 0) - (a.v || 0));
+  det.append(ds, tbl(['نام', 'نمره', 'از ۲۰', 'تغییر'], rws.map(r => [r.n, r.a ? 'غایب' : f2(r.s) + ' از ' + fa(r.m), r.a ? '—' : f2(r.v), anaDelta(r.dl)]))); body.append(det);
+  // تحلیل دبیر + چاپ
+  const notes = lsGet('sia_ana_v1', {}), ta = el('textarea', 'ana-ta'), nk = anaNoteKey(x, k); ta.rows = 4; ta.maxLength = 1500;
+  ta.placeholder = 'مثلاً: بیشتر خطاها در مسئله‌های بخش ۲ بود؛ جلسه‌ی رفع اشکال سه‌شنبه برگزار می‌شود.'; ta.value = notes[nk] || '';
+  ta.addEventListener('input', () => { const n2 = lsGet('sia_ana_v1', {}); if (ta.value.trim()) n2[nk] = ta.value; else delete n2[nk]; lsSet('sia_ana_v1', n2); });
+  const tf = el('div', 'field'), tl = el('label', '', 'تحلیل و راهکار شما (اختیاری؛ در برگه‌ی چاپی می‌آید و روی همین دستگاه می‌ماند)'); ta.id = 'anaTa'; tl.htmlFor = 'anaTa'; tf.append(tl, ta);
+  const pb = el('button', 'send', '🖨 برگه‌ی تحلیل نتایج (چاپ یا PDF)'); pb.type = 'button'; pb.addEventListener('click', () => anaPrint(x, list, A, ta.value.trim()));
+  body.append(tf, pb); card.append(sm, body); box.append(card); return card;
+}
+function anaMountEl(x) { const tmp = el('div'); return anaMount(tmp, x); }
+function anaPrint(x, list, A, note) {
+  const o = A.o, pa = $('#printArea'); pa.textContent = '';
+  if (LOGO_BASE64) { const im = el('img'); im.src = $('#logo').src; im.alt = ''; im.style.cssText = 'width:72px;height:72px;float:left;margin:0 10px 6px 0'; pa.append(im); }
+  pa.append(el('h1', '', 'تحلیل نتایج آزمون — ' + SCHOOL_NAME),
+    el('div', '', 'کلاس: ' + x.c + '   |   درس: ' + x.s + '   |   دبیر: ' + (anaTeacher(x) || '................')),
+    el('div', '', 'نوع آزمون: ' + o.e + '   |   تاریخ آزمون: ' + fa(o.d) + (o.m ? '   |   نمره از ' + fa(o.m) : '') + '   |   تاریخ تهیه: ' + fa(dateStr()) + '   |   سال تحصیلی ' + ACADEMIC_YEAR));
+  pa.append(el('h2', '', 'شاخص‌های آماری (بر مبنای ۲۰)'), tbl(['شرکت‌کننده', 'غایب', 'میانگین', 'میانه', 'انحراف معیار', 'بیشترین', 'کمترین', 'درصد قبولی'],
+    [[fa(o.N), fa(o.A), f2(o.mean), f2(o.med), f2(o.sd), f2(o.max), f2(o.min), o.N ? anaPct(o.pass) : '—']]));
+  const dt = el('div', 'pa-two'), d1 = el('div'), d2 = el('div');
+  d1.append(tbl(['بازه‌ی نمره', 'تعداد', 'درصد'], ANA_BANDS.map((b, i) => [b[2], fa(o.bands[i]), o.N ? anaPct(o.bands[i] / o.N * 100) : '—']).reverse())); d2.append(anaBars(o, true));
+  dt.append(d1, d2); pa.append(el('h2', '', 'توزیع فراوانی نمرات'), dt);
+  if (A.prev && A.prev.mean != null) pa.append(el('h2', '', 'مقایسه با آزمون قبلی'), tbl(['آزمون', 'تاریخ', 'میانگین', 'درصد قبولی'],
+    [[A.prev.e, fa(A.prev.d), f2(A.prev.mean), anaPct(A.prev.pass)], [o.e, fa(o.d), f2(o.mean), anaPct(o.pass)], ['تغییر', '', anaDelta(o.mean - A.prev.mean), anaDeltaPct(o.pass - A.prev.pass)]]));
+  pa.append(el('h2', '', 'جمع‌بندی خودکار'), el('p', '', anaSummary(A)));
+  pa.append(el('h2', '', 'گروه رفع اشکال پیشنهادی'), el('p', '', A.help.length ? A.help.map(r => r.n + ' (' + f2(r.v) + ')').join('، ') : 'ندارد.'),
+    el('h2', '', 'غایبین — نیازمند آزمون جبرانی'), el('p', '', A.abs.length ? A.abs.map(r => r.n).join('، ') : 'ندارد.'));
+  if (A.miss.length) pa.append(el('p', '', 'نمره یا غیبت ثبت‌نشده: ' + A.miss.join('، ')));
+  let i = 0; const rws = A.rows.slice().sort((a, b) => String(a.n).localeCompare(String(b.n), 'fa'));
+  pa.append(el('h2', '', 'فهرست نمره‌ها'), tbl(['ردیف', 'نام دانش‌آموز', 'نمره', 'از ۲۰', 'تغییر نسبت به آزمون قبل'], rws.map(r => [fa(++i), r.n, r.a ? 'غایب' : f2(r.s) + ' از ' + fa(r.m), r.a ? '—' : f2(r.v), anaDelta(r.dl)])));
+  pa.append(el('h2', '', 'تحلیل دبیر و راهکارهای پیشنهادی'));
+  if (note) { const p = el('p', '', note); p.style.whiteSpace = 'pre-wrap'; pa.append(p); } else { const ln = el('div', 'pa-lines'); for (let j = 0; j < 5; j++) ln.append(el('div')); pa.append(ln); }
+  const sg = el('div', 'pa-sign'); sg.append(el('div', '', 'نام و امضای دبیر:'), el('div', '', 'نام و امضای مدیر:')); pa.append(sg);
+  document.body.classList.add('printing'); window.print();
+}
+
 
 /* ======================= نمودارها، کارنامه‌ی چاپی و نشان‌ها ======================= */
 const NS = 'http://www.w3.org/2000/svg', JM = ['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'], SCHOOL_NAME = 'دبیرستان صلاح‌الدین ایوبی';
