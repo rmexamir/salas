@@ -939,6 +939,136 @@ footer::before{
 
 @media (max-width:380px){.hero h1{font-size:24px}.logo{width:92px;height:92px}.tab{font-size:10.5px}}
 @media (prefers-reduced-motion:reduce){.logo,.send::after{animation:none!important}html{scroll-behavior:auto}}
+
+/* =====================================================================
+   🧭 پنل مدیر — نوار کناری راست، فشرده و واکنش‌گرا
+   (فقط نمایش؛ منطق و شناسه‌ها دست‌نخورده‌اند)
+   ===================================================================== */
+:root{
+  --ic-today:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linejoin='round'%3E%3Crect x='3' y='3' width='7' height='9' rx='1.5'/%3E%3Crect x='14' y='3' width='7' height='5' rx='1.5'/%3E%3Crect x='14' y='12' width='7' height='9' rx='1.5'/%3E%3Crect x='3' y='16' width='7' height='5' rx='1.5'/%3E%3C/svg%3E");
+  --ic-stu:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2 9l10-5 10 5-10 5z'/%3E%3Cpath d='M6 11.5V16c0 1.5 3 3 6 3s6-1.5 6-3v-4.5'/%3E%3C/svg%3E");
+  --ic-tch:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='5' width='18' height='16' rx='3'/%3E%3Cpath d='M3 10h18M8 3v4M16 3v4M8 14h2M14 14h2M8 18h2'/%3E%3C/svg%3E");
+  --ic-rep:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 20V10M10 20V4M16 20v-7M2 20h20'/%3E%3C/svg%3E");
+  --ic-sys:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M4 6h8M18 6h2M4 12h2M12 12h8M4 18h10M20 18h0'/%3E%3Ccircle cx='15' cy='6' r='2.2'/%3E%3Ccircle cx='9' cy='12' r='2.2'/%3E%3Ccircle cx='17' cy='18' r='2.2'/%3E%3C/svg%3E");
+}
+
+/* --- فشرده‌سازی عمومی پنل --- */
+#p-mg .card{padding:14px;margin-bottom:12px;border-radius:16px}
+#p-mg .card::before{inset-inline:14px}
+#p-mg .card>.lbl:first-child{font-size:14px}
+#p-mg .mg-sec-d{font-size:12.5px;line-height:1.7;margin:0 2px 8px}
+#p-mg .mg-desk{padding:12px;margin-bottom:12px;border-radius:16px}
+#p-mg .mg-desk-h{margin-bottom:8px}
+#p-mg .mg-desk-h b{font-size:15px}
+#p-mg .mg-att{gap:6px}
+#p-mg .mg-at{min-height:52px;padding:6px 10px;border-radius:13px;gap:8px}
+#p-mg .mg-at b{font-size:19px;min-width:24px}
+#p-mg .mg-at span{font-size:12.5px;line-height:1.5}
+#p-mg .mg-bar select,#p-mg .mg-bar input{height:44px}
+#p-mg .btn{height:46px}
+#p-mg .field{margin-bottom:10px}
+#p-mg .dir-it summary{min-height:46px}
+
+/* --- نوار بالای محتوا (عنوان بخش + دکمه‌ی منو) --- */
+.mg-top{display:flex;align-items:center;gap:10px;margin:0 0 10px;padding:8px 10px;border-radius:16px;
+  background:var(--glass);border:1px solid var(--line);box-shadow:var(--shadow);
+  -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+.mg-burger{width:44px;height:44px;flex:none;border-radius:13px;border:1px solid var(--line);background:var(--input);color:var(--ink);display:grid;place-items:center}
+.mg-burger svg{width:22px;height:22px}
+.mg-burger:active{transform:scale(.94)}
+.mg-tt{min-width:0;flex:1}
+.mg-tt b{display:block;font-size:16px;font-weight:900;line-height:1.5}
+.mg-tt small{display:block;font-size:12px;color:var(--muted);font-weight:600}
+
+/* --- نوار کناری (پایه: کشوی موبایل) --- */
+#mgNav.mg-nav{
+  position:fixed;z-index:46;top:0;bottom:0;right:0;margin:0;
+  width:min(84vw,300px);display:flex;flex-direction:column;flex-wrap:nowrap;gap:3px;
+  padding:calc(env(safe-area-inset-top,0px) + 14px) 12px calc(env(safe-area-inset-bottom,0px) + 14px);
+  background:var(--card);border-inline-start:1px solid var(--line);border-radius:24px 0 0 24px;
+  box-shadow:-18px 0 50px -10px rgba(0,0,0,.45);overflow-y:auto;overscroll-behavior:contain;
+  transform:translateX(105%);visibility:hidden;
+  transition:transform .3s cubic-bezier(.2,.8,.2,1),visibility 0s linear .3s;
+}
+body.mg-drawer #mgNav.mg-nav{transform:none;visibility:visible;transition:transform .3s cubic-bezier(.2,.8,.2,1),visibility 0s}
+.mg-bd{position:fixed;inset:0;z-index:45;background:rgba(4,20,14,.55);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);
+  opacity:0;visibility:hidden;transition:opacity .25s,visibility 0s linear .25s}
+body.mg-drawer .mg-bd{opacity:1;visibility:visible;transition:opacity .25s}
+body.mg-drawer{overflow:hidden}
+
+.mg-nh{display:flex;align-items:center;gap:10px;padding:2px 4px 12px;margin-bottom:6px;border-bottom:1px dashed var(--line)}
+.mg-nh img{width:42px;height:42px;flex:none;border-radius:50%;background:#FFFEFA;padding:3px;object-fit:contain;border:2px solid var(--g4);box-shadow:0 4px 12px rgba(0,0,0,.2)}
+.mg-nh b{display:block;font-size:15px;font-weight:900;line-height:1.5}
+.mg-nh small{display:block;font-size:11.5px;color:var(--muted);font-weight:600;line-height:1.5}
+.mg-ng{padding:12px 10px 4px;font-size:11.5px;font-weight:800;color:var(--muted);letter-spacing:0}
+#mgNav .mg-nb{
+  flex:none;display:flex;align-items:center;gap:11px;width:100%;height:48px;padding:0 12px;
+  border-radius:13px;border:0;background:transparent;color:var(--ink);box-shadow:none;
+  font-weight:700;font-size:14.5px;text-align:start;position:relative;transition:background .18s,color .18s;
+}
+#mgNav .mg-nb::before{content:"";width:21px;height:21px;flex:none;background:currentColor;opacity:.85;
+  -webkit-mask:var(--ic) center/contain no-repeat;mask:var(--ic) center/contain no-repeat}
+#mgNav .mg-nb[data-sec="today"]{--ic:var(--ic-today)}
+#mgNav .mg-nb[data-sec="stu"]{--ic:var(--ic-stu)}
+#mgNav .mg-nb[data-sec="tch"]{--ic:var(--ic-tch)}
+#mgNav .mg-nb[data-sec="rep"]{--ic:var(--ic-rep)}
+#mgNav .mg-nb[data-sec="sys"]{--ic:var(--ic-sys)}
+#mgNav .mg-nb:hover{background:var(--input)}
+#mgNav .mg-nb.on{
+  color:#fff;
+  background:linear-gradient(var(--g4),var(--g4)) right 0 center/4px 58% no-repeat,linear-gradient(160deg,var(--e6),var(--e8));
+  box-shadow:0 8px 16px -8px rgba(10,58,37,.6);
+}
+#mgNav .mg-nb.on::before{opacity:1}
+[data-theme="dark"] #mgNav .mg-nb.on{
+  color:#07120D;
+  background:linear-gradient(var(--e8),var(--e8)) right 0 center/4px 58% no-repeat,linear-gradient(160deg,var(--g3),var(--g5));
+}
+#mgNav .mg-nb.dot::after{top:50%;inset-inline-end:12px;transform:translateY(-50%);width:9px;height:9px;box-shadow:0 0 0 2px var(--card),0 0 8px rgba(201,60,66,.7)}
+#mgNav .mg-nb.on.dot::after{box-shadow:0 0 0 2px var(--e6)}
+.mg-nf{margin-top:auto;padding-top:12px;border-top:1px dashed var(--line);display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.mg-nf button{height:42px;border-radius:12px;border:1.5px solid var(--line);background:var(--input);font-weight:800;font-size:13px;color:var(--ink)}
+.mg-nf button:active{transform:scale(.96)}
+.mg-nf .out{color:var(--absent)}
+
+/* --- موبایل: نوار بالای چسبان --- */
+@media (max-width:899.98px){
+  .mg-top{position:sticky;top:calc(env(safe-area-inset-top,0px) + 6px);z-index:6}
+  #p-mg .mg-att{grid-template-columns:1fr 1fr}
+}
+
+/* --- رایانه: نوار کناری ثابت در سمت راست، محتوا در سمت چپ --- */
+@media (min-width:900px){
+  body.mg-on main{max-width:1180px}
+  body.mg-on #mgBody:not([hidden]){display:grid;grid-template-columns:248px minmax(0,1fr);column-gap:18px;row-gap:0;align-items:start}
+  body.mg-on #mgBody>*{grid-column:2}
+  body.mg-on #mgBody>#mgNav{grid-column:1;grid-row:1/span 40}
+  body.mg-on #mgBody>.mg-bd{display:none}
+  #mgNav.mg-nav{
+    position:sticky;top:12px;z-index:3;width:auto;max-height:calc(100vh - 24px);height:auto;
+    transform:none;visibility:visible;transition:none;
+    padding:14px 12px;border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);
+  }
+  .mg-burger{display:none}
+  .mg-top{background:transparent;border:0;box-shadow:none;padding:2px 2px 8px;-webkit-backdrop-filter:none;backdrop-filter:none}
+  .mg-tt b{font-size:20px}
+  #p-mg .mg-att{grid-template-columns:repeat(4,minmax(0,1fr))}
+  body.mg-drawer{overflow:auto}
+}
+
+/* --- فشرده کردن سربرگ هنگام کار در پنل مدیر --- */
+body.mg-on .hero{padding:calc(env(safe-area-inset-top,0px) + 12px) 64px 20px;border-radius:0 0 24px 24px}
+body.mg-on .hero-inner{flex-direction:row;justify-content:center;gap:12px}
+body.mg-on .logo{width:54px;height:54px;padding:4px;border-width:2px;animation:none;box-shadow:0 0 0 4px rgba(224,194,104,.16),0 8px 18px rgba(0,0,0,.4)}
+body.mg-on .hero h1{font-size:clamp(17px,4.6vw,22px);margin:0;text-align:start}
+body.mg-on .hero p{display:none}
+body.mg-on #quote{display:none!important}
+/* در تب مدیر، فرم «دبیر/درس/کلاس» مخصوص ثبت حضور و نمرات است و جای آن نیست (فقط پنهان می‌شود؛ مقدارها حفظ می‌مانند) */
+body.mg-tab #common{display:none!important}
+body.mg-on main{padding-top:14px}
+body.mg-on .tabs{margin-bottom:12px}
+body.mg-on .tab{min-height:54px}
+@media (prefers-reduced-motion:reduce){#mgNav.mg-nav,.mg-bd{transition:none!important}}
 </style>
 </head>
 <body>
@@ -1217,7 +1347,7 @@ footer::before{
         <div class="mg-att" id="mgAttn"></div>
       </div>
       <nav class="mg-nav" id="mgNav" aria-label="بخش‌های پنل مدیر"></nav>
-      <div class="mg-sec" data-sec="today" data-t="امروز" hidden>
+      <div class="mg-sec" data-sec="today" data-t="داشبورد امروز" hidden>
       <div class="mg-sec-d">غایبین هر کلاس و زنگ، وضعیت ثبت حضور و غیاب امروز، مرخصی‌ها، دبیر جایگزین و غیبت موجه.</div>
       <div class="card" id="alertCard" hidden style="border:2px solid var(--absent)">
         <div class="lbl" style="margin-bottom:8px;color:var(--absent)">⚠️ حضور و غیاب ثبت‌نشده (بیش از ۱۵ دقیقه از شروع زنگ)</div>
@@ -1291,7 +1421,7 @@ footer::before{
         <div id="cdList"></div>
       </div>
       </div>
-      <div class="mg-sec" data-sec="rep" data-t="گزارش‌ها" hidden>
+      <div class="mg-sec" data-sec="rep" data-t="گزارش‌ها و آمار" hidden>
       <div class="mg-sec-d">گزارش کلاس‌ها، برترین‌ها، نمودار ماهانه، گزارش چاپی و جدول‌های کامل.</div>
       <div class="card">
         <div class="lbl" style="margin-bottom:8px">فیلتر گزارش‌ها و خروجی CSV (کلاس، دبیر، تاریخ)</div>
@@ -4260,6 +4390,71 @@ function mgGo(id) {               // رفتن به یک کارت، حتی اگر
   mo.observe($('#alertCard'), { attributes:true, attributeFilter:['hidden'] });
   paint();
 })();
+})();
+</script>
+<script>
+/* پنل مدیر: نوار کناری راست (رایانه) / کشوی راست (موبایل) — فقط لایه‌ی نمایش؛ از دکمه‌ها و توابع موجود استفاده می‌کند */
+(function(){
+  'use strict';
+  var d = document, $ = function(s){ return d.querySelector(s); };
+  var pm = $('#p-mg'), mb = $('#mgBody'), nav = $('#mgNav');
+  if (!pm || !mb || !nav) return;
+  var body = d.body, mq = window.matchMedia('(min-width:900px)');
+
+  function mk(tag, cls, txt){ var e = d.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; }
+  function btn(k){ return nav.querySelector('button[data-sec="' + k + '"]'); }
+
+  /* ساخت ساختار منو: سربرگ + گروه‌ها + پایین */
+  var head = mk('div', 'mg-nh'), lg = $('#logo');
+  if (lg && lg.getAttribute('src')) { var im = mk('img'); im.alt = ''; im.src = lg.getAttribute('src'); head.append(im); }
+  var ht = mk('div'); ht.append(mk('b', '', 'پنل مدیریت'), mk('small', '', typeof SCHOOL_NAME !== 'undefined' ? SCHOOL_NAME : '')); head.append(ht);
+  var groups = [['نمای کلی', ['today']], ['مدیریت', ['stu', 'tch']], ['گزارش و سامانه', ['rep', 'sys']]], used = {}, frag = d.createDocumentFragment();
+  frag.append(head);
+  groups.forEach(function(g){
+    var items = g[1].map(btn).filter(Boolean); if (!items.length) return;
+    frag.append(mk('div', 'mg-ng', g[0])); items.forEach(function(b){ used[b.dataset.sec] = 1; frag.append(b); });
+  });
+  var rest = [].slice.call(nav.querySelectorAll('.mg-nb')).filter(function(b){ return !used[b.dataset.sec]; });
+  if (rest.length) { frag.append(mk('div', 'mg-ng', 'سایر')); rest.forEach(function(b){ frag.append(b); }); }
+  var foot = mk('div', 'mg-nf'), rl = mk('button', '', '🔄 بازخوانی'), lo = mk('button', 'out', 'خروج');
+  rl.type = lo.type = 'button';
+  rl.addEventListener('click', function(){ var r = $('#mgReload'); if (r) r.click(); setDrawer(false); });
+  lo.addEventListener('click', function(){ var o = $('#logoutBtn'); if (o) o.click(); setDrawer(false); });
+  foot.append(rl, lo); frag.append(foot);
+  nav.textContent = ''; nav.append(frag);
+
+  /* نوار عنوان + دکمه‌ی منو + پس‌زمینه‌ی کشو */
+  var top = mk('div', 'mg-top'), bur = mk('button', 'mg-burger'), tt = mk('div', 'mg-tt'), ttl = mk('b'), sub = mk('small');
+  bur.type = 'button'; bur.setAttribute('aria-label', 'باز کردن منوی مدیریت'); bur.setAttribute('aria-controls', 'mgNav'); bur.setAttribute('aria-expanded', 'false');
+  bur.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h10"/></svg>';
+  tt.append(ttl, sub); top.append(bur, tt);
+  var bd = mk('div', 'mg-bd'); bd.setAttribute('aria-hidden', 'true');
+  mb.insertBefore(top, mb.firstChild); mb.append(bd);
+
+  function setDrawer(v){
+    body.classList.toggle('mg-drawer', !!v); bur.setAttribute('aria-expanded', String(!!v));
+    if (v) { var on = nav.querySelector('.mg-nb.on') || nav.querySelector('.mg-nb'); if (on) on.focus({ preventScroll: true }); }
+  }
+  bur.addEventListener('click', function(){ setDrawer(!body.classList.contains('mg-drawer')); });
+  bd.addEventListener('click', function(){ setDrawer(false); });
+  d.addEventListener('keydown', function(e){ if (e.key === 'Escape' && body.classList.contains('mg-drawer')) { setDrawer(false); bur.focus(); } });
+  (mq.addEventListener ? mq.addEventListener('change', function(e){ if (e.matches) setDrawer(false); }) : mq.addListener(function(e){ if (e.matches) setDrawer(false); }));
+  nav.addEventListener('click', function(e){
+    if (!e.target.closest('.mg-nb')) return; setDrawer(false);
+    var y = mb.getBoundingClientRect().top + window.scrollY - 8; window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
+  });
+
+  /* عنوان بخش فعال و زمان آخرین بازخوانی */
+  function syncTitle(){ var on = nav.querySelector('.mg-nb.on'); ttl.textContent = on ? on.textContent.trim() : ''; var st = $('#mgDeskStamp'); sub.textContent = st ? st.textContent.trim() : ''; }
+  new MutationObserver(syncTitle).observe(nav, { attributes: true, attributeFilter: ['class'], subtree: true });
+  var st = $('#mgDeskStamp'); if (st) new MutationObserver(syncTitle).observe(st, { childList: true, characterData: true, subtree: true });
+  syncTitle();
+
+  /* فعال‌سازی حالت پنل مدیر (کلاس روی body) */
+  function sync(){ var on = !pm.hidden && !mb.hidden; body.classList.toggle('mg-tab', !pm.hidden); body.classList.toggle('mg-on', on); if (!on) setDrawer(false); }
+  new MutationObserver(sync).observe(pm, { attributes: true, attributeFilter: ['hidden'] });
+  new MutationObserver(sync).observe(mb, { attributes: true, attributeFilter: ['hidden'] });
+  sync();
 })();
 </script>
 </body>
