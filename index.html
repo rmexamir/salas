@@ -1416,7 +1416,7 @@ body.mg-on .tab{min-height:54px}
       </div>
       <div class="mg-sec" data-sec="rep" data-t="گزارش‌ها و آمار" hidden>
       <div class="mg-sec-d">گزارش کلاس‌ها، برترین‌ها، نمودار ماهانه، گزارش چاپی و جدول‌های کامل.</div>
-      <div class="card">
+      <div class="card" hidden>
         <div class="lbl" style="margin-bottom:8px">فیلتر گزارش‌ها و خروجی CSV (کلاس، دبیر، تاریخ)</div>
         <div class="mg-bar">
           <select id="mgCls" aria-label="کلاس"></select>
@@ -1430,7 +1430,7 @@ body.mg-on .tab{min-height:54px}
         </div>
         <div id="mgMsg" class="empty" hidden></div>
       </div>
-      <div class="card">
+      <div class="card" hidden>
         <div class="lbl" style="margin-bottom:8px">گزارش غیبت و نمرات — هر کلاس یک ردیف</div>
         <div class="cls-h"><span class="nm">کلاس</span><span>غیبت</span><span>تأخیر</span><span>موجه</span><span>میانگین</span></div>
         <div id="mgCr"></div>
@@ -1439,17 +1439,18 @@ body.mg-on .tab{min-height:54px}
         <div class="lbl" style="margin-bottom:8px">سه نفر برتر هر کلاس (بر اساس معدل)</div>
         <div id="topBox"></div>
       </div>
-      <div class="card">
+      <div class="card" hidden>
         <div class="lbl" style="margin-bottom:8px">نمودار غیبت و تأخیر ماهانه</div>
         <div class="field"><select id="absCls" aria-label="کلاس"></select></div>
         <div id="absChart"></div>
       </div>
-      <div class="card" id="mrCard">
+      <div class="card" hidden id="mrCard">
         <div class="lbl" style="margin-bottom:8px">گزارش ماهانه (چاپ یا ذخیره‌ی PDF)</div>
         <div class="mg-bar"><input id="mrMonth" type="text" inputmode="numeric" placeholder="ماه (۱۴۰۵/۰۷)" aria-label="ماه"><button id="mrGo" class="btn" type="button">تهیه‌ی گزارش</button></div>
       </div>
       <div class="card"><details><summary class="lbl" style="cursor:pointer">جدول کامل حضور و غیاب (جدیدترین‌ها)</summary><div class="mg-wrap" style="margin-top:8px"><table class="mg-tbl" id="mgAtt"></table></div></details></div>
       <div class="card"><details><summary class="lbl" style="cursor:pointer">جدول کامل نمرات (جدیدترین‌ها)</summary><div class="mg-wrap" style="margin-top:8px"><table class="mg-tbl" id="mgGr"></table></div></details></div>
+      <div class="card" id="mgGradeDeleteCard"><div class="lbl" style="margin-bottom:8px">حذف نمره ثبت‌شده (ویژه مدیر)</div><div class="field"><select id="mgGradeDelete" aria-label="انتخاب نمره برای حذف"><option value="">ابتدا نمرات بارگذاری شود</option></select></div><button id="mgGradeDeleteBtn" class="btn" type="button">حذف نمره انتخاب‌شده</button><div class="now-sub" style="margin-top:6px">برای جلوگیری از حذف اشتباه، پیش از حذف تأیید گرفته می‌شود.</div></div>
       </div>
       <div class="mg-sec" data-sec="tch" data-t="دبیران و برنامه" hidden>
       <div class="mg-sec-d">حضور و خروج همکاران، ابلاغ و ساعات، و ویرایش برنامه‌ی هفتگی.</div>
@@ -1480,6 +1481,18 @@ body.mg-on .tab{min-height:54px}
         <div class="field" id="dirClsF"><select id="dirCls" aria-label="کلاس"></select></div>
         <div class="field"><input id="dirQ" type="search" placeholder="جست‌وجو: نام، کلاس، کد ملی، شماره..." autocomplete="off" aria-label="جست‌وجو در بانک اطلاعات"></div>
         <div id="dirList"></div>
+      </div>
+      <div class="card" id="dirAddCard">
+        <div class="lbl" style="margin-bottom:8px">ثبت اطلاعات جدید توسط مدیر</div>
+        <details><summary class="lbl" style="cursor:pointer">ثبت دانش‌آموز جدید</summary>
+          <div class="mg-bar" style="margin-top:8px"><input id="newStuStream" placeholder="رشته" aria-label="رشته دانش‌آموز"><input id="newStuClass" placeholder="کلاس" aria-label="کلاس دانش‌آموز"><input id="newStuName" placeholder="نام و نام خانوادگی" aria-label="نام دانش‌آموز"></div>
+          <div class="mg-bar"><input id="newStuNid" inputmode="numeric" placeholder="کد ملی" aria-label="کد ملی دانش‌آموز"><input id="newStuFather" placeholder="نام پدر" aria-label="نام پدر"><input id="newStuPhone" inputmode="tel" placeholder="تلفن پدر (اختیاری)" aria-label="تلفن پدر"></div>
+          <button id="newStuSave" class="btn" type="button">ثبت دانش‌آموز</button>
+        </details>
+        <details style="margin-top:10px"><summary class="lbl" style="cursor:pointer">ثبت دبیر جدید</summary>
+          <div class="mg-bar" style="margin-top:8px"><input id="newTchName" placeholder="نام دبیر" aria-label="نام دبیر"><input id="newTchPin" placeholder="کد ورود" aria-label="کد ورود دبیر"><input id="newTchCourse" placeholder="درس" aria-label="درس دبیر"></div>
+          <button id="newTchSave" class="btn" type="button">ثبت دبیر</button>
+        </details>
       </div>
       <div class="card" id="auCard">
         <div class="lbl" style="margin-bottom:8px">سابقه‌ی تغییرات (آخرین ۱۲۰ مورد)</div>
@@ -2008,8 +2021,33 @@ async function mgLoad() {
   $('#mgLogin').hidden = true; $('#mgBody').hidden = false; edInit(); loadDir(); excInit(); pfInit(); v3Init(); if (!$('#mrMonth').value) $('#mrMonth').value = dateStr().slice(0, 7);
   mgFillSel($('#mgCls'), 'همه کلاس‌ها', MG.att.map(r => r[3]).concat(MG.gr.map(r => r[3])));
   mgFillSel($('#mgTch'), 'همه دبیران', MG.att.map(r => r[5]).concat(MG.gr.map(r => r[5])));
-  mgRender(); absInit(); pollToday(); abInit(); { const n = new Date(); $('#mgStamp').textContent = 'آخرین بازخوانی: ساعت ' + fa(pad(n.getHours()) + ':' + pad(n.getMinutes())); }
+  mgRender(); mgGradeDeleteInit(); absInit(); pollToday(); abInit(); { const n = new Date(); $('#mgStamp').textContent = 'آخرین بازخوانی: ساعت ' + fa(pad(n.getHours()) + ':' + pad(n.getMinutes())); }
 }
+function mgGradeDeleteInit() {
+  const sel = $('#mgGradeDelete'); if (!sel) return;
+  const cur = sel.value; sel.textContent = '';
+  const first = el('option', '', '— انتخاب نمره —'); first.value = ''; sel.append(first);
+  MG.gr.map((r, i) => ({r, i})).slice().reverse().slice(0, 500).forEach(({r, i}) => {
+    const label = [r[0], r[3], r[6], r[4], 'نمره: ' + r[11]].join(' · ');
+    const o = el('option', '', label); o.value = String(i + 2); o.dataset.expected = JSON.stringify(r); sel.append(o);
+  });
+  if ([...sel.options].some(o => o.value === cur)) sel.value = cur;
+}
+$('#mgGradeDeleteBtn').addEventListener('click', () => {
+  const sel = $('#mgGradeDelete'), opt = sel.options[sel.selectedIndex];
+  if (!sel.value || !opt) return toast('ابتدا یک نمره را انتخاب کنید.');
+  showModal({icon:'warn', title:'تأیید حذف نمره', msg:'آیا از حذف این نمره ثبت‌شده مطمئن هستید؟ این عملیات روی همان رکورد انجام می‌شود.', buttons:[
+    {text:'انصراف'}, {text:'حذف نمره', primary:true, onClick: async () => {
+      const b = $('#mgGradeDeleteBtn'); b.disabled = true;
+      let expected; try { expected = JSON.parse(opt.dataset.expected || '[]'); } catch (_) { expected = []; }
+      const r = await send({action:'gradeDelete', pin:MG.pin, key:ACCESS_KEY, rowNumber:Number(sel.value), expected});
+      b.disabled = false;
+      if (r.net) return toast('اینترنت در دسترس نیست.');
+      if (r.status !== 'ok') return toast(r.message || 'حذف نمره انجام نشد.');
+      toast('نمره با موفقیت حذف شد.'); await mgLoad();
+    }}
+  ]});
+});
 function mgCsv(name, head, rows) {
   const q = v => { let s = String(v); if (/^[=+\-@\t\r]/.test(s) && !/^[+-]?\d+(\.\d+)?$/.test(s)) s = "'" + s; return '"' + s.replace(/"/g, '""') + '"'; };   // جلوگیری از اجرای فرمول در Excel
   const txt = '﻿' + [head].concat(rows).map(r => r.map(q).join(',')).join('\r\n');
@@ -2316,6 +2354,21 @@ function renderDir() {
   else if (hit.length > 100) box.append(el('div', 'now-sub', fa(hit.length - 100) + ' مورد دیگر هم هست؛ جست‌وجو را دقیق‌تر کنید.'));
 }
 $('#dirQ').addEventListener('input', renderDir); $('#dirCls').addEventListener('change', renderDir);
+$('#newStuSave').addEventListener('click', async () => {
+  const p = {action:'studentAdd', pin:MG.pin, key:ACCESS_KEY, stream:$('#newStuStream').value.trim(), cls:$('#newStuClass').value.trim(), name:$('#newStuName').value.trim(), nid:en($('#newStuNid').value).replace(/\D/g,''), father:$('#newStuFather').value.trim(), phone:en($('#newStuPhone').value).replace(/\D/g,'')};
+  if (!p.stream || !p.cls || !p.name || !p.nid) return toast('رشته، کلاس، نام و کد ملی الزامی است.');
+  const b=$('#newStuSave'); b.disabled=true; const r=await send(p); b.disabled=false;
+  if (r.status!=='ok') return toast(r.message || 'ثبت دانش‌آموز انجام نشد.');
+  ['newStuStream','newStuClass','newStuName','newStuNid','newStuFather','newStuPhone'].forEach(id=>$('#'+id).value=''); toast('دانش‌آموز ثبت شد.'); await mgLoad();
+});
+$('#newTchSave').addEventListener('click', async () => {
+  const p = {action:'teacherAdd', pin:MG.pin, key:ACCESS_KEY, name:$('#newTchName').value.trim(), tpin:$('#newTchPin').value.trim(), course:$('#newTchCourse').value.trim()};
+  if (!p.name || !p.tpin || !p.course) return toast('نام دبیر، کد ورود و درس الزامی است.');
+  const b=$('#newTchSave'); b.disabled=true; const r=await send(p); b.disabled=false;
+  if (r.status!=='ok') return toast(r.message || 'ثبت دبیر انجام نشد.');
+  ['newTchName','newTchPin','newTchCourse'].forEach(id=>$('#'+id).value=''); toast('دبیر ثبت شد.'); await mgLoad();
+});
+
 function dirClsFill() { const sl = $('#dirCls'), cur = sl.value; sl.textContent = ''; [''].concat(uniq(DIR.students.map(x => x.c)).sort((a, b) => a.localeCompare(b, 'fa'))).forEach(c => { const o = el('option', '', c || '— انتخاب کلاس —'); o.value = c; sl.append(o); }); sl.value = cur; }
 
 /* ======================= ورود (دانش‌آموز با کد ملی / دبیر با نام و کد) و پرتال دانش‌آموز ======================= */
