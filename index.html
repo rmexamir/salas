@@ -16,7 +16,7 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxzPr6P54uH4gV_rQrss
 // کلید دسترسی اختیاری (باید با ACCESS_KEY در Code.gs یکی باشد)
 const ACCESS_KEY = "";
 // نسخه‌ی برنامه — با هر به‌روزرسانی این عدد بالا می‌رود و در صفحه‌ی ورود و پایین صفحه نمایش داده می‌شود.
-const APP_VERSION = "1.05";
+const APP_VERSION = "1.06";
 // (اختیاری) لینک Google Sheet برای دکمه «باز کردن Google Sheet» در تب مدیر
 const SHEET_URL = "https://docs.google.com/spreadsheets/d/10i-IGQKyj078M6kJ7YhdAniuJInl6JemwVxAqs7FnrY/edit";
 const DEFAULT_MAX_SCORE = 20;
@@ -1090,6 +1090,35 @@ body.mg-on .tab{min-height:54px}
 .tmw{grid-template-columns:1fr}
 .tmw .cl{max-width:340px;width:100%;margin-inline:auto;padding:14px 10px}
 .tmw svg.ck{width:140px;height:140px}
+
+/* ---------- انضباطی و پرورشی (نسخه‌ی ۱٫۰۶) ---------- */
+:root{--ic-dis:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6z'/%3E%3Cpath d='M9 12l2 2 4-4'/%3E%3C/svg%3E")}
+#mgNav .mg-nb[data-sec="dis"]{--ic:var(--ic-dis)}
+.ds-nav .chip{height:48px;font-size:13px;padding:0 4px;line-height:1.3}
+.ds-it{border:1px solid var(--line);border-inline-start:5px solid var(--line);border-radius:14px;padding:10px 12px;margin-bottom:8px;background:var(--input)}
+.ds-it.k-neg{border-inline-start-color:var(--absent)} .ds-it.k-pos{border-inline-start-color:var(--present)} .ds-it.k-edu{border-inline-start-color:var(--excused)}
+.ds-it.k-act{border-inline-start-color:var(--gold)} .ds-it.k-fam{border-inline-start-color:var(--late)} .ds-it.vd{opacity:.62}
+.ds-h{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;flex-wrap:wrap}
+.ds-tt{font-weight:800;line-height:1.7;flex:1 1 140px}
+.ds-tags{display:flex;gap:4px;flex-wrap:wrap}
+.ds-tag{padding:2px 10px;border-radius:99px;font-size:12px;font-weight:800;white-space:nowrap;background:var(--line);color:var(--ink)}
+.ds-tag.k-neg{background:var(--absent-bg);color:var(--absent)} .ds-tag.k-pos{background:var(--present-bg);color:var(--present)} .ds-tag.k-edu{background:var(--excused-bg);color:var(--excused)}
+.ds-tag.k-act{background:#F4EBCB;color:#7A5F10} .ds-tag.fo{background:var(--late-bg);color:var(--late)} .ds-tag.fc{background:var(--present-bg);color:var(--present)}
+.ds-tag.sev0{background:var(--present-bg);color:var(--present)} .ds-tag.sev1{background:var(--late-bg);color:var(--late)} .ds-tag.sev2{background:var(--absent);color:#fff}
+[data-theme="dark"] .ds-tag.k-act{background:#3A3010;color:#E0C26E}
+.ds-meta{font-size:12.5px;color:var(--muted);margin-top:3px;line-height:1.8}
+.ds-desc{white-space:pre-wrap;margin:6px 0;line-height:1.9;font-size:14.5px}
+.ds-void{margin-top:6px;padding:6px 10px;border-radius:10px;background:var(--absent-bg);color:var(--absent);font-weight:700;font-size:13px}
+.ds-acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.ds-acts .btn{height:40px;padding:0 12px;font-size:13.5px}
+.ds-tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}
+.ds-tile{border:1px solid var(--line);border-radius:14px;padding:8px 10px;background:var(--input)}
+.ds-tile .now-t{font-size:22px}
+.ds-opts{display:flex;gap:14px;flex-wrap:wrap;margin:4px 0 8px}
+.chip.ds-kc.k-neg.on{background:var(--absent);border-color:var(--absent);color:#fff}
+.chip.ds-kc.k-pos.on{background:var(--present);border-color:var(--present);color:#fff}
+.chip.ds-kc.k-edu.on{background:var(--excused);border-color:var(--excused);color:#fff}
+@media (max-width:420px){.ds-tiles{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
 <body>
@@ -1158,6 +1187,10 @@ body.mg-on .tab{min-height:54px}
     <button class="tab" type="button" role="tab" data-tab="cns" aria-selected="false">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 01-11.6 7.1L4 20l1-4.6A8 8 0 1121 12z"/><path d="M8.5 11h7M8.5 14h4"/></svg>
       مشاوره
+    </button>
+    <button class="tab" type="button" role="tab" data-tab="dis" aria-selected="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg>
+      انضباطی
     </button>
     <button class="tab" type="button" role="tab" data-tab="stf" aria-selected="false">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
@@ -1346,6 +1379,11 @@ body.mg-on .tab{min-height:54px}
     </div>
   </section>
 
+  <!-- انضباطی و پرورشی (دبیر) -->
+  <section id="p-dis" hidden>
+    <div id="disTHost"></div>
+  </section>
+
   <section id="p-stf" hidden>
     <div class="card">
       <div class="lbl" style="margin-bottom:8px">اعلام حضور و خروج</div>
@@ -1469,6 +1507,11 @@ body.mg-on .tab{min-height:54px}
       </div>
       <div class="card"><details><summary class="lbl" style="cursor:pointer">جدول کامل حضور و غیاب (جدیدترین‌ها)</summary><div class="mg-wrap" style="margin-top:8px"><table class="mg-tbl" id="mgAtt"></table></div></details></div>
       <div class="card"><details><summary class="lbl" style="cursor:pointer">جدول کامل نمرات (جدیدترین‌ها)</summary><div class="mg-wrap" style="margin-top:8px"><table class="mg-tbl" id="mgGr"></table></div></details></div>
+      </div>
+      <div class="mg-sec" data-sec="dis" data-t="انضباطی و پرورشی" hidden>
+      <div class="mg-sec-d">ثبت و مدیریت موارد انضباطی، تشویق‌ها و فعالیت‌های پرورشی، اقدامات تربیتی، پیگیری تماس با خانواده، پرونده‌ی دانش‌آموز و گزارش چاپی. همه‌ی تغییرات با قبل و بعد ثبت می‌شود.</div>
+      <span id="disOpenCnt" hidden></span>
+      <div id="disMgCard"><div id="disMHost"></div></div>
       </div>
       <div class="mg-sec" data-sec="tch" data-t="دبیران و برنامه" hidden>
       <div class="mg-sec-d">حضور و خروج همکاران، ابلاغ و ساعات، و ویرایش برنامه‌ی هفتگی.</div>
@@ -1740,9 +1783,9 @@ function loadClass() {
 function setTab(t) {
   S.tab = t; P.tab = t; savePrefs();
   $$('.tab').forEach(b => { const on = b.dataset.tab === t; b.classList.toggle('active', on); b.setAttribute('aria-selected', on); });
-  ['att', 'gr', 'mg', 'sch', 'inb', 'cns', 'stf'].forEach(k => { $('#p-' + k).hidden = t !== k; });
-  $('#common').hidden = ['sch', 'inb', 'cns', 'stf'].includes(t);
-  if (t === 'att') autoSlotApply(); if (t === 'sch') renderSch(); if (t === 'inb') loadInbox(); if (t === 'cns') cnsOpen(); if (t === 'stf') stfOpen();
+  ['att', 'gr', 'mg', 'sch', 'inb', 'cns', 'stf', 'dis'].forEach(k => { $('#p-' + k).hidden = t !== k; });
+  $('#common').hidden = ['sch', 'inb', 'cns', 'stf', 'dis'].includes(t);
+  if (t === 'att') autoSlotApply(); if (t === 'sch') renderSch(); if (t === 'inb') loadInbox(); if (t === 'cns') cnsOpen(); if (t === 'stf') stfOpen(); if (t === 'dis') disOpen('t');
 }
 $$('.tab').forEach(b => b.addEventListener('click', () => setTab(b.dataset.tab)));
 
@@ -2047,7 +2090,7 @@ async function mgLoad() {
   if (r.status !== 'ok') return toast(r.message || 'خطا در دریافت گزارش.');
   MG.att = r.att || []; MG.gr = r.gr || []; MG.attHead = r.attHead || []; MG.grHead = r.grHead || [];
   $('#mgLogin').hidden = true; $('#mgBody').hidden = false; edInit(); loadDir(); excInit(); pfInit(); v3Init(); addInit(); gdInit();
-  mgRender(); absInit(); pollToday(); abInit(); { const n = new Date(); $('#mgStamp').textContent = 'آخرین بازخوانی: ساعت ' + fa(pad(n.getHours()) + ':' + pad(n.getMinutes())); }
+  mgRender(); absInit(); pollToday(); abInit(); try { const ds = document.querySelector('.mg-sec[data-sec="dis"]'); if (ds && !ds.hidden) disOpen('m'); dsBadge(); } catch (e) {} { const n = new Date(); $('#mgStamp').textContent = 'آخرین بازخوانی: ساعت ' + fa(pad(n.getHours()) + ':' + pad(n.getMinutes())); }
 }
 function mgCsv(name, head, rows) {
   const q = v => { let s = String(v); if (/^[=+\-@\t\r]/.test(s) && !/^[+-]?\d+(\.\d+)?$/.test(s)) s = "'" + s; return '"' + s.replace(/"/g, '""') + '"'; };   // جلوگیری از اجرای فرمول در Excel
@@ -2371,21 +2414,21 @@ function gateMode() {
 function applyRole() {
   const st = ROLE === 'student', mgr = ROLE === 'manager', cn = ROLE === 'counselor', staff = ROLE === 'teacher' || mgr;
   $('#gate').hidden = !!ROLE; $('#whoBar').hidden = !ROLE; $('#p-stu').hidden = !st;
-  const vis = cn ? ['cns', 'sch'] : mgr ? ['att', 'gr', 'sch', 'inb', 'mg'] : ROLE === 'teacher' ? ['att', 'gr', 'sch', 'inb', 'cns', 'stf'] : ['att', 'gr', 'sch', 'inb'];
+  const vis = cn ? ['cns', 'sch'] : mgr ? ['att', 'gr', 'sch', 'inb', 'mg'] : ROLE === 'teacher' ? ['att', 'gr', 'sch', 'inb', 'cns', 'stf', 'dis'] : ['att', 'gr', 'sch', 'inb'];
   const tb = document.querySelector('.tabs'); tb.hidden = st; tb.style.gridTemplateColumns = 'repeat(' + vis.length + ',1fr)';
   $$('.tab').forEach(b => { b.hidden = !vis.includes(b.dataset.tab); });
   $('#schWho').closest('.field').hidden = st; $('#nowLbl').textContent = st ? 'زنگ فعلی کلاس شما' : 'زنگ فعلی — همه‌ی کلاس‌ها';
   $('#whoName').textContent = st && SD ? SD.name + ' · ' + SD.cls : mgr ? 'مدیر مدرسه' : cn ? 'مشاور: ' + COUNSELOR_NAME : ROLE === 'teacher' ? 'دبیر: ' + S.teacher : '';
   $('#cnsC').hidden = !cn; $('#cnsT').hidden = ROLE !== 'teacher';
   if (st && SD) {
-    ['att', 'gr', 'mg', 'cns', 'stf'].forEach(k => { $('#p-' + k).hidden = true; }); $('#common').hidden = true;
+    ['att', 'gr', 'mg', 'cns', 'stf', 'dis'].forEach(k => { $('#p-' + k).hidden = true; }); $('#common').hidden = true;
     const h = $('#stuHead'); h.textContent = ''; h.append(el('div', 'now-t', SD.name), el('div', 'now-sub', 'کلاس ' + SD.cls)); stuNav(STU_K); qzPrefetch();
   } else if (cn) {
     $('#common').hidden = true; setTab('cns');
   } else if (staff) {
     $('#common').hidden = false; $('#teacher').readOnly = !ISMGR; S.slotPick = null; S.subMode = false; S.per = 0; refreshRestrict(); renderPer();
     if (mgr) { setTab('mg'); $('#mgLogin').hidden = true; if ($('#mgBody').hidden) mgLoad(); }
-    else setTab(['gr', 'sch', 'inb', 'cns', 'stf'].includes(P.tab) ? P.tab : 'att');
+    else setTab(['gr', 'sch', 'inb', 'cns', 'stf', 'dis'].includes(P.tab) ? P.tab : 'att');
   }
   startPolls();
 }
@@ -2423,6 +2466,7 @@ $('#gGo').addEventListener('click', async () => {
 });
 ['#gNid', '#gPin'].forEach(q => $(q).addEventListener('keydown', e => { if (e.key === 'Enter') $('#gGo').click(); }));
 $('#logoutBtn').addEventListener('click', () => {
+  dsReset();
   if (ROLE === 'counselor') { CPIN = ''; CNSL = []; try { sessionStorage.removeItem('sia_cns'); } catch (e) {} }
   if (ROLE === 'manager') { MG.pin = ''; S.pin = ''; $('#pin').value = ''; $('#mgBody').hidden = true; $('#mgLogin').hidden = false; try { sessionStorage.removeItem('sia_mgr'); } catch (e) {} }
   if (ROLE === 'teacher') { S.pin = P.pin = ''; $('#pin').value = ''; savePrefs(); try { sessionStorage.removeItem('sia_tpin'); } catch (x) {} }
@@ -4628,6 +4672,387 @@ async function mcAdd() {
   b.disabled = false; if (r.status !== 'ok') return toast(r.message || 'ثبت نشد');
   $('#mcTitle').value = ''; toast('در تقویم آموزشی ثبت شد ✓'); mcLoad();
 }
+/* ======================= انضباطی و پرورشی (نسخه‌ی ۱٫۰۶) =======================
+   موارد انضباطی، تشویق‌ها و فعالیت‌های پرورشی، اقدامات تربیتی، پیگیری تماس با خانواده، پرونده‌ی دانش‌آموز،
+   گزارش چاپی و سابقه‌ی تغییرات (مدیر). همه‌ی بررسی‌های دسترسی در سرور (Code.gs) انجام می‌شود؛ این بخش فقط نمایش و فرم است. */
+const DIS = { meta:null, mt:0, key:'', host:null, view:'new', back:'list', edit:null, ent:'rec', sel:{ cls:'', name:'' }, f:{}, rel:{},
+  lf:{ e:'rec', cls:'', name:'', kind:'', q:'', from:'', to:'', inc:false }, ff:{ cls:'', name:'', all:false },
+  pf:{ cls:'', name:'', inc:false }, rp:{ scope:'school', cls:'', name:'', from:'', to:'', det:false, data:null }, lg:{ cls:'', name:'' } };
+const DS_COL = { 'انضباطی':'neg', 'تشویق':'pos', 'پرورشی':'edu' };
+const DS_ICON = { 'انضباطی':'⚠️', 'تشویق':'🌟', 'پرورشی':'🎯' };
+const DS_FIELDS = { rec:['date', 'kind', 'cat', 'sev', 'desc'], act:['date', 'type', 'desc', 'rel'], fam:['topic', 'rel', 'due', 'st', 'cdate', 'method', 'who', 'result'] };
+const DS_ENAME = { rec:'مورد', act:'اقدام تربیتی', fam:'تماس با خانواده' };
+const dsMgr = () => !!(DIS.meta && DIS.meta.role === 'm');
+const dsToday = () => DIS.meta ? DIS.meta.td : dateStr();
+const dsAuth = () => ({ teacher:S.teacher, pin:ROLE === 'manager' ? MG.pin : S.pin });
+const dsCall = (action, extra) => send(Object.assign({ action:action, key:ACCESS_KEY }, dsAuth(), extra || {}));
+const dsFail = r => r.net ? 'اینترنت در دسترس نیست؛ دوباره تلاش کنید.' : (r.message || 'انجام نشد.');
+const dsOpt = (sel, val, txt) => { const o = el('option', '', txt); o.value = val; sel.append(o); return o; };
+const dsIsOpen = x => !!DIS.meta && DIS.meta.open.indexOf(x.st) >= 0;
+function dsNormDate(s) { const q = jParse(String(s || '').trim()); return q ? jStr(q[0], q[1], q[2]) : ''; }
+function dsPlus(n) { const q = jParse(dsToday()), g = jGreg(q[0], q[1], q[2]); g.setDate(g.getDate() + n); const j = jOf(g); return jStr(j[0], j[1], j[2]); }
+function dsFresh() { const t = dsToday(); DIS.f = { date:t, kind:'انضباطی', cat:'', sev:'', desc:'', type:'', rel:'', topic:'', due:'', st:'نیازمند پیگیری', cdate:t, method:'', who:'', result:'' }; }
+function dsSelect(items, val, ph, on) {
+  const s = el('select'); if (ph != null) dsOpt(s, '', ph); items.forEach(x => dsOpt(s, x, x)); s.value = items.indexOf(val) >= 0 ? val : '';
+  s.addEventListener('change', () => on(s.value)); return s;
+}
+function dsField(label, node) { const f = el('div', 'field'); if (label) f.append(el('span', 'lbl', label)); f.append(node); return f; }
+function dsReset() { DIS.meta = null; DIS.mt = 0; DIS.key = ''; DIS.edit = null; DIS.rel = {}; DIS.view = 'new'; DIS.sel = { cls:'', name:'' }; DIS.lf.cls = DIS.lf.name = DIS.ff.cls = DIS.ff.name = DIS.pf.cls = DIS.pf.name = DIS.rp.cls = DIS.rp.name = DIS.lg.cls = DIS.lg.name = ''; DIS.rp.data = null; DIS.f = {}; ['#disMHost', '#disTHost'].forEach(q => { const h = $(q); if (h) h.textContent = ''; }); const c = $('#disOpenCnt'); if (c) c.textContent = ''; }
+
+/* پرسش با متن (دلیل ابطال) در پنجره‌ی پیام */
+function dsAsk(title, msg, ph, okText, cb) {
+  const sh = $('#sheet'); sh.textContent = '';
+  const ta = el('textarea', 'ana-ta'); ta.rows = 3; ta.maxLength = 200; ta.placeholder = ph; ta.style.cssText = 'min-height:84px;margin-bottom:14px;text-align:right';
+  const b = el('div', 'btns'), ok = el('button', 'btn primary', okText), no = el('button', 'btn', 'انصراف'); ok.type = no.type = 'button';
+  ok.addEventListener('click', () => { const v = ta.value.trim(); if (v.length < 3) { toast('دلیل را بنویسید (دست‌کم ۳ نویسه)'); ta.focus(); return; } closeModal(); cb(v); });
+  no.addEventListener('click', closeModal); b.append(ok, no);
+  sh.append(el('div', 'mi warn', '!'), el('h3', '', title), el('p', '', msg), ta, b); $('#modal').hidden = false; ta.focus();
+}
+
+/* ---------- ورود به بخش ---------- */
+function disOpen(role) {
+  const host = $(role === 'm' ? '#disMHost' : '#disTHost'); if (!host) return; DIS.host = host;
+  const key = ROLE + '|' + S.teacher;
+  if (DIS.meta && DIS.key === key && Date.now() - DIS.mt < 300000) { disRender(); return; }
+  host.textContent = ''; host.append(el('div', 'empty', 'در حال بارگذاری…'));
+  dsCall('disMeta').then(r => {
+    if (r.status !== 'ok') {
+      host.textContent = ''; const c = el('div', 'card'), b = el('button', 'btn', 'تلاش دوباره'); b.type = 'button'; b.style.cssText = 'width:100%;margin-top:10px'; b.addEventListener('click', () => disOpen(role));
+      c.append(el('div', 'empty', dsFail(r)), b); host.append(c); return;
+    }
+    DIS.meta = r; DIS.mt = Date.now(); DIS.key = key; if (!Object.keys(DIS.f).length) dsFresh();
+    if (!dsMgr() && ['rep', 'log'].indexOf(DIS.view) >= 0) DIS.view = 'new';
+    disRender();
+  });
+}
+function disRender() {
+  const h = DIS.host; if (!h || !DIS.meta) return; h.textContent = ''; const mg = dsMgr();
+  const nav = el('div', 'chips ds-nav'), items = [['new', DIS.edit ? '✏️ ویرایش' : '➕ ثبت'], ['list', '📋 فهرست'], ['fam', '📞 پیگیری خانواده'], ['file', '🗂 پرونده']];
+  if (mg) items.push(['rep', '🖨 گزارش چاپی'], ['log', '🕘 سابقه تغییرات']);
+  nav.style.gridTemplateColumns = 'repeat(' + (items.length === 4 ? 2 : 3) + ',1fr)';
+  items.forEach(q => { const b = el('button', 'chip' + (DIS.view === q[0] ? ' on' : ''), q[1]); b.type = 'button'; b.addEventListener('click', () => { if (DIS.edit && q[0] === 'new') return; if (DIS.edit) { DIS.edit = null; dsFresh(); } DIS.view = q[0]; disRender(); }); nav.append(b); });
+  const c = el('div', 'card'); c.append(nav); h.append(c);
+  const body = el('div'); h.append(body);
+  ({ new:dsViewNew, list:b => dsViewList(b, ''), fam:b => dsViewList(b, 'fam'), file:dsViewFile, rep:dsViewRep, log:dsViewLog })[DIS.view](body);
+}
+
+/* ---------- انتخاب کلاس و دانش‌آموز ---------- */
+function dsPick(parent, st, o) {
+  o = o || {}; const cl = DIS.meta.classes;
+  if (!cl.length) { parent.append(el('div', 'empty', DIS.meta.role === 'm' ? 'هنوز دانش‌آموزی ثبت نشده است.' : 'کلاسی برای شما تعریف نشده است. (نام شما باید در «برنامه‌ی هفتگی» برای کلاسی ثبت شده باشد.)')); return false; }
+  const bar = el('div', 'mg-bar'), cs = el('select'), ss = el('select'); cs.setAttribute('aria-label', 'کلاس'); ss.setAttribute('aria-label', 'دانش‌آموز');
+  if (o.allCls || cl.length > 1) dsOpt(cs, '', o.allCls ? 'همه‌ی کلاس‌ها' : '— انتخاب کلاس —');
+  cl.forEach(x => dsOpt(cs, x.c, x.c));
+  if (!cl.some(x => x.c === st.cls)) st.cls = (cl.length === 1 && !o.allCls) ? cl[0].c : ''; cs.value = st.cls;
+  const fillS = () => {
+    ss.textContent = ''; const c = cl.find(x => x.c === st.cls);
+    dsOpt(ss, '', o.noStu ? '' : o.allStu ? 'همه‌ی دانش‌آموزان' : c ? '— انتخاب دانش‌آموز —' : 'ابتدا کلاس را انتخاب کنید');
+    if (c) c.n.forEach(n => dsOpt(ss, n, n)); if (!c || c.n.indexOf(st.name) < 0) st.name = ''; ss.value = st.name; ss.disabled = !c;
+  };
+  fillS();
+  cs.addEventListener('change', () => { st.cls = cs.value; st.name = ''; fillS(); o.onChange && o.onChange(); });
+  ss.addEventListener('change', () => { st.name = ss.value; o.onChange && o.onChange(); });
+  bar.append(cs); if (!o.noStu) bar.append(ss); parent.append(bar); return true;
+}
+
+/* ---------- یک مورد در فهرست ---------- */
+function dsItem(x, o) {
+  o = o || {}; const E = x.e, M = DIS.meta, top = E === 'rec' ? x.cat : E === 'act' ? x.type : x.topic;
+  const d = el('div', 'ds-it ' + (E === 'rec' ? 'k-' + DS_COL[x.kind] : E === 'act' ? 'k-act' : 'k-fam') + (x.vd ? ' vd' : ''));
+  const h = el('div', 'ds-h'), tags = el('span', 'ds-tags');
+  h.append(el('span', 'ds-tt', (E === 'rec' ? DS_ICON[x.kind] : E === 'act' ? '🛠' : '📞') + ' ' + top));
+  if (E === 'rec') { tags.append(el('span', 'ds-tag k-' + DS_COL[x.kind], x.kind)); if (x.sev) tags.append(el('span', 'ds-tag sev' + M.sev.indexOf(x.sev), x.sev)); }
+  if (E === 'act') tags.append(el('span', 'ds-tag k-act', 'اقدام'));
+  if (E === 'fam') {
+    const op = dsIsOpen(x), td = dsToday(); tags.append(el('span', 'ds-tag ' + (op ? 'fo' : 'fc'), x.st));
+    if (op && x.due) { if (x.due < td) tags.append(el('span', 'ds-tag sev2', 'سررسید گذشته')); else if (x.due === td) tags.append(el('span', 'ds-tag sev1', 'امروز')); }
+  }
+  h.append(tags); d.append(h);
+  const sub = []; if (!o.noStu) sub.push(x.name + ' · ' + x.cls);
+  if (E === 'fam') { sub.push('ثبت ' + fa(x.day)); if (x.due) sub.push('موعد ' + fa(x.due)); } else sub.push('تاریخ ' + fa(x.date));
+  d.append(el('div', 'ds-meta', sub.join(' · ')));
+  if (x.rel) { const rb = o.relMap && o.relMap[x.rel]; d.append(el('div', 'ds-meta', '🔗 مرتبط با: ' + (rb || 'مورد دیگر'))); }
+  const body = E === 'fam' ? x.result : x.desc; if (E !== 'fam' && body) d.append(el('div', 'ds-desc', body));
+  if (E === 'fam') {
+    if (x.cdate || x.method || x.who) d.append(el('div', 'ds-meta', '☎️ ' + [x.cdate ? fa(x.cdate) : '', x.method, x.who ? 'با ' + x.who : ''].filter(String).join(' · ')));
+    if (x.result) d.append(el('div', 'ds-desc', 'نتیجه: ' + x.result));
+    if (x.ph) { const pr = el('div', 'ds-acts'); [['پدر', x.ph.fn, x.ph.fp], ['مادر', x.ph.mn, x.ph.mp], ['دانش‌آموز', '', x.ph.sp]].forEach(q => { if (!q[2]) return; const a = el('a', 'tel', '📞 ' + q[0] + (q[1] ? ' (' + q[1] + ')' : '')); a.href = 'tel:' + q[2].replace(/[^\d+]/g, ''); a.style.minHeight = '40px'; pr.append(a); }); if (pr.children.length) d.append(pr); }
+  }
+  d.append(el('div', 'ds-meta', 'ثبت: ' + x.by + ' · ' + fa(x.t) + (x.ed ? ' — ویرایش: ' + (x.edBy || '') + ' ' + fa(x.ed) : '')));
+  if (x.vd) d.append(el('div', 'ds-void', '⛔ ابطال‌شده — دلیل: ' + x.vw));
+  const ac = el('div', 'ds-acts');
+  if (E === 'fam' && !x.vd && x.can && dsIsOpen(x)) { const b = el('button', 'btn', '✅ ثبت نتیجه‌ی تماس'); b.type = 'button'; b.addEventListener('click', () => dsEdit(x, true)); ac.append(b); }
+  if (x.can && !x.vd) {
+    const e = el('button', 'btn', '✏️ ویرایش'), v = el('button', 'btn', '⛔ ابطال'); e.type = v.type = 'button';
+    e.addEventListener('click', () => dsEdit(x)); v.addEventListener('click', () => dsVoid(x, o.reload)); ac.append(e, v);
+  }
+  if (x.vd && dsMgr()) { const b = el('button', 'btn', '↩️ بازگردانی'); b.type = 'button'; b.addEventListener('click', () => dsRestore(x, o.reload)); ac.append(b); }
+  if (ac.children.length) d.append(ac);
+  return d;
+}
+function dsEdit(x, done) {
+  DIS.edit = { e:x.e, o:x }; DIS.back = DIS.view === 'new' ? 'list' : DIS.view; DIS.view = 'new'; DIS.sel = { cls:x.cls, name:x.name }; DIS.f = {};
+  DS_FIELDS[x.e].forEach(k => { DIS.f[k] = x[k] || ''; });
+  if (x.e === 'fam') { if (!DIS.f.cdate) DIS.f.cdate = dsToday(); if (done) DIS.f.st = 'انجام شد'; }
+  disRender(); window.scrollTo({ top:0, behavior:'smooth' });
+}
+function dsVoid(x, reload) {
+  dsAsk('ابطال ' + DS_ENAME[x.e], 'مورد حذف نمی‌شود؛ با علامت «ابطال‌شده» و دلیل شما در سابقه می‌ماند.', 'دلیل ابطال…', 'ابطال', async why => {
+    const r = await dsCall('disVoid', { e:x.e, id:x.id, why:why }); if (r.status !== 'ok') return toast(dsFail(r));
+    toast('ابطال شد'); DIS.rel = {}; dsBadge(); reload && reload();
+  });
+}
+function dsRestore(x, reload) {
+  showModal({ icon:'warn', title:'بازگرداندن مورد', msg:'این مورد دوباره فعال شود؟', buttons:[{ text:'بازگردانی', primary:true, onClick:async () => { const r = await dsCall('disVoid', { e:x.e, id:x.id, undo:true }); if (r.status !== 'ok') return toast(dsFail(r)); toast('بازگردانده شد'); DIS.rel = {}; dsBadge(); reload && reload(); } }, { text:'انصراف' }] });
+}
+
+/* ---------- نمای «ثبت / ویرایش» ---------- */
+function dsViewNew(box) {
+  const ed = DIS.edit, E = ed ? ed.e : DIS.ent, f = DIS.f, M = DIS.meta, c = el('div', 'card');
+  c.append(el('div', 'lbl', ed ? '✏️ ویرایش ' + DS_ENAME[E] : 'ثبت جدید'));
+  if (ed) {
+    c.append(el('div', 'now-t', ed.o.name), el('div', 'now-sub', 'کلاس ' + ed.o.cls + ' — دانش‌آموز و کلاس قابل تغییر نیست؛ در صورت اشتباه، مورد را ابطال و دوباره ثبت کنید.'));
+    if (!dsMgr()) c.append(el('div', 'now-sub', 'ویرایش فقط برای ثبت‌کننده و تا ' + fa(M.editHrs) + ' ساعت پس از ثبت ممکن است.'));
+  } else {
+    const eb = el('div', 'chips'); eb.style.cssText = 'grid-template-columns:repeat(3,1fr);margin:8px 0 6px';
+    [['rec', 'ثبت مورد'], ['act', 'اقدام تربیتی'], ['fam', 'تماس با خانواده']].forEach(q => { const b = el('button', 'chip' + (E === q[0] ? ' on' : ''), q[1]); b.type = 'button'; b.addEventListener('click', () => { DIS.ent = q[0]; disRender(); }); eb.append(b); });
+    c.append(eb, el('div', 'now-sub', E === 'rec' ? 'مورد انضباطی، تشویق یا فعالیت پرورشی' : E === 'act' ? 'اقدام انجام‌شده برای دانش‌آموز (تذکر، احضار ولی، قرارداد رفتاری…)' : 'ثبت درخواست پیگیری یا نتیجه‌ی تماس با خانواده'));
+    c.style.paddingBottom = '14px';
+    const pk = el('div'); pk.style.marginTop = '10px'; c.append(pk);
+    if (!dsPick(pk, DIS.sel, { onChange:() => { if (E !== 'rec') dsRelLoad(); } })) { box.append(c); return; }
+  }
+  box.append(c);
+  const fc = el('div', 'card'); box.append(fc);
+  const dateRow = (key, label) => {
+    const r = el('div', 'mg-bar jp'), d = el('select'), m = el('select'), y = el('select'); d.setAttribute('aria-label', 'روز'); m.setAttribute('aria-label', 'ماه'); y.setAttribute('aria-label', 'سال'); r.append(d, m, y);
+    let api = null; api = jPicker(d, m, y, () => { if (api) f[key] = api.get(); }); api.set(f[key] || dsToday()); f[key] = api.get(); return dsField(label, r);
+  };
+  const area = (key, ph, max, rows) => {
+    const t = el('textarea', 'ana-ta'); t.maxLength = max; t.placeholder = ph; t.rows = rows || 4; t.value = f[key] || ''; const cn = el('div', 'now-sub', fa(t.value.length) + ' / ' + fa(max)); cn.style.textAlign = 'left';
+    t.addEventListener('input', () => { f[key] = t.value; cn.textContent = fa(t.value.length) + ' / ' + fa(max); }); const w = el('div'); w.append(t, cn); return w;
+  };
+  if (E === 'rec') {
+    const kb = el('div', 'chips'); kb.style.cssText = 'grid-template-columns:repeat(3,1fr)';
+    M.kinds.forEach(k => { const b = el('button', 'chip ds-kc k-' + DS_COL[k] + (f.kind === k ? ' on' : ''), DS_ICON[k] + ' ' + k); b.type = 'button'; b.addEventListener('click', () => { f.kind = k; f.cat = ''; f.sev = ''; disRender(); }); kb.append(b); });
+    fc.append(dsField('نوع', kb), dsField('عنوان', dsSelect(M.cats[f.kind], f.cat, '— انتخاب عنوان —', v => { f.cat = v; })));
+    if (f.kind === 'انضباطی') fc.append(dsField('شدت', dsSelect(M.sev, f.sev, '— انتخاب شدت —', v => { f.sev = v; })));
+    fc.append(dateRow('date', 'تاریخ رخداد'), dsField('شرح' + (f.kind === 'انضباطی' ? ' (الزامی)' : ' (اختیاری)'), area('desc', 'شرح کوتاه و موضوعی؛ از نوشتن قضاوت و عبارت توهین‌آمیز خودداری کنید.', 600)));
+  } else if (E === 'act') {
+    fc.append(dsField('نوع اقدام', dsSelect(M.acts, f.type, '— انتخاب اقدام —', v => { f.type = v; })), dateRow('date', 'تاریخ اقدام'));
+    const rs = el('select'); rs.id = 'dsRel'; rs.addEventListener('change', () => { f.rel = rs.value; }); dsOpt(rs, '', '— بدون ارتباط —'); fc.append(dsField('مرتبط با مورد (اختیاری)', rs));
+    fc.append(dsField('شرح اقدام (اختیاری)', area('desc', 'نتیجه یا توضیح اقدام…', 600, 3))); dsRelLoad();
+  } else {
+    fc.append(dsField('موضوع تماس / دلیل پیگیری', (() => { const i = el('input'); i.type = 'text'; i.maxLength = 200; i.value = f.topic || ''; i.placeholder = 'مثلاً غیبت مکرر در هفته‌ی گذشته'; i.addEventListener('input', () => { f.topic = i.value; }); return i; })()));
+    const rs = el('select'); rs.id = 'dsRel'; rs.addEventListener('change', () => { f.rel = rs.value; }); dsOpt(rs, '', '— بدون ارتباط —'); fc.append(dsField('مرتبط با (اختیاری)', rs));
+    const di = el('input'); di.type = 'text'; di.inputMode = 'numeric'; di.setAttribute('dir', 'ltr'); di.style.textAlign = 'center'; di.placeholder = 'موعد پیگیری (اختیاری) — ' + fa('1405/07/30'); di.value = f.due ? fa(f.due) : '';
+    di.addEventListener('input', () => { f.due = di.value; });
+    const qb = el('div', 'mg-bar'); qb.style.marginTop = '6px'; [['امروز', 0], ['فردا', 1], ['۳ روز دیگر', 3], ['یک هفته دیگر', 7]].forEach(q => { const b = el('button', 'btn', q[0]); b.type = 'button'; b.style.cssText = 'height:38px;padding:0 10px;font-size:13px;flex:1 1 70px'; b.addEventListener('click', () => { f.due = dsPlus(q[1]); di.value = fa(f.due); }); qb.append(b); });
+    const df = dsField('موعد پیگیری', di); df.append(qb); fc.append(df);
+    fc.append(dsField('وضعیت', dsSelect(M.fst, f.st, null, v => { f.st = v; disRender(); })));
+    if (f.st === 'انجام شد' || f.st === 'پاسخ نداد') {
+      const ok = f.st === 'انجام شد';
+      fc.append(dateRow('cdate', ok ? 'تاریخ تماس' : 'تاریخ تلاش برای تماس'), dsField('روش تماس', dsSelect(M.methods, f.method, '— انتخاب —', v => { f.method = v; })), dsField('طرف تماس', dsSelect(M.whoL, f.who, '— انتخاب —', v => { f.who = v; })),
+        dsField(ok ? 'نتیجه‌ی گفت‌وگو (الزامی)' : 'توضیح (اختیاری)', area('result', 'خلاصه‌ی گفت‌وگو و توافق انجام‌شده…', 600, 3)));
+    }
+    dsRelLoad();
+  }
+  const sb = el('button', 'send', ed ? 'ذخیره‌ی تغییرات' : 'ثبت'); sb.type = 'button'; sb.addEventListener('click', () => dsSubmit(sb)); fc.append(sb);
+  if (ed) { const cb = el('button', 'btn', 'انصراف'); cb.type = 'button'; cb.style.cssText = 'width:100%;margin-top:8px'; cb.addEventListener('click', () => { DIS.edit = null; DIS.view = DIS.back || 'list'; dsFresh(); disRender(); }); fc.append(cb); }
+}
+async function dsRelLoad() {
+  const rs = $('#dsRel'), st = DIS.sel; if (!rs) return; const E = DIS.edit ? DIS.edit.e : DIS.ent;
+  const fill = r => { if (!$('#dsRel') || $('#dsRel') !== rs) return; rs.textContent = ''; dsOpt(rs, '', '— بدون ارتباط —'); const l = (r.rec || []).concat(E === 'fam' ? (r.act || []) : []).filter(x => !x.vd); l.forEach(x => dsOpt(rs, x.id, fa(x.date) + ' · ' + (x.e === 'rec' ? x.cat : x.type))); if (DIS.f.rel && !l.some(x => x.id === DIS.f.rel)) dsOpt(rs, DIS.f.rel, '(مورد ابطال‌شده یا نامشخص)'); rs.value = DIS.f.rel || ''; };
+  if (!st.cls || !st.name) return; const key = st.cls + '|' + st.name;
+  if (DIS.rel[key]) return fill(DIS.rel[key]);
+  const r = await dsCall('disFile', { cls:st.cls, name:st.name }); if (r.status !== 'ok') return; DIS.rel[key] = r; if (st.cls + '|' + st.name === key) fill(r);
+}
+async function dsSubmit(btn) {
+  const ed = DIS.edit, E = ed ? ed.e : DIS.ent, f = DIS.f, st = DIS.sel, td = dsToday();
+  const bad = m => { toast(m); return false; };
+  if (!ed && (!st.cls || !st.name)) return bad('کلاس و دانش‌آموز را انتخاب کنید');
+  if (E === 'rec') { if (!f.cat) return bad('عنوان را انتخاب کنید'); if (f.kind === 'انضباطی' && !f.sev) return bad('شدت را انتخاب کنید'); if ((f.kind === 'انضباطی' || f.cat === 'سایر') && String(f.desc || '').trim().length < 3) return bad('شرح را بنویسید'); }
+  if (E === 'act') { if (!f.type) return bad('نوع اقدام را انتخاب کنید'); if (f.type === 'سایر' && String(f.desc || '').trim().length < 3) return bad('شرح اقدام را بنویسید'); }
+  if (E !== 'fam' && f.date > td) return bad('تاریخ نمی‌تواند در آینده باشد');
+  if (E === 'fam') {
+    if (String(f.topic || '').trim().length < 3) return bad('موضوع تماس را بنویسید');
+    if (String(f.due || '').trim()) { const d = dsNormDate(f.due); if (!d) return bad('موعد پیگیری را به شکل ' + fa('1405/07/30') + ' بنویسید'); f.due = d; } else f.due = '';
+    if (f.st === 'انجام شد' && (!f.method || !f.who || String(f.result || '').trim().length < 3)) return bad('روش، طرف تماس و نتیجه‌ی گفت‌وگو را کامل کنید');
+    if (f.cdate > td) return bad('تاریخ تماس نمی‌تواند در آینده باشد');
+  }
+  const pay = { e:E, id:ed ? ed.o.id : '', cls:ed ? ed.o.cls : st.cls, name:ed ? ed.o.name : st.name }; DS_FIELDS[E].forEach(k => { pay[k] = f[k] == null ? '' : f[k]; });
+  btn.disabled = true; btn.textContent = 'در حال ذخیره…'; const r = await dsCall('disSave', pay); btn.disabled = false; btn.textContent = ed ? 'ذخیره‌ی تغییرات' : 'ثبت';
+  if (r.status !== 'ok') return toast(dsFail(r));
+  DIS.rel = {}; toast(r.same ? 'تغییری وجود نداشت' : ed ? 'تغییرات ذخیره شد ✓' : 'ثبت شد ✓');
+  if (ed) { DIS.edit = null; DIS.view = DIS.back || 'list'; dsFresh(); } else { ['desc', 'topic', 'result', 'due', 'rel', 'method', 'who'].forEach(k => { f[k] = ''; }); f.st = 'نیازمند پیگیری'; if (E === 'rec') { f.cat = ''; f.sev = ''; } if (E === 'act') f.type = ''; }
+  dsBadge(); disRender(); window.scrollTo({ top:0, behavior:'smooth' });
+}
+
+/* ---------- نمای «فهرست» و «پیگیری خانواده» ---------- */
+function dsViewList(box, preset) {
+  const fam = preset === 'fam', L = fam ? DIS.ff : DIS.lf, M = DIS.meta, c = el('div', 'card'), out = el('div', 'card'); if (fam) L.e = 'fam';
+  c.append(el('div', 'lbl', fam ? 'پیگیری تماس با خانواده' + (dsMgr() ? '' : ' (تماس‌های ثبت‌شده‌ی خودتان)') : 'فهرست و جستجو'));
+  if (!fam) {
+    const eb = el('div', 'chips'); eb.style.cssText = 'grid-template-columns:repeat(3,1fr);margin:8px 0 10px';
+    [['rec', 'موارد'], ['act', 'اقدامات'], ['fam', 'تماس‌ها']].forEach(q => { const b = el('button', 'chip' + (L.e === q[0] ? ' on' : ''), q[1]); b.type = 'button'; b.addEventListener('click', () => { L.e = q[0]; disRender(); }); eb.append(b); });
+    c.append(eb);
+  }
+  const mdv = el('div'); mdv.style.marginTop = fam ? '10px' : '0'; c.append(mdv);
+  if (!dsPick(mdv, L, { allCls:true, allStu:true, onChange:() => load() })) { box.append(c); return; }
+  let kindSel = null; const q = el('input'); q.type = 'search'; q.placeholder = 'جست‌وجو در متن…'; q.maxLength = 60; q.value = L.q || ''; q.addEventListener('input', () => { L.q = q.value; });
+  const fr = el('input'), to = el('input'); [fr, to].forEach((i, k) => { i.type = 'text'; i.inputMode = 'numeric'; i.setAttribute('dir', 'ltr'); i.style.textAlign = 'center'; i.placeholder = (k ? 'تا ' : 'از ') + fa('1405/07/01'); i.value = L[k ? 'to' : 'from'] ? fa(L[k ? 'to' : 'from']) : ''; i.addEventListener('input', () => { L[k ? 'to' : 'from'] = i.value; }); });
+  const bar = el('div', 'mg-bar'); if (!fam && L.e === 'rec') { kindSel = dsSelect(M.kinds, L.kind, 'همه‌ی انواع', v => { L.kind = v; load(); }); bar.append(kindSel); } bar.append(q); c.append(bar);
+  if (!fam) { const b2 = el('div', 'mg-bar'); b2.append(fr, to); c.append(b2); }
+  const opts = el('div', 'ds-opts');
+  if (fam) { const l = el('label', 'sms-opt'), i = el('input'); i.type = 'checkbox'; i.checked = !L.all; i.addEventListener('change', () => { L.all = !i.checked; load(); }); l.append(i, document.createTextNode(' فقط تماس‌های نیازمند پیگیری')); opts.append(l); }
+  if (dsMgr()) { const l = el('label', 'sms-opt'), i = el('input'); i.type = 'checkbox'; i.checked = !!L.inc; i.addEventListener('change', () => { L.inc = i.checked; load(); }); l.append(i, document.createTextNode(' نمایش ابطال‌شده‌ها')); opts.append(l); }
+  if (opts.children.length) c.append(opts);
+  const go = el('button', 'btn', '🔍 نمایش'); go.type = 'button'; go.style.cssText = 'width:100%;margin-top:6px'; go.addEventListener('click', () => load()); c.append(go);
+  q.addEventListener('keydown', e => { if (e.key === 'Enter') load(); });
+  box.append(c, out);
+  async function load() {
+    const fromV = String(L.from || '').trim() ? dsNormDate(L.from) : '', toV = String(L.to || '').trim() ? dsNormDate(L.to) : '';
+    if ((String(L.from || '').trim() && !fromV) || (String(L.to || '').trim() && !toV)) return toast('تاریخ را به شکل ' + fa('1405/07/30') + ' بنویسید');
+    out.textContent = ''; out.append(el('div', 'empty', 'در حال بارگذاری…'));
+    const r = await dsCall('disList', { e:L.e, cls:L.cls, name:L.name, kind:L.e === 'rec' ? L.kind : '', q:L.q || '', from:fromV, to:toV, inc:!!L.inc, open:fam && !L.all });
+    out.textContent = ''; if (r.status !== 'ok') { out.append(el('div', 'empty', dsFail(r))); return; }
+    out.append(el('div', 'lbl', fa(r.list.length) + ' مورد' + (r.more ? ' (فقط ' + fa(r.list.length) + ' مورد اول؛ فیلتر را محدودتر کنید)' : '')));
+    if (!r.list.length) out.append(el('div', 'empty', fam ? 'تماسی در انتظار پیگیری نیست.' : 'موردی پیدا نشد.'));
+    r.list.forEach(x => out.append(dsItem(x, { reload:load })));
+    if (fam) { const td = r.td; DIS.openCnt = r.list.filter(x => dsIsOpen(x) && (!x.due || x.due <= td)).length; }
+  }
+  load();
+}
+
+/* ---------- نمای «پرونده‌ی دانش‌آموز» ---------- */
+function dsCounts(r) {
+  const rec = r.rec.filter(x => !x.vd), act = r.act.filter(x => !x.vd), fam = r.fam.filter(x => !x.vd), M = DIS.meta;
+  const neg = rec.filter(x => x.kind === 'انضباطی'), sv = M.sev.map(s => neg.filter(x => x.sev === s).length);
+  return { neg:neg.length, sv:sv, pos:rec.filter(x => x.kind === 'تشویق').length, edu:rec.filter(x => x.kind === 'پرورشی').length, act:act.length, fam:fam.length, famOpen:fam.filter(dsIsOpen).length };
+}
+function dsViewFile(box) {
+  const P = DIS.pf, c = el('div', 'card'), out = el('div'); c.append(el('div', 'lbl', 'پرونده‌ی انضباطی و پرورشی دانش‌آموز'));
+  const pk = el('div'); pk.style.marginTop = '10px'; c.append(pk);
+  if (!dsPick(pk, P, { onChange:() => load() })) { box.append(c); return; }
+  if (dsMgr()) { const l = el('label', 'sms-opt'), i = el('input'); i.type = 'checkbox'; i.checked = !!P.inc; i.addEventListener('change', () => { P.inc = i.checked; load(); }); l.append(i, document.createTextNode(' نمایش ابطال‌شده‌ها')); c.append(l); }
+  box.append(c, out);
+  async function load() {
+    out.textContent = ''; if (!P.cls || !P.name) { out.append(el('div', 'card empty', 'کلاس و دانش‌آموز را انتخاب کنید.')); return; }
+    out.append(el('div', 'empty', 'در حال بارگذاری…')); const r = await dsCall('disFile', { cls:P.cls, name:P.name, inc:!!P.inc });
+    out.textContent = ''; if (r.status !== 'ok') { out.append(el('div', 'card empty', dsFail(r))); return; }
+    DIS.rel[P.cls + '|' + P.name] = r;
+    const n = dsCounts(r), hd = el('div', 'card'); hd.append(el('div', 'now-t', r.stu.name), el('div', 'now-sub', 'کلاس ' + r.stu.cls + (r.stu.stream ? ' · رشته‌ی ' + r.stu.stream : '')));
+    const tiles = el('div', 'ds-tiles');
+    [['⚠️ انضباطی', n.neg, n.neg ? 'سبک ' + fa(n.sv[0]) + ' · متوسط ' + fa(n.sv[1]) + ' · شدید ' + fa(n.sv[2]) : ''], ['🌟 تشویق', n.pos, ''], ['🎯 پرورشی', n.edu, ''], ['🛠 اقدام', n.act, ''], ['📞 پیگیری باز', n.famOpen, 'از ' + fa(n.fam) + ' تماس']].forEach(q => { const t = el('div', 'ds-tile'); t.append(el('div', 'now-sub', q[0]), el('div', 'now-t', fa(q[1]))); if (q[2]) t.append(el('div', 'ds-meta', q[2])); tiles.append(t); });
+    hd.append(tiles);
+    if (r.ph) { const pr = el('div', 'ds-acts'); [['پدر', r.ph.fn, r.ph.fp], ['مادر', r.ph.mn, r.ph.mp], ['دانش‌آموز', '', r.ph.sp]].forEach(q => { if (!q[2]) return; const a = el('a', 'tel', '📞 ' + q[0] + (q[1] ? ' (' + q[1] + ')' : '')); a.href = 'tel:' + q[2].replace(/[^\d+]/g, ''); a.style.minHeight = '40px'; pr.append(a); }); if (pr.children.length) hd.append(pr); }
+    const ab = el('div', 'ds-acts'), nb = el('button', 'btn', '➕ ثبت برای این دانش‌آموز'); nb.type = 'button'; nb.addEventListener('click', () => { DIS.sel = { cls:P.cls, name:P.name }; DIS.view = 'new'; disRender(); window.scrollTo({ top:0, behavior:'smooth' }); }); ab.append(nb);
+    if (dsMgr()) { const pb = el('button', 'btn', '🖨 چاپ پرونده'); pb.type = 'button'; pb.addEventListener('click', () => dsPrint({ scope:'student', stu:r.stu, ph:r.ph, rec:r.rec, act:r.act, fam:r.fam, td:r.td })); ab.append(pb); }
+    hd.append(ab); out.append(hd);
+    const relMap = {}; r.rec.concat(r.act).forEach(x => { relMap[x.id] = fa(x.date) + ' · ' + (x.e === 'rec' ? x.cat : x.type); });
+    const all = r.rec.concat(r.act, r.fam).map(x => ({ x:x, d:x.e === 'fam' ? x.day : x.date })).sort((a, b) => a.d < b.d ? 1 : a.d > b.d ? -1 : 0);
+    const tl = el('div', 'card'); tl.append(el('div', 'lbl', 'سوابق (جدیدترین بالا)')); if (!all.length) tl.append(el('div', 'empty', 'هنوز چیزی ثبت نشده است.'));
+    all.forEach(q => tl.append(dsItem(q.x, { noStu:true, relMap:relMap, reload:load }))); out.append(tl);
+    if (r.beh && r.beh.length) { const d = el('details', 'dir-it'), s = el('summary'); s.append(el('span', '', 'یادداشت‌های رفتاری قبلی (' + fa(r.beh.length) + ')')); d.append(s); r.beh.forEach(b => { const it = el('div', 'ds-meta'); it.style.padding = '4px 14px 8px'; it.textContent = fa(b.t) + ' · ' + b.k + ' · ' + b.w + ' — ' + b.n; d.append(it); }); out.append(d); }
+  }
+  load();
+}
+
+/* ---------- نمای «گزارش چاپی» (مدیر) ---------- */
+function dsAgg(data) {
+  const m = {}, g = x => (m[x.cls + '|' + x.name] = m[x.cls + '|' + x.name] || { name:x.name, cls:x.cls, neg:0, sv:[0, 0, 0], pos:0, edu:0, act:0, fam:0, fo:0 });
+  data.rec.filter(x => !x.vd).forEach(x => { const a = g(x); if (x.kind === 'انضباطی') { a.neg++; const i = DIS.meta.sev.indexOf(x.sev); if (i >= 0) a.sv[i]++; } else if (x.kind === 'تشویق') a.pos++; else a.edu++; });
+  data.act.filter(x => !x.vd).forEach(x => { g(x).act++; });
+  data.fam.filter(x => !x.vd).forEach(x => { const a = g(x); a.fam++; if (dsIsOpen(x)) a.fo++; });
+  return Object.keys(m).map(k => m[k]).sort((a, b) => b.neg - a.neg || b.sv[2] - a.sv[2] || a.cls.localeCompare(b.cls, 'fa') || a.name.localeCompare(b.name, 'fa'));
+}
+function dsReportNodes(d) {
+  const M = DIS.meta, nodes = [], rec = d.rec.filter(x => !x.vd), act = d.act.filter(x => !x.vd), fam = d.fam.filter(x => !x.vd), st = d.scope === 'student';
+  const n = dsCounts({ rec:rec, act:act, fam:fam });
+  nodes.push(el('h2', '', 'خلاصه'));
+  nodes.push(tbl(['موارد انضباطی', 'سبک', 'متوسط', 'شدید', 'تشویق‌ها', 'فعالیت‌های پرورشی', 'اقدامات تربیتی', 'تماس با خانواده', 'پیگیری باز'], [[n.neg, n.sv[0], n.sv[1], n.sv[2], n.pos, n.edu, n.act, n.fam, n.famOpen].map(fa)]));
+  const cat = {}; rec.forEach(x => { const k = x.kind + '|' + x.cat; cat[k] = (cat[k] || 0) + 1; });
+  const cr = Object.keys(cat).map(k => [k.split('|')[0], k.split('|')[1], cat[k]]).sort((a, b) => M.kinds.indexOf(a[0]) - M.kinds.indexOf(b[0]) || b[2] - a[2]);
+  if (cr.length && !st) { nodes.push(el('h2', '', 'عنوان‌ها به تفکیک نوع')); nodes.push(tbl(['نوع', 'عنوان', 'تعداد'], cr.map(q => [q[0], q[1], fa(q[2])]))); }
+  if (!st) {
+    const ag = dsAgg({ rec:rec, act:act, fam:fam });
+    if (d.scope === 'school') {
+      const bc = {}; ag.forEach(a => { const o = bc[a.cls] = bc[a.cls] || { neg:0, pos:0, edu:0, act:0, fo:0, s:0 }; o.neg += a.neg; o.pos += a.pos; o.edu += a.edu; o.act += a.act; o.fo += a.fo; o.s++; });
+      nodes.push(el('h2', '', 'خلاصه‌ی کلاس‌ها')); nodes.push(tbl(['کلاس', 'دانش‌آموزان دارای سابقه', 'انضباطی', 'تشویق', 'پرورشی', 'اقدام', 'پیگیری باز'], Object.keys(bc).sort((a, b) => a.localeCompare(b, 'fa')).map(c => [c, fa(bc[c].s), fa(bc[c].neg), fa(bc[c].pos), fa(bc[c].edu), fa(bc[c].act), fa(bc[c].fo)])));
+    }
+    nodes.push(el('h2', '', 'وضعیت دانش‌آموزان (به ترتیب تعداد موارد انضباطی)'));
+    nodes.push(ag.length ? tbl(['دانش‌آموز', 'کلاس', 'انضباطی (سبک/متوسط/شدید)', 'تشویق', 'پرورشی', 'اقدام', 'پیگیری باز'], ag.map(a => [a.name, a.cls, fa(a.neg) + (a.neg ? ' (' + a.sv.map(fa).join('/') + ')' : ''), fa(a.pos), fa(a.edu), fa(a.act), fa(a.fo)])) : el('div', '', 'موردی در این بازه ثبت نشده است.'));
+  }
+  if (d.det || st) {
+    const sc = st ? [] : ['دانش‌آموز', 'کلاس'];
+    if (rec.length) { nodes.push(el('h2', '', 'موارد انضباطی، تشویق‌ها و فعالیت‌های پرورشی')); nodes.push(tbl(sc.concat(['تاریخ', 'نوع', 'عنوان', 'شدت', 'شرح', 'ثبت‌کننده']), rec.map(x => (st ? [] : [x.name, x.cls]).concat([fa(x.date), x.kind, x.cat, x.sev || '—', x.desc || '—', x.by])))); }
+    if (act.length) { nodes.push(el('h2', '', 'اقدامات تربیتی')); nodes.push(tbl(sc.concat(['تاریخ', 'اقدام', 'شرح', 'ثبت‌کننده']), act.map(x => (st ? [] : [x.name, x.cls]).concat([fa(x.date), x.type, x.desc || '—', x.by])))); }
+    if (fam.length) { nodes.push(el('h2', '', 'پیگیری تماس با خانواده')); nodes.push(tbl(sc.concat(['تاریخ ثبت', 'موضوع', 'وضعیت', 'موعد', 'تاریخ تماس', 'روش و طرف تماس', 'نتیجه']), fam.map(x => (st ? [] : [x.name, x.cls]).concat([fa(x.day), x.topic, x.st, x.due ? fa(x.due) : '—', x.cdate ? fa(x.cdate) : '—', [x.method, x.who].filter(String).join(' · ') || '—', x.result || '—'])))); }
+    if (!rec.length && !act.length && !fam.length) nodes.push(el('div', '', 'در این بازه موردی ثبت نشده است.'));
+  }
+  return nodes;
+}
+function dsPrint(d) {
+  const pa = $('#printArea'); pa.textContent = ''; pa.classList.remove('paper');
+  if (LOGO_BASE64) { const im = el('img'); im.src = $('#logo').src; im.alt = ''; im.style.cssText = 'width:76px;height:76px;float:left;margin:0 10px 6px 0'; pa.append(im); }
+  const title = d.scope === 'student' ? 'پرونده‌ی انضباطی و پرورشی دانش‌آموز' : 'گزارش انضباطی و پرورشی';
+  pa.append(el('h1', '', title + ' — ' + SCHOOL_NAME));
+  let info = '';
+  if (d.scope === 'student') info = 'نام: ' + d.stu.name + ' · کلاس: ' + d.stu.cls + (d.stu.stream ? ' · رشته: ' + d.stu.stream : '') + (d.ph && (d.ph.fn || d.ph.mn) ? ' · ولی: ' + [d.ph.fn, d.ph.mn].filter(String).join(' / ') : '');
+  else info = (d.scope === 'class' ? 'کلاس: ' + d.cls : 'کل مدرسه') + (d.from || d.to ? ' · بازه: ' + (d.from ? 'از ' + fa(d.from) : '') + (d.to ? ' تا ' + fa(d.to) : '') : ' · همه‌ی سوابق');
+  pa.append(el('div', '', info + ' · تاریخ صدور: ' + fa(d.td || dateStr())));
+  dsReportNodes(d).forEach(n => pa.append(n));
+  const nt = el('div', '', 'موارد ابطال‌شده در این گزارش نیامده است. این گزارش محرمانه است و فقط برای استفاده‌ی مدیریت مدرسه و اولیای دانش‌آموز مربوط تنظیم شده است.'); nt.style.marginTop = '14px'; pa.append(nt);
+  const sg = el('div', 'pa-sign'); ['مدیر مدرسه', 'مسئول انضباطی و پرورشی'].concat(d.scope === 'student' ? ['ولی دانش‌آموز (مشاهده شد)'] : []).forEach(t => sg.append(el('div', '', t))); pa.append(sg);
+  document.body.classList.add('printing'); window.print();
+}
+function dsViewRep(box) {
+  const R = DIS.rp, M = DIS.meta, c = el('div', 'card'), out = el('div'); c.append(el('div', 'lbl', 'گزارش چاپی انضباطی و پرورشی (فقط مدیر)'));
+  const sb = el('div', 'chips'); sb.style.cssText = 'grid-template-columns:repeat(3,1fr);margin:8px 0 10px';
+  [['school', 'کل مدرسه'], ['class', 'یک کلاس'], ['student', 'یک دانش‌آموز']].forEach(q => { const b = el('button', 'chip' + (R.scope === q[0] ? ' on' : ''), q[1]); b.type = 'button'; b.addEventListener('click', () => { R.scope = q[0]; R.data = null; disRender(); }); sb.append(b); }); c.append(sb);
+  if (R.scope !== 'school') { const pk = el('div'); c.append(pk); if (!dsPick(pk, R, { noStu:R.scope === 'class' })) { box.append(c); return; } }
+  const fr = el('input'), to = el('input'); [fr, to].forEach((i, k) => { i.type = 'text'; i.inputMode = 'numeric'; i.setAttribute('dir', 'ltr'); i.style.textAlign = 'center'; i.placeholder = (k ? 'تا تاریخ ' : 'از تاریخ ') + fa('1405/07/01') + ' (اختیاری)'; i.value = R[k ? 'to' : 'from'] ? fa(R[k ? 'to' : 'from']) : ''; i.addEventListener('input', () => { R[k ? 'to' : 'from'] = i.value; }); });
+  const bar = el('div', 'mg-bar'); bar.append(fr, to); c.append(bar);
+  if (R.scope !== 'student') { const l = el('label', 'sms-opt'), i = el('input'); i.type = 'checkbox'; i.checked = !!R.det; i.addEventListener('change', () => { R.det = i.checked; if (R.data) draw(); }); l.append(i, document.createTextNode(' شامل فهرست جزئیات همه‌ی موارد')); c.append(l); }
+  const b1 = el('button', 'send', 'نمایش گزارش'), b2 = el('button', 'btn', '🖨 چاپ'); b1.type = b2.type = 'button'; b2.style.cssText = 'width:100%;margin-top:8px';
+  c.append(b1, b2); box.append(c, out);
+  const info = () => { const q = k => R[k] ? dsNormDate(R[k]) : ''; return { from:q('from'), to:q('to') }; };
+  function draw() {
+    out.textContent = ''; const d = R.data; if (!d) return; const cd = el('div', 'card');
+    cd.append(el('div', 'now-t', d.scope === 'student' ? 'پرونده‌ی ' + d.stu.name + ' — ' + d.stu.cls : d.scope === 'class' ? 'گزارش کلاس ' + d.cls : 'گزارش کل مدرسه'));
+    if (d.more) cd.append(el('div', 'now-sub', '⚠️ حجم داده زیاد است و فقط ۵۰۰۰ مورد اول هر بخش در گزارش آمده؛ بازه را کوتاه‌تر کنید.'));
+    dsReportNodes(d).forEach(n => cd.append(n)); out.append(cd);
+  }
+  async function run(print) {
+    const f = info(); if ((R.from && !f.from) || (R.to && !f.to)) return toast('تاریخ را به شکل ' + fa('1405/07/30') + ' بنویسید');
+    if (R.scope !== 'school' && !R.cls) return toast('کلاس را انتخاب کنید'); if (R.scope === 'student' && !R.name) return toast('دانش‌آموز را انتخاب کنید');
+    b1.disabled = b2.disabled = true; const r = await dsCall('disReport', { cls:R.scope === 'school' ? '' : R.cls, name:R.scope === 'student' ? R.name : '', from:f.from, to:f.to }); b1.disabled = b2.disabled = false;
+    if (r.status !== 'ok') return toast(dsFail(r));
+    R.data = { scope:R.scope, cls:R.cls, stu:{ name:R.name, cls:R.cls, stream:((M.classes.find(x => x.c === R.cls) || {}).s) || '' }, from:f.from, to:f.to, det:R.scope === 'student' || !!R.det, rec:r.rec, act:r.act, fam:r.fam, td:r.td, more:r.more };
+    draw(); if (print) dsPrint(R.data);
+  }
+  b1.addEventListener('click', () => run(false)); b2.addEventListener('click', () => run(true)); draw();
+}
+
+/* ---------- نمای «سابقه‌ی تغییرات» (مدیر) ---------- */
+function dsViewLog(box) {
+  const G = DIS.lg, c = el('div', 'card'), out = el('div'); c.append(el('div', 'lbl', 'سابقه‌ی تغییرات انضباطی و پرورشی (آخرین ۳۰۰ مورد)'), el('div', 'now-sub', 'هر ثبت، ویرایش، ابطال و بازگردانی با نام کاربر و مقدار قبلی و جدید ثبت می‌شود.'));
+  const pk = el('div'); pk.style.marginTop = '8px'; c.append(pk); if (!dsPick(pk, G, { allCls:true, allStu:true, onChange:() => load() })) { box.append(c); return; }
+  const b = el('button', 'btn', '🔄 بارگذاری'); b.type = 'button'; b.style.cssText = 'width:100%'; b.addEventListener('click', () => load()); c.append(b); box.append(c, out);
+  async function load() {
+    out.textContent = ''; out.append(el('div', 'empty', 'در حال بارگذاری…')); const r = await dsCall('disLog', { cls:G.cls, name:G.name }); out.textContent = '';
+    if (r.status !== 'ok') { out.append(el('div', 'card empty', dsFail(r))); return; }
+    const cd = el('div', 'card'); cd.append(r.list.length ? tbl(['زمان', 'کاربر', 'عملیات', 'بخش', 'دانش‌آموز', 'فیلد', 'قبلاً', 'اکنون'], r.list.map(x => [fa(x.t), x.w, x.op, x.sec, x.name + ' · ' + x.cls, x.f, x.a || '—', x.b || '—'])) : el('div', 'empty', 'سابقه‌ای نیست.')); out.append(cd);
+  }
+  load();
+}
+
+/* ---------- نشانگر پیگیری‌های سررسیدشده (میز کار مدیر) ---------- */
+async function dsBadge() {
+  if (ROLE !== 'manager' || !MG.pin) return;
+  const r = await send({ action:'disList', e:'fam', open:true, pin:MG.pin, key:ACCESS_KEY }); const c = $('#disOpenCnt'); if (!c || r.status !== 'ok') return;
+  const n = r.list.filter(x => !x.due || x.due <= r.td).length; c.textContent = n ? fa(n) : '';
+}
+
 /* ======================= پنل مدیر: میز کار و بخش‌بندی ======================= */
 const MG_SEC_K = 'sia_mg_sec';
 function mgShow(k, scroll) {
@@ -4635,6 +5060,7 @@ function mgShow(k, scroll) {
   secs.forEach(x => { x.hidden = x.dataset.sec !== k; });
   $$('#mgNav button').forEach(b => { const on = b.dataset.sec === k; b.classList.toggle('on', on); b.setAttribute('aria-pressed', String(on)); });
   try { localStorage.setItem(MG_SEC_K, k); } catch (e) {}
+  if (k === 'dis' && MG.pin && !$('#mgBody').hidden) disOpen('m');
   if (scroll) { const r = $('#mgNav').getBoundingClientRect(); if (r.top < 0) $('#mgNav').scrollIntoView({ behavior:'smooth', block:'start' }); }
 }
 function mgGo(id) {               // رفتن به یک کارت، حتی اگر در بخش دیگری باشد
@@ -4648,22 +5074,23 @@ function mgGo(id) {               // رفتن به یک کارت، حتی اگر
   mgShow(k);
   const num = s => { const m = /\d+/.exec(en(s || '')); return m ? +m[0] : 0; };
   const paint = () => {
-    const al = $('#alertCard').hidden ? 0 : $('#alertList').children.length, lv = num($('#leaveCnt').textContent), cn = num($('#cmCnt').textContent);
+    const al = $('#alertCard').hidden ? 0 : $('#alertList').children.length, lv = num($('#leaveCnt').textContent), cn = num($('#cmCnt').textContent), df = num($('#disOpenCnt').textContent);
     const hi = RK.filter(x => x.lv === 'بالا').length;
     const T = [['alertCard', al, 'زنگ بدون حضور و غیاب', 'حضور و غیاب امروز کامل است', 'bad'],
       ['leaveCard', lv, 'مرخصی در انتظار تصمیم', 'مرخصی در انتظار نیست', 'warn'],
       ['riskCard', RK.length, 'در معرض خطر' + (hi ? ' (' + fa(hi) + ' خطر بالا)' : ''), 'کسی در معرض خطر نیست', hi ? 'bad' : 'warn'],
-      ['cnsMgCard', cn, 'مشاوره‌ی منتظر تأیید', 'تأیید مشاوره لازم نیست', 'warn']];
+      ['cnsMgCard', cn, 'مشاوره‌ی منتظر تأیید', 'تأیید مشاوره لازم نیست', 'warn'],
+      ['disMgCard', df, 'تماس با خانواده‌ی سررسیدشده', 'پیگیری معوقی نیست', 'warn']];
     const box = $('#mgAttn'); box.textContent = '';
     T.forEach(t => { const b = el('button', 'mg-at ' + (t[1] ? t[4] : 'ok')); b.type = 'button'; b.append(el('b', '', t[1] ? fa(t[1]) : '✓'), el('span', '', t[1] ? t[2] : t[3]));
       b.addEventListener('click', () => mgGo(t[0])); box.append(b); });
     $('#mgDeskStamp').textContent = $('#mgStamp').textContent;
-    const dot = { today:al + lv > 0, stu:RK.length + cn > 0 };
+    const dot = { today:al + lv > 0, stu:RK.length + cn > 0, dis:df > 0 };
     $$('#mgNav button').forEach(b => b.classList.toggle('dot', !!dot[b.dataset.sec]));
   };
   let tm; const later = () => { clearTimeout(tm); tm = setTimeout(paint, 80); };
   const mo = new MutationObserver(later);
-  ['#alertList', '#leaveCnt', '#cmCnt', '#riskList', '#mgStamp'].forEach(s => { const e = $(s); if (e) mo.observe(e, { childList:true, subtree:true, characterData:true }); });
+  ['#alertList', '#leaveCnt', '#cmCnt', '#riskList', '#mgStamp', '#disOpenCnt'].forEach(s => { const e = $(s); if (e) mo.observe(e, { childList:true, subtree:true, characterData:true }); });
   mo.observe($('#alertCard'), { attributes:true, attributeFilter:['hidden'] });
   paint();
 })();
@@ -4685,7 +5112,7 @@ function mgGo(id) {               // رفتن به یک کارت، حتی اگر
   var head = mk('div', 'mg-nh'), lg = $('#logo');
   if (lg && lg.getAttribute('src')) { var im = mk('img'); im.alt = ''; im.src = lg.getAttribute('src'); head.append(im); }
   var ht = mk('div'); ht.append(mk('b', '', 'پنل مدیریت'), mk('small', '', typeof SCHOOL_NAME !== 'undefined' ? SCHOOL_NAME : '')); head.append(ht);
-  var groups = [['نمای کلی', ['today', 'cal']], ['مدیریت', ['stu', 'tch']], ['گزارش و سامانه', ['rep', 'sys']]], used = {}, frag = d.createDocumentFragment();
+  var groups = [['نمای کلی', ['today', 'cal']], ['مدیریت', ['stu', 'dis', 'tch']], ['گزارش و سامانه', ['rep', 'sys']]], used = {}, frag = d.createDocumentFragment();
   frag.append(head);
   groups.forEach(function(g){
     var items = g[1].map(btn).filter(Boolean); if (!items.length) return;
