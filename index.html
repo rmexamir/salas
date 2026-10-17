@@ -1853,6 +1853,7 @@ function loadClass() {
 
 /* ---------- تب‌ها ---------- */
 function setTab(t) {
+  if (ROLE === 'student') return;      // دانش‌آموز هیچ‌وقت بخش‌های دبیر (کارتابل، ثبت آزمون و ...) را نمی‌بیند
   S.tab = t; P.tab = t; savePrefs();
   $$('.tab').forEach(b => { const on = b.dataset.tab === t; b.classList.toggle('active', on); b.setAttribute('aria-selected', on); });
   ['att', 'gr', 'mg', 'sch', 'inb', 'cns', 'stf', 'dis'].forEach(k => { $('#p-' + k).hidden = t !== k; });
@@ -2493,7 +2494,7 @@ function applyRole() {
   $('#whoName').textContent = st && SD ? SD.name + ' · ' + SD.cls : mgr ? 'مدیر مدرسه' : cn ? 'مشاور: ' + COUNSELOR_NAME : ROLE === 'teacher' ? 'دبیر: ' + S.teacher : '';
   $('#cnsC').hidden = !cn; $('#cnsT').hidden = ROLE !== 'teacher';
   if (st && SD) {
-    ['att', 'gr', 'mg', 'cns', 'stf', 'dis'].forEach(k => { $('#p-' + k).hidden = true; }); $('#common').hidden = true;
+    ['att', 'gr', 'mg', 'inb', 'cns', 'stf', 'dis'].forEach(k => { $('#p-' + k).hidden = true; }); $('#common').hidden = true;
     const h = $('#stuHead'); h.textContent = ''; h.append(el('div', 'now-t', SD.name), el('div', 'now-sub', 'کلاس ' + SD.cls)); stuNav(STU_K); qzPrefetch();
   } else if (cn) {
     $('#common').hidden = true; setTab('cns');
@@ -3238,19 +3239,28 @@ function legend(items) {
   return l;
 }
 function trendSvg(rows) {         // rows: [{d, n, ca}] از قدیم به جدید؛ قدیمی‌ترین سمت راست
-  const W = 320, H = 190, L = 30, R = 10, T = 12, B = 28, wrap = el('div');
-  if (rows.length < 2) { wrap.append(el('div', 'now-sub', 'برای رسم روند، دست‌کم دو نمره لازم است.')); return wrap; }
-  const svg = sv('svg', { viewBox:'0 0 ' + W + ' ' + H, width:'100%', role:'img', 'aria-label':'نمودار روند نمره' });
-  const X = i => W - R - i * (W - L - R) / (rows.length - 1), Y = v => T + (1 - v / 20) * (H - T - B);
+  const W = 320, H = 190, L = 30, R = 10, T = 12, B = 28, wrap = el('div'), N = rows.length;
+  if (N < 1) { wrap.append(el('div', 'now-sub', 'هنوز نمره‌ای برای رسم روند ثبت نشده است.')); return wrap; }
+  const svg = sv('svg', { viewBox:'0 0 ' + W + ' ' + H, width:'100%', role:'img', 'aria-label':'نمودار روند نمره در مقایسه با میانگین کلاس' });
+  const X = i => N === 1 ? (L + W - R) / 2 : W - R - i * (W - L - R) / (N - 1), Y = v => T + (1 - v / 20) * (H - T - B);
   [0, 5, 10, 15, 20].forEach(v => svg.append(sv('line', { x1:L, x2:W - R, y1:Y(v), y2:Y(v), style:'stroke:var(--line);stroke-width:1' }), sv('text', { x:L - 6, y:Y(v) + 4, 'text-anchor':'end', 'font-size':10, style:'fill:var(--muted)' }, fa(v))));
   const line = (k, col, dash) => {
     const pts = rows.map((r, i) => r[k] == null ? null : [X(i), Y(r[k])]).filter(Boolean);
     if (pts.length > 1) svg.append(sv('polyline', { points:pts.map(q => q.join(',')).join(' '), fill:'none', style:'stroke:' + col + ';stroke-width:2.5' + (dash ? ';stroke-dasharray:5 4' : '') }));
-    pts.forEach(q => svg.append(sv('circle', { cx:q[0], cy:q[1], r:3.5, style:'fill:' + col })));
+    pts.forEach(q => svg.append(sv('circle', { cx:q[0], cy:q[1], r:N === 1 ? 6 : 3.5, style:'fill:' + col })));
   };
   line('ca', '#E0BC6B', true); line('n', '#2FA4A9');
-  [0, rows.length - 1].forEach(i => svg.append(sv('text', { x:X(i), y:H - 8, 'text-anchor':'middle', 'font-size':10, style:'fill:var(--muted)' }, fa(String(rows[i].d).slice(5)))));
-  wrap.append(svg, legend([['#2FA4A9', 'نمره‌ی شما'], ['#E0BC6B', 'میانگین کلاس']])); return wrap;
+  if (N === 1) {                      // فقط یک نمره: مقدار نمره‌ی دانش‌آموز و میانگین کلاس کنار هم نوشته می‌شود
+    const r = rows[0], up = r.ca == null || r.n >= r.ca;
+    const tx = (v, col, above) => svg.append(sv('text', { x:X(0), y:Y(v) + (above ? -12 : 20), 'text-anchor':'middle', 'font-size':12, 'font-weight':800, style:'fill:' + col }, f2(v)));
+    if (r.n != null) tx(r.n, '#2FA4A9', up);
+    if (r.ca != null) tx(r.ca, '#B8923A', !up);
+  }
+  const ix = N === 1 ? [0] : [0, N - 1];
+  ix.forEach(i => svg.append(sv('text', { x:X(i), y:H - 8, 'text-anchor':'middle', 'font-size':10, style:'fill:var(--muted)' }, fa(String(rows[i].d).slice(5)))));
+  wrap.append(svg, legend([['#2FA4A9', 'نمره‌ی شما'], ['#E0BC6B', 'میانگین کلاس']]));
+  if (N === 1) wrap.append(el('div', 'now-sub', 'فقط یک نمره ثبت شده است؛ با ثبت نمره‌های بعدی، روند کامل نمایش داده می‌شود.'));
+  return wrap;
 }
 const byDate = (a, b) => a.d < b.d ? -1 : a.d > b.d ? 1 : 0;
 function absInit() { renderTop(); }
