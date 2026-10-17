@@ -41,7 +41,7 @@ const STUDENTS = {
 (function(){try{var p=JSON.parse(localStorage.getItem('sia_prefs_v1')||'{}');var t=p.theme||(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 </script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0D3B26">
+<meta name="theme-color" content="#073B30">
 <link rel="manifest" href="manifest.json">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -1129,6 +1129,67 @@ body.mg-on .tab{min-height:54px}
 .chip.ds-kc.k-pos.on{background:var(--present);border-color:var(--present);color:#fff}
 .chip.ds-kc.k-edu.on{background:var(--excused);border-color:var(--excused);color:#fff}
 @media (max-width:420px){.ds-tiles{grid-template-columns:repeat(2,1fr)}}
+
+/* =====================================================================
+   🎓 بازنگری گرافیکی v1.07 — هویت بصری متناسب با دبیرستان دوره‌ی دوم
+   فقط ظاهر؛ ساختار و منطق تغییری نکرده است.
+   اصول: آرامش و جدیت تحصیلی، خوانایی بالا (کنتراست)، هدف‌های لمسی ≥ ۴۸px،
+   رنگ طلایی فقط به‌عنوان تأکید، حرکت کم و قابل‌خاموش‌شدن.
+   ===================================================================== */
+:root{
+  --bg:#F3F6F5; --card:#FFFFFF; --ink:#12201B; --muted:#56655F; --line:#DCE5E1; --input:#F7FAF9;
+  --primary:#0B5D4B; --teal:#0E8A6D; --gold:#D99A1E; --focus:#0E8A6D;
+  --present:#15803D; --present-bg:#E3F5E9; --absent:#C62F3A; --absent-bg:#FCE8EA;
+  --late:#B45309; --late-bg:#FDF0DA; --excused:#2563C9; --excused-bg:#E3EEFD;
+  --r:18px; --ring:0 0 0 4px rgba(14,138,109,.22);
+  --shadow:0 1px 2px rgba(15,40,32,.05),0 8px 22px -10px rgba(15,40,32,.16);
+}
+[data-theme="dark"]{
+  --bg:#0A1512; --card:#111F1B; --ink:#E9F2EE; --muted:#9FB5AC; --line:#223630; --input:#0C1915;
+  --primary:#34D3A0; --on-primary:#06150F; --teal:#34D3A0; --focus:#5FE0B8; --gold:#F0B94A;
+  --present:#4ADE80; --present-bg:#0E2E1E; --absent:#F26B74; --absent-bg:#3A1A1F; --late:#F0A24A; --late-bg:#38270E;
+  --excused:#6EA8FF; --excused-bg:#10284A; --ring:0 0 0 4px rgba(95,224,184,.22);
+}
+::selection{background:rgba(14,138,109,.28)}
+*{scrollbar-color:rgba(14,138,109,.45) transparent}::-webkit-scrollbar-thumb{background:rgba(14,138,109,.4)}
+body{background:var(--bg);font-variant-numeric:tabular-nums}
+[data-theme="dark"] body{background:var(--bg)}
+/* سربرگ: تمیز، با عنوان یک‌رنگ و خوانا */
+.hero{background:linear-gradient(135deg,#073B30 0%,#0B5D4B 58%,#12806A 100%);border-radius:0 0 26px 26px;box-shadow:0 12px 28px -12px rgba(7,59,48,.55)}
+.hero::before{background:radial-gradient(circle at 90% 0%,rgba(255,255,255,.14),transparent 46%)}
+.hero::after{height:3px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.hero h1{background:none;-webkit-text-fill-color:#fff;color:#fff;filter:none;text-shadow:0 2px 12px rgba(0,0,0,.25)}
+.hero p{color:#D6EFE6}.hero p::before,.hero p::after{display:none}
+/* کارت‌ها: تخت‌تر و آرام‌تر، بدون خط طلایی تزئینی */
+.card{border-radius:var(--r);padding:18px}.card::before{display:none}
+.card>.lbl:first-child::before{background:var(--teal);box-shadow:none;border-radius:3px}
+/* تب‌ها و چیپ‌ها: نوار پیل‌شکل با وضعیت فعال شفاف */
+.tab,.chip,.btn,.abs-btn{min-height:48px;border-radius:14px}
+.tab{box-shadow:none;border:1.5px solid var(--line)}
+.tab.active,.chip.on{background:var(--primary);border-color:var(--primary);color:var(--on-primary);box-shadow:0 8px 18px -8px rgba(11,93,75,.55),inset 0 -3px 0 rgba(255,255,255,.22)}
+[data-theme="dark"] .tab.active{box-shadow:0 8px 18px -8px rgba(0,0,0,.6),inset 0 -3px 0 rgba(255,255,255,.35)}
+/* فرم‌ها */
+input[type=text],input[type=password],input[type=search],input[type=time],select{height:52px;border-radius:14px;border-width:1.5px;background:var(--input)}
+input:focus,select:focus{border-color:var(--teal);box-shadow:var(--ring);background:var(--card)}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px;border-radius:10px}
+/* دکمه‌ی اصلی: بدون برق‌زدن دائمی */
+.send{height:58px;border-radius:16px;background:linear-gradient(160deg,#12806A,#0B5D4B);box-shadow:0 14px 24px -12px rgba(7,59,48,.7),inset 0 -3px 0 rgba(255,255,255,.2)}
+.send::after{animation:none;display:none}
+[data-theme="dark"] .send{color:#06150F;background:linear-gradient(160deg,#5FE0B8,#34D3A0);box-shadow:0 14px 24px -12px rgba(52,211,160,.5)}
+.bar-in{border-radius:22px}
+/* ردیف دانش‌آموز و وضعیت‌ها: خوانایی بیشتر */
+.row,.grow{border-radius:16px}.row-main{min-height:60px}.nm{font-size:16.5px;font-weight:800}
+.badge{font-weight:800;padding:4px 13px}
+.cnt b{font-size:22px}
+/* پنجره‌ها و ورود */
+.modal{background:rgba(5,20,16,.55)}
+.gate{background:radial-gradient(520px 360px at 88% 6%,rgba(255,255,255,.14),transparent 62%),linear-gradient(160deg,#052E25,#0B5D4B 62%,#12806A)}
+.gate-card{border-radius:26px;border:1px solid rgba(255,255,255,.35);box-shadow:0 30px 60px -16px rgba(0,0,0,.55)}
+.gate-logo{border-color:var(--gold);box-shadow:0 0 0 7px rgba(255,255,255,.18),0 16px 30px rgba(0,0,0,.3)}
+/* تیک‌های کارتابل هم‌خوان با هویت جدید */
+.inb-chip{border-radius:14px}.inb-chip .tk{background:var(--present)}.inb-chip.nw{border-color:var(--present)}
+/* حرکت کم برای کاربرانی که خواسته‌اند */
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
 </style>
 </head>
 <body>
