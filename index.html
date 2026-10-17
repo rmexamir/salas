@@ -4686,7 +4686,7 @@ const dsMgr = () => !!(DIS.meta && DIS.meta.role === 'm');
 const dsToday = () => DIS.meta ? DIS.meta.td : dateStr();
 const dsAuth = () => ({ teacher:S.teacher, pin:ROLE === 'manager' ? MG.pin : S.pin });
 const dsCall = (action, extra) => send(Object.assign({ action:action, key:ACCESS_KEY }, dsAuth(), extra || {}));
-const dsFail = r => r.net ? 'اینترنت در دسترس نیست؛ دوباره تلاش کنید.' : (r.message || 'انجام نشد.');
+const dsFail = r => r.net ? 'اینترنت در دسترس نیست؛ دوباره تلاش کنید.' : (/عملیات نامعتبر/.test(r.message || '') ? 'نسخه‌ی منتشرشده‌ی Code.gs قدیمی است و بخش انضباطی را نمی‌شناسد. در Apps Script: Deploy ← Manage deployments ← ✏️ Edit ← Version: New version ← Deploy (و یک بار تابع setup را اجرا کنید).' : (r.message || 'انجام نشد.'));
 const dsOpt = (sel, val, txt) => { const o = el('option', '', txt); o.value = val; sel.append(o); return o; };
 const dsIsOpen = x => !!DIS.meta && DIS.meta.open.indexOf(x.st) >= 0;
 function dsNormDate(s) { const q = jParse(String(s || '').trim()); return q ? jStr(q[0], q[1], q[2]) : ''; }
