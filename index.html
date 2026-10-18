@@ -1191,6 +1191,13 @@ input:focus,select:focus{border-color:var(--teal);box-shadow:var(--ring);backgro
 /* حرکت کم برای کاربرانی که خواسته‌اند */
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
 .tab.warn-dot{position:relative}.tab.warn-dot::after{content:"";position:absolute;top:7px;inset-inline-end:9px;width:10px;height:10px;border-radius:50%;background:var(--absent);box-shadow:0 0 0 3px var(--card)}
+.dir-it.dir-ok{background:var(--present-bg);border-color:var(--present);border-inline-start:5px solid var(--present)}
+.dir-it.dir-bad{background:var(--absent-bg);border-color:rgba(198,47,58,.35);border-inline-start:5px solid var(--absent)}
+.dir-it.dir-bad summary,.dir-it.dir-ok summary{background:transparent}
+.dir-miss{margin:0 0 8px;padding:8px 12px;border-radius:10px;background:rgba(198,47,58,.12);color:var(--absent);font-weight:800;font-size:13px}
+.dir-sum{grid-column:1/-1;display:flex;gap:10px;flex-wrap:wrap;margin-bottom:4px}
+.dir-sum span{padding:6px 14px;border-radius:999px;font-weight:800;font-size:13px}
+.dir-sum .ok{background:var(--present-bg);color:var(--present)}.dir-sum .bad{background:var(--absent-bg);color:var(--absent)}
 </style>
 </head>
 <body>
@@ -2468,6 +2475,9 @@ function dirEdit(b, x, kind) {
     toast('ذخیره شد' + (r.moved ? ' · سابقه‌ی ' + fa(r.moved) + ' ردیف منتقل شد' : '')); await loadDir(); if (r.moved && typeof mgLoad === 'function') mgLoad();
   });
 }
+/* کامل‌بودن اطلاعات دانش‌آموز: کد ملی، نام و تلفن پدر و مادر و تلفن دانش‌آموز */
+const DIR_REQ = [['id', 'کد ملی'], ['fn', 'نام پدر'], ['fp', 'تلفن پدر'], ['mn', 'نام مادر'], ['mp', 'تلفن مادر'], ['sp', 'تلفن دانش‌آموز']];
+const dirMissing = x => DIR_REQ.filter(q => !String(x[q[0]] || '').trim()).map(q => q[1]);
 function renderDir() {
   const tb = $('#dirTabs'); tb.textContent = '';
   [['s', 'دانش‌آموزان (' + fa(DIR.students.length) + ')'], ['t', 'دبیران (' + fa(DIR.teachers.length) + ')']].forEach(q => {
@@ -2477,10 +2487,14 @@ function renderDir() {
   $('#dirClsF').hidden = DT !== 's'; box.classList.toggle('dir-grid', DT === 's');
   if (DT === 's' && !cv && !term) { box.append(el('div', 'empty', 'برای دیدن دانش‌آموزان، ابتدا کلاس را انتخاب کنید یا نام را جست‌وجو کنید.')); return; }
   const hit = src.filter(x => !term || dn(Object.keys(x).map(k => Array.isArray(x[k]) ? x[k].join(' ') : x[k]).join(' ')).indexOf(term) >= 0);
+  if (DT === 's' && hit.length) { const nOk = hit.filter(x => !dirMissing(x).length).length, st = el('div', 'dir-sum');
+    st.append(el('span', 'ok', '✓ کامل: ' + fa(nOk)), el('span', 'bad', '✗ ناقص: ' + fa(hit.length - nOk))); box.append(st); }
   hit.slice(0, 100).forEach(x => {
     const d = el('details', 'dir-it'), sm = el('summary'), b = el('div', 'dir-b');
+    if (DT === 's') { const ms = dirMissing(x); d.classList.add(ms.length ? 'dir-bad' : 'dir-ok'); d.dataset.missing = ms.join('، '); }
     if (DT === 's') {
-      sm.append(el('span', '', x.n), el('small', '', cv ? '' : x.c));
+      sm.append(el('span', '', (dirMissing(x).length ? '' : '✓ ') + x.n), el('small', '', cv ? '' : x.c));
+      if (dirMissing(x).length) b.append(el('div', 'dir-miss', 'اطلاعات ناقص: ' + dirMissing(x).join('، ')));
       b.append(infoRow('کد ملی', x.id), telRow('پدر', x.fn, x.fp), telRow('مادر', x.mn, x.mp), telRow('دانش‌آموز', '', x.sp));
       { const eb = el('button', 'btn', '✏️ ویرایش مشخصات'); eb.type = 'button'; eb.addEventListener('click', () => dirEdit(b, x, 's')); b.append(eb); }
       if (x.id) { const pb = el('button', 'btn', 'کارنامه (چاپ / PDF)'); pb.type = 'button';
