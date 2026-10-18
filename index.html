@@ -16,7 +16,7 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxzPr6P54uH4gV_rQrss
 // کلید دسترسی اختیاری (باید با ACCESS_KEY در Code.gs یکی باشد)
 const ACCESS_KEY = "";
 // نسخه‌ی برنامه — با هر به‌روزرسانی این عدد بالا می‌رود و در صفحه‌ی ورود و پایین صفحه نمایش داده می‌شود.
-const APP_VERSION = "1.07";
+const APP_VERSION = "1.08";
 // (اختیاری) لینک Google Sheet برای دکمه «باز کردن Google Sheet» در تب مدیر
 const SHEET_URL = "https://docs.google.com/spreadsheets/d/10i-IGQKyj078M6kJ7YhdAniuJInl6JemwVxAqs7FnrY/edit";
 const DEFAULT_MAX_SCORE = 20;
@@ -1212,6 +1212,8 @@ input:focus,select:focus{border-color:var(--teal);box-shadow:var(--ring);backgro
 .stu-rem{position:relative;margin:0 0 10px;padding:10px 40px 10px 14px;border-radius:14px;background:var(--late-bg);border:1.5px solid var(--late);color:var(--ink)}
 .stu-rem-i{font-weight:800;padding:2px 0}.stu-rem-i.hot{color:var(--absent)}
 .stu-rem-x{position:absolute;top:6px;inset-inline-end:8px;width:32px;height:32px;border-radius:50%;border:0;background:transparent;font-size:16px;color:var(--muted)}
+.view-bar{position:sticky;top:0;z-index:70;display:flex;justify-content:space-between;align-items:center;gap:8px;padding:calc(8px + env(safe-area-inset-top,0px)) 14px 8px;background:#B45309;color:#fff;font-weight:800;font-size:13px}
+.view-bar .btn{min-height:36px;padding:0 12px;background:#fff;color:#7C2D12;border-color:#fff;font-size:13px}
 </style>
 </head>
 <body>
@@ -1586,6 +1588,10 @@ input:focus,select:focus{border-color:var(--teal);box-shadow:var(--ring);backgro
         <div class="mg-bar"><button id="cdGen" class="btn" type="button">ساخت کد برای بدون‌کدها</button><button id="cdPrint" class="btn" type="button">چاپ فهرست</button></div>
         <div id="cdList"></div>
       </div>
+      </div>
+      <div class="mg-sec" data-sec="set" data-t="رمز و تنظیمات" hidden>
+      <div class="mg-sec-d">تغییر رمز مدیر؛ رمز تازه جایگزین رمز قبلی می‌شود و رمز قدیمی دیگر کار نمی‌کند.</div>
+      <div id="setHost"></div>
       </div>
       <div class="mg-sec" data-sec="pta" data-t="جلسات اولیا" hidden>
       <div class="mg-sec-d">ثبت جلسه‌ی اولیا و مربیان و حضور و غیاب اولیا به‌تفکیک کلاس؛ برای هر کلاس مشخص می‌شود کدام والد حضور داشته است.</div>
@@ -2515,6 +2521,7 @@ function renderDir() {
       if (dirMissing(x).length) b.append(el('div', 'dir-miss', 'اطلاعات ناقص: ' + dirMissing(x).join('، ')));
       b.append(infoRow('کد ملی', x.id), telRow('پدر', x.fn, x.fp), telRow('مادر', x.mn, x.mp), telRow('دانش‌آموز', '', x.sp));
       { const eb = el('button', 'btn', '✏️ ویرایش مشخصات'); eb.type = 'button'; eb.addEventListener('click', () => dirEdit(b, x, 's')); b.append(eb); }
+      { const vb = el('button', 'btn', '👁 ورود به پنل این دانش‌آموز'); vb.type = 'button'; vb.addEventListener('click', () => viewStudent(x)); b.append(vb); }
       if (x.id) { const pb = el('button', 'btn', 'کارنامه (چاپ / PDF)'); pb.type = 'button';
         pb.addEventListener('click', async () => { pb.disabled = true; const r = await send({ action:'studentCard', pin:MG.pin, nid:x.id, ym:dateStr().slice(0, 7), key:ACCESS_KEY }); pb.disabled = false;
           if (r.status === 'ok') printCard(r); else toast(r.message || 'کارنامه دریافت نشد.'); }); b.append(pb); }
@@ -2522,6 +2529,7 @@ function renderDir() {
       sm.append(el('span', '', x.n), el('small', '', x.courses.join('، ')));
       b.append(infoRow('کد پرسنلی', x.pc), infoRow('کد ملی', x.id), infoRow('مدرک تحصیلی', x.deg), telRow('شماره تماس', '', x.ph));
       { const eb = el('button', 'btn', '✏️ ویرایش مشخصات'); eb.type = 'button'; eb.addEventListener('click', () => dirEdit(b, x, 't')); b.append(eb); }
+      { const vb = el('button', 'btn', '👁 ورود به پنل این دبیر'); vb.type = 'button'; vb.addEventListener('click', () => viewTeacher(x)); b.append(vb); }
     }
     d.append(sm, b); box.append(d);
   });
@@ -2556,7 +2564,7 @@ function applyRole() {
   $('#cnsC').hidden = !cn; $('#cnsT').hidden = ROLE !== 'teacher';
   if (st && SD) {
     ['att', 'gr', 'mg', 'inb', 'cns', 'stf', 'dis'].forEach(k => { $('#p-' + k).hidden = true; }); $('#common').hidden = true;
-    const h = $('#stuHead'); h.textContent = ''; h.append(el('div', 'now-t', SD.name), el('div', 'now-sub', 'کلاس ' + SD.cls)); stuNav(STU_K); qzPrefetch();
+    const h = $('#stuHead'); h.textContent = ''; h.append(el('div', 'now-t', SD.name), el('div', 'now-sub', 'کلاس ' + SD.cls)); stuNav(STU_K); if (!SD.viewAs) qzPrefetch();
   } else if (cn) {
     $('#common').hidden = true; setTab('cns');
   } else if (staff) {
@@ -2600,6 +2608,7 @@ $('#gGo').addEventListener('click', async () => {
 });
 ['#gNid', '#gPin'].forEach(q => $(q).addEventListener('keydown', e => { if (e.key === 'Enter') $('#gGo').click(); }));
 $('#logoutBtn').addEventListener('click', () => {
+  if (VIEWAS) { VIEWAS = null; const vb = $('#viewBar'); if (vb) vb.hidden = true; }
   dsReset();
   if (ROLE === 'counselor') { CPIN = ''; CNSL = []; try { sessionStorage.removeItem('sia_cns'); } catch (e) {} }
   if (ROLE === 'manager') { MG.pin = ''; S.pin = ''; $('#pin').value = ''; $('#mgBody').hidden = true; $('#mgLogin').hidden = false; try { sessionStorage.removeItem('sia_mgr'); } catch (e) {} }
@@ -2612,7 +2621,7 @@ function tbl(head, rows) {
   const tb = el('tbody'); rows.forEach(r => { const tr = el('tr'); r.forEach(c => tr.append(el('td', '', c))); tb.append(tr); }); t.append(tb); w.append(t); return w;
 }
 /* تکمیل اطلاعات توسط دانش‌آموز؛ تا کامل نشود فقط همین بخش باز است */
-const stuLocked = () => !!(SD && SD.prof && SD.prof.miss && SD.prof.miss.length);
+const stuLocked = () => !!(SD && !SD.viewAs && SD.prof && SD.prof.miss && SD.prof.miss.length);
 function stuProf(box) {
   const P = SD.prof || {}, c = el('div', 'card'); c.append(el('div', 'lbl', 'تکمیل اطلاعات'));
   const n = el('div', 'dir-miss', 'برای استفاده از بخش‌های برنامه، ابتدا اطلاعات زیر را کامل کن. این اطلاعات فقط برای تماس مدرسه با خانواده است.'); c.append(n);
@@ -2766,6 +2775,38 @@ setTimeout(() => {          // بازگرداندن نشست قبلی بعد ا�
   }
 }, 0);
 
+/* ======================= رمز مدیر + ورود مدیر به پنل دانش‌آموز و دبیر (نسخه‌ی ۱٫۰۸) ======================= */
+function setOpen() {
+  const h = $('#setHost'); h.textContent = ''; const c = el('div', 'card'); c.append(el('div', 'lbl', '🔑 تغییر رمز مدیر'));
+  const fd = lb => { const f = el('div', 'field'), i = el('input'); i.type = 'password'; i.autocomplete = 'new-password'; f.append(el('label', '', lb), i); c.append(f); return i; };
+  const cur = fd('رمز فعلی'), nw = fd('رمز جدید (دست‌کم ۶ نویسه)'), rp = fd('تکرار رمز جدید');
+  const ok = el('button', 'send', 'ذخیره‌ی رمز جدید'); ok.type = 'button'; c.append(ok);
+  c.append(el('div', 'now-sub', 'رمز را جایی امن یادداشت کنید. اگر فراموش شد، تابع resetManagerPin را از ویرایشگر Apps Script اجرا کنید تا رمز به مقدار اولیه‌ی فایل Code.gs برگردد.'), el('div', 'now-sub', 'نگارش برنامه: ' + fa(APP_VERSION)));
+  ok.addEventListener('click', async () => {
+    if (!cur.value) { toast('رمز فعلی را بنویسید.'); return; } if (nw.value.length < 6) { toast('رمز جدید باید دست‌کم ۶ نویسه باشد.'); return; } if (nw.value !== rp.value) { toast('تکرار رمز با رمز جدید یکی نیست.'); return; }
+    ok.disabled = true; const r = await send({ action:'mgPinChange', pin:cur.value.trim(), newPin:nw.value.trim(), key:ACCESS_KEY }); ok.disabled = false;
+    if (r.net) { toast('اینترنت در دسترس نیست.'); return; } if (r.status !== 'ok') { toast(r.message || 'رمز تغییر نکرد.'); return; }
+    MG.pin = S.pin = nw.value.trim(); try { sessionStorage.setItem('sia_mgr', MG.pin); } catch (e) {}
+    cur.value = nw.value = rp.value = ''; toast('رمز مدیر تغییر کرد ✓');
+  }); h.append(c);
+}
+let VIEWAS = null;     // {pin, prevT}: مدیر وارد پنل دانش‌آموز یا دبیر شده است
+function viewBar(label) {
+  let b = $('#viewBar'); if (!b) { b = el('div', 'view-bar'); b.id = 'viewBar'; document.body.prepend(b); }
+  b.textContent = ''; b.hidden = false; const bk = el('button', 'btn', '↩ بازگشت به پنل مدیر'); bk.type = 'button'; bk.addEventListener('click', viewExit); b.append(el('span', '', '👁 حالت مشاهده‌ی مدیر — ' + label), bk);
+}
+function viewExit() {
+  const v = VIEWAS; if (!v) return; VIEWAS = null; const b = $('#viewBar'); if (b) b.hidden = true;
+  SD = null; INB = null; ISMGR = true; ROLE = 'manager'; S.pin = MG.pin = v.pin; S.teacher = v.prevT || ''; $('#teacher').value = v.prevT || ''; $('#pin').value = v.pin; applyRole();
+}
+async function viewStudent(x) {
+  const r = await send({ action:'studentCard', pin:MG.pin, cls:x.c, name:x.n, nid:x.id || '', today:dateStr(), ym:dateStr().slice(0, 7), key:ACCESS_KEY });
+  if (r.net) { toast('اینترنت در دسترس نیست.'); return; } if (r.status !== 'ok') { toast(r.message || 'ورود انجام نشد.'); return; }
+  VIEWAS = { pin:MG.pin, prevT:S.teacher }; SD = r; SD.nid = x.id || ''; SD.sec = ''; SD.viewAs = true; ROLE = 'student'; STU_K = 'dash'; applyRole(); viewBar('پنل دانش‌آموز: ' + x.n);
+}
+function viewTeacher(x) {
+  VIEWAS = { pin:MG.pin, prevT:S.teacher }; S.teacher = x.n; S.pin = MG.pin; $('#teacher').value = x.n; $('#pin').value = MG.pin; ISMGR = false; ROLE = 'teacher'; INB = null; applyRole(); viewBar('پنل دبیر: ' + x.n);
+}
 /* ======================= جلسات اولیا و مربیان + حضور و غیاب اولیا (نسخه‌ی ۱٫۰۷) ======================= */
 const PT = { list:[], classes:[] };
 const ptCall = (action, extra) => send(Object.assign({ action:action, pin:MG.pin, key:ACCESS_KEY }, extra || {}));
@@ -5433,6 +5474,7 @@ function mgShow(k, scroll) {
   try { localStorage.setItem(MG_SEC_K, k); } catch (e) {}
   if (k === 'dis' && MG.pin && !$('#mgBody').hidden) disOpen('m');
   if (k === 'pta' && MG.pin && !$('#mgBody').hidden) ptOpen();
+  if (k === 'set' && MG.pin && !$('#mgBody').hidden) setOpen();
   if (scroll) { const r = $('#mgNav').getBoundingClientRect(); if (r.top < 0) $('#mgNav').scrollIntoView({ behavior:'smooth', block:'start' }); }
 }
 function mgGo(id) {               // رفتن به یک کارت، حتی اگر در بخش دیگری باشد
