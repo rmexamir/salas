@@ -2593,12 +2593,34 @@ function tbl(head, rows) {
   const w = el('div', 'mg-wrap'), t = el('table', 'mg-tbl'), hr = el('tr'); head.forEach(h => hr.append(el('th', '', h))); const th = el('thead'); th.append(hr); t.append(th);
   const tb = el('tbody'); rows.forEach(r => { const tr = el('tr'); r.forEach(c => tr.append(el('td', '', c))); tb.append(tr); }); t.append(tb); w.append(t); return w;
 }
+/* تکمیل اطلاعات توسط دانش‌آموز؛ تا کامل نشود فقط همین بخش باز است */
+const stuLocked = () => !!(SD && SD.prof && SD.prof.miss && SD.prof.miss.length);
+function stuProf(box) {
+  const P = SD.prof || {}, c = el('div', 'card'); c.append(el('div', 'lbl', 'تکمیل اطلاعات'));
+  const n = el('div', 'dir-miss', 'برای استفاده از بخش‌های برنامه، ابتدا اطلاعات زیر را کامل کن. این اطلاعات فقط برای تماس مدرسه با خانواده است.'); c.append(n);
+  const F = [['fn', 'نام پدر'], ['fp', 'تلفن همراه پدر', 1], ['mn', 'نام مادر'], ['mp', 'تلفن همراه مادر', 1], ['sp', 'تلفن همراه خودت', 1]], I = {};
+  F.forEach(q => { const f = el('div', 'field'), inp = el('input'); inp.type = 'text'; inp.value = P[q[0]] || ''; inp.autocomplete = 'off';
+    if (q[2]) { inp.inputMode = 'numeric'; inp.style.direction = 'ltr'; inp.style.textAlign = 'right'; inp.placeholder = '۰۹۱۲۱۲۳۴۵۶۷'; }
+    if (!P[q[0]]) inp.style.borderColor = 'var(--absent)'; I[q[0]] = inp; f.append(el('label', '', q[1]), inp); c.append(f); });
+  const ok = el('button', 'send', 'ذخیره و ادامه'); ok.type = 'button'; c.append(ok); box.append(c);
+  ok.addEventListener('click', async () => {
+    const v = k => I[k].value.trim(), d = k => digitsOnly(v(k));
+    if (v('fn').length < 3 || v('mn').length < 3) { toast('نام پدر و مادر را کامل بنویسید.'); return; }
+    ok.disabled = true; ok.textContent = 'در حال ذخیره…';
+    const r = await send({ action:'stuProfile', nid:SD.nid, secret:SD.sec || '', fn:v('fn'), fp:d('fp'), mn:v('mn'), mp:d('mp'), sp:d('sp'), key:ACCESS_KEY });
+    ok.disabled = false; ok.textContent = 'ذخیره و ادامه';
+    if (r.net) { toast('اینترنت در دسترس نیست.'); return; }
+    if (r.status !== 'ok') { toast(r.message || 'ذخیره نشد.'); return; }
+    SD.prof = r.prof; toast(r.prof.miss.length ? 'هنوز بعضی موارد خالی است.' : 'ممنون! اطلاعات کامل شد ✓'); stuNav(r.prof.miss.length ? 'prof' : 'sch');
+  });
+}
 function stuNav(k) {
+  if (stuLocked()) k = 'prof';           // تا تکمیل اطلاعات، سایر منوها بسته است
   STU_K = k; const nv = $('#stuNav'); nv.textContent = '';
-  [['sch', 'برنامه هفتگی'], ['plan', '📖 برنامه مطالعه'], ['qz', '📝 آزمونک‌ها'], ['kar', 'کارنامه'], ['att', 'حضور و غیاب'], ['avg', 'میانگین کلاس'], ['mock', 'آزمون‌های آزمایشی'], ['cal', 'تقویم آزمون و تکلیف'], ['leave', 'درخواست مرخصی']].forEach(q => { const b = el('button', 'chip' + (k === q[0] ? ' on' : ''), q[1]); b.type = 'button'; b.dataset.k = q[0]; b.addEventListener('click', () => stuNav(q[0])); nv.append(b); }); qzBadge();
+  (stuLocked() ? [['prof', '📝 تکمیل اطلاعات']] : []).concat([['sch', 'برنامه هفتگی'], ['plan', '📖 برنامه مطالعه'], ['qz', '📝 آزمونک‌ها'], ['kar', 'کارنامه'], ['att', 'حضور و غیاب'], ['avg', 'میانگین کلاس'], ['mock', 'آزمون‌های آزمایشی'], ['cal', 'تقویم آزمون و تکلیف'], ['leave', 'درخواست مرخصی']].map(q => stuLocked() ? [q[0], '🔒 ' + q[1], 1] : q)).forEach(q => { const b = el('button', 'chip' + (k === q[0] ? ' on' : ''), q[1]); b.type = 'button'; b.dataset.k = q[0]; if (q[2]) { b.disabled = true; b.style.opacity = '.5'; } b.addEventListener('click', () => stuNav(q[0])); nv.append(b); }); qzBadge();
   const sch = k === 'sch'; $('#p-sch').hidden = !sch; $('#stuBody').hidden = sch;
   if (sch) { Z.who = 'c:' + SD.cls; renderSch(); return; }
-  const box = $('#stuBody'); box.textContent = ''; ({ plan:stuPlan, qz:stuQz, kar:stuKar, att:stuAtt, avg:stuAvg, mock:stuMock, cal:stuCal, leave:stuLeave })[k](box);
+  const box = $('#stuBody'); box.textContent = ''; ({ prof:stuProf, plan:stuPlan, qz:stuQz, kar:stuKar, att:stuAtt, avg:stuAvg, mock:stuMock, cal:stuCal, leave:stuLeave })[k](box);
 }
 function stuKar(box) {
   const c1 = el('div', 'card'), c2 = el('div', 'card'); c1.append(el('div', 'lbl', 'کارنامه — میانگین هر درس (از ۲۰)')); c2.append(el('div', 'lbl', 'نمره‌های هر آزمون'));
