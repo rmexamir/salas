@@ -10,3 +10,6 @@ self.addEventListener('fetch', e => {
   e.respondWith(fetch(r).then(res => { if (res.ok) { const cp = res.clone(); caches.open(CACHE).then(c => c.put(r, cp)); } return res; })
     .catch(() => caches.match(r).then(m => m || caches.match('./index.html'))));
 });
+
+/* لمس اعلان یادآور: برنامه را باز یا فعال کن */
+self.addEventListener('notificationclick', e => { e.notification.close(); e.waitUntil(self.clients.matchAll({ type:'window', includeUncontrolled:true }).then(l => { for (const c of l) if ('focus' in c) return c.focus(); return self.clients.openWindow('./'); })); });
