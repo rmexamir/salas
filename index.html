@@ -1198,6 +1198,14 @@ input:focus,select:focus{border-color:var(--teal);box-shadow:var(--ring);backgro
 .dir-sum{grid-column:1/-1;display:flex;gap:10px;flex-wrap:wrap;margin-bottom:4px}
 .dir-sum span{padding:6px 14px;border-radius:999px;font-weight:800;font-size:13px}
 .dir-sum .ok{background:var(--present-bg);color:var(--present)}.dir-sum .bad{background:var(--absent-bg);color:var(--absent)}
+.pt-g{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}
+.pt-g .chip{flex-direction:column;gap:2px;padding:8px 4px;height:auto}.pt-g small{font-weight:600;font-size:11px;opacity:.85}
+.chip.pt-ok{background:var(--present-bg);border-color:var(--present);color:var(--present)}
+.chip.pt-no{background:var(--absent-bg);border-color:rgba(198,47,58,.4);color:var(--absent)}
+.pt-seg{display:grid;grid-template-columns:repeat(auto-fit,minmax(70px,1fr));gap:6px;margin:8px 0}
+.chip.pt-present.on{background:var(--present);border-color:var(--present);color:#fff}
+.chip.pt-absent.on{background:var(--absent);border-color:var(--absent);color:#fff}
+.chip.pt-excused.on{background:var(--excused);border-color:var(--excused);color:#fff}
 </style>
 </head>
 <body>
@@ -1572,6 +1580,10 @@ input:focus,select:focus{border-color:var(--teal);box-shadow:var(--ring);backgro
         <div class="mg-bar"><button id="cdGen" class="btn" type="button">ساخت کد برای بدون‌کدها</button><button id="cdPrint" class="btn" type="button">چاپ فهرست</button></div>
         <div id="cdList"></div>
       </div>
+      </div>
+      <div class="mg-sec" data-sec="pta" data-t="جلسات اولیا" hidden>
+      <div class="mg-sec-d">ثبت جلسه‌ی اولیا و مربیان و حضور و غیاب اولیا به‌تفکیک کلاس؛ برای هر کلاس مشخص می‌شود کدام والد حضور داشته است.</div>
+      <div id="ptHost"></div>
       </div>
       <div class="mg-sec" data-sec="rep" data-t="گزارش‌ها و آمار" hidden>
       <div class="mg-sec-d">برترین‌ها، جدول‌های کامل و حذف نمره‌ی ثبت‌شده.</div>
@@ -2614,13 +2626,20 @@ function stuProf(box) {
     SD.prof = r.prof; toast(r.prof.miss.length ? 'هنوز بعضی موارد خالی است.' : 'ممنون! اطلاعات کامل شد ✓'); stuNav(r.prof.miss.length ? 'prof' : 'sch');
   });
 }
+function stuVis(box) {
+  const c = el('div', 'card'); c.append(el('div', 'lbl', 'مراجعه‌ی اولیا به مدرسه'));
+  const l = SD.visits || [];
+  if (!l.length) c.append(el('div', 'empty', 'تاکنون مراجعه‌ای از طرف اولیا ثبت نشده است.'));
+  else c.append(tbl(['تاریخ', 'مراجعه‌کننده', 'موضوع'], l.map(x => [fa(x.d), x.w, x.s])));
+  box.append(c);
+}
 function stuNav(k) {
   if (stuLocked()) k = 'prof';           // تا تکمیل اطلاعات، سایر منوها بسته است
   STU_K = k; const nv = $('#stuNav'); nv.textContent = '';
-  (stuLocked() ? [['prof', '📝 تکمیل اطلاعات']] : []).concat([['sch', 'برنامه هفتگی'], ['plan', '📖 برنامه مطالعه'], ['qz', '📝 آزمونک‌ها'], ['kar', 'کارنامه'], ['att', 'حضور و غیاب'], ['avg', 'میانگین کلاس'], ['mock', 'آزمون‌های آزمایشی'], ['cal', 'تقویم آزمون و تکلیف'], ['leave', 'درخواست مرخصی']].map(q => stuLocked() ? [q[0], '🔒 ' + q[1], 1] : q)).forEach(q => { const b = el('button', 'chip' + (k === q[0] ? ' on' : ''), q[1]); b.type = 'button'; b.dataset.k = q[0]; if (q[2]) { b.disabled = true; b.style.opacity = '.5'; } b.addEventListener('click', () => stuNav(q[0])); nv.append(b); }); qzBadge();
+  (stuLocked() ? [['prof', '📝 تکمیل اطلاعات']] : []).concat([['sch', 'برنامه هفتگی'], ['plan', '📖 برنامه مطالعه'], ['qz', '📝 آزمونک‌ها'], ['kar', 'کارنامه'], ['att', 'حضور و غیاب'], ['avg', 'میانگین کلاس'], ['mock', 'آزمون‌های آزمایشی'], ['cal', 'تقویم آزمون و تکلیف'], ['leave', 'درخواست مرخصی'], ['vis', '👪 مراجعه‌ی اولیا']].map(q => stuLocked() ? [q[0], '🔒 ' + q[1], 1] : q)).forEach(q => { const b = el('button', 'chip' + (k === q[0] ? ' on' : ''), q[1]); b.type = 'button'; b.dataset.k = q[0]; if (q[2]) { b.disabled = true; b.style.opacity = '.5'; } b.addEventListener('click', () => stuNav(q[0])); nv.append(b); }); qzBadge();
   const sch = k === 'sch'; $('#p-sch').hidden = !sch; $('#stuBody').hidden = sch;
   if (sch) { Z.who = 'c:' + SD.cls; renderSch(); return; }
-  const box = $('#stuBody'); box.textContent = ''; ({ prof:stuProf, plan:stuPlan, qz:stuQz, kar:stuKar, att:stuAtt, avg:stuAvg, mock:stuMock, cal:stuCal, leave:stuLeave })[k](box);
+  const box = $('#stuBody'); box.textContent = ''; ({ vis:stuVis, prof:stuProf, plan:stuPlan, qz:stuQz, kar:stuKar, att:stuAtt, avg:stuAvg, mock:stuMock, cal:stuCal, leave:stuLeave })[k](box);
 }
 function stuKar(box) {
   const c1 = el('div', 'card'), c2 = el('div', 'card'); c1.append(el('div', 'lbl', 'کارنامه — میانگین هر درس (از ۲۰)')); c2.append(el('div', 'lbl', 'نمره‌های هر آزمون'));
@@ -2673,6 +2692,104 @@ setTimeout(() => {          // بازگرداندن نشست قبلی بعد ا�
   }
 }, 0);
 
+/* ======================= جلسات اولیا و مربیان + حضور و غیاب اولیا (نسخه‌ی ۱٫۰۷) ======================= */
+const PT = { list:[], classes:[] };
+const ptCall = (action, extra) => send(Object.assign({ action:action, pin:MG.pin, key:ACCESS_KEY }, extra || {}));
+async function ptOpen() {
+  const h = $('#ptHost'); if (!h) return; h.textContent = ''; h.append(el('div', 'now-sub', 'در حال دریافت…'));
+  const r = await ptCall('ptList'); if (r.net) { h.textContent = 'اینترنت در دسترس نیست.'; return; } if (r.status !== 'ok') { h.textContent = r.message || 'دریافت نشد.'; return; }
+  PT.list = r.list; PT.classes = r.classes; const v = await ptCall('pvList', { cls:PT.vf || '' }); PT.visits = v.status === 'ok' ? v.list : []; ptView();
+}
+function ptView() {
+  const h = $('#ptHost'); h.textContent = '';
+  const add = el('button', 'send', '➕ ثبت جلسه‌ی جدید اولیا و مربیان'); add.type = 'button'; add.addEventListener('click', () => ptForm(null)); h.append(add);
+  if (!PT.list.length) h.append(el('div', 'empty', 'هنوز جلسه‌ای ثبت نشده است.'));
+  PT.list.forEach(m => {
+    const c = el('div', 'card'), hd = el('div'); hd.style.cssText = 'display:flex;justify-content:space-between;gap:8px;align-items:center';
+    const tot = m.st.reduce((a, x) => a + x.tot, 0), rec = m.st.reduce((a, x) => a + (x.rec ? x.p + x.e + x.a : 0), 0), pr = m.st.reduce((a, x) => a + x.p, 0);
+    hd.append(el('b', '', m.t), el('span', 'badge', fa(m.d)));
+    c.append(hd, el('div', 'now-sub', (m.all ? 'همه‌ی کلاس‌ها' : 'کلاس‌های ' + m.cl.map(fa).join('، ')) + (m.note ? ' · ' + m.note : '')));
+    c.append(el('div', 'now-sub', rec ? 'حضور اولیا: ' + fa(pr) + ' از ' + fa(tot) + ' دانش‌آموز (' + fa(Math.round(pr / (tot || 1) * 100)) + '٪)' : 'حضور و غیاب هنوز ثبت نشده است.'));
+    const g = el('div', 'pt-g');
+    m.st.forEach(x => { const b = el('button', 'chip' + (x.rec ? ' pt-ok' : ' pt-no'), ''); b.type = 'button';
+      b.append(el('b', '', fa(x.c)), el('small', '', x.rec ? fa(x.p) + ' حاضر از ' + fa(x.tot) : 'ثبت نشده')); b.addEventListener('click', () => ptAtt(m, x.c)); g.append(b); });
+    c.append(g);
+    const row = el('div'); row.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px';
+    const ed = el('button', 'btn', '✏️ ویرایش جلسه'), dl = el('button', 'btn', '🗑 حذف'); ed.type = dl.type = 'button';
+    ed.addEventListener('click', () => ptForm(m));
+    dl.addEventListener('click', async () => { if (!confirm('این جلسه و حضور و غیاب آن از فهرست حذف شود؟')) return; const r = await ptCall('ptDelMeeting', { id:m.id }); if (r.status !== 'ok') { toast(r.message || 'حذف نشد.'); return; } toast('حذف شد'); ptOpen(); });
+    row.append(ed, dl); c.append(row); $('#ptHost').append(c);
+  });
+  pvView();
+}
+function ptForm(m) {
+  const h = $('#ptHost'); h.textContent = ''; const c = el('div', 'card'); c.append(el('div', 'lbl', m ? 'ویرایش جلسه' : 'جلسه‌ی جدید اولیا و مربیان'));
+  const fd = (lb, v, ph) => { const f = el('div', 'field'), i = el('input'); i.type = 'text'; i.value = v || ''; if (ph) i.placeholder = ph; f.append(el('label', '', lb), i); c.append(f); return i; };
+  const d = fd('تاریخ (مثل ۱۴۰۵/۰۷/۲۵)', m ? m.d : dateStr()), t = fd('عنوان جلسه', m ? m.t : '', 'مثلاً جلسه‌ی اولیا و مربیان — نیمسال اول'), note = fd('توضیحات (محل برگزاری و ...)', m ? m.note : '');
+  d.style.direction = 'ltr'; d.style.textAlign = 'right';
+  c.append(el('div', 'now-sub', 'کلاس‌های دعوت‌شده (اگر هیچ‌کدام انتخاب نشود، همه‌ی کلاس‌ها):'));
+  const sel = {}, g = el('div', 'pt-g'); (m && !m.all ? m.cl : []).forEach(x => { sel[x] = 1; });
+  PT.classes.forEach(x => { const b = el('button', 'chip' + (sel[x] ? ' on' : ''), fa(x)); b.type = 'button'; b.addEventListener('click', () => { sel[x] = !sel[x]; b.classList.toggle('on', !!sel[x]); }); g.append(b); }); c.append(g);
+  const row = el('div'), ok = el('button', 'send', 'ذخیره'), no = el('button', 'btn', 'انصراف'); ok.type = no.type = 'button'; row.style.cssText = 'display:grid;grid-template-columns:2fr 1fr;gap:8px;margin-top:12px'; row.append(ok, no); c.append(row); h.append(c);
+  no.addEventListener('click', ptView);
+  ok.addEventListener('click', async () => {
+    ok.disabled = true; const r = await ptCall('ptSaveMeeting', { id:m ? m.id : '', d:en(d.value), t:t.value.trim(), note:note.value.trim(), cl:Object.keys(sel).filter(k => sel[k]) }); ok.disabled = false;
+    if (r.net) { toast('اینترنت در دسترس نیست.'); return; } if (r.status !== 'ok') { toast(r.message || 'ذخیره نشد.'); return; }
+    toast('ذخیره شد'); await ptOpen();
+  });
+}
+/* ---------- مراجعه‌ی اولیا ---------- */
+function pvView() {
+  const h = $('#ptHost'), c = el('div', 'card'); c.id = 'pvCard'; c.append(el('div', 'lbl', '👪 مراجعه‌ی اولیا به مدرسه'));
+  const add = el('button', 'send', '➕ ثبت مراجعه‌ی جدید'); add.type = 'button'; add.addEventListener('click', () => pvForm(null)); c.append(add);
+  const f = el('div', 'field'), sel = el('select'); f.style.marginTop = '10px'; [''].concat(PT.classes).forEach(x => { const o = el('option', '', x ? 'کلاس ' + fa(x) : 'همه‌ی کلاس‌ها'); o.value = x; sel.append(o); }); sel.value = PT.vf || '';
+  sel.addEventListener('change', () => { PT.vf = sel.value; ptOpen(); }); f.append(sel); c.append(f);
+  if (!PT.visits.length) c.append(el('div', 'empty', 'مراجعه‌ای ثبت نشده است.'));
+  PT.visits.forEach(v => { const d = el('div', 'dir-it'); d.style.padding = '10px 14px';
+    const hd = el('div'); hd.style.cssText = 'display:flex;justify-content:space-between;gap:8px;align-items:center'; hd.append(el('b', '', v.n + ' · ' + fa(v.c)), el('span', 'badge', fa(v.d)));
+    d.append(hd, el('div', 'now-sub', 'مراجعه‌کننده: ' + v.w + ' · موضوع: ' + v.s)); if (v.note) d.append(el('div', 'now-sub', 'توضیح: ' + v.note));
+    const r = el('div'); r.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px'; const ed = el('button', 'btn', '✏️ ویرایش'), dl = el('button', 'btn', '🗑 حذف'); ed.type = dl.type = 'button';
+    ed.addEventListener('click', () => pvForm(v));
+    dl.addEventListener('click', async () => { if (!confirm('این مراجعه حذف شود؟')) return; const q = await ptCall('pvDel', { id:v.id }); if (q.status !== 'ok') { toast(q.message || 'حذف نشد.'); return; } toast('حذف شد'); ptOpen(); });
+    r.append(ed, dl); d.append(r); c.append(d); });
+  h.append(c);
+}
+function pvForm(v) {
+  const h = $('#ptHost'); h.textContent = ''; const c = el('div', 'card'); c.append(el('div', 'lbl', v ? 'ویرایش مراجعه' : 'ثبت مراجعه‌ی اولیا'));
+  const cf = el('div', 'field'), cs = el('select'), sf = el('div', 'field'), ss = el('select');
+  PT.classes.forEach(x => { const o = el('option', '', 'کلاس ' + fa(x)); o.value = x; cs.append(o); }); cf.append(el('label', '', 'کلاس'), cs); sf.append(el('label', '', 'دانش‌آموز'), ss);
+  const loadS = async keep => { ss.textContent = ''; const r = await ptCall('ptGet', { id:'', cls:cs.value }); (r.list || []).forEach(x => { const o = el('option', '', x.n); o.value = x.n; ss.append(o); }); if (keep) ss.value = keep; };
+  cs.addEventListener('change', () => loadS()); if (v) cs.value = v.c; loadS(v ? v.n : '');
+  const fd = (lb, val, ph) => { const f = el('div', 'field'), i = el('input'); i.type = 'text'; i.value = val || ''; if (ph) i.placeholder = ph; f.append(el('label', '', lb), i); return [f, i]; };
+  const [df, di] = fd('تاریخ مراجعه (مثل ۱۴۰۵/۰۷/۲۵)', v ? v.d : dateStr()); di.style.direction = 'ltr'; di.style.textAlign = 'right';
+  const [sf2, si] = fd('موضوع مراجعه', v ? v.s : '', 'مثلاً پیگیری وضعیت تحصیلی'), [nf, ni] = fd('توضیح داخلی (دانش‌آموز نمی‌بیند)', v ? v.note : '');
+  let who = v ? v.w : ''; const wg = el('div', 'pt-seg'); ['پدر', 'مادر', 'هر دو', 'سایر'].forEach(q => { const b = el('button', 'chip' + (who === q ? ' on' : ''), q); b.type = 'button'; b.addEventListener('click', () => { who = q; $$('#pvWho .chip').forEach(x => x.classList.toggle('on', x === b)); }); wg.append(b); }); wg.id = 'pvWho';
+  const qg = el('div', 'pt-seg'); ['وضعیت تحصیلی', 'غیبت و تأخیر', 'انضباط و رفتار', 'مدارک و ثبت‌نام', 'مشاوره', 'سایر'].forEach(q => { const b = el('button', 'chip', q); b.type = 'button'; b.addEventListener('click', () => { si.value = q; }); qg.append(b); });
+  c.append(cf, sf, df, el('div', 'now-sub', 'مراجعه‌کننده:'), wg, sf2, qg, nf);
+  const row = el('div'), ok = el('button', 'send', 'ذخیره'), no = el('button', 'btn', 'انصراف'); ok.type = no.type = 'button'; row.style.cssText = 'display:grid;grid-template-columns:2fr 1fr;gap:8px;margin-top:12px'; row.append(ok, no); c.append(row); h.append(c);
+  no.addEventListener('click', ptView);
+  ok.addEventListener('click', async () => { ok.disabled = true;
+    const r = await ptCall('pvSave', { id:v ? v.id : '', c:cs.value, n:ss.value, d:en(di.value), w:who, s:si.value.trim(), note:ni.value.trim() }); ok.disabled = false;
+    if (r.net) { toast('اینترنت در دسترس نیست.'); return; } if (r.status !== 'ok') { toast(r.message || 'ذخیره نشد.'); return; } toast('ثبت شد ✓'); await ptOpen(); });
+}
+async function ptAtt(m, cls) {
+  const h = $('#ptHost'); h.textContent = ''; h.append(el('div', 'now-sub', 'در حال دریافت…'));
+  const r = await ptCall('ptGet', { id:m.id, cls:cls }); if (r.status !== 'ok') { toast(r.message || 'دریافت نشد.'); ptView(); return; }
+  h.textContent = ''; const c = el('div', 'card'); c.append(el('div', 'lbl', 'حضور اولیا — کلاس ' + fa(cls)), el('div', 'now-sub', m.t + ' · ' + fa(m.d)));
+  const rows = r.list.map(x => Object.assign({}, x)), sm = el('div', 'dir-sum'), list = el('div');
+  const paint = () => { const n = k => rows.filter(x => x.s === k).length; sm.textContent = ''; sm.append(el('span', 'ok', '✓ حاضر: ' + fa(n('حاضر'))), el('span', 'bad', '✗ غایب: ' + fa(n('غایب'))), el('span', 'bad', 'موجه: ' + fa(n('موجه'))), el('span', 'bad', 'ثبت‌نشده: ' + fa(rows.filter(x => !x.s).length))); };
+  const draw = () => { list.textContent = ''; rows.forEach(x => {
+    const d = el('div', 'dir-it'); d.style.padding = '10px 14px'; d.append(el('div', 'now-t', x.n));
+    const sg = el('div', 'pt-seg'); [['حاضر', 'present'], ['غایب', 'absent'], ['موجه', 'excused']].forEach(q => { const b = el('button', 'chip pt-' + q[1] + (x.s === q[0] ? ' on' : ''), q[0]); b.type = 'button'; b.addEventListener('click', () => { x.s = x.s === q[0] ? '' : q[0]; if (x.s !== 'حاضر') x.w = ''; paint(); draw(); }); sg.append(b); }); d.append(sg);
+    if (x.s === 'حاضر') { const w = el('div', 'pt-seg'); ['پدر', 'مادر', 'هر دو', 'سایر'].forEach(q => { const b = el('button', 'chip' + (x.w === q ? ' on' : ''), q); b.type = 'button'; b.addEventListener('click', () => { x.w = x.w === q ? '' : q; draw(); }); w.append(b); }); d.append(el('div', 'now-sub', 'همراه:'), w); }
+    list.append(d); }); };
+  const all = el('button', 'btn', 'همه را «غایب» کن'); all.type = 'button'; all.addEventListener('click', () => { rows.forEach(x => { if (!x.s) x.s = 'غایب'; }); paint(); draw(); });
+  paint(); draw(); c.append(sm, all, list);
+  const row = el('div'), ok = el('button', 'send', 'ذخیره‌ی حضور و غیاب'), no = el('button', 'btn', 'بازگشت'); ok.type = no.type = 'button'; row.style.cssText = 'display:grid;grid-template-columns:2fr 1fr;gap:8px;margin-top:12px'; row.append(ok, no); c.append(row); h.append(c);
+  no.addEventListener('click', ptView);
+  ok.addEventListener('click', async () => { ok.disabled = true; const r2 = await ptCall('ptSaveAtt', { id:m.id, cls:cls, rows:rows.filter(x => x.s) }); ok.disabled = false;
+    if (r2.net) { toast('اینترنت در دسترس نیست.'); return; } if (r2.status !== 'ok') { toast(r2.message || 'ذخیره نشد.'); return; } toast('ثبت شد ✓'); await ptOpen(); });
+}
 /* ======================= دسترسی دبیر فقط به کلاس و درس خودش + کارتابل ======================= */
 const normT = v => String(v == null ? '' : v).replace(/ي/g, 'ی').replace(/ك/g, 'ک').replace(/\u200c/g, ' ').replace(/\s+/g, ' ').trim();
 function myPairs() {            // null = بدون محدودیت (مدیر، یا هنوز برنامه‌ای ثبت نشده)
@@ -3353,6 +3470,7 @@ function printCard(d) {
   const a = d.att; pa.append(el('h2', '', 'حضور و غیاب'), tbl(['کل جلسات', 'حاضر', 'غایب', 'تأخیر', 'غیبت موجه'], [[a.sessions, a.present, a.absent, a.late, a.excused].map(fa)]));
   if (d.grades.length) pa.append(el('h2', '', 'نمره‌ی آزمون‌ها'), tbl(['تاریخ', 'درس', 'آزمون', 'نمره', 'از ۲۰'], d.grades.slice().sort(byDate).map(g => [g.d, g.c, g.e, g.a ? 'غایب' : fa(g.s) + ' از ' + fa(g.m), g.a ? '—' : f2(g.n)])));
   if (d.badges && d.badges.length) pa.append(el('h2', '', 'نشان‌های تشویقی'), el('div', '', d.badges.map(b => b.i + ' ' + b.t).join('  ·  ')));
+  if (d.visits && d.visits.length) pa.append(el('h2', '', 'مراجعه‌ی اولیا'), tbl(['تاریخ', 'مراجعه‌کننده', 'موضوع'], d.visits.map(x => [fa(x.d), x.w, x.s])));
   const ft = el('div', '', 'این کارنامه برای اطلاع اولیا از وضعیت تحصیلی فرزندشان تنظیم شده است.'); ft.style.marginTop = '18px'; pa.append(ft);
   document.body.classList.add('printing'); window.print();
 }
@@ -5240,6 +5358,7 @@ function mgShow(k, scroll) {
   $$('#mgNav button').forEach(b => { const on = b.dataset.sec === k; b.classList.toggle('on', on); b.setAttribute('aria-pressed', String(on)); });
   try { localStorage.setItem(MG_SEC_K, k); } catch (e) {}
   if (k === 'dis' && MG.pin && !$('#mgBody').hidden) disOpen('m');
+  if (k === 'pta' && MG.pin && !$('#mgBody').hidden) ptOpen();
   if (scroll) { const r = $('#mgNav').getBoundingClientRect(); if (r.top < 0) $('#mgNav').scrollIntoView({ behavior:'smooth', block:'start' }); }
 }
 function mgGo(id) {               // رفتن به یک کارت، حتی اگر در بخش دیگری باشد
