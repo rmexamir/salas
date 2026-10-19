@@ -3920,6 +3920,15 @@ if (/iphone|ipad|ipod/i.test(navigator.userAgent) && !navigator.standalone) $('#
 let GFIRST = null, RK = [], LV = [];
 const fldOf = (l, n) => { const x = el('div', 'field'); x.append(el('label', '', l), n); return x; };
 const card1 = (t) => { const c = el('div', 'dir-it'); c.style.padding = '10px 14px'; return c; };
+/* پیامک عادی (برنامه‌ی پیش‌فرض پیامک گوشی مدیر، با شماره‌ی خود مدیر) به پدر و مادر؛ فقط در حضور و غیاب پنل مدیر */
+function smsParents(st, text) {
+  const w = el('div'); w.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;align-items:center';
+  [['پدر', st && st.fp], ['مادر', st && st.mp]].forEach(q => {
+    if (!q[1]) { w.append(el('span', 'now-sub', 'شماره‌ی ' + q[0] + ' ثبت نشده')); return; }
+    const a = el('a', 'tel', '✉️ پیامک به ' + q[0]); a.href = 'sms:' + q[1] + '?body=' + encodeURIComponent(text); w.append(a);
+  });
+  return w;
+}
 function msgBtns(phone, text) {   // پیامک، روبیکا و تماس با شماره‌ی پدر؛ متن آماده است
   const w = el('div'); w.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;align-items:center';
   if (!phone) { w.append(el('span', 'now-sub', 'شماره‌ی پدر ثبت نشده است')); return w; }
@@ -4977,8 +4986,8 @@ function abRender() {
         }); g.append(b);
         if (AB.open === ds + '|' + o.p + '|' + r.n) {
           const s = DIR.students.find(q => normT(q.n) === normT(r.n) && normT(q.c) === normT(o.c)), ph = s ? (s.fp || s.mp) : '';
-          const txt = 'اولیای گرامی، ' + r.n + ' ' + (today ? 'امروز' : 'روز') + ' ' + plDayName(ds) + ' در زنگ ' + (ORD[o.p - 1] || fa(o.p)) + ' (درس ' + o.s + ') ' + (kind === 'lt' ? 'با تأخیر حاضر شد' : kind === 'ex' ? 'با غیبت موجه ثبت شده است' : 'غایب بود') + '. لطفاً با مدرسه هماهنگ کنید. ' + SCHOOL_NAME;
-          const c = el('div', 'ab-c'); const inf = [s && s.fn ? 'پدر: ' + s.fn : '', r.why ? (r.mgr ? 'علت (ثبت مدیر): ' : 'توضیح دبیر: ') + r.why : ''].filter(Boolean).join('؛ '); if (inf) c.append(el('div', 'now-sub', inf)); c.append(msgBtns(ph, txt)); g.append(c);
+          const txt = 'ولی محترم، دانش‌آموز ' + r.n + ' (' + o.c + ') ' + (today ? 'امروز' : 'در تاریخ ' + fa(ds)) + ' در زنگ ' + (ORD[o.p - 1] || fa(o.p)) + ' درس ' + o.s + ' ' + (kind === 'lt' ? 'تأخیر دارد' : kind === 'ex' ? 'غیبت موجه ثبت شده است' : 'غایب است') + '. ' + SCHOOL_NAME;
+          const c = el('div', 'ab-c'); const inf = [s && s.fn ? 'پدر: ' + s.fn : '', s && s.mn ? 'مادر: ' + s.mn : '', r.why ? (r.mgr ? 'علت (ثبت مدیر): ' : 'توضیح دبیر: ') + r.why : ''].filter(Boolean).join('؛ '); if (inf) c.append(el('div', 'now-sub', inf)); c.append(smsParents(s, txt)); g.append(c);
         }
       });
       w.append(g);
