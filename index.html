@@ -246,6 +246,7 @@ footer b{color:var(--ink)}
 .slot .pn{width:30px;height:30px;flex:none;border-radius:50%;background:var(--primary);color:var(--on-primary);display:grid;place-items:center;font-weight:800;font-size:14px}
 .slot .tm{font-size:12px;color:var(--muted);text-align:end}
 .slot.free{opacity:.5}
+.slot.absent{border-color:#C93C42}.slot.absent .nm{color:#C93C42;font-weight:800}
 .ed-row{display:grid;grid-template-columns:26px 1fr 1fr;gap:6px;align-items:center;margin-bottom:8px}
 .ed-row input{height:46px}
 .sms-opt{display:flex;align-items:center;gap:10px;padding:2px 4px;font-size:14px;font-weight:700}
@@ -1490,6 +1491,18 @@ input:focus,select:focus{border-color:var(--teal);box-shadow:var(--ring);backgro
       <div class="now-sub" style="margin-top:8px">ساعت و تاریخ از سرور ثبت می‌شود و با ساعت گوشی تغییر نمی‌کند.</div>
     </div>
     <div class="card"><div class="lbl" style="margin-bottom:8px">سابقه‌ی ورود و خروج شما</div><div id="stfHist"></div></div>
+    <div class="card" id="tlCard">
+      <div class="lbl" style="margin-bottom:8px">درخواست مرخصی</div>
+      <div class="mg-bar jp"><select id="tlD" aria-label="روز"></select><select id="tlM" aria-label="ماه"></select><select id="tlY" aria-label="سال"></select></div>
+      <div id="tlDay" class="now-sub" style="margin:6px 0 10px"></div>
+      <div class="lbl" style="margin-bottom:6px">زنگ‌های مرخصی</div>
+      <div id="tlPer" class="chips" style="grid-template-columns:repeat(4,1fr)"></div>
+      <div class="field" style="margin-top:10px"><label for="tlWhy">علت مرخصی</label><input id="tlWhy" type="text" maxlength="150" autocomplete="off"></div>
+      <button id="tlSend" class="send" type="button">ثبت درخواست مرخصی</button>
+      <div class="now-sub" style="margin-top:8px">پس از تأیید مدیر، در برنامه‌ی هفتگی همان روز «دبیر غایب» نشان داده می‌شود.</div>
+      <div class="lbl" style="margin:12px 0 8px">درخواست‌های من</div>
+      <div id="tlHist"></div>
+    </div>
   </section>
 
   <section id="p-mg" hidden>
@@ -1619,6 +1632,14 @@ input:focus,select:focus{border-color:var(--teal);box-shadow:var(--ring);backgro
       </div>
       <div class="mg-sec" data-sec="tch" data-t="دبیران و برنامه" hidden>
       <div class="mg-sec-d">حضور و خروج همکاران، ابلاغ و ساعات، و ویرایش برنامه‌ی هفتگی.</div>
+      <div class="card" id="tlMgCard">
+        <div class="lbl" style="margin-bottom:8px">درخواست‌های مرخصی دبیران<span id="tlMgCnt"></span></div>
+        <div id="tlMgList"></div>
+        <div class="lbl" style="margin:14px 0 8px">سابقه‌ی عدم حضور دبیران</div>
+        <div id="tlMgSum"></div>
+        <div class="mg-bar" style="margin-top:10px"><select id="tlFilt" aria-label="دبیر"></select><button id="tlCsv" class="btn" type="button">CSV</button></div>
+        <div id="tlMgHist" class="mg-wrap" style="margin-top:8px"></div>
+      </div>
       <div class="card" id="stfRepCard">
         <div class="lbl" style="margin-bottom:8px">گزارش حضور و خروج همکاران</div>
         <div id="srKind" class="chips"></div>
@@ -1890,7 +1911,7 @@ function setTab(t) {
   $$('.tab').forEach(b => { const on = b.dataset.tab === t; b.classList.toggle('active', on); b.setAttribute('aria-selected', on); });
   ['att', 'gr', 'mg', 'sch', 'inb', 'cns', 'stf', 'dis'].forEach(k => { $('#p-' + k).hidden = t !== k; });
   $('#common').hidden = ['sch', 'inb', 'cns', 'stf', 'dis'].includes(t);
-  if (t === 'att') autoSlotApply(); if (t === 'sch') renderSch(); if (t === 'inb') loadInbox(); if (t === 'cns') cnsOpen(); if (t === 'stf') stfOpen(); if (t === 'dis') disOpen('t');
+  if (t === 'att') autoSlotApply(); if (t === 'sch') renderSch(); if (t === 'inb') loadInbox(); if (t === 'cns') cnsOpen(); if (t === 'stf') { stfOpen(); tlMineLoad(); } if (t === 'dis') disOpen('t');
 }
 $$('.tab').forEach(b => b.addEventListener('click', () => setTab(b.dataset.tab)));
 
@@ -2218,6 +2239,9 @@ function shiftOfDate(d) {                       // جمعه جزو هفته‌ی
 }
 const DAYS = ['شنبه','یکشنبه','دوشنبه','سه‌شنبه','چهارشنبه','پنجشنبه'];
 let SCH = lsGet(SCH_KEY, []), TINFO = lsGet('sia_tinfo_v1', {});
+let ABS = lsGet('sia_abs_v1', []);      // مرخصی‌های تأییدشدهٔ دبیران: [تاریخ شمسی، دبیر، زنگ‌ها ('' = همه)]
+const absOn = (teacher, dateJ, p) => !!dateJ && ABS.some(a => a[0] === dateJ && normT(a[1]) === normT(teacher) && (!a[2] || String(a[2]).split(',').indexOf(String(p)) >= 0));
+const weekJ = d => { const t = new Date(); t.setHours(12, 0, 0, 0); t.setDate(t.getDate() - ((t.getDay() + 1) % 7) + d); const j = jOf(t); return jStr(j[0], j[1], j[2]); };   // تاریخ شمسی روز d (۰ = شنبه) در هفته‌ی جاری
 const SH_FA = { morning:'صبح', afternoon:'ظهر' };                 // هر ردیف: [کلاس, روز(۰-۵), زنگ(۱..), درس, دبیر]
 const Z = { who:'', day:0, shift:'' }, ED = { cls:'', day:0, cells:{} };
 const todayIdx = () => { const i = (new Date().getDay() + 1) % 7; return i > 5 ? 0 : i; };
@@ -2248,8 +2272,8 @@ function renderSch() {
   schOpts(); dayBar($('#schDays'), Z.day, i => { Z.day = i; renderSch(); });
   const isC = Z.who[0] === 'c', ul = $('#schList'); ul.textContent = '';
   PERIOD_TIMES.forEach((tm, i) => {
-    const r = slotOf(Z.day, i + 1)[0], li = el('li'), b = el('button', 'slot' + (r ? '' : ' free')); b.type = 'button';
-    b.append(el('span', 'pn', fa(i + 1)), el('span', 'nm', r ? r[3] + (r[5] ? ' (تک‌زنگ)' : '') : '—'), el('span', 'tm', (r ? (isC ? r[4] : r[0]) + ' · ' : '') + tm));
+    const r = slotOf(Z.day, i + 1)[0], li = el('li'), ab = !!r && absOn(r[4], weekJ(Z.day), i + 1), b = el('button', 'slot' + (r ? '' : ' free') + (ab ? ' absent' : '')); b.type = 'button';
+    b.append(el('span', 'pn', fa(i + 1)), el('span', 'nm', r ? r[3] + (r[5] ? ' (تک‌زنگ)' : '') + (ab ? ' — دبیر غایب' : '') : '—'), el('span', 'tm', (r ? (isC ? r[4] : r[0]) + ' · ' : '') + tm));
     if (r && ROLE !== 'student' && ROLE !== 'counselor') b.addEventListener('click', () => useSlot(r)); li.append(b); ul.append(li);
   });
   $('#schEmpty').hidden = SCH.length > 0;
@@ -2257,7 +2281,7 @@ function renderSch() {
   const hr = el('tr'); hr.append(el('th', '', 'زنگ')); DAYS.forEach(d => hr.append(el('th', '', d))); const th = el('thead'); th.append(hr); t.append(th);
   const tb = el('tbody');
   PERIOD_TIMES.forEach((_, p) => { const tr = el('tr'); tr.append(el('td', '', fa(p + 1)));
-    DAYS.forEach((__, d) => { const r = slotOf(d, p + 1)[0]; tr.append(el('td', '', r ? r[3] + ' (' + (isC ? r[4] : r[0]) + ')' : '—')); }); tb.append(tr); });
+    DAYS.forEach((__, d) => { const r = slotOf(d, p + 1)[0]; tr.append(el('td', '', r ? r[3] + ' (' + (isC ? r[4] : r[0]) + ')' + (absOn(r[4], weekJ(d), p + 1) ? ' ⚠ غایب' : '') : '—')); }); tb.append(tr); });
   t.append(tb);
   const inf = $('#schInfo'); inf.hidden = Z.who[0] !== 't'; if (!inf.hidden) inf.textContent = infoLine(Z.who.slice(2));
   renderTch();
@@ -2277,6 +2301,7 @@ async function loadSchedule() {
     if (r.status !== 'ok') return;
     SCH = (r.rows || []).map(x => [String(x[0]), +x[1], +x[2], String(x[3]), String(x[4]), String(x[5] || '')]); lsSet(SCH_KEY, SCH);
     TINFO = r.info || {}; lsSet('sia_tinfo_v1', TINFO);
+    ABS = r.abs || []; lsSet('sia_abs_v1', ABS);
     renderSch(); if (!$('#mgBody').hidden) edLoadCls();
     if (ROLE === 'teacher') { refreshRestrict(); autoSlotApply(); renderPer(); }
   } catch (e) { /* از نسخه ذخیره‌شده استفاده می‌شود */ }
@@ -2397,10 +2422,11 @@ function renderNow() {
   const cls = ROLE === 'student' && SD ? [SD.cls] : uniq(allClasses().concat(SCH.map(r => r[0]))).sort((a, b) => a.localeCompare(b, 'fa'));
   if (!cls.length) { box.append(el('div', 'empty', 'هنوز کلاسی ثبت نشده است.')); return; }
   const ul = el('ul', 'list'), canUse = ROLE !== 'student' && ROLE !== 'counselor';
+  const nj = (() => { const x = new Date(); x.setDate(x.getDate() + (n.k || 0)); const j = jOf(x); return jStr(j[0], j[1], j[2]); })();
   cls.forEach(c => {
-    const r = SCH.find(x => x[0] === c && x[1] === n.day && x[2] === n.p && (!x[5] || x[5] === SH_FA[n.shift])), li = el('li'), b = el('button', 'slot' + (r ? '' : ' free')); b.type = 'button';
+    const r = SCH.find(x => x[0] === c && x[1] === n.day && x[2] === n.p && (!x[5] || x[5] === SH_FA[n.shift])), ab = !!r && absOn(r[4], nj, n.p), li = el('li'), b = el('button', 'slot' + (r ? '' : ' free') + (ab ? ' absent' : '')); b.type = 'button';
     const a = el('span', '', c); a.style.cssText = 'flex:1;font-weight:800';
-    b.append(a, el('span', 'tm', r ? r[3] + ' · ' + r[4] : '—'));
+    b.append(a, el('span', 'tm', r ? r[3] + ' · ' + r[4] + (ab ? ' · دبیر غایب' : '') : '—'));
     if (r && canUse) b.addEventListener('click', () => useSlot(r)); li.append(b); ul.append(li);
   });
   box.append(ul);
@@ -4341,6 +4367,45 @@ function renderRisk() {
 }
 $('#riskCls').addEventListener('change', renderRisk);
 /* --- مدیر: مرخصی --- */
+/* --- مدیر: تأیید یا رد مرخصی دبیران و سابقه‌ی عدم حضور آنان --- */
+let TLM = [];
+async function tlMgLoad() {
+  if (!MG.pin || $('#mgBody').hidden) return;
+  const r = await send({ action:'tlList', pin:MG.pin, key:ACCESS_KEY });
+  if (r.status === 'ok') { TLM = r.list; tlMgPaint(); }
+}
+async function tlDecide(id, ok, note) {
+  const r = await send({ action:'tlDecide', pin:MG.pin, id:id, ok:ok, note:note, key:ACCESS_KEY });
+  toast(r.status === 'ok' ? (ok ? 'تأیید شد؛ در برنامه‌ی هفتگی غیبت دبیر ثبت شد' : 'رد شد') : (r.message || 'ناموفق'));
+  if (r.status === 'ok') { tlMgLoad(); loadSchedule(); }
+}
+function tlMgWire() {
+  if (window.__tlWired) return; window.__tlWired = true;
+  $('#tlFilt').addEventListener('change', tlMgPaint);
+  $('#tlCsv').addEventListener('click', () => { const F = $('#tlFilt').value; mgCsv('teacher-leaves.csv', ['تاریخ', 'روز', 'دبیر', 'زنگ‌ها', 'علت', 'وضعیت', 'یادداشت مدیر'], TLM.filter(x => !F || x.n === F).map(x => [x.d, x.day, x.n, x.pr.length ? x.pr.join('،') : 'همه', x.r, x.s, x.note])); });
+}
+function tlMgPaint() {
+  const pend = TLM.filter(x => x.s === 'در انتظار'), box = $('#tlMgList');
+  $('#tlMgCnt').textContent = pend.length ? ' (' + fa(pend.length) + ' در انتظار)' : '';
+  box.textContent = '';
+  if (!pend.length) box.append(el('div', 'empty', 'درخواستی در انتظار تصمیم نیست.'));
+  pend.forEach(x => {
+    const d = card1(); d.append(el('div', 'now-t', x.n + ' · ' + x.day + ' ' + fa(x.d)), el('div', 'now-sub', 'زنگ‌ها: ' + (x.pr.length ? 'زنگ ' + fa(x.pr.join(' و ')) : 'همه‌ی زنگ‌ها') + ' · علت: ' + x.r));
+    const row = el('div'); row.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;margin-top:8px';
+    const ok = el('button', 'btn', '✓ تأیید'), no = el('button', 'btn', '✗ رد'); ok.type = no.type = 'button';
+    ok.style.cssText = 'background:#1F7A55;color:#fff;border-color:#1F7A55';
+    ok.addEventListener('click', () => tlDecide(x.id, true, ''));
+    no.addEventListener('click', () => { const note = prompt('علت رد (اختیاری):'); if (note === null) return; tlDecide(x.id, false, note); });
+    row.append(ok, no); d.append(row); box.append(d);
+  });
+  const sel = $('#tlFilt'), keep = sel.value, teachers = uniq(TLM.map(x => x.n)).sort((a, b) => a.localeCompare(b, 'fa'));
+  sel.textContent = ''; ['', ...teachers].forEach(t => { const o = el('option', '', t || 'همه‌ی دبیران'); o.value = t; sel.append(o); });
+  sel.value = teachers.includes(keep) ? keep : '';
+  const cnt = (t, st) => TLM.filter(x => x.n === t && x.s === st).length, sum = $('#tlMgSum'); sum.textContent = '';
+  sum.append(teachers.length ? tbl(['دبیر', 'روز غیبت تأییدشده', 'رد شده', 'در انتظار'], teachers.map(t => [t, fa(cnt(t, 'تأیید شده')), fa(cnt(t, 'رد شده')), fa(cnt(t, 'در انتظار'))])) : el('div', 'now-sub', 'هنوز درخواستی ثبت نشده است.'));
+  const F = sel.value, det = TLM.filter(x => !F || x.n === F), hb = $('#tlMgHist'); hb.textContent = '';
+  if (det.length) hb.append(tbl(['تاریخ', 'روز', 'دبیر', 'زنگ‌ها', 'علت', 'وضعیت'], det.map(x => [fa(x.d), x.day, x.n, x.pr.length ? fa(x.pr.join('، ')) : 'همه', x.r, x.s + (x.note ? ' — ' + x.note : '')])));
+}
 async function loadLeaves() { const r = await send({ action:'leaveList', pin:MG.pin, key:ACCESS_KEY }); if (r.status === 'ok') { LV = r.list; renderLeaves(); } }
 let LV_SHOW = false;
 function renderLeaves() {
@@ -4537,7 +4602,7 @@ async function pfBeh() {
   add.addEventListener('click', async () => { if (!inp.value.trim()) return; const r = await send({ action:'behAdd', pin:MG.pin, cls:PF.cls, name:PF.name, kind:kind.value, note:inp.value.trim(), key:ACCESS_KEY }); if (r.status !== 'ok') return toast(r.message || 'ثبت نشد'); inp.value = ''; toast('ثبت شد ✓'); ld(); });
   ld();
 }
-function v3Init() { cmInit(); srInit(); loadRisk(); loadLeaves(); codeInit(); mcInit(); if (!window.__lvPoll) window.__lvPoll = setInterval(() => { if (MG.pin && !$('#mgBody').hidden) loadLeaves(); }, 60000); }   // درخواست‌های مرخصی هر دقیقه بررسی می‌شود
+function v3Init() { cmInit(); srInit(); loadRisk(); loadLeaves(); tlMgWire(); tlMgLoad(); codeInit(); mcInit(); if (!window.__lvPoll) window.__lvPoll = setInterval(() => { if (MG.pin && !$('#mgBody').hidden) { loadLeaves(); tlMgLoad(); } }, 60000); }   // درخواست‌های مرخصی هر دقیقه بررسی می‌شود
 
 /* ---------- گزینه پیامک ---------- */
 if (!SMS_ENABLED) $('#smsOpt').hidden = true;
@@ -4818,6 +4883,45 @@ async function stfMark(isIn) {
   } finally { STF_BUSY = false; if (STF) stfPaint(); else { bi.disabled = di; bo.disabled = dout; } }
 }
 $('#stfIn').addEventListener('click', () => stfMark(true)); $('#stfOut').addEventListener('click', () => stfMark(false));
+
+/* --- مرخصی دبیر: دبیر درخواست می‌دهد؛ پس از تأیید مدیر، در برنامه‌ی هفتگی آن روز «دبیر غایب» دیده می‌شود --- */
+const TL = { per:[], pk:null, busy:false };
+function tlDayTxt() {
+  if (!TL.pk) return; const q = jParse(TL.pk.get()); if (!q) return; const g = jGreg(q[0], q[1], q[2]);
+  $('#tlDay').textContent = JWD[g.getDay()] + ' ' + fa(TL.pk.get()) + (g.getDay() === 5 ? ' — جمعه تعطیل است' : '');
+}
+function tlPerDraw() {
+  const box = $('#tlPer'); box.textContent = '';
+  const all = el('button', 'chip' + (TL.per.length ? '' : ' on'), 'همه‌ی زنگ‌ها'); all.type = 'button';
+  all.addEventListener('click', () => { TL.per = []; tlPerDraw(); }); box.append(all);
+  [1, 2, 3].forEach(p => {
+    const on = TL.per.indexOf(p) >= 0, b = el('button', 'chip' + (on ? ' on' : ''), 'زنگ ' + fa(p)); b.type = 'button';
+    b.addEventListener('click', () => { let s2 = TL.per.filter(x => x !== p); if (!on) s2.push(p); s2 = s2.sort(); TL.per = s2.length === 3 ? [] : s2; tlPerDraw(); });
+    box.append(b);
+  });
+}
+function tlPaintMine(list) {
+  const h = $('#tlHist'); h.textContent = '';
+  if (!list || !list.length) { h.append(el('div', 'now-sub', 'هنوز درخواستی ثبت نکرده‌اید.')); return; }
+  h.append(tbl(['تاریخ', 'روز', 'زنگ‌ها', 'وضعیت'], list.map(x => [fa(x.d), x.day, x.pr.length ? fa(x.pr.join('، ')) : 'همه', x.s + (x.note ? ' — ' + x.note : '')])));
+}
+async function tlMineLoad() {
+  if (!TL.pk) { TL.pk = jPicker($('#tlD'), $('#tlM'), $('#tlY'), tlDayTxt); tlDayTxt(); tlPerDraw(); $('#tlSend').addEventListener('click', tlSubmit); }
+  if (!S.teacher.trim()) return;
+  const r = await send({ action:'tlMine', teacher:S.teacher.trim(), pin:S.pin.trim(), key:ACCESS_KEY });
+  if (r.status === 'ok') tlPaintMine(r.list);
+}
+async function tlSubmit() {
+  if (TL.busy) return; const reason = $('#tlWhy').value.trim();
+  if (!reason) return toast('علت مرخصی را بنویسید'); if (!S.teacher.trim()) return toast('نام دبیر مشخص نیست');
+  TL.busy = true; const b = $('#tlSend'); b.disabled = true;
+  try {
+    const r = await send({ action:'tlSubmit', teacher:S.teacher.trim(), pin:S.pin.trim(), key:ACCESS_KEY, date:TL.pk.get(), periods:TL.per, reason:reason });
+    if (r.net) return toast('اینترنت در دسترس نیست'); if (r.status !== 'ok') return toast(r.message || 'ثبت نشد');
+    $('#tlWhy').value = ''; tlPaintMine(r.list); toast('درخواست ثبت شد؛ منتظر تأیید مدیر');
+  } finally { TL.busy = false; b.disabled = false; }
+}
+
 
 /* --- گزارش مدیر: روزانه، هفتگی، ماهانه؛ دبیری که در آن روز یا زنگ کلاس نداشته محاسبه نمی‌شود --- */
 const slotMin = s => s.split('–').map(x => { const h = toEn(x).split(':').map(Number); return h[0] * 60 + h[1]; });
