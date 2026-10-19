@@ -4340,13 +4340,16 @@ async function calLoad() {
   const box = $('#calList'); if (!box) return; calInit(); calPerFill();
   const r = await send({ action:'calList', teacher:S.teacher.trim(), pin:S.pin.trim(), key:ACCESS_KEY }); if (r.status !== 'ok') return; box.textContent = '';
   r.list.slice(0, 30).forEach(x => { const row = el('div', 'dir-r'), b = el('button', 'btn', 'حذف'); b.type = 'button';
-    row.append(el('span', '', (x.k === 'آزمون' ? '📝 ' : '📚 ') + fa(x.d) + (x.p ? ' · زنگ ' + fa(x.p) + calTm(x.d, x.p) : '') + ' · ' + x.c + ' · ' + x.s + ' — ' + x.t), b);
+    row.append(el('span', '', (x.k === 'آزمون' ? '📝 ' : '📚 ') + fa(x.d) + (x.p ? ' · زنگ ' + fa(x.p) + calTm(x.d, x.p) : '') + ' · ' + x.c + ' · ' + x.s + ' — ' + x.t + (x.pend ? ' · ⏳ در انتظار تأیید مدیر' : '')), b);
     b.addEventListener('click', async () => { const q = await send({ action:'calDel', teacher:S.teacher.trim(), pin:S.pin.trim(), date:x.d, cls:x.c, course:x.s, title:x.t, key:ACCESS_KEY }); if (q.status !== 'ok') toast(q.message || 'حذف نشد'); calLoad(); }); box.append(row); });
 }
 $('#calAdd').addEventListener('click', async () => {
   const x = INB && INB[+$('#inbSel').value || 0]; if (!x) return toast('ابتدا کلاس و درس را انتخاب کنید');
   calInit(); const q = jParse(CALP.get()); if (jGreg(q[0], q[1], q[2]).getDay() === 5) return toast('جمعه تعطیل است؛ روز دیگری انتخاب کنید');
-  const r = await send({ action:'calAdd', teacher:S.teacher.trim(), pin:S.pin.trim(), cls:x.c, course:x.s, date:CALP.get(), period:+$('#calPer').value || 1, kind:$('#calKind').value, title:$('#calTitle').value.trim(), key:ACCESS_KEY });
+  const base = { action:'calAdd', teacher:S.teacher.trim(), pin:S.pin.trim(), cls:x.c, course:x.s, date:CALP.get(), period:+$('#calPer').value || 1, kind:$('#calKind').value, title:$('#calTitle').value.trim(), key:ACCESS_KEY };
+  const r = await send(base);
+  if (r.status === 'conflict') return calConflict(r, base, q => { if (q.status === 'ok' || q.status === 'pending') { $('#calTitle').value = ''; calLoad(); } });
+  if (r.status === 'pending') { $('#calTitle').value = ''; toast('برای تأیید مدیر ارسال شد ⏳'); return calLoad(); }
   if (r.status !== 'ok') return toast(r.message || 'ثبت نشد'); $('#calTitle').value = ''; toast('ثبت شد ✓'); calLoad();
 });
 $('#inbSel').addEventListener('change', () => { CALP_USER = false; if (CALP) calPerFill(); });
@@ -5197,18 +5200,41 @@ function mcRender() {
       it.append(el('div', 'd', (x.k === 'آزمون' ? '📝 ' : '📚 ') + fa(x.d)), el('div', '', x.s + (x.p ? ' · زنگ ' + fa(x.p) : '')), el('div', 't', x.t), dl);
       dl.addEventListener('click', () => showModal({ icon:'warn', title:'حذف از تقویم آموزشی', msg:x.k + ' «' + x.t + '» کلاس ' + x.c + ' (' + fa(x.d) + ') حذف شود؟',
         buttons:[{ text:'حذف', primary:true, onClick:async () => { const q = await send({ action:'calDel', teacher:'', pin:MG.pin, date:x.d, cls:x.c, course:x.s, title:x.t, key:ACCESS_KEY }); toast(q.status === 'ok' ? 'حذف شد' : (q.message || 'حذف نشد')); mcLoad(); } }, { text:'انصراف' }] }));
+      if (x.pend) {
+        const okb = el('button', 'btn', '✓ تأیید'), nob = el('button', 'btn', '✗ رد'); okb.type = nob.type = 'button';
+        okb.style.cssText = 'background:#1F7A55;color:#fff;border-color:#1F7A55';
+        okb.addEventListener('click', () => calDecide(x, true)); nob.addEventListener('click', () => calDecide(x, false));
+        it.append(el('div', 'now-sub', '⏳ در انتظار تأیید شما — دبیر: ' + x.te), okb, nob);
+      }
       col.append(it);
     });
     box.append(col);
   });
+}
+
+/* --- تداخل در تقویم: آزمون/تکلیف دوم در یک روز فقط با تأیید مدیر --- */
+function calConflict(r, base, after) {
+  const isM = base.teacher === 'مدیر';
+  const rows = (r.existing || []).map(x => '• ' + x.k + ' «' + x.t + '» — درس ' + x.s + ' · دبیر: ' + x.te + (x.pend ? ' (در انتظار تأیید)' : '')).join('\n');
+  showModal({ icon:'warn', title:'هشدار تداخل در تقویم', msg:(r.message || '') + '\n' + rows + '\n\nثبت آزمون یا تکلیف دوم در همان روز فقط با تأیید نهایی مدیر امکان‌پذیر است.',
+    buttons:[
+      isM ? { text:'ثبت با تأیید مدیر', primary:true, onClick:async () => { const q = await send(Object.assign({}, base, { confirm:true })); after(q); } }
+          : { text:'ارسال برای تأیید مدیر', primary:true, onClick:async () => { const q = await send(Object.assign({}, base, { request:true })); if (q.status === 'pending') toast('برای تأیید مدیر ارسال شد ⏳'); else toast(q.message || 'ارسال نشد'); after(q); } },
+      { text:'انصراف' } ] });
+}
+async function calDecide(x, ok) {
+  const q = await send({ action:'calDecide', pin:MG.pin, date:x.d, cls:x.c, course:x.s, title:x.t, teacher:x.te, ok:ok, key:ACCESS_KEY });
+  toast(q.status === 'ok' ? (ok ? 'تأیید شد ✓' : 'رد شد') : (q.message || 'ناموفق')); mcLoad();
 }
 async function mcAdd() {
   const c = $('#mcCls').value, s0 = $('#mcCourse').value.trim(), title = $('#mcTitle').value.trim();
   if (!c) return toast('کلاس را انتخاب کنید'); if (!s0) return toast('نام درس را بنویسید'); if (!title) return toast('عنوان را بنویسید (مثلاً فصل ۲)');
   const q = jParse(MC.pk.get()); if (jGreg(q[0], q[1], q[2]).getDay() === 5) return toast('جمعه تعطیل است؛ روز دیگری انتخاب کنید');
   const b = $('#mcAdd'); b.disabled = true;
-  const r = await send({ action:'calAdd', teacher:'مدیر', pin:MG.pin, cls:c, course:s0, date:MC.pk.get(), period:+$('#mcPer').value || 1, kind:$('#mcKind').value, title:title, key:ACCESS_KEY });
-  b.disabled = false; if (r.status !== 'ok') return toast(r.message || 'ثبت نشد');
+  const base = { action:'calAdd', teacher:'مدیر', pin:MG.pin, cls:c, course:s0, date:MC.pk.get(), period:+$('#mcPer').value || 1, kind:$('#mcKind').value, title:title, key:ACCESS_KEY };
+  const r = await send(base); b.disabled = false;
+  if (r.status === 'conflict') return calConflict(r, base, q => { if (q.status === 'ok') { $('#mcTitle').value = ''; toast('در تقویم آموزشی ثبت شد ✓'); mcLoad(); } else toast(q.message || 'ثبت نشد'); });
+  if (r.status !== 'ok') return toast(r.message || 'ثبت نشد');
   $('#mcTitle').value = ''; toast('در تقویم آموزشی ثبت شد ✓'); mcLoad();
 }
 /* ======================= انضباطی و پرورشی (نسخه‌ی ۱٫۰۶) =======================

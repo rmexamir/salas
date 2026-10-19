@@ -1,5 +1,5 @@
 /* سرویس‌ورکر: ابتدا شبکه (تا نسخه‌ی جدید همیشه برسد)، اگر آفلاین بود نسخه‌ی ذخیره‌شده */
-const CACHE = 'salas-v1.09';
+const CACHE = 'salas-v1.10';
 const SHELL = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png', './icon-maskable-512.png'];
 // هر فایل جداگانه ذخیره می‌شود تا نبودِ یک فایل (مثلاً آیکون) نصب کل سرویس‌ورکر را خراب نکند
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => Promise.all(SHELL.map(u => c.add(u).catch(() => {})))).then(() => self.skipWaiting())); });
