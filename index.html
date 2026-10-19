@@ -3920,11 +3920,25 @@ if (/iphone|ipad|ipod/i.test(navigator.userAgent) && !navigator.standalone) $('#
 let GFIRST = null, RK = [], LV = [];
 const fldOf = (l, n) => { const x = el('div', 'field'); x.append(el('label', '', l), n); return x; };
 const card1 = (t) => { const c = el('div', 'dir-it'); c.style.padding = '10px 14px'; return c; };
-function msgBtns(phone, text) {   // پیامک، واتساپ و تماس با شماره‌ی پدر؛ متن آماده است
+function msgBtns(phone, text) {   // پیامک، روبیکا و تماس با شماره‌ی پدر؛ متن آماده است
   const w = el('div'); w.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;align-items:center';
   if (!phone) { w.append(el('span', 'now-sub', 'شماره‌ی پدر ثبت نشده است')); return w; }
-  [['پیامک به پدر', 'sms:' + phone + '?body=' + encodeURIComponent(text)], ['واتساپ', 'https://wa.me/98' + phone.replace(/^0/, '') + '?text=' + encodeURIComponent(text)], ['تماس', 'tel:' + phone]].forEach(q => { const a = el('a', 'tel', q[0]); a.href = q[1]; if (/^https/.test(q[1])) { a.target = '_blank'; a.rel = 'noopener'; } w.append(a); });
+  [['پیامک به پدر', 'sms:' + phone + '?body=' + encodeURIComponent(text)], ['روبیکا', ''], ['تماس', 'tel:' + phone]].forEach(q => {
+    const a = el('a', 'tel', q[0]);
+    if (q[1]) a.href = q[1];
+    else { a.href = '#'; a.addEventListener('click', e => { e.preventDefault(); rubikaSend(phone, text); }); }      // روبیکا لینک پیام آماده به شماره ندارد؛ متن کپی و روبیکا باز می‌شود
+    w.append(a);
+  });
   return w;
+}
+/* ارسال از طریق روبیکا: متن پیام کپی می‌شود، روبیکا باز می‌شود و کاربر فقط گفتگو با شماره‌ی پدر را باز و «جای‌گذاری» می‌کند */
+async function rubikaSend(phone, text) {
+  let ok = false;
+  try { await navigator.clipboard.writeText(text); ok = true; } catch (e) {
+    try { const t = document.createElement('textarea'); t.value = text; t.style.cssText = 'position:fixed;opacity:0'; document.body.append(t); t.select(); ok = document.execCommand('copy'); t.remove(); } catch (x) {}
+  }
+  toast(ok ? 'متن پیام کپی شد؛ در روبیکا گفتگو با ' + fa(phone) + ' را باز کنید و جای‌گذاری کنید.' : 'کپی خودکار انجام نشد؛ متن را دستی کپی کنید.');
+  window.open('https://rubika.ir/', '_blank', 'noopener');
 }
 async function openFile(id, v) {
   const w = window.open('', '_blank'); v.disabled = true; const r = await send({ action:'mockFile', pin:MG.pin, id:id, key:ACCESS_KEY }); v.disabled = false;
