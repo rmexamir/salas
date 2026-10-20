@@ -6,7 +6,7 @@
 /* =====================================================================
    ⚙️ تنظیمات مدرسه — فقط همین بخش را ویرایش کنید
    ===================================================================== */
-const SCHOOL_NAME = "دبیرستان صلاح‌الدین ایوبی";
+let SCHOOL_NAME = "دبیرستان صلاح‌الدین ایوبی";   // مقدار اولیه؛ از «راه‌اندازی مدرسه» در پنل مدیر قابل تغییر است
 const SCHOOL_MOTTO = "ثبت به‌موقع امروز، چراغ راه تصمیم‌های فردای دانش‌آموزان است.";
 const ACADEMIC_YEAR = "۱۴۰۵–۱۴۰۶";
 // لوگوی مدرسه (Base64). اگر خالی باشد بدون لوگو نمایش داده می‌شود.
@@ -16,7 +16,7 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxzPr6P54uH4gV_rQrss
 // کلید دسترسی اختیاری (باید با ACCESS_KEY در Code.gs یکی باشد)
 const ACCESS_KEY = "";
 // نسخه‌ی برنامه — با هر به‌روزرسانی این عدد بالا می‌رود و در صفحه‌ی ورود و پایین صفحه نمایش داده می‌شود.
-const APP_VERSION = "1.08";
+const APP_VERSION = "1.11";
 // (اختیاری) لینک Google Sheet برای دکمه «باز کردن Google Sheet» در تب مدیر
 const SHEET_URL = "https://docs.google.com/spreadsheets/d/10i-IGQKyj078M6kJ7YhdAniuJInl6JemwVxAqs7FnrY/edit";
 const DEFAULT_MAX_SCORE = 20;
@@ -41,7 +41,7 @@ const STUDENTS = {
 (function(){try{var p=JSON.parse(localStorage.getItem('sia_prefs_v1')||'{}');var t=p.theme||(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
 </script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#073B30">
+<meta name="theme-color" content="#0E2244">
 <link rel="manifest" href="manifest.json">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -51,6 +51,8 @@ const STUDENTS = {
 <title>سامانه مدرسه — دبیرستان صلاح‌الدین ایوبی</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- فونت: اگر Google Fonts در دسترس نبود، نسخه‌ی jsDelivr جایگزین است -->
+<link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <meta name="color-scheme" content="light dark">
 <style>
@@ -302,21 +304,21 @@ a.tel{display:inline-flex;align-items:center;min-height:44px;padding:0 14px;bord
 .tab{position:relative}
 .tab.alert::after{content:"";position:absolute;top:6px;inset-inline-end:8px;width:10px;height:10px;border-radius:50%;background:var(--absent);box-shadow:0 0 0 3px var(--card)}
 /* ===== تم ۲: سبز و طلایی هماهنگ با لوگوی مدرسه ===== */
-:root{--bg:#F5F3EA;--ink:#17261E;--muted:#5C695F;--line:#E4DFCB;--input:#FAF8F0;--navy:#0D3B26;--gold:#B8962E;--teal:#1F7A55;--primary:#145A3A;--focus:#B8962E;--shadow:0 8px 24px rgba(20,60,40,.10);--r:18px}
-[data-theme="dark"]{--bg:#0B1510;--card:#13231A;--ink:#EAF2EC;--muted:#9FB3A5;--line:#243A2D;--input:#0F1C15;--primary:#D4AF4F;--on-primary:#0B1510;--focus:#E0C26E;--shadow:0 8px 24px rgba(0,0,0,.4)}
-.hero{background:linear-gradient(150deg,#0B3A24 0%,#145A3A 55%,#1F7A55 100%);box-shadow:0 12px 30px rgba(11,58,36,.32);padding-bottom:42px}
+:root{--bg:#F3F5F9;--ink:#14213A;--muted:#55627A;--line:#DDE3EC;--input:#F7F9FC;--navy:#10223F;--gold:#B8962E;--teal:#24497F;--primary:#1B3763;--focus:#B8962E;--shadow:0 8px 24px rgba(20,40,70,.10);--r:18px}
+[data-theme="dark"]{--bg:#0A1322;--card:#14213A;--ink:#E8EEF7;--muted:#9FB3A5;--line:#26385A;--input:#0F1C15;--primary:#D4AF4F;--on-primary:#0A1322;--focus:#E0C26E;--shadow:0 8px 24px rgba(0,0,0,.4)}
+.hero{background:linear-gradient(150deg,#0E1F3A 0%,#1B3763 55%,#24497F 100%);box-shadow:0 12px 30px rgba(16,34,63,.32);padding-bottom:42px}
 .hero::before{background:radial-gradient(circle at 14% 16%,rgba(212,175,79,.28),transparent 42%),radial-gradient(circle at 90% 90%,rgba(255,255,255,.10),transparent 46%),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56'%3E%3Cpath d='M28 4l6 10 11-3-3 11 10 6-10 6 3 11-11-3-6 10-6-10-11 3 3-11-10-6 10-6-3-11 11 3z' fill='none' stroke='%23D4AF4F' stroke-opacity='.2'/%3E%3C/svg%3E");background-size:auto,auto,56px 56px}
 .logo{width:96px;height:96px;padding:6px;background:#FDFDFB;border:3px solid #D4AF4F;box-shadow:0 8px 22px rgba(0,0,0,.35)}
 .tab{border-radius:16px}
-.tab.active{background:linear-gradient(135deg,#145A3A,#0D3B26);color:#fff;border-color:transparent;box-shadow:0 8px 18px rgba(13,59,38,.35),inset 0 -3px 0 var(--gold)}
-[data-theme="dark"] .tab.active{background:linear-gradient(135deg,#D4AF4F,#B8962E);color:#0B1510;box-shadow:0 8px 18px rgba(0,0,0,.45)}
+.tab.active{background:linear-gradient(135deg,#1B3763,#10223F);color:#fff;border-color:transparent;box-shadow:0 8px 18px rgba(16,34,63,.35),inset 0 -3px 0 var(--gold)}
+[data-theme="dark"] .tab.active{background:linear-gradient(135deg,#D4AF4F,#B8962E);color:#0A1322;box-shadow:0 8px 18px rgba(0,0,0,.45)}
 .card{animation:rise .35s ease both}
 .card>.lbl:first-child{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:800;color:var(--ink)}
 .card>.lbl:first-child::before{content:"";width:4px;height:16px;border-radius:3px;background:var(--gold);flex:none}
-.send{background:linear-gradient(135deg,#1F7A55,#0D3B26);box-shadow:0 8px 18px rgba(13,59,38,.35)}
+.send{background:linear-gradient(135deg,#24497F,#10223F);box-shadow:0 8px 18px rgba(16,34,63,.35)}
 [data-theme="dark"] .send{background:linear-gradient(135deg,#D8B45A,#C9A24B)}
-.quote{background:linear-gradient(120deg,#0D3B26,#1F7A55,#0D3B26);background-size:200% 100%;box-shadow:0 8px 20px rgba(13,59,38,.28)}
-.gate{background:linear-gradient(160deg,#0B3A24,#145A3A 60%,#1F7A55)}
+.quote{background:linear-gradient(120deg,#10223F,#24497F,#10223F);background-size:200% 100%;box-shadow:0 8px 20px rgba(16,34,63,.28)}
+.gate{background:linear-gradient(160deg,#0E1F3A,#1B3763 60%,#24497F)}
 .gate-card{margin-top:72px;text-align:center;padding:0 18px 22px;border-radius:24px;border:1px solid rgba(212,175,79,.55);box-shadow:0 20px 50px rgba(0,0,0,.35)}
 .gate-card .field{text-align:start}
 .gate-logo{display:block;width:116px;height:116px;margin:-58px auto 10px;padding:7px;border-radius:50%;background:#FDFDFB;border:3px solid #D4AF4F;box-shadow:0 10px 24px rgba(0,0,0,.3);object-fit:contain}
@@ -371,7 +373,7 @@ a.tel{display:inline-flex;align-items:center;min-height:44px;padding:0 14px;bord
 
 @media (display-mode:standalone){#installBtn,#gInstall,#iosHint{display:none!important}}
 .mono{font-family:ui-monospace,Menlo,Consolas,monospace;direction:ltr;letter-spacing:1px}
-.cert{border:7px double #B8962E;padding:34px 24px;text-align:center;line-height:2.1;font-size:15px} .cert h1{font-size:30px;margin:6px 0;color:#0D3B26}
+.cert{border:7px double #B8962E;padding:34px 24px;text-align:center;line-height:2.1;font-size:15px} .cert h1{font-size:30px;margin:6px 0;color:#10223F}
 
 /* ===== نسخه ۴ ===== */
 .gate-wrap{width:100%;max-width:420px;margin:auto}
@@ -380,13 +382,13 @@ a.tel{display:inline-flex;align-items:center;min-height:44px;padding:0 14px;bord
 .tmw{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .tmw .cl{border-radius:20px;padding:12px 8px;text-align:center;box-shadow:0 8px 22px rgba(0,0,0,.18);min-width:0}
 .tmw .cl{background:linear-gradient(160deg,#FCF8EA,#F1E7C4);border:3px double #B8962E;color:#3A2F10;font-family:"Noto Naskh Arabic","Amiri","Scheherazade New",serif}
-[data-theme="dark"] .tmw .cl{background:linear-gradient(160deg,#1E2B22,#15211A);color:#F0E4B9;border-color:#D4AF4F}
+[data-theme="dark"] .tmw .cl{background:linear-gradient(160deg,#1C2A42,#15211A);color:#F0E4B9;border-color:#D4AF4F}
 .tmw h4{margin:0 0 4px;font-size:11px;font-weight:800;opacity:.75}
 .tmw svg.ck{width:100px;height:100px;display:block;margin:0 auto 4px}
 .tmw .dd{font-size:13px;font-weight:700;line-height:1.7}
 .tmw .cl .dd{font-size:14px;font-weight:700}
-.tmq{margin-top:10px;padding:14px 16px;border-radius:18px;text-align:center;font-weight:700;line-height:1.9;font-size:14px;color:#17261E;background:rgba(255,255,255,.92);border:1px solid rgba(184,150,46,.7);box-shadow:0 6px 18px rgba(0,0,0,.14);transition:opacity .45s}
-[data-theme="dark"] .tmq{background:#13231A;color:#EAF2EC}
+.tmq{margin-top:10px;padding:14px 16px;border-radius:18px;text-align:center;font-weight:700;line-height:1.9;font-size:14px;color:#14213A;background:rgba(255,255,255,.92);border:1px solid rgba(184,150,46,.7);box-shadow:0 6px 18px rgba(0,0,0,.14);transition:opacity .45s}
+[data-theme="dark"] .tmq{background:#14213A;color:#E8EEF7}
 .tmq.fade{opacity:0}
 .tmq b{display:block;font-size:11px;color:#B8962E;margin-bottom:2px}
 .mg-bar.jp{flex-wrap:nowrap}.mg-bar.jp select{flex:1 1 0;padding-inline:8px;font-size:14px}
@@ -432,7 +434,7 @@ a.tel{display:inline-flex;align-items:center;min-height:44px;padding:0 14px;bord
 .pl-dd.hot{background:var(--absent-bg);border-color:transparent;color:var(--absent)}
 .pl-tip{font-size:15px;font-weight:600;line-height:1.9;margin:4px 0 8px}
 .focus-ov{position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;padding:calc(env(safe-area-inset-top,0px) + 20px) 20px calc(env(safe-area-inset-bottom,0px) + 20px);
-  background:radial-gradient(circle at 50% 28%,#1A6B47 0%,#0D3B26 48%,#07140D 100%);color:#fff;animation:fade .2s ease;overflow-y:auto}
+  background:radial-gradient(circle at 50% 28%,#1A6B47 0%,#10223F 48%,#07140D 100%);color:#fff;animation:fade .2s ease;overflow-y:auto}
 .focus-ov.brk{background:radial-gradient(circle at 50% 28%,#2A5470 0%,#13324A 48%,#08141F 100%)}
 .focus-box{width:min(100%,380px);text-align:center}
 .focus-lbl{font-size:14px;font-weight:800;color:#E0BC6B}
@@ -446,7 +448,7 @@ a.tel{display:inline-flex;align-items:center;min-height:44px;padding:0 14px;bord
 .focus-tip{font-size:14px;color:#D5E8DC;line-height:1.9;min-height:3.8em;margin-bottom:16px}
 .focus-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .focus-btns .btn{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.3);color:#fff}
-.focus-btns .btn.primary{background:#E0BC6B;border-color:#E0BC6B;color:#0B1510}
+.focus-btns .btn.primary{background:#E0BC6B;border-color:#E0BC6B;color:#0A1322}
 .focus-btns .btn.ghost{grid-column:1/-1;height:44px;background:transparent;border-color:transparent;color:#CFE3D6;font-weight:600}
 .focus-btns .btn.full{grid-column:1/-1}
 /* ---------- تحلیل نتایج آزمون (کارتابل) ---------- */
@@ -636,21 +638,21 @@ body.qz-lock{overflow:hidden}
    فقط ظاهر؛ هیچ منطقی تغییر نکرده است.
    ===================================================================== */
 :root{
-  --e9:#04211A; --e8:#0A3A25; --e7:#0F4D31; --e6:#17694A; --e5:#22906A;
+  --e9:#081428; --e8:#10223F; --e7:#162E55; --e6:#1E3D6E; --e5:#2B5694;
   --g3:#EFDB98; --g4:#E0C268; --g5:#C9A43E; --g6:#A8862A;
-  --bg:#F4F1E6; --card:#FFFFFF; --ink:#13241A; --muted:#5D6B61; --line:#E7E1CE; --input:#FBFAF3;
-  --primary:#0F5033; --gold:#C9A43E; --teal:#1F8A63; --focus:#C9A43E;
+  --bg:#F3F5F9; --card:#FFFFFF; --ink:#0F1B2D; --muted:#55627A; --line:#DDE3EC; --input:#F7F9FC;
+  --primary:#1B3A6B; --gold:#C9A43E; --teal:#2B5BA8; --focus:#C9A43E;
   --r:20px;
-  --shadow:0 1px 2px rgba(10,40,25,.05),0 10px 26px -8px rgba(10,40,25,.14);
-  --shadow-lg:0 2px 6px rgba(10,40,25,.07),0 22px 44px -14px rgba(10,40,25,.28);
+  --shadow:0 1px 2px rgba(12,24,48,.05),0 10px 26px -8px rgba(12,24,48,.14);
+  --shadow-lg:0 2px 6px rgba(12,24,48,.07),0 22px 44px -14px rgba(12,24,48,.28);
   --glass:rgba(255,255,255,.74);
   --ring:0 0 0 4px rgba(201,164,62,.24);
   --pat:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cg fill='none' stroke='%23fff' stroke-opacity='.075' stroke-width='1'%3E%3Crect x='14' y='14' width='36' height='36'/%3E%3Crect x='14' y='14' width='36' height='36' transform='rotate(45 32 32)'/%3E%3Ccircle cx='32' cy='32' r='6'/%3E%3C/g%3E%3Cg fill='%23fff' fill-opacity='.06'%3E%3Ccircle cx='0' cy='0' r='2'/%3E%3Ccircle cx='64' cy='0' r='2'/%3E%3Ccircle cx='0' cy='64' r='2'/%3E%3Ccircle cx='64' cy='64' r='2'/%3E%3C/g%3E%3C/svg%3E");
 }
 [data-theme="dark"]{
-  --bg:#07120D; --card:#0F1F17; --ink:#EAF2EC; --muted:#9DB2A4; --line:#1F3528; --input:#0B1812;
-  --primary:#D9B654; --on-primary:#07120D; --focus:#E6C97A; --teal:#3CC592;
-  --glass:rgba(15,31,23,.72);
+  --bg:#0A1220; --card:#111C2E; --ink:#E8EEF7; --muted:#9FB0C8; --line:#22324B; --input:#0D1727;
+  --primary:#D9B654; --on-primary:#0A1220; --focus:#E6C97A; --teal:#7FA6E8;
+  --glass:rgba(17,28,46,.72);
   --shadow:0 1px 2px rgba(0,0,0,.4),0 12px 28px -8px rgba(0,0,0,.55);
   --shadow-lg:0 2px 6px rgba(0,0,0,.5),0 24px 48px -14px rgba(0,0,0,.7);
   --ring:0 0 0 4px rgba(230,201,122,.2);
@@ -661,13 +663,13 @@ body{
   font-weight:500;letter-spacing:0;
   background:
     radial-gradient(700px 380px at 105% -60px,rgba(201,164,62,.13),transparent 62%),
-    radial-gradient(620px 460px at -15% 38%,rgba(31,138,99,.09),transparent 62%),
+    radial-gradient(620px 460px at -15% 38%,rgba(43,91,168,.09),transparent 62%),
     var(--bg);
 }
 [data-theme="dark"] body{
   background:
     radial-gradient(700px 380px at 105% -60px,rgba(217,182,84,.08),transparent 62%),
-    radial-gradient(620px 460px at -15% 38%,rgba(34,144,106,.10),transparent 62%),
+    radial-gradient(620px 460px at -15% 38%,rgba(43,91,168,.10),transparent 62%),
     var(--bg);
 }
 *{scrollbar-width:thin;scrollbar-color:rgba(201,164,62,.5) transparent}
@@ -678,10 +680,10 @@ body{
 .hero{
   background:
     radial-gradient(circle at 50% 0%,rgba(255,255,255,.10),transparent 55%),
-    linear-gradient(158deg,#04231A 0%,#0A4A2E 46%,#17694A 100%);
+    linear-gradient(158deg,#081428 0%,#132B52 46%,#1E3D6E 100%);
   border-radius:0 0 38px 38px;
   padding:calc(env(safe-area-inset-top,0px) + 26px) 20px 50px;
-  box-shadow:0 18px 40px -12px rgba(4,33,26,.55),0 2px 0 rgba(224,194,104,.55);
+  box-shadow:0 18px 40px -12px rgba(8,20,40,.55),0 2px 0 rgba(224,194,104,.55);
 }
 .hero::before{
   background:
@@ -765,11 +767,11 @@ main{padding-top:20px}
 .tab.active{
   color:#fff;border:0;
   background:linear-gradient(160deg,var(--e6),var(--e8) 70%,var(--e9));
-  box-shadow:0 10px 20px -6px rgba(10,58,37,.6),inset 0 1px 0 rgba(255,255,255,.2),inset 0 -3px 0 var(--g4);
+  box-shadow:0 10px 20px -6px rgba(16,34,63,.6),inset 0 1px 0 rgba(255,255,255,.2),inset 0 -3px 0 var(--g4);
 }
 .tab.active svg{transform:translateY(-1px) scale(1.08);filter:drop-shadow(0 2px 4px rgba(0,0,0,.3))}
 [data-theme="dark"] .tab.active{
-  color:#07120D;
+  color:#0A1220;
   background:linear-gradient(160deg,var(--g3),var(--g4) 55%,var(--g5));
   box-shadow:0 10px 22px -6px rgba(201,164,62,.45),inset 0 1px 0 rgba(255,255,255,.5);
 }
@@ -779,7 +781,7 @@ main{padding-top:20px}
 .field>label,.lbl{font-size:13px;font-weight:700;color:var(--muted);margin-bottom:2px}
 input[type=text],input[type=password],input[type=search],input[type=time],select{
   height:54px;border-radius:15px;border:1.5px solid var(--line);background:var(--input);
-  box-shadow:inset 0 1px 2px rgba(10,40,25,.04);
+  box-shadow:inset 0 1px 2px rgba(12,24,48,.04);
   transition:border-color .2s,box-shadow .2s,background .2s;
 }
 input:focus,select:focus{border-color:var(--g5);background:var(--card);box-shadow:var(--ring)}
@@ -790,10 +792,10 @@ input::placeholder{color:#9AA79E;font-weight:500}
 }
 .chip.on{
   background:linear-gradient(160deg,var(--e6),var(--e8));border-color:transparent;color:#fff;
-  box-shadow:0 8px 16px -6px rgba(10,58,37,.55),inset 0 -3px 0 var(--g4);
+  box-shadow:0 8px 16px -6px rgba(16,34,63,.55),inset 0 -3px 0 var(--g4);
 }
 [data-theme="dark"] .chip.on{
-  background:linear-gradient(160deg,var(--g3),var(--g5));color:#07120D;
+  background:linear-gradient(160deg,var(--g3),var(--g5));color:#0A1220;
   box-shadow:0 8px 16px -6px rgba(201,164,62,.45);
 }
 .dt-strip{border-radius:15px;border:1.5px dashed rgba(201,164,62,.6);background:linear-gradient(135deg,var(--input),rgba(201,164,62,.07))}
@@ -804,14 +806,14 @@ input::placeholder{color:#9AA79E;font-weight:500}
 .btn{
   height:54px;border-radius:15px;font-weight:800;
   background:linear-gradient(180deg,var(--card),var(--input));
-  box-shadow:0 1px 2px rgba(10,40,25,.06);transition:transform .15s,box-shadow .2s,background .2s;
+  box-shadow:0 1px 2px rgba(12,24,48,.06);transition:transform .15s,box-shadow .2s,background .2s;
 }
 .btn.primary,.sheet .btn.primary{
   background:linear-gradient(160deg,var(--e6),var(--e8));border-color:transparent;color:#fff;
-  box-shadow:0 10px 20px -8px rgba(10,58,37,.6),inset 0 -3px 0 var(--g4);
+  box-shadow:0 10px 20px -8px rgba(16,34,63,.6),inset 0 -3px 0 var(--g4);
 }
 [data-theme="dark"] .btn.primary,[data-theme="dark"] .sheet .btn.primary{
-  background:linear-gradient(160deg,var(--g3),var(--g5));color:#07120D;box-shadow:0 10px 20px -8px rgba(201,164,62,.5);
+  background:linear-gradient(160deg,var(--g3),var(--g5));color:#0A1220;box-shadow:0 10px 20px -8px rgba(201,164,62,.5);
 }
 .hint,.now-sub{line-height:1.8}
 
@@ -819,18 +821,18 @@ input::placeholder{color:#9AA79E;font-weight:500}
 .list{gap:10px}
 .row{
   border-radius:17px;border:1.5px solid var(--line);background:var(--input);
-  box-shadow:0 1px 2px rgba(10,40,25,.04);
+  box-shadow:0 1px 2px rgba(12,24,48,.04);
 }
 .row::before{width:6px;opacity:.85;border-radius:0 6px 6px 0}
-.row[data-st="absent"],.row[data-st="late"],.row[data-st="excused"]{box-shadow:0 8px 18px -10px rgba(10,40,25,.35)}
+.row[data-st="absent"],.row[data-st="late"],.row[data-st="excused"]{box-shadow:0 8px 18px -10px rgba(12,24,48,.35)}
 .row-main{min-height:62px}
 .num{font-weight:700;font-variant-numeric:tabular-nums;opacity:.8}
 .nm{font-weight:800}
 .badge{padding:5px 14px;font-size:12.5px;letter-spacing:0;box-shadow:inset 0 0 0 1px rgba(31,138,77,.18)}
 .row[data-st="absent"] .badge,.row[data-st="late"] .badge,.row[data-st="excused"] .badge{box-shadow:0 4px 10px -3px rgba(0,0,0,.3)}
 .note-btn{border-radius:0}
-.grow{border-radius:17px;box-shadow:0 1px 2px rgba(10,40,25,.04)}
-.grow.has{border-color:rgba(31,138,99,.45)}
+.grow{border-radius:17px;box-shadow:0 1px 2px rgba(12,24,48,.04)}
+.grow.has{border-color:rgba(43,91,168,.45)}
 .score{border-radius:14px!important;font-variant-numeric:tabular-nums}
 .abs-btn{border-radius:12px}
 
@@ -839,7 +841,7 @@ input::placeholder{color:#9AA79E;font-weight:500}
 .bar-in{
   border-radius:24px;border:1px solid var(--line);padding:12px;
   background:var(--glass);-webkit-backdrop-filter:blur(18px) saturate(1.4);backdrop-filter:blur(18px) saturate(1.4);
-  box-shadow:0 -10px 34px -10px rgba(10,40,25,.28),inset 0 1px 0 rgba(255,255,255,.6);
+  box-shadow:0 -10px 34px -10px rgba(12,24,48,.28),inset 0 1px 0 rgba(255,255,255,.6);
 }
 [data-theme="dark"] .bar-in{box-shadow:0 -10px 34px -10px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.06)}
 .cnt{border-radius:14px;padding:6px 2px;background:var(--input);border:1px solid transparent}
@@ -848,7 +850,7 @@ input::placeholder{color:#9AA79E;font-weight:500}
 .send{
   position:relative;overflow:hidden;height:60px;border-radius:17px;font-size:17px;font-weight:900;color:#fff;
   background:linear-gradient(160deg,var(--e5),var(--e7) 55%,var(--e9));
-  box-shadow:0 14px 26px -10px rgba(10,58,37,.7),inset 0 1px 0 rgba(255,255,255,.22),inset 0 -3px 0 var(--g4);
+  box-shadow:0 14px 26px -10px rgba(16,34,63,.7),inset 0 1px 0 rgba(255,255,255,.22),inset 0 -3px 0 var(--g4);
 }
 .send::after{
   content:"";position:absolute;top:0;bottom:0;width:60%;left:-80%;pointer-events:none;
@@ -857,7 +859,7 @@ input::placeholder{color:#9AA79E;font-weight:500}
 }
 @keyframes shine{0%,70%{left:-80%}100%{left:140%}}
 [data-theme="dark"] .send{
-  color:#07120D;background:linear-gradient(160deg,var(--g3),var(--g4) 55%,var(--g5));
+  color:#0A1220;background:linear-gradient(160deg,var(--g3),var(--g4) 55%,var(--g5));
   box-shadow:0 14px 26px -10px rgba(201,164,62,.55),inset 0 1px 0 rgba(255,255,255,.5);
 }
 .send.green{background:linear-gradient(160deg,#34C079,#1B8A4D);box-shadow:0 14px 26px -10px rgba(27,138,77,.7),inset 0 -3px 0 rgba(255,255,255,.25)}
@@ -865,7 +867,7 @@ input::placeholder{color:#9AA79E;font-weight:500}
 .queue{border-radius:16px;box-shadow:var(--shadow)}
 
 /* ---------- پیام و پنجره‌ها ---------- */
-.modal{background:rgba(4,20,14,.6);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.modal{background:rgba(6,12,24,.6);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
 .sheet{
   border-radius:28px;padding:30px 24px 22px;border:1px solid var(--line);
   box-shadow:0 30px 70px -10px rgba(0,0,0,.5);
@@ -882,14 +884,14 @@ input::placeholder{color:#9AA79E;font-weight:500}
   padding:13px 22px;box-shadow:0 14px 34px rgba(0,0,0,.4);
   -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
 }
-[data-theme="dark"] .toast{background:rgba(234,242,236,.95);color:#07120D}
+[data-theme="dark"] .toast{background:rgba(232,238,247,.95);color:#0A1220}
 
 /* ---------- پیام امروز ---------- */
 .quote{
   position:relative;overflow:hidden;border-radius:22px;padding:16px 18px;
   border:1px solid rgba(224,194,104,.65);
   background:linear-gradient(120deg,var(--e9),var(--e6) 50%,var(--e9));background-size:220% 100%;
-  box-shadow:0 16px 30px -14px rgba(10,58,37,.6),inset 0 1px 0 rgba(255,255,255,.12);
+  box-shadow:0 16px 30px -14px rgba(16,34,63,.6),inset 0 1px 0 rgba(255,255,255,.12);
 }
 .quote::before{content:"";position:absolute;inset:0;background:var(--pat);background-size:64px 64px;opacity:.9;pointer-events:none}
 .quote::after{
@@ -905,9 +907,9 @@ input::placeholder{color:#9AA79E;font-weight:500}
 .gate{
   background:
     radial-gradient(520px 340px at 85% 8%,rgba(224,194,104,.28),transparent 62%),
-    radial-gradient(520px 420px at 0% 100%,rgba(34,144,106,.45),transparent 62%),
+    radial-gradient(520px 420px at 0% 100%,rgba(43,91,168,.45),transparent 62%),
     var(--pat),
-    linear-gradient(160deg,#04221A,#0A4A2E 58%,#17694A);
+    linear-gradient(160deg,#04221A,#132B52 58%,#1E3D6E);
   background-size:auto,auto,64px 64px,auto;
 }
 .gate-card{
@@ -930,12 +932,12 @@ input::placeholder{color:#9AA79E;font-weight:500}
 
 /* ---------- برنامه / زنگ‌ها ---------- */
 .day{border-radius:14px;font-weight:800;transition:all .2s}
-.day.on{background:linear-gradient(160deg,var(--e6),var(--e8));border-color:transparent;color:#fff;box-shadow:0 8px 16px -6px rgba(10,58,37,.55)}
-[data-theme="dark"] .day.on{background:linear-gradient(160deg,var(--g3),var(--g5));color:#07120D}
+.day.on{background:linear-gradient(160deg,var(--e6),var(--e8));border-color:transparent;color:#fff;box-shadow:0 8px 16px -6px rgba(16,34,63,.55)}
+[data-theme="dark"] .day.on{background:linear-gradient(160deg,var(--g3),var(--g5));color:#0A1220}
 .day.today{box-shadow:inset 0 -3px 0 var(--g4)}
-.slot{border-radius:16px;box-shadow:0 1px 2px rgba(10,40,25,.04)}
-.slot .pn,.pl-pn{background:linear-gradient(160deg,var(--e6),var(--e8));color:#fff;box-shadow:0 4px 10px -3px rgba(10,58,37,.5)}
-[data-theme="dark"] .slot .pn,[data-theme="dark"] .pl-pn{background:linear-gradient(160deg,var(--g3),var(--g5));color:#07120D}
+.slot{border-radius:16px;box-shadow:0 1px 2px rgba(12,24,48,.04)}
+.slot .pn,.pl-pn{background:linear-gradient(160deg,var(--e6),var(--e8));color:#fff;box-shadow:0 4px 10px -3px rgba(16,34,63,.5)}
+[data-theme="dark"] .slot .pn,[data-theme="dark"] .pl-pn{background:linear-gradient(160deg,var(--g3),var(--g5));color:#0A1220}
 .pl-it.rev .pl-pn{background:var(--card);color:var(--ink);box-shadow:none}
 .pl-it.done .pl-pn{background:var(--present);color:#fff}
 .badge.live{background:linear-gradient(160deg,#34C079,#1B8A4D);box-shadow:0 0 0 4px rgba(31,138,77,.15)}
@@ -946,16 +948,16 @@ input::placeholder{color:#9AA79E;font-weight:500}
 .mg-at{border-radius:16px;transition:transform .15s,box-shadow .2s}
 .mg-at b{font-variant-numeric:tabular-nums}
 .mg-nb{border-radius:999px;transition:all .2s}
-.mg-nb.on{background:linear-gradient(160deg,var(--e6),var(--e8));border-color:transparent;color:#fff;box-shadow:0 8px 16px -6px rgba(10,58,37,.55)}
-[data-theme="dark"] .mg-nb.on{background:linear-gradient(160deg,var(--g3),var(--g5));color:#07120D}
-.mg-wrap{border-radius:16px;border:1px solid var(--line);box-shadow:inset 0 1px 2px rgba(10,40,25,.04)}
+.mg-nb.on{background:linear-gradient(160deg,var(--e6),var(--e8));border-color:transparent;color:#fff;box-shadow:0 8px 16px -6px rgba(16,34,63,.55)}
+[data-theme="dark"] .mg-nb.on{background:linear-gradient(160deg,var(--g3),var(--g5));color:#0A1220}
+.mg-wrap{border-radius:16px;border:1px solid var(--line);box-shadow:inset 0 1px 2px rgba(12,24,48,.04)}
 .mg-tbl th,.mg-sum th{background:linear-gradient(160deg,var(--e7),var(--e8));color:#fff;font-weight:800}
-[data-theme="dark"] .mg-tbl th{background:linear-gradient(160deg,var(--g4),var(--g5));color:#07120D}
+[data-theme="dark"] .mg-tbl th{background:linear-gradient(160deg,var(--g4),var(--g5));color:#0A1220}
 .mg-tbl tbody tr:nth-child(even) td{background:rgba(201,164,62,.06)}
 .mg-tbl td{font-variant-numeric:tabular-nums}
-.dir-it,.ab-s,.qz-it,.qz-q,.pl-it{border-radius:17px;box-shadow:0 1px 2px rgba(10,40,25,.04)}
-a.tel{background:linear-gradient(160deg,var(--e6),var(--e8));color:#fff;box-shadow:0 8px 16px -6px rgba(10,58,37,.55)}
-[data-theme="dark"] a.tel{background:linear-gradient(160deg,var(--g3),var(--g5));color:#07120D}
+.dir-it,.ab-s,.qz-it,.qz-q,.pl-it{border-radius:17px;box-shadow:0 1px 2px rgba(12,24,48,.04)}
+a.tel{background:linear-gradient(160deg,var(--e6),var(--e8));color:#fff;box-shadow:0 8px 16px -6px rgba(16,34,63,.55)}
+[data-theme="dark"] a.tel{background:linear-gradient(160deg,var(--g3),var(--g5));color:#0A1220}
 .pl-stat{border-radius:17px;background:linear-gradient(180deg,var(--input),var(--card));box-shadow:var(--shadow)}
 .pl-stat b{font-variant-numeric:tabular-nums;color:var(--primary)}
 .pill,.ab-tag,.qz-st,.pl-dd,.pl-why span{letter-spacing:0}
@@ -971,7 +973,7 @@ a.tel{background:linear-gradient(160deg,var(--e6),var(--e8));color:#fff;box-shad
 [data-theme="dark"] .qz-big{background:linear-gradient(160deg,var(--g3),var(--g5));-webkit-background-clip:text;background-clip:text}
 
 /* ---------- حالت تمرکز ---------- */
-.focus-ov{background:radial-gradient(circle at 50% 24%,#1F7A55 0%,#0A3A25 46%,#04120B 100%)}
+.focus-ov{background:radial-gradient(circle at 50% 24%,#24497F 0%,#10223F 46%,#04120B 100%)}
 .focus-ring .fr-fg{stroke:var(--g4);filter:drop-shadow(0 0 8px rgba(224,194,104,.7))}
 .focus-t{text-shadow:0 4px 24px rgba(0,0,0,.4)}
 
@@ -1052,11 +1054,11 @@ footer::before{
 #mgNav .mg-nb.on{
   color:#fff;
   background:linear-gradient(var(--g4),var(--g4)) right 0 center/3px 52% no-repeat,linear-gradient(160deg,var(--e6),var(--e8));
-  box-shadow:0 8px 16px -8px rgba(10,58,37,.6);
+  box-shadow:0 8px 16px -8px rgba(16,34,63,.6);
 }
 #mgNav .mg-nb.on::before{opacity:1}
 [data-theme="dark"] #mgNav .mg-nb.on{
-  color:#07120D;
+  color:#0A1220;
   background:linear-gradient(var(--e8),var(--e8)) right 0 center/3px 52% no-repeat,linear-gradient(160deg,var(--g3),var(--g5));
 }
 #mgNav .mg-nb.dot::after{top:6px;inset-inline-end:8px;width:9px;height:9px;box-shadow:0 0 0 2px var(--card),0 0 8px rgba(201,60,66,.7)}
@@ -1160,53 +1162,53 @@ body.mg-on .tab{min-height:54px}
    رنگ طلایی فقط به‌عنوان تأکید، حرکت کم و قابل‌خاموش‌شدن.
    ===================================================================== */
 :root{
-  --bg:#F3F6F5; --card:#FFFFFF; --ink:#12201B; --muted:#56655F; --line:#DCE5E1; --input:#F7FAF9;
-  --primary:#0B5D4B; --teal:#0E8A6D; --gold:#D99A1E; --focus:#0E8A6D;
+  --bg:#F3F5F9; --card:#FFFFFF; --ink:#0F1B2D; --muted:#55627A; --line:#DDE3EC; --input:#F7F9FC;
+  --primary:#1E3D6E; --teal:#2B5BA8; --gold:#D99A1E; --focus:#2B5BA8;
   --present:#15803D; --present-bg:#E3F5E9; --absent:#C62F3A; --absent-bg:#FCE8EA;
   --late:#B45309; --late-bg:#FDF0DA; --excused:#2563C9; --excused-bg:#E3EEFD;
-  --r:18px; --ring:0 0 0 4px rgba(14,138,109,.22);
-  --shadow:0 1px 2px rgba(15,40,32,.05),0 8px 22px -10px rgba(15,40,32,.16);
+  --r:18px; --ring:0 0 0 4px rgba(43,91,168,.22);
+  --shadow:0 1px 2px rgba(15,27,45,.05),0 8px 22px -10px rgba(15,27,45,.16);
 }
 [data-theme="dark"]{
-  --bg:#0A1512; --card:#111F1B; --ink:#E9F2EE; --muted:#9FB5AC; --line:#223630; --input:#0C1915;
-  --primary:#34D3A0; --on-primary:#06150F; --teal:#34D3A0; --focus:#5FE0B8; --gold:#F0B94A;
+  --bg:#0A1220; --card:#111C2E; --ink:#E8EEF7; --muted:#9FB0C8; --line:#22324B; --input:#0D1727;
+  --primary:#D9B654; --on-primary:#0A1220; --teal:#D9B654; --focus:#E6C97A; --gold:#F0B94A;
   --present:#4ADE80; --present-bg:#0E2E1E; --absent:#F26B74; --absent-bg:#3A1A1F; --late:#F0A24A; --late-bg:#38270E;
-  --excused:#6EA8FF; --excused-bg:#10284A; --ring:0 0 0 4px rgba(95,224,184,.22);
+  --excused:#6EA8FF; --excused-bg:#10284A; --ring:0 0 0 4px rgba(230,201,122,.22);
 }
-::selection{background:rgba(14,138,109,.28)}
-*{scrollbar-color:rgba(14,138,109,.45) transparent}::-webkit-scrollbar-thumb{background:rgba(14,138,109,.4)}
+::selection{background:rgba(43,91,168,.28)}
+*{scrollbar-color:rgba(43,91,168,.45) transparent}::-webkit-scrollbar-thumb{background:rgba(43,91,168,.4)}
 body{background:var(--bg);font-variant-numeric:tabular-nums}
 [data-theme="dark"] body{background:var(--bg)}
 /* سربرگ: تمیز، با عنوان یک‌رنگ و خوانا */
-.hero{background:linear-gradient(135deg,#073B30 0%,#0B5D4B 58%,#12806A 100%);border-radius:0 0 26px 26px;box-shadow:0 12px 28px -12px rgba(7,59,48,.55)}
+.hero{background:linear-gradient(135deg,#0E2244 0%,#1E3D6E 58%,#2B5694 100%);border-radius:0 0 26px 26px;box-shadow:0 12px 28px -12px rgba(14,34,68,.55)}
 .hero::before{background:radial-gradient(circle at 90% 0%,rgba(255,255,255,.14),transparent 46%)}
 .hero::after{height:3px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
 .hero h1{background:none;-webkit-text-fill-color:#fff;color:#fff;filter:none;text-shadow:0 2px 12px rgba(0,0,0,.25)}
-.hero p{color:#D6EFE6}.hero p::before,.hero p::after{display:none}
+.hero p{color:#D3DCEC}.hero p::before,.hero p::after{display:none}
 /* کارت‌ها: تخت‌تر و آرام‌تر، بدون خط طلایی تزئینی */
 .card{border-radius:var(--r);padding:18px}.card::before{display:none}
 .card>.lbl:first-child::before{background:var(--teal);box-shadow:none;border-radius:3px}
 /* تب‌ها و چیپ‌ها: نوار پیل‌شکل با وضعیت فعال شفاف */
 .tab,.chip,.btn,.abs-btn{min-height:48px;border-radius:14px}
 .tab{box-shadow:none;border:1.5px solid var(--line)}
-.tab.active,.chip.on{background:var(--primary);border-color:var(--primary);color:var(--on-primary);box-shadow:0 8px 18px -8px rgba(11,93,75,.55),inset 0 -3px 0 rgba(255,255,255,.22)}
+.tab.active,.chip.on{background:var(--primary);border-color:var(--primary);color:var(--on-primary);box-shadow:0 8px 18px -8px rgba(30,61,110,.55),inset 0 -3px 0 rgba(255,255,255,.22)}
 [data-theme="dark"] .tab.active{box-shadow:0 8px 18px -8px rgba(0,0,0,.6),inset 0 -3px 0 rgba(255,255,255,.35)}
 /* فرم‌ها */
 input[type=text],input[type=password],input[type=search],input[type=time],select{height:52px;border-radius:14px;border-width:1.5px;background:var(--input)}
 input:focus,select:focus{border-color:var(--teal);box-shadow:var(--ring);background:var(--card)}
 :focus-visible{outline:3px solid var(--focus);outline-offset:2px;border-radius:10px}
 /* دکمه‌ی اصلی: بدون برق‌زدن دائمی */
-.send{height:58px;border-radius:16px;background:linear-gradient(160deg,#12806A,#0B5D4B);box-shadow:0 14px 24px -12px rgba(7,59,48,.7),inset 0 -3px 0 rgba(255,255,255,.2)}
+.send{height:58px;border-radius:16px;background:linear-gradient(160deg,#2B5694,#1E3D6E);box-shadow:0 14px 24px -12px rgba(14,34,68,.7),inset 0 -3px 0 rgba(255,255,255,.2)}
 .send::after{animation:none;display:none}
-[data-theme="dark"] .send{color:#06150F;background:linear-gradient(160deg,#5FE0B8,#34D3A0);box-shadow:0 14px 24px -12px rgba(52,211,160,.5)}
+[data-theme="dark"] .send{color:#0A1220;background:linear-gradient(160deg,#E6C97A,#D9B654);box-shadow:0 14px 24px -12px rgba(217,182,84,.5)}
 .bar-in{border-radius:22px}
 /* ردیف دانش‌آموز و وضعیت‌ها: خوانایی بیشتر */
 .row,.grow{border-radius:16px}.row-main{min-height:60px}.nm{font-size:16.5px;font-weight:800}
 .badge{font-weight:800;padding:4px 13px}
 .cnt b{font-size:22px}
 /* پنجره‌ها و ورود */
-.modal{background:rgba(5,20,16,.55)}
-.gate{background:radial-gradient(520px 360px at 88% 6%,rgba(255,255,255,.14),transparent 62%),linear-gradient(160deg,#052E25,#0B5D4B 62%,#12806A)}
+.modal{background:rgba(6,12,24,.55)}
+.gate{background:radial-gradient(520px 360px at 88% 6%,rgba(255,255,255,.14),transparent 62%),linear-gradient(160deg,#0A1830,#1E3D6E 62%,#2B5694)}
 .gate-card{border-radius:26px;border:1px solid rgba(255,255,255,.35);box-shadow:0 30px 60px -16px rgba(0,0,0,.55)}
 .gate-logo{border-color:var(--gold);box-shadow:0 0 0 7px rgba(255,255,255,.18),0 16px 30px rgba(0,0,0,.3)}
 /* تیک‌های کارتابل هم‌خوان با هویت جدید */
@@ -1237,6 +1239,184 @@ input:focus,select:focus{border-color:var(--teal);box-shadow:var(--ring);backgro
 .stu-rem-x{position:absolute;top:6px;inset-inline-end:8px;width:32px;height:32px;border-radius:50%;border:0;background:transparent;font-size:16px;color:var(--muted)}
 .view-bar{position:sticky;top:0;z-index:70;display:flex;justify-content:space-between;align-items:center;gap:8px;padding:calc(8px + env(safe-area-inset-top,0px)) 14px 8px;background:#B45309;color:#fff;font-weight:800;font-size:13px}
 .view-bar .btn{min-height:36px;padding:0 12px;background:#fff;color:#7C2D12;border-color:#fff;font-size:13px}
+/* =====================================================================
+   🎓 سامانه‌ی طراحی نسخه‌ی ۱٫۰۹ — دبیرستان پسرانه‌ی دوره‌ی دوم
+   سرمه‌ای آکادمیک + طلایی برای تأکید؛ سبز فقط برای «حاضر / کامل» و قرمز فقط برای «خطر / ناقص».
+   این آخرین لایه‌ی ظاهری است و رنگ‌های لایه‌های قبلی را یکدست می‌کند. منطق برنامه تغییری نکرده است.
+   ===================================================================== */
+:root{
+  --e9:#081428; --e8:#0E2244; --e7:#152E58; --e6:#1E3D6E; --e5:#2B5694;
+  --g3:#F2E0A6; --g4:#E2C16A; --g5:#C9A13F; --g6:#9E7C24;
+  --bg:#F3F5F9; --card:#FFFFFF; --ink:#0F1B2D; --muted:#55627A; --line:#DDE3EC; --input:#F7F9FC;
+  --primary:#1B3A6B; --on-primary:#FFFFFF; --teal:#2B5BA8; --gold:#C9A13F; --focus:#C9A13F; --navy:#0E2244;
+  --present:#15803D; --present-bg:#E5F4EA; --absent:#C42B37; --absent-bg:#FCEAEC;
+  --late:#A85A06; --late-bg:#FDF1DE; --excused:#2563C9; --excused-bg:#E5EEFC; --on-present:#FFFFFF;
+  --c-me:#2B5BA8; --c-cls:#B98A1E; --c-cls-tx:#8A6512; --c-str:#7C5CC4;
+  --r:18px; --ring:0 0 0 4px rgba(43,91,168,.22);
+  --shadow:0 1px 2px rgba(12,24,48,.05),0 8px 24px -12px rgba(12,24,48,.20);
+  --shadow-lg:0 2px 6px rgba(12,24,48,.08),0 24px 48px -16px rgba(12,24,48,.34);
+  --glass:rgba(255,255,255,.88);
+  --pat:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72' viewBox='0 0 72 72'%3E%3Cg fill='none' stroke='%23E2C16A' stroke-opacity='.14' stroke-width='1'%3E%3Crect x='22' y='22' width='28' height='28'/%3E%3Crect x='22' y='22' width='28' height='28' transform='rotate(45 36 36)'/%3E%3Ccircle cx='36' cy='36' r='5'/%3E%3Cpath d='M0 0l16 16M72 0L56 16M0 72l16-16M72 72L56 56M36 0v8M36 72v-8M0 36h8M72 36h-8'/%3E%3C/g%3E%3C/svg%3E");
+}
+[data-theme="dark"]{
+  --bg:#0A1220; --card:#111C2E; --ink:#E8EEF7; --muted:#9FB0C8; --line:#24344F; --input:#0D1727;
+  --primary:#E2C16A; --on-primary:#0A1220; --teal:#8DB2F2; --focus:#E6C97A; --gold:#E2C16A;
+  --present:#4ADE80; --present-bg:#0F2A1C; --absent:#F47A82; --absent-bg:#3A1A20;
+  --late:#F2A94E; --late-bg:#38270E; --excused:#86B4FF; --excused-bg:#12284A; --on-present:#062012;
+  --c-me:#8DB2F2; --c-cls:#E2C16A; --c-cls-tx:#E2C16A; --c-str:#B9A3F0;
+  --ring:0 0 0 4px rgba(230,201,122,.22); --glass:rgba(17,28,46,.88);
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 26px -10px rgba(0,0,0,.6);
+  --shadow-lg:0 2px 6px rgba(0,0,0,.5),0 24px 48px -14px rgba(0,0,0,.7);
+}
+/* پایه */
+body{overflow-x:clip;background:
+  radial-gradient(900px 420px at 100% -140px,rgba(201,161,63,.10),transparent 60%),
+  radial-gradient(800px 520px at -10% 30%,rgba(43,91,168,.07),transparent 60%),var(--bg)}
+[data-theme="dark"] body{background:
+  radial-gradient(900px 420px at 100% -140px,rgba(226,193,106,.06),transparent 60%),
+  radial-gradient(800px 520px at -10% 30%,rgba(43,91,168,.14),transparent 60%),var(--bg)}
+::selection{background:rgba(201,161,63,.32)}
+*{scrollbar-color:rgba(43,91,168,.45) transparent}::-webkit-scrollbar-thumb{background:rgba(43,91,168,.4)}
+.chips>*,.tabs>*{min-width:0}               /* جلوگیری از بیرون‌زدگی افقی در موبایل */
+input:focus,select:focus,textarea:focus{border-color:var(--teal);box-shadow:var(--ring);background:var(--card)}
+
+/* سربرگ: سرمه‌ای با گره‌ی هشت‌پر (خاتم) و خط طلایی */
+.hero{background:linear-gradient(160deg,var(--e9) 0%,var(--e8) 50%,var(--e6) 100%)!important;border-radius:0 0 28px 28px;
+  box-shadow:0 18px 40px -18px rgba(8,20,40,.75)}
+.hero::before{background:radial-gradient(600px 260px at 88% -60px,rgba(226,193,106,.24),transparent 62%),var(--pat)!important;
+  background-size:auto,72px 72px!important;-webkit-mask-image:linear-gradient(to bottom,#000 35%,rgba(0,0,0,.25));mask-image:linear-gradient(to bottom,#000 35%,rgba(0,0,0,.25))}
+.hero::after{left:8%;right:8%;bottom:0;height:3px;border-radius:3px;box-shadow:none;
+  background:linear-gradient(90deg,transparent,var(--g5) 20%,var(--g3) 50%,var(--g5) 80%,transparent)}
+.hero h1{color:#fff;-webkit-text-fill-color:#fff}
+.hero p{color:#D3DCEC}
+.hero .logo{border-color:var(--g4)}
+/* پس از ورود: سربرگ فشرده تا محتوا زودتر دیده شود */
+body.signed .hero{padding:calc(env(safe-area-inset-top,0px) + 10px) 64px 14px;border-radius:0 0 22px 22px}
+body.signed .hero-inner{flex-direction:row;justify-content:center;gap:12px}
+body.signed .hero .logo{width:52px;height:52px;padding:3px;border-width:2px;margin:0}
+body.signed .hero{padding-inline:58px}
+body.signed .hero h1{font-size:clamp(16px,4.4vw,26px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.toast{width:max-content;max-width:calc(100vw - 32px);text-align:center}
+body.signed .hero p{display:none}
+
+/* نوار کاربر */
+.who-bar{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:6px;padding-inline-start:14px;box-shadow:var(--shadow);margin-bottom:12px}
+.who-bar #whoName{font-weight:800;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.who-bar .btn{height:40px;min-height:40px;border-radius:12px;font-size:14px}
+
+/* پیام امروز */
+.quote{background:linear-gradient(120deg,var(--e9),var(--e6) 55%,var(--e8))!important;background-size:100% 100%!important;
+  border:1px solid rgba(226,193,106,.55);box-shadow:0 16px 30px -16px rgba(8,20,40,.75),inset 0 1px 0 rgba(255,255,255,.1);animation:none}
+.quote::before{background:var(--pat);background-size:72px 72px;opacity:1}
+#tmHome .tmq{display:none}                  /* «پیام امروز» یک بار نمایش داده شود */
+
+/* کارت‌ها */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
+.card>.lbl:first-child::before{background:linear-gradient(180deg,var(--g4),var(--g6));box-shadow:none}
+
+/* تب‌ها */
+.tabs{background:var(--glass);border:1px solid var(--line);box-shadow:var(--shadow)}
+.tab{color:var(--muted);line-height:1.3}
+.tab:hover{color:var(--ink);background:var(--input)}
+.tab.active{color:#fff;background:linear-gradient(160deg,var(--e5),var(--e7) 60%,var(--e8));
+  box-shadow:0 10px 20px -8px rgba(14,34,68,.65),inset 0 1px 0 rgba(255,255,255,.18),inset 0 -3px 0 var(--g4)}
+[data-theme="dark"] .tab.active{color:#0A1220;background:linear-gradient(160deg,var(--g3),var(--g5));box-shadow:0 10px 20px -10px rgba(226,193,106,.5)}
+
+/* دکمه‌ها و انتخاب‌ها */
+.send{color:#fff;background:linear-gradient(160deg,var(--e5),var(--e7) 60%,var(--e8));
+  box-shadow:0 14px 26px -14px rgba(14,34,68,.85),inset 0 1px 0 rgba(255,255,255,.18),inset 0 -3px 0 rgba(226,193,106,.6)}
+.send.green{background:linear-gradient(160deg,#22A05A,#15803D);box-shadow:0 14px 26px -12px rgba(21,128,61,.7),inset 0 -3px 0 rgba(255,255,255,.25)}
+[data-theme="dark"] .send{color:#0A1220;background:linear-gradient(160deg,var(--g3),var(--g5));box-shadow:0 14px 26px -14px rgba(226,193,106,.5)}
+[data-theme="dark"] .send.green{color:#062012;background:linear-gradient(160deg,#6EE7A0,#34C579)}
+.send:disabled{opacity:.6;filter:saturate(.7)}
+.chip.on{background:var(--primary);border-color:var(--primary);color:var(--on-primary);box-shadow:0 8px 18px -10px rgba(14,34,68,.6)}
+[data-theme="dark"] .chip.on{box-shadow:0 8px 18px -10px rgba(226,193,106,.45)}
+.btn:hover,.chip:hover{border-color:var(--teal)}
+
+/* صفحه‌ی ورود */
+.gate{background:radial-gradient(700px 420px at 90% -10%,rgba(226,193,106,.20),transparent 60%),var(--pat),linear-gradient(160deg,var(--e9),var(--e8) 55%,var(--e6))!important;
+  background-size:auto,72px 72px,auto!important}
+.gate-card{border:1px solid rgba(226,193,106,.45);box-shadow:0 30px 60px -18px rgba(0,0,0,.6)}
+.gate-logo{border-color:var(--g4)}
+
+/* ساعت و تاریخ: هم‌خوان با کارت‌ها */
+.tmw .cl{background:linear-gradient(180deg,var(--card),var(--input));border:1px solid var(--line);border-top:3px solid var(--g5);color:var(--ink);
+  font-family:inherit;box-shadow:var(--shadow)}
+
+/* هشدار حضور و غیاب ثبت‌نشده: خوانا، بدون بلوک‌های قرمز تمام‌رنگ */
+.red-it{background:var(--absent-bg)!important;border:1px solid rgba(196,43,55,.3)!important;border-inline-start:5px solid var(--absent)!important;color:var(--ink);padding:10px 14px}
+.red-it .now-t{color:var(--ink)}.red-it .now-sub{color:var(--absent);font-weight:700}
+.red-it a.tel{background:var(--absent);color:#fff}
+
+/* پیام کوتاه */
+.toast{background:var(--e8);color:#fff;border:1px solid rgba(226,193,106,.45);box-shadow:var(--shadow-lg)}
+[data-theme="dark"] .toast{background:#E8EEF7;color:#0A1220}
+.modal{background:rgba(6,12,24,.6)}
+
+/* ===== منوی مدیر ===== */
+#mgNav .mg-ng{font-size:11px;color:var(--muted);border-top:1px solid var(--line);margin-top:4px;padding:10px 12px 4px}
+#mgNav .mg-ng:first-of-type{border-top:0;margin-top:0}
+#mgNav .mg-nb.on{color:#fff}
+[data-theme="dark"] #mgNav .mg-nb.on{color:#0A1220}
+#mgNav .mg-nh b{color:var(--navy)}
+[data-theme="dark"] #mgNav .mg-nh b{color:var(--g3)}
+#mgNav .mg-nb[data-sec="pta"]{--ic:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='9' cy='7' r='3'/%3E%3Ccircle cx='17' cy='9' r='2.5'/%3E%3Cpath d='M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M14 20c0-2.4 1.4-4.4 3-5 2 .3 4 2.3 4 5'/%3E%3C/svg%3E")}
+#mgNav .mg-nb[data-sec="set"]{--ic:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='4' y='11' width='16' height='10' rx='2'/%3E%3Cpath d='M8 11V7a4 4 0 0 1 8 0v4'/%3E%3C/svg%3E")}
+@media (min-width:900px){
+  #mgNav.mg-nav{border-top:4px solid var(--g4)}
+  #mgNav .mg-nb{min-height:44px;border-radius:12px;font-size:14px}
+}
+/* موبایل و تبلت: منوی افقی چسبان با آیکن؛ محتوا تمام‌عرض */
+@media (max-width:899.98px){
+  body.mg-on #mgBody:not([hidden]){display:flex;flex-direction:column;align-items:stretch}
+  body.mg-on #mgBody>*{min-width:0}
+  #mgNav.mg-nav{order:-1;position:sticky;top:calc(env(safe-area-inset-top,0px) + 6px);z-index:15;flex-direction:row;align-items:stretch;
+    overflow-x:auto;overflow-y:hidden;max-height:none;margin:0 0 12px;padding:6px;gap:4px;border-radius:18px;
+    background:var(--glass);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);scroll-snap-type:x proximity}
+  #mgNav .mg-nh,#mgNav .mg-ng{display:none}
+  #mgNav .mg-nb{flex:0 0 auto;width:auto;min-width:74px;min-height:58px;padding:6px 10px;font-size:11.5px;white-space:nowrap;scroll-snap-align:start}
+  #mgNav .mg-nb::before{width:21px;height:21px}
+  #mgNav .mg-nb.dot::after{top:6px;inset-inline-end:6px}
+  #mgNav .mg-nf{flex-direction:row;flex:none;margin:0;padding:0;padding-inline-start:6px;border-top:0;border-inline-start:1px dashed var(--line);gap:4px}
+  #mgNav .mg-nf button{width:48px;height:auto;min-height:58px}
+  .mg-top{margin-top:2px}
+}
+
+/* بانک اطلاعات: کامل = سبز، ناقص = قرمز (به‌همراه ✓ و فهرست موارد ناقص، نه فقط رنگ) */
+.dir-it.dir-ok summary span:first-child{color:var(--present);font-weight:800}
+.dir-it.dir-bad summary span:first-child{color:var(--absent);font-weight:800}
+
+@media (min-width:600px){.q-tx{min-height:2em}}
+/* فیلدهای تلفن و عدد هم مثل بقیه‌ی فیلدها (قبلاً بی‌قالب و ریز نمایش داده می‌شدند) */
+input[type=tel],input[type=number],input[type=email]{width:100%;height:52px;padding:0 14px;border-radius:14px;border:1.5px solid var(--line);background:var(--input);color:var(--ink);font:inherit;font-size:16px;outline:none;transition:border-color .15s,background .15s}
+input[type=tel]:focus,input[type=number]:focus,input[type=email]:focus{border-color:var(--teal);box-shadow:var(--ring);background:var(--card)}
+/* ===== راه‌اندازی مدرسه (نسخه‌ی ۱٫۱۱) ===== */
+#mgNav .mg-nb[data-sec="setup"]{--ic:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 21h18M5 21V10l7-5 7 5v11M10 21v-5h4v5M12 5V2l3 1.2L12 4.4'/%3E%3C/svg%3E")}
+.su-steps{display:grid;gap:8px}
+.su-step{display:flex;align-items:center;gap:12px;width:100%;min-height:60px;padding:8px 12px;border-radius:14px;border:1.5px solid var(--line);background:var(--input);text-align:start;font:inherit;color:inherit;cursor:pointer}
+.su-step:hover{border-color:var(--teal)}
+.su-step i{flex:none;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-weight:900;background:var(--line);color:var(--ink)}
+.su-step.ok i{background:var(--present);color:var(--on-present)}
+.su-step.warn{border-color:var(--late);background:var(--late-bg)}.su-step.warn i{background:var(--late);color:#fff}
+[data-theme="dark"] .su-step.warn i{color:#1a1405}
+.su-step span{flex:1;min-width:0}.su-step b{display:block;font-size:14.5px;font-weight:800}
+.su-step small{display:block;color:var(--muted);font-size:12.5px;line-height:1.7;overflow-wrap:anywhere}
+.su-step em{font-style:normal;color:var(--muted);font-size:20px;line-height:1}
+.su-cls{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:8px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+.su-cls.ed{grid-template-columns:1fr}
+.su-cls b{display:block;font-weight:800}.su-cls small{display:block;color:var(--muted);font-size:12.5px}
+#p-mg .su-cls .btn{height:40px;min-height:40px;padding:0 12px;font-size:13px}
+.su-chips{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 10px}
+.su-chip{display:inline-flex;align-items:center;gap:6px;padding:4px;padding-inline-start:12px;border-radius:999px;background:var(--excused-bg);color:var(--ink);font-weight:700;font-size:13px}
+.su-chip button{width:28px;height:28px;border-radius:50%;border:0;background:var(--card);color:var(--absent);font-weight:900;cursor:pointer}
+.su-add{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px}
+#p-mg .su-add .btn{height:52px}
+.su-h{font-weight:800;font-size:13.5px;margin:14px 0 6px;padding-top:12px;border-top:1px dashed var(--line)}
+.su-h:first-of-type{margin-top:0;padding-top:0;border-top:0}
+.su-out{margin-top:10px;padding:10px 12px;border-radius:12px;background:var(--present-bg);font-weight:800}
+.su-out code{direction:ltr;display:inline-block;font-size:18px;letter-spacing:1px;font-family:ui-monospace,Consolas,monospace}
+/* شماره‌ی نسخه */
+.app-ver{font-weight:800;letter-spacing:0}
 </style>
 </head>
 <body>
@@ -1255,7 +1435,7 @@ input:focus,select:focus{border-color:var(--teal);box-shadow:var(--ring);backgro
   <div class="card gate-card">
     <img id="gateLogo" class="gate-logo" alt="لوگوی دبیرستان صلاح‌الدین ایوبی" hidden>
     <h2 style="margin:0 0 2px;font-size:20px">ورود به سامانه</h2>
-    <div class="now-sub" style="margin-bottom:12px">دبیرستان صلاح‌الدین ایوبی</div>
+    <div class="now-sub" id="gSchool" style="margin-bottom:12px">دبیرستان صلاح‌الدین ایوبی</div>
     <div id="gRole" class="chips" style="grid-template-columns:repeat(4,1fr);margin-bottom:12px"></div>
     <div id="gS"><div class="field"><label for="gNid">کد ملی دانش‌آموز</label><input id="gNid" type="text" inputmode="numeric" maxlength="12" autocomplete="off" placeholder="کد ملی ۱۰ رقمی" style="direction:ltr;text-align:center"></div>
       <div class="field"><label for="gSec">کد ورود یا رمز شخصی (اگر مدرسه به شما داده است)</label><input id="gSec" type="password" autocomplete="off" style="direction:ltr;text-align:center"></div></div>
@@ -1636,6 +1816,103 @@ input:focus,select:focus{border-color:var(--teal);box-shadow:var(--ring);backgro
         <div id="cdList"></div>
       </div>
       </div>
+      <div class="mg-sec" data-sec="setup" data-t="راه‌اندازی مدرسه" hidden>
+      <div class="mg-sec-d">همه‌ی اطلاعات پایه‌ی مدرسه را از همین‌جا وارد کنید؛ نیازی به ویرایش مستقیم Google Sheet نیست. برای مدرسه‌ی تازه، مراحل را به ترتیب انجام دهید.</div>
+      <div class="card" id="suHub">
+        <div class="lbl" style="margin-bottom:8px">مراحل راه‌اندازی</div>
+        <div id="suSteps" class="su-steps"></div>
+      </div>
+      <div class="card" id="suSchool">
+        <div class="lbl" style="margin-bottom:8px">۱. نام مدرسه</div>
+        <div class="field"><label for="suName">نام مدرسه (در سربرگ، کارنامه‌ها، گواهی‌ها و پیامک‌ها)</label><input id="suName" type="text" maxlength="80" autocomplete="off"></div>
+        <button id="suNameGo" class="btn" type="button" style="width:100%">ذخیره‌ی نام مدرسه</button>
+      </div>
+      <div class="card" id="suCls">
+        <div class="lbl" style="margin-bottom:8px">۲. کلاس‌ها</div>
+        <div class="grid2">
+          <div class="field"><label for="suClsSt">رشته</label><input id="suClsSt" type="text" list="suStL" maxlength="40" autocomplete="off" placeholder="مثلاً تجربی"><datalist id="suStL"></datalist></div>
+          <div class="field"><label for="suClsG">پایه</label><select id="suClsG"><option value="دهم">دهم</option><option value="یازدهم">یازدهم</option><option value="دوازدهم">دوازدهم</option></select></div>
+        </div>
+        <div class="field"><label for="suClsN">شماره‌ی کلاس</label><input id="suClsN" type="text" maxlength="40" autocomplete="off" placeholder="مثلاً ۲۰۱"></div>
+        <div class="now-sub" id="suClsPrev" style="margin-bottom:8px"></div>
+        <button id="suClsGo" class="btn" type="button" style="width:100%">➕ ایجاد کلاس</button>
+        <div id="suClsList" style="margin-top:12px"></div>
+      </div>
+      <div class="card" id="saCard">
+        <details>
+          <summary class="lbl" style="cursor:pointer">۳. درج دانش‌آموزان (تکی، یا گروهی از Excel)</summary>
+          <div style="margin-top:10px">
+            <div class="grid2">
+              <div class="field"><label for="saStream">رشته</label><input id="saStream" type="text" list="saStreamL" autocomplete="off" placeholder="مثلاً تجربی"><datalist id="saStreamL"></datalist></div>
+              <div class="field"><label for="saCls">کلاس</label><input id="saCls" type="text" list="saClsL" autocomplete="off" placeholder="مثلاً دهم تجربی ۱۰۲"><datalist id="saClsL"></datalist></div>
+            </div>
+            <div class="field"><label for="saName">نام و نام خانوادگی</label><input id="saName" type="text" maxlength="60" autocomplete="off"></div>
+            <div class="grid2">
+              <div class="field"><label for="saId">کد ملی</label><input id="saId" type="text" inputmode="numeric" maxlength="12" autocomplete="off" dir="ltr"></div>
+              <div class="field"><label for="saSp">تلفن دانش‌آموز</label><input id="saSp" type="tel" inputmode="numeric" maxlength="14" autocomplete="off" dir="ltr"></div>
+              <div class="field"><label for="saFn">نام پدر</label><input id="saFn" type="text" maxlength="60" autocomplete="off"></div>
+              <div class="field"><label for="saFp">تلفن پدر</label><input id="saFp" type="tel" inputmode="numeric" maxlength="14" autocomplete="off" dir="ltr"></div>
+              <div class="field"><label for="saMn">نام مادر</label><input id="saMn" type="text" maxlength="60" autocomplete="off"></div>
+              <div class="field"><label for="saMp">تلفن مادر</label><input id="saMp" type="tel" inputmode="numeric" maxlength="14" autocomplete="off" dir="ltr"></div>
+            </div>
+            <button id="saGo" class="send" type="button">ثبت دانش‌آموز</button>
+            <details style="margin-top:12px"><summary class="lbl" style="cursor:pointer">افزودن گروهی (چسباندن از Excel)</summary>
+              <div class="now-sub" style="margin:8px 0">رشته و کلاس را بالا پر کنید. هر خط یک دانش‌آموز، با این ترتیب ستون‌ها (جداکننده: Tab یا | یا ویرگول): نام، کد ملی، نام پدر، تلفن پدر، نام مادر، تلفن مادر، تلفن دانش‌آموز. فقط نام الزامی است. حداکثر ۸۰ نفر در هر بار.</div>
+              <div class="field"><textarea id="saBulk" rows="6" aria-label="فهرست دانش‌آموزان" style="width:100%;border-radius:12px;border:1.5px solid var(--line);background:var(--input);color:var(--ink);padding:10px;font:inherit"></textarea></div>
+              <button id="saBulkGo" class="btn" type="button" style="width:100%">ثبت گروهی</button>
+            </details>
+          </div>
+        </details>
+      </div>
+      <div class="card" id="taCard">
+        <details>
+          <summary class="lbl" style="cursor:pointer">۴. درج دبیر جدید</summary>
+          <div style="margin-top:10px">
+            <div class="field"><label for="taName">نام و نام خانوادگی دبیر</label><input id="taName" type="text" maxlength="60" autocomplete="off"></div>
+            <div class="grid2">
+              <div class="field"><label for="taCourse">درس</label><input id="taCourse" type="text" list="taCourseL" maxlength="60" autocomplete="off"><datalist id="taCourseL"></datalist></div>
+              <div class="field"><label for="taCode">کد ورود دبیر</label><input id="taCode" type="text" maxlength="30" autocomplete="off" dir="ltr"></div>
+              <div class="field"><label for="taHours">ابلاغ (ساعت هفتگی)</label><input id="taHours" type="text" inputmode="numeric" maxlength="2" autocomplete="off" dir="ltr"></div>
+              <div class="field"><label for="taDays">روزهای تدریس</label><input id="taDays" type="text" maxlength="60" autocomplete="off" placeholder="مثلاً شنبه تا چهارشنبه"></div>
+              <div class="field"><label for="taPc">کد پرسنلی</label><input id="taPc" type="text" inputmode="numeric" maxlength="12" autocomplete="off" dir="ltr"></div>
+              <div class="field"><label for="taId">کد ملی</label><input id="taId" type="text" inputmode="numeric" maxlength="12" autocomplete="off" dir="ltr"></div>
+              <div class="field"><label for="taPh">شماره تماس</label><input id="taPh" type="tel" inputmode="numeric" maxlength="14" autocomplete="off" dir="ltr"></div>
+              <div class="field"><label for="taDeg">مدرک تحصیلی</label><input id="taDeg" type="text" maxlength="40" autocomplete="off"></div>
+            </div>
+            <div class="now-sub" style="margin-bottom:10px">درس‌های بیشترِ همین دبیر را در مرحله‌ی ۵ (تخصیص درس به دبیر) اضافه کنید. وقتی برای دبیران کد ورود ثبت شود، همه‌ی دبیران باید کد داشته باشند. بعد از ثبت، زنگ‌های دبیر را در مرحله‌ی ۶ (برنامه‌ی هفتگی) بچینید.</div>
+            <button id="taGo" class="send" type="button">ثبت دبیر</button>
+          </div>
+        </details>
+      </div>
+      <div class="card" id="suTc">
+        <div class="lbl" style="margin-bottom:8px">۵. تخصیص درس به دبیر</div>
+        <div class="field"><select id="suTcT" aria-label="دبیر"></select></div>
+        <div id="suTcList" class="su-chips"></div>
+        <div class="su-add"><input id="suTcC" type="text" list="taCourseL" maxlength="60" autocomplete="off" aria-label="درس" placeholder="درس (از فهرست رسمی دروس)"><button id="suTcGo" class="btn" type="button">افزودن درس</button></div>
+        <div class="now-sub" style="margin-top:8px">کلاس و زنگ هر درس را در مرحله‌ی بعد (برنامه‌ی هفتگی) بچینید؛ دسترسی هر دبیر به کلاس و درس از روی همان برنامه است.</div>
+      </div>
+      <div class="card" id="suSch">
+        <div class="lbl" style="margin-bottom:8px">۶. برنامه‌ی هفتگی</div>
+        <div class="now-sub" id="suSchTx" style="margin-bottom:8px"></div>
+        <button id="suSchGo" class="btn" type="button" style="width:100%">باز کردن ویرایش برنامه‌ی هفتگی</button>
+      </div>
+      <div class="card" id="suPw">
+        <div class="lbl" style="margin-bottom:8px">۷. رمزهای ورود</div>
+        <div class="su-h">مدیر</div>
+        <div class="now-sub" id="suMgTx" style="margin-bottom:8px"></div>
+        <button id="suMgPw" class="btn" type="button" style="width:100%">تغییر رمز مدیر</button>
+        <div class="su-h">کد ورود دبیر</div>
+        <div class="field"><select id="suPwT" aria-label="دبیر"></select></div>
+        <div class="su-add"><input id="suPwTc" type="text" maxlength="30" autocomplete="off" dir="ltr" aria-label="کد ورود جدید" placeholder="کد جدید (دست‌کم ۴ نویسه)"><button id="suPwTGo" class="btn" type="button">ذخیره‌ی کد</button></div>
+        <div class="su-h">رمز دانش‌آموز</div>
+        <label class="sms-opt"><input type="checkbox" id="suStu2fa" style="width:auto;height:auto"> ورود دانش‌آموز با رمز (علاوه بر کد ملی)</label>
+        <div class="now-sub" id="suStu2faTx" style="margin:4px 0 10px"></div>
+        <div class="grid2"><div class="field"><select id="suPwC" aria-label="کلاس"></select></div><div class="field"><select id="suPwS" aria-label="دانش‌آموز"></select></div></div>
+        <div class="field"><input id="suPwSp" type="text" maxlength="40" autocomplete="off" dir="ltr" aria-label="رمز جدید دانش‌آموز" placeholder="رمز جدید (خالی = ساخت کد ورود تازه)"></div>
+        <button id="suPwSGo" class="btn" type="button" style="width:100%">تغییر رمز دانش‌آموز</button>
+        <div id="suPwOut"></div>
+      </div>
+      </div>
       <div class="mg-sec" data-sec="set" data-t="رمز و تنظیمات" hidden>
       <div class="mg-sec-d">تغییر رمز مدیر؛ رمز تازه جایگزین رمز قبلی می‌شود و رمز قدیمی دیگر کار نمی‌کند.</div>
       <div id="setHost"></div>
@@ -1702,12 +1979,18 @@ input:focus,select:focus{border-color:var(--teal);box-shadow:var(--ring);backgro
         <div class="lbl" style="margin-bottom:8px">ابلاغ و ساعات دبیران</div>
         <div class="mg-wrap"><table class="mg-tbl" id="tchTbl"></table></div>
       </div>
-      <div class="card">
+      <div class="card" id="edCard">
         <div class="lbl" style="margin-bottom:8px">ویرایش برنامه هفتگی</div>
         <div class="field"><select id="edCls" aria-label="کلاس"></select></div>
         <div id="edDays" class="days"></div>
-        <div id="edRows"></div>
+        <div id="edRows"></div><datalist id="edCourseL"></datalist>
         <button id="edSave" class="send" type="button">ذخیره برنامه این کلاس</button>
+      </div>
+      <div class="card" id="curCard">
+        <div class="lbl" style="margin-bottom:8px">فهرست رسمی دروس و تعداد واحد</div>
+        <div class="mg-bar"><select id="curSt" aria-label="رشته"></select><select id="curG" aria-label="پایه"></select></div>
+        <div id="curBox"></div>
+        <div class="now-sub" style="margin-top:8px">معدل و میانگین کل = مجموع (میانگین هر درس × تعداد واحد) ÷ مجموع واحدها. منبع: «مشخصات رشته درس» وزارت آموزش و پرورش، شاخه‌ی نظری (علوم تجربی ۱۶۰۰۰، ادبیات و علوم انسانی ۱۷۰۰۰). در فرم‌های ثبت و ویرایش برنامه، همین دروس برای رشته و پایه‌ی هر کلاس پیشنهاد می‌شود.</div>
       </div>
       </div>
       <div class="mg-sec" data-sec="sys" data-t="اطلاعات و سامانه" hidden>
@@ -1718,52 +2001,6 @@ input:focus,select:focus{border-color:var(--teal);box-shadow:var(--ring);backgro
         <div class="field" id="dirClsF"><select id="dirCls" aria-label="کلاس"></select></div>
         <div class="field"><input id="dirQ" type="search" placeholder="جست‌وجو: نام، کلاس، کد ملی، شماره..." autocomplete="off" aria-label="جست‌وجو در بانک اطلاعات"></div>
         <div id="dirList"></div>
-      </div>
-      <div class="card" id="saCard">
-        <details>
-          <summary class="lbl" style="cursor:pointer">➕ درج دانش‌آموز جدید (فقط مدیر)</summary>
-          <div style="margin-top:10px">
-            <div class="grid2">
-              <div class="field"><label for="saStream">رشته</label><input id="saStream" type="text" list="saStreamL" autocomplete="off" placeholder="مثلاً تجربی"><datalist id="saStreamL"></datalist></div>
-              <div class="field"><label for="saCls">کلاس</label><input id="saCls" type="text" list="saClsL" autocomplete="off" placeholder="مثلاً دهم تجربی ۱۰۲"><datalist id="saClsL"></datalist></div>
-            </div>
-            <div class="field"><label for="saName">نام و نام خانوادگی</label><input id="saName" type="text" maxlength="60" autocomplete="off"></div>
-            <div class="grid2">
-              <div class="field"><label for="saId">کد ملی</label><input id="saId" type="text" inputmode="numeric" maxlength="12" autocomplete="off" dir="ltr"></div>
-              <div class="field"><label for="saSp">تلفن دانش‌آموز</label><input id="saSp" type="tel" inputmode="numeric" maxlength="14" autocomplete="off" dir="ltr"></div>
-              <div class="field"><label for="saFn">نام پدر</label><input id="saFn" type="text" maxlength="60" autocomplete="off"></div>
-              <div class="field"><label for="saFp">تلفن پدر</label><input id="saFp" type="tel" inputmode="numeric" maxlength="14" autocomplete="off" dir="ltr"></div>
-              <div class="field"><label for="saMn">نام مادر</label><input id="saMn" type="text" maxlength="60" autocomplete="off"></div>
-              <div class="field"><label for="saMp">تلفن مادر</label><input id="saMp" type="tel" inputmode="numeric" maxlength="14" autocomplete="off" dir="ltr"></div>
-            </div>
-            <button id="saGo" class="send" type="button">ثبت دانش‌آموز</button>
-            <details style="margin-top:12px"><summary class="lbl" style="cursor:pointer">افزودن گروهی (چسباندن از Excel)</summary>
-              <div class="now-sub" style="margin:8px 0">رشته و کلاس را بالا پر کنید. هر خط یک دانش‌آموز، با این ترتیب ستون‌ها (جداکننده: Tab یا | یا ویرگول): نام، کد ملی، نام پدر، تلفن پدر، نام مادر، تلفن مادر، تلفن دانش‌آموز. فقط نام الزامی است. حداکثر ۸۰ نفر در هر بار.</div>
-              <div class="field"><textarea id="saBulk" rows="6" aria-label="فهرست دانش‌آموزان" style="width:100%;border-radius:12px;border:1.5px solid var(--line);background:var(--input);color:var(--ink);padding:10px;font:inherit"></textarea></div>
-              <button id="saBulkGo" class="btn" type="button" style="width:100%">ثبت گروهی</button>
-            </details>
-          </div>
-        </details>
-      </div>
-      <div class="card" id="taCard">
-        <details>
-          <summary class="lbl" style="cursor:pointer">➕ درج دبیر جدید (فقط مدیر)</summary>
-          <div style="margin-top:10px">
-            <div class="field"><label for="taName">نام و نام خانوادگی دبیر</label><input id="taName" type="text" maxlength="60" autocomplete="off"></div>
-            <div class="grid2">
-              <div class="field"><label for="taCourse">درس</label><input id="taCourse" type="text" list="taCourseL" maxlength="60" autocomplete="off"><datalist id="taCourseL"></datalist></div>
-              <div class="field"><label for="taCode">کد ورود دبیر</label><input id="taCode" type="text" maxlength="30" autocomplete="off" dir="ltr"></div>
-              <div class="field"><label for="taHours">ابلاغ (ساعت هفتگی)</label><input id="taHours" type="text" inputmode="numeric" maxlength="2" autocomplete="off" dir="ltr"></div>
-              <div class="field"><label for="taDays">روزهای تدریس</label><input id="taDays" type="text" maxlength="60" autocomplete="off" placeholder="مثلاً شنبه تا چهارشنبه"></div>
-              <div class="field"><label for="taPc">کد پرسنلی</label><input id="taPc" type="text" inputmode="numeric" maxlength="12" autocomplete="off" dir="ltr"></div>
-              <div class="field"><label for="taId">کد ملی</label><input id="taId" type="text" inputmode="numeric" maxlength="12" autocomplete="off" dir="ltr"></div>
-              <div class="field"><label for="taPh">شماره تماس</label><input id="taPh" type="tel" inputmode="numeric" maxlength="14" autocomplete="off" dir="ltr"></div>
-              <div class="field"><label for="taDeg">مدرک تحصیلی</label><input id="taDeg" type="text" maxlength="40" autocomplete="off"></div>
-            </div>
-            <div class="now-sub" style="margin-bottom:10px">اگر دبیر چند درس دارد، برای هر درس یک بار ثبت کنید (نام یکسان). وقتی برای دبیران کد ورود ثبت شود، همه‌ی دبیران باید کد داشته باشند. بعد از ثبت، برنامه‌ی هفتگی دبیر را در بخش «دبیران و برنامه ← ویرایش برنامه هفتگی» وارد کنید.</div>
-            <button id="taGo" class="send" type="button">ثبت دبیر</button>
-          </div>
-        </details>
       </div>
       <div class="card" id="auCard">
         <div class="lbl" style="margin-bottom:8px">سابقه‌ی تغییرات (آخرین ۱۲۰ مورد)</div>
@@ -1827,7 +2064,7 @@ function g2j(gy, gm, gd) {
 const MONTHS = ['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];
 
 /* ---------- وضعیت‌ها ---------- */
-['gVer', 'ftVer'].forEach(id => { const e = document.getElementById(id); if (e) e.textContent = 'نسخه ' + APP_VERSION; });
+['gVer', 'ftVer'].forEach(id => { const e = document.getElementById(id); if (e) e.textContent = 'نسخه‌ی ' + fa(APP_VERSION).replace('.', '٫'); }); { const gs = document.getElementById('gSchool'); if (gs) gs.textContent = SCHOOL_NAME; }
 const STATUS = [
   { key:'present', label:'حاضر',       sheet:'' },
   { key:'absent',  label:'غایب',       sheet:'غایب' },
@@ -2100,7 +2337,7 @@ async function grSavedLoad(force) {
   box.hidden = false;
   box.append(el('div', 'lbl', 'نمرات ثبت‌شده‌ی این روز و زنگ'), el('div', 'now-sub', 'برای تغییر هر نمره، درخواست ویرایش بدهید؛ پس از تأیید مدیر جایگزین می‌شود.'));
   r.list.forEach(ex => {
-    box.append(el('div', 'now-t', ex.et + ' · سقف ' + fa(ex.max)));
+    box.append(el('div', 'now-t', ex.et + ' | سقف ' + fa(ex.max)));
     ex.rows.forEach(x => {
       const row = el('div', 'dir-r'), b = el('button', 'btn', '✎ درخواست ویرایش'); b.type = 'button';
       b.addEventListener('click', () => grSingleEdit(ex, x));
@@ -2258,7 +2495,7 @@ function nextMySlot() {            // زنگ بعدیِ امروزِ همین د
 function nextClass() {
   $('#search').value = '';
   const r = nextMySlot();
-  if (r) { S.per = r[2]; renderPer(); useSlot(r); toast('زنگ بعدی: ' + r[0] + ' · ' + r[3]); return; }
+  if (r) { S.per = r[2]; renderPer(); useSlot(r); toast('زنگ بعدی: ' + r[0] + ' | ' + r[3]); return; }
   loadClass();
   if (S.autoDate) refreshNow(true);
   if (ROLE === 'teacher' && !ISMGR) toast('امروز زنگ دیگری در برنامه‌ی شما نیست');
@@ -2268,15 +2505,56 @@ function nextClass() {
 /* ---------- فهرست کلاس‌ها و دبیران از Google Sheets ---------- */
 const R_KEY = 'sia_roster_v1';
 const uniq = a => a.filter((x, i) => x && a.indexOf(x) === i);
+/* ---------- فهرست رسمی دروس و تعداد واحد به تفکیک رشته و پایه (از Code.gs، نسخه‌ی ۱٫۱۰) ---------- */
+let CUR = null;                                  // { streams:{ رشته:{ پایه:[[درس، واحد]] } }, elective:[[درس، واحد]] }
+const GRADES = ['دهم', 'یازدهم', 'دوازدهم'];
+const cKey = s => norm(s).replace(/[0-9۰-۹٠-٩]/g, '').replace(/آ/g, 'ا').replace(/[\s،,.()\-_:؛]/g, '');
+const C_ALIAS = { 'دینوزندگی':'تعلیماتدینی', 'دینی':'تعلیماتدینی', 'معارف':'تعلیماتدینی', 'قران':'تعلیماتدینی', 'عربیوقران':'عربی', 'انگلیسی':'زبانخارجی',
+  'زبانانگلیسی':'زبانخارجی', 'زبان':'زبانخارجی', 'ادبیات':'فارسی', 'ادبیاتفارسی':'فارسی', 'ورزش':'تربیتبدنی', 'دفاعی':'امادگیدفاعی' };
+function gradeOfCls(c) {
+  const s = norm(c || ''); if (/دوازدهم/.test(s)) return 'دوازدهم'; if (/یازدهم/.test(s)) return 'یازدهم'; if (/دهم/.test(s)) return 'دهم';
+  const m = /(^|\D)([123])\d\d(\D|$)/.exec(en(s)); return m ? GRADES[m[2] - 1] : '';
+}
+function streamOfCls(c) {
+  const k = Object.keys(STUDENTS).find(st => STUDENTS[st] && Object.prototype.hasOwnProperty.call(STUDENTS[st], c)) || '', s = norm(k + ' ' + (c || ''));
+  return /تجرب/.test(s) ? 'تجربی' : /انسان|ادبیات/.test(s) ? 'انسانی' : '';
+}
+function curRows(cls) {           // [[درس، واحد]] برای رشته و پایه‌ی کلاس؛ اگر معلوم نباشد همه‌ی فهرست
+  if (!CUR || !CUR.streams) return null;
+  const st = streamOfCls(cls), g = gradeOfCls(cls); let out = [];
+  Object.keys(CUR.streams).forEach(a => { if (!st || a === st) Object.keys(CUR.streams[a]).forEach(b => { if (!g || b === g) out = out.concat(CUR.streams[a][b]); }); });
+  return out.concat(CUR.elective || []);
+}
+const curFor = cls => { const l = curRows(cls); return l ? uniq(l.map(x => x[0])) : null; };
+const curAll = () => curFor('');
+function unitsOf(cls, course) {    // همان قاعده‌ی Code.gs (courseUnits_)؛ درس ناشناخته = ۱ واحد
+  const P = (curRows(cls) || []).map(x => [cKey(x[0]), x[1]]), k0 = cKey(course), k = C_ALIAS[k0] || k0;
+  const hit = !k ? null : P.find(x => x[0] === k) || P.find(x => x[0].indexOf(k) === 0) || P.find(x => k.indexOf(x[0]) === 0) || P.find(x => x[0].indexOf(k) >= 0);
+  return hit ? hit[1] : 1;
+}
+const wMean = l => { let s = 0, w = 0; l.forEach(x => { if (x[0] != null && isFinite(x[0])) { s += x[0] * x[1]; w += x[1]; } }); return w ? s / w : null; };   // [[مقدار، واحد]]
+const uTx = u => u ? fa(u) : '—';
+const uSum = l => { const t = l.filter(x => x.me != null).reduce((a, x) => a + (x.u || 0), 0); return t ? fa(t) : '—'; };
+function curRender() {            // کارت مدیر: فهرست دروس و واحدهای هر رشته و پایه
+  const box = $('#curBox'), ss = $('#curSt'), gs = $('#curG'); if (!box) return; box.textContent = '';
+  if (!CUR || !CUR.streams) { box.append(el('div', 'empty', 'فهرست دروس هنوز از سرور دریافت نشده است. فایل Code.gs همین نسخه را در Apps Script جایگزین و دوباره منتشر (Deploy) کنید.')); return; }
+  if (!ss.options.length) { Object.keys(CUR.streams).forEach(k => { const o = el('option', '', 'رشته‌ی ' + k); o.value = k; ss.append(o); }); GRADES.forEach(g => { const o = el('option', '', 'پایه‌ی ' + g); o.value = g; gs.append(o); }); }
+  const rows = (CUR.streams[ss.value] || {})[gs.value] || [], tot = rows.reduce((a, x) => a + x[1], 0);
+  box.append(tbl(['ردیف', 'نام درس', 'واحد'], rows.map((x, i) => [fa(i + 1), x[0], fa(x[1])]).concat([['', 'جمع واحدهای الزامی این پایه', fa(tot)]])));
+  if (CUR.elective && CUR.elective.length) box.append(el('div', 'now-sub', 'دروس انتخابی (بدون پایه‌ی مشخص): ' + CUR.elective.map(x => x[0] + ' (' + fa(x[1]) + ' واحد)').join('، ')));
+}
+['#curSt', '#curG'].forEach(q => { const e = $(q); if (e) e.addEventListener('change', curRender); });
 function applyRoster(r) {
   if (!r || !r.classes) return;
+  if (r.cur && r.cur.streams) CUR = r.cur;
+  if (r.school) setSchoolName(r.school);                       // نام مدرسه از «راه‌اندازی مدرسه»
   Object.keys(STUDENTS).forEach(k => delete STUDENTS[k]);
   Object.keys(r.classes).forEach(k => { STUDENTS[k] = r.classes[k]; });
   S.authReq = r.authRequired !== false;
   $('#pinField').hidden = !S.authReq;
   fillDatalist('teacherList', uniq((r.teachers || []).concat(P.teachers)));
-  fillDatalist('courseList', uniq((r.courses || []).concat(P.courses)));
-  lsSet('sia_rost_t', r.teachers || []); lsSet('sia_rost_c', r.courses || []); gateFill();
+  fillDatalist('courseList', curFor(S.cls) || uniq((r.courses || []).concat(P.courses)));
+  lsSet('sia_rost_t', r.teachers || []); lsSet('sia_rost_c', r.courses || []); gateFill(); curRender();
 }
 async function loadRoster() {
   if (!SCRIPT_URL || !navigator.onLine) return;
@@ -2313,7 +2591,8 @@ async function mgLoad() {
   if (r.status !== 'ok') return toast(r.message || 'خطا در دریافت گزارش.');
   MG.att = r.att || []; MG.gr = r.gr || []; MG.attHead = r.attHead || []; MG.grHead = r.grHead || [];
   $('#mgLogin').hidden = true; $('#mgBody').hidden = false; edInit(); loadDir(); excInit(); pfInit(); v3Init(); addInit(); gdInit();
-  mgRender(); absInit(); pollToday(); abInit(); try { const ds = document.querySelector('.mg-sec[data-sec="dis"]'); if (ds && !ds.hidden) disOpen('m'); dsBadge(); } catch (e) {} { const n = new Date(); $('#mgStamp').textContent = 'آخرین بازخوانی: ساعت ' + fa(pad(n.getHours()) + ':' + pad(n.getMinutes())); }
+  mgRender(); absInit(); pollToday(); abInit(); try { const ds = document.querySelector('.mg-sec[data-sec="dis"]'); if (ds && !ds.hidden) disOpen('m'); dsBadge(); } catch (e) {}
+  try { const cs = document.querySelector('#mgBody .mg-sec:not([hidden])'); if (cs && cs.dataset.sec === 'setup') suOpen(); if (cs && cs.dataset.sec === 'set') setOpen(); } catch (e) {}   // بخشی که پیش از ورود باز مانده بود { const n = new Date(); $('#mgStamp').textContent = 'آخرین بازخوانی: ساعت ' + fa(pad(n.getHours()) + ':' + pad(n.getMinutes())); }
 }
 function mgCsv(name, head, rows) {
   const q = v => { let s = String(v); if (/^[=+\-@\t\r]/.test(s) && !/^[+-]?\d+(\.\d+)?$/.test(s)) s = "'" + s; return '"' + s.replace(/"/g, '""') + '"'; };   // جلوگیری از اجرای فرمول در Excel
@@ -2364,13 +2643,13 @@ function renderSch() {
   renderNow();
   const auto = shiftOfDate(new Date()); if (!Z.shift) Z.shift = auto;
   const sb = $('#schShift'); sb.textContent = '';
-  [['morning', 'صبح'], ['afternoon', 'ظهر']].forEach(q => { const b = el('button', 'chip' + (Z.shift === q[0] ? ' on' : ''), q[1] + (q[0] === auto ? ' · این هفته' : '')); b.type = 'button'; b.addEventListener('click', () => { Z.shift = q[0]; renderSch(); }); sb.append(b); });
+  [['morning', 'صبح'], ['afternoon', 'ظهر']].forEach(q => { const b = el('button', 'chip' + (Z.shift === q[0] ? ' on' : ''), q[1] + (q[0] === auto ? ' | این هفته' : '')); b.type = 'button'; b.addEventListener('click', () => { Z.shift = q[0]; renderSch(); }); sb.append(b); });
   PERIOD_TIMES = SHIFT_TIMES[Z.shift];
   schOpts(); dayBar($('#schDays'), Z.day, i => { Z.day = i; renderSch(); });
   const isC = Z.who[0] === 'c', ul = $('#schList'); ul.textContent = '';
   PERIOD_TIMES.forEach((tm, i) => {
     const r = slotOf(Z.day, i + 1)[0], li = el('li'), ab = !!r && absOn(r[4], weekJ(Z.day), i + 1), b = el('button', 'slot' + (r ? '' : ' free') + (ab ? ' absent' : '')); b.type = 'button';
-    b.append(el('span', 'pn', fa(i + 1)), el('span', 'nm', r ? r[3] + (r[5] ? ' (تک‌زنگ)' : '') + (ab ? ' — دبیر غایب' : '') : '—'), el('span', 'tm', (r ? (isC ? r[4] : r[0]) + ' · ' : '') + tm));
+    b.append(el('span', 'pn', fa(i + 1)), el('span', 'nm', r ? r[3] + (r[5] ? ' (تک‌زنگ)' : '') + (ab ? ' — دبیر غایب' : '') : '—'), el('span', 'tm', (r ? (isC ? r[4] : r[0]) + ' | ' : '') + tm));
     if (r && ROLE !== 'student' && ROLE !== 'counselor') b.addEventListener('click', () => useSlot(r)); li.append(b); ul.append(li);
   });
   $('#schEmpty').hidden = SCH.length > 0;
@@ -2420,13 +2699,14 @@ function edLoadCls() {
 }
 function edRender() {
   dayBar($('#edDays'), ED.day, i => { ED.day = i; edRender(); });
+  fillDatalist('edCourseL', curFor(ED.cls) || uniq(lsGet('sia_rost_c', []).concat(P.courses)));   // دروس رسمی رشته و پایه‌ی کلاس در حال ویرایش
   const box = $('#edRows'); box.textContent = '';
   PERIOD_TIMES.forEach((tm, i) => {
     const c = edCell(ED.day + '-' + (i + 1)), wrap = el('div', 'ed-slot');
     (c.alt ? [['صبح', c.m], ['ظهر', c.a]] : [['زنگ ' + fa(i + 1), c.all]]).forEach(pt => {
       const row = el('div', 'ed-row');
       const mk = (f, ph, list) => { const x = el('input'); x.type = 'text'; x.placeholder = ph; x.value = pt[1][f]; x.autocomplete = 'off'; x.setAttribute('list', list); x.setAttribute('aria-label', ph + ' ' + pt[0]); x.addEventListener('input', () => { pt[1][f] = x.value; }); return x; };
-      row.append(el('span', 'num', pt[0]), mk('s', 'درس', 'courseList'), mk('t', 'دبیر', 'teacherList')); wrap.append(row);
+      row.append(el('span', 'num', pt[0]), mk('s', 'درس', 'edCourseL'), mk('t', 'دبیر', 'teacherList')); wrap.append(row);
     });
     const lb = el('label', 'sms-opt'), cb = el('input'); cb.type = 'checkbox'; cb.checked = c.alt;
     cb.addEventListener('change', () => { c.alt = cb.checked; if (c.alt && !c.m.s && !c.m.t) Object.assign(c.m, c.all); edRender(); });
@@ -2437,7 +2717,7 @@ const hoursOf = t => SCH.filter(r => r[4] === t).reduce((a, r) => a + (r[5] ? 1 
 const daysOf = t => Array.from(new Set(SCH.filter(r => r[4] === t).map(r => r[1]))).sort();
 function infoLine(t) {
   const i = TINFO[t] || {}, ds = daysOf(t).map(d => DAYS[d]).join('، ');
-  return 'ابلاغ: ' + (i.h ? fa(i.h) + ' ساعت' : 'ثبت نشده') + ' · برنامه‌ی فعلی: ' + fa(hoursOf(t)) + ' ساعت' + (ds ? ' · روزها: ' + ds : '');
+  return 'ابلاغ: ' + (i.h ? fa(i.h) + ' ساعت' : 'ثبت نشده') + ' | برنامه‌ی فعلی: ' + fa(hoursOf(t)) + ' ساعت' + (ds ? ' | روزها: ' + ds : '');
 }
 function renderTch() {
   const t = $('#tchTbl'); if (!t) return; t.textContent = '';
@@ -2512,9 +2792,9 @@ function renderNow() {
   const mins = Math.max(1, Math.ceil(((n.live ? n.end : n.start) - now) / 60000));
   const dayTxt = n.k === 0 ? 'امروز' : n.k === 1 ? 'فردا' : DAYS[n.day];
   const hd = el('div', 'now-hd');
-  hd.append(el('div', 'now-t', 'زنگ ' + ORD[n.p - 1] + ' · ' + DAYS[n.day] + (n.k < 2 ? ' (' + dayTxt + ')' : '')), el('span', 'badge ' + (n.live ? 'live' : 'next'), n.live ? 'در حال برگزاری' : (!n0.live && NOWSKIP ? 'زنگ بعد از آن' : 'زنگ بعدی')));
+  hd.append(el('div', 'now-t', 'زنگ ' + ORD[n.p - 1] + ' | ' + DAYS[n.day] + (n.k < 2 ? ' (' + dayTxt + ')' : '')), el('span', 'badge ' + (n.live ? 'live' : 'next'), n.live ? 'در حال برگزاری' : (!n0.live && NOWSKIP ? 'زنگ بعد از آن' : 'زنگ بعدی')));
   const st = n.time.split('–')[0];
-  box.append(hd, el('div', 'now-sub', n.time + ' · شیفت ' + (n.shift === 'morning' ? 'صبح' : 'ظهر') + ' · ' +
+  box.append(hd, el('div', 'now-sub', n.time + ' | شیفت ' + (n.shift === 'morning' ? 'صبح' : 'ظهر') + ' | ' +
     (n.live ? fa(mins) + ' دقیقه تا پایان زنگ' : mins <= 90 ? fa(mins) + ' دقیقه دیگر شروع می‌شود' : 'شروع ' + dayTxt + ' ساعت ' + st)));
   const cls = ROLE === 'student' && SD ? [SD.cls] : uniq(allClasses().concat(SCH.map(r => r[0]))).sort((a, b) => a.localeCompare(b, 'fa'));
   if (!cls.length) { box.append(el('div', 'empty', 'هنوز کلاسی ثبت نشده است.')); return; }
@@ -2523,7 +2803,7 @@ function renderNow() {
   cls.forEach(c => {
     const r = SCH.find(x => x[0] === c && x[1] === n.day && x[2] === n.p && (!x[5] || x[5] === SH_FA[n.shift])), ab = !!r && absOn(r[4], nj, n.p), li = el('li'), b = el('button', 'slot' + (r ? '' : ' free') + (ab ? ' absent' : '')); b.type = 'button';
     const a = el('span', '', c); a.style.cssText = 'flex:1;font-weight:800';
-    b.append(a, el('span', 'tm', r ? r[3] + ' · ' + r[4] + (ab ? ' · دبیر غایب' : '') : '—'));
+    b.append(a, el('span', 'tm', r ? r[3] + ' | ' + r[4] + (ab ? ' | دبیر غایب' : '') : '—'));
     if (r && canUse) b.addEventListener('click', () => useSlot(r)); li.append(b); ul.append(li);
   });
   box.append(ul);
@@ -2619,12 +2899,15 @@ function dirEdit(b, x, kind) {
     ok.disabled = false; ok.textContent = 'ذخیره';
     if (r.net) { toast('اینترنت در دسترس نیست.'); return; }
     if (r.status !== 'ok') { toast(r.message || 'ذخیره نشد.'); return; }
-    toast('ذخیره شد' + (r.moved ? ' · سابقه‌ی ' + fa(r.moved) + ' ردیف منتقل شد' : '')); await loadDir(); if (r.moved && typeof mgLoad === 'function') mgLoad();
+    toast('ذخیره شد' + (r.moved ? ' | سابقه‌ی ' + fa(r.moved) + ' ردیف منتقل شد' : '')); await loadDir(); if (r.moved && typeof mgLoad === 'function') mgLoad();
   });
 }
 /* کامل‌بودن اطلاعات دانش‌آموز: کد ملی، نام و تلفن پدر و مادر و تلفن دانش‌آموز */
 const DIR_REQ = [['id', 'کد ملی'], ['fn', 'نام پدر'], ['fp', 'تلفن پدر'], ['mn', 'نام مادر'], ['mp', 'تلفن مادر'], ['sp', 'تلفن دانش‌آموز']];
 const dirMissing = x => DIR_REQ.filter(q => !String(x[q[0]] || '').trim()).map(q => q[1]);
+/* کامل‌بودن اطلاعات دبیر (نسخه‌ی ۱٫۰۹): کد پرسنلی، کد ملی، شماره تماس، مدرک تحصیلی */
+const TDIR_REQ = [['pc', 'کد پرسنلی'], ['id', 'کد ملی'], ['ph', 'شماره تماس'], ['deg', 'مدرک تحصیلی']];
+const tDirMissing = x => TDIR_REQ.filter(q => !String(x[q[0]] || '').trim()).map(q => q[1]);
 function renderDir() {
   const tb = $('#dirTabs'); tb.textContent = '';
   [['s', 'دانش‌آموزان (' + fa(DIR.students.length) + ')'], ['t', 'دبیران (' + fa(DIR.teachers.length) + ')']].forEach(q => {
@@ -2634,11 +2917,11 @@ function renderDir() {
   $('#dirClsF').hidden = DT !== 's'; box.classList.toggle('dir-grid', DT === 's');
   if (DT === 's' && !cv && !term) { box.append(el('div', 'empty', 'برای دیدن دانش‌آموزان، ابتدا کلاس را انتخاب کنید یا نام را جست‌وجو کنید.')); return; }
   const hit = src.filter(x => !term || dn(Object.keys(x).map(k => Array.isArray(x[k]) ? x[k].join(' ') : x[k]).join(' ')).indexOf(term) >= 0);
-  if (DT === 's' && hit.length) { const nOk = hit.filter(x => !dirMissing(x).length).length, st = el('div', 'dir-sum');
-    st.append(el('span', 'ok', '✓ کامل: ' + fa(nOk)), el('span', 'bad', '✗ ناقص: ' + fa(hit.length - nOk))); box.append(st); }
+  if (hit.length) { const mf = DT === 's' ? dirMissing : tDirMissing, nOk = hit.filter(x => !mf(x).length).length, st = el('div', 'dir-sum');
+    st.append(el('span', 'ok', '✓ تکمیل‌شده: ' + fa(nOk)), el('span', 'bad', '✗ تکمیل‌نشده: ' + fa(hit.length - nOk))); box.append(st); }
   hit.slice(0, 100).forEach(x => {
     const d = el('details', 'dir-it'), sm = el('summary'), b = el('div', 'dir-b');
-    if (DT === 's') { const ms = dirMissing(x); d.classList.add(ms.length ? 'dir-bad' : 'dir-ok'); d.dataset.missing = ms.join('، '); }
+    { const ms = DT === 's' ? dirMissing(x) : tDirMissing(x); d.classList.add(ms.length ? 'dir-bad' : 'dir-ok'); d.dataset.missing = ms.join('، '); }
     if (DT === 's') {
       sm.append(el('span', '', (dirMissing(x).length ? '' : '✓ ') + x.n), el('small', '', cv ? '' : x.c));
       if (dirMissing(x).length) b.append(el('div', 'dir-miss', 'اطلاعات ناقص: ' + dirMissing(x).join('، ')));
@@ -2649,7 +2932,8 @@ function renderDir() {
         pb.addEventListener('click', async () => { pb.disabled = true; const r = await send({ action:'studentCard', pin:MG.pin, nid:x.id, ym:dateStr().slice(0, 7), key:ACCESS_KEY }); pb.disabled = false;
           if (r.status === 'ok') printCard(r); else toast(r.message || 'کارنامه دریافت نشد.'); }); b.append(pb); }
     } else {
-      sm.append(el('span', '', x.n), el('small', '', x.courses.join('، ')));
+      const tm = tDirMissing(x); sm.append(el('span', '', (tm.length ? '' : '✓ ') + x.n), el('small', '', x.courses.join('، ')));
+      if (tm.length) b.append(el('div', 'dir-miss', 'اطلاعات تکمیل‌نشده: ' + tm.join('، ')));
       b.append(infoRow('کد پرسنلی', x.pc), infoRow('کد ملی', x.id), infoRow('مدرک تحصیلی', x.deg), telRow('شماره تماس', '', x.ph));
       { const eb = el('button', 'btn', '✏️ ویرایش مشخصات'); eb.type = 'button'; eb.addEventListener('click', () => dirEdit(b, x, 't')); b.append(eb); }
       { const vb = el('button', 'btn', '👁 ورود به پنل این دبیر'); vb.type = 'button'; vb.addEventListener('click', () => viewTeacher(x)); b.append(vb); }
@@ -2712,16 +2996,16 @@ function tchProfRender(prof, miss) {
 }
 function applyRole() {
   const st = ROLE === 'student', mgr = ROLE === 'manager', cn = ROLE === 'counselor', staff = ROLE === 'teacher' || mgr;
-  $('#gate').hidden = !!ROLE; $('#whoBar').hidden = !ROLE; $('#p-stu').hidden = !st;
+  $('#gate').hidden = !!ROLE; document.body.classList.toggle('signed', !!ROLE); $('#whoBar').hidden = !ROLE; $('#p-stu').hidden = !st;
   const vis = cn ? ['cns', 'sch'] : mgr ? ['att', 'gr', 'sch', 'inb', 'mg'] : ROLE === 'teacher' ? ['att', 'gr', 'sch', 'inb', 'cns', 'stf', 'dis'] : ['att', 'gr', 'sch', 'inb'];
   const tb = document.querySelector('.tabs'); tb.hidden = st; tb.style.gridTemplateColumns = 'repeat(' + vis.length + ',1fr)';
   $$('.tab').forEach(b => { b.hidden = !vis.includes(b.dataset.tab); });
   $('#schWho').closest('.field').hidden = st; $('#nowLbl').textContent = st ? 'زنگ فعلی کلاس شما' : 'زنگ فعلی — همه‌ی کلاس‌ها';
-  $('#whoName').textContent = st && SD ? SD.name + ' · ' + SD.cls : mgr ? 'مدیر مدرسه' : cn ? 'مشاور: ' + COUNSELOR_NAME : ROLE === 'teacher' ? 'دبیر: ' + S.teacher : '';
+  $('#whoName').textContent = st && SD ? SD.name + ' | ' + SD.cls : mgr ? 'مدیر مدرسه' : cn ? 'مشاور: ' + COUNSELOR_NAME : ROLE === 'teacher' ? 'دبیر: ' + S.teacher : '';
   $('#cnsC').hidden = !cn; $('#cnsT').hidden = ROLE !== 'teacher';
   setTimeout(tchGate, 0);
   if (st && SD) {
-    ['att', 'gr', 'mg', 'inb', 'cns', 'stf', 'dis'].forEach(k => { $('#p-' + k).hidden = true; }); $('#common').hidden = true;
+    ['home', 'att', 'gr', 'mg', 'inb', 'cns', 'stf', 'dis'].forEach(k => { $('#p-' + k).hidden = true; }); $('#common').hidden = true;
     const h = $('#stuHead'); h.textContent = ''; h.append(el('div', 'now-t', SD.name), el('div', 'now-sub', 'کلاس ' + SD.cls)); stuNav(STU_K); if (!SD.viewAs) qzPrefetch();
   } else if (cn) {
     $('#common').hidden = true; setTab('cns');
@@ -2834,8 +3118,9 @@ function remNotify() {          // اعلان مرورگر: هر یادآور د
 document.addEventListener('visibilitychange', () => { if (!document.hidden && ROLE === 'student') { stuBanner(); remNotify(); } });
 function stuDash(box) {
   const A = SD.att || {}, tot = A.sessions || 0, rate = tot ? Math.round((A.present || 0) / tot * 100) : null, avg = SD.overall ? SD.overall.me : null, clsAvg = SD.overall ? SD.overall.cls : null;
-  const by = {}; (SD.grades || []).filter(g => g.n != null && !g.a).forEach(g => { const m = en(String(g.d)).slice(0, 7); (by[m] = by[m] || []).push(g.n); });
-  const ks = Object.keys(by).sort(), mean = a => a.reduce((x, y) => x + y, 0) / a.length, delta = ks.length >= 2 ? mean(by[ks[ks.length - 1]]) - mean(by[ks[ks.length - 2]]) : null;
+  const UC = {}; (SD.courses || []).forEach(x => { UC[x.c] = x.u || 1; });   // روند ماهانه هم وزنی بر اساس واحد درس
+  const by = {}; (SD.grades || []).filter(g => g.n != null && !g.a).forEach(g => { const m = en(String(g.d)).slice(0, 7); (by[m] = by[m] || []).push([g.n, UC[g.c] || 1]); });
+  const ks = Object.keys(by).sort(), mean = wMean, delta = ks.length >= 2 ? mean(by[ks[ks.length - 1]]) - mean(by[ks[ks.length - 2]]) : null;
   const hero = el('div', 'card'); hero.append(el('div', 'now-t', 'سلام ' + String(SD.name).split(' ')[0] + ' 👋'));
   hero.append(el('div', 'now-sub', SD.rank && SD.rank.of ? 'رتبه‌ی کلاسی تو: ' + fa(SD.rank.pos) + ' از ' + fa(SD.rank.of) : 'وضعیت تحصیلی تو در یک نگاه'));
   const rg = el('div', 'rings');
@@ -2843,7 +3128,7 @@ function stuDash(box) {
     ringSvg(avg == null ? null : avg / 20 * 100, avg == null ? 'var(--muted)' : avg >= 17 ? 'var(--present)' : avg >= 12 ? 'var(--teal)' : 'var(--absent)', f2(avg), 'میانگین از ۲۰'));
   hero.append(rg);
   const tr = el('div', 'now-sub'); tr.style.textAlign = 'center';
-  tr.textContent = delta == null ? 'برای دیدن پیشرفت ماهانه، دست‌کم در دو ماه نمره لازم است.' : (delta >= 0.05 ? '📈 ' + f2(delta) + ' نمره بهتر از ماه قبل' : delta <= -0.05 ? '📉 ' + f2(-delta) + ' نمره پایین‌تر از ماه قبل' : '➡️ مثل ماه قبل') + (clsAvg != null && avg != null ? ' · میانگین کلاس ' + f2(clsAvg) : '');
+  tr.textContent = delta == null ? 'برای دیدن پیشرفت ماهانه، دست‌کم در دو ماه نمره لازم است.' : (delta >= 0.05 ? '📈 ' + f2(delta) + ' نمره بهتر از ماه قبل' : delta <= -0.05 ? '📉 ' + f2(-delta) + ' نمره پایین‌تر از ماه قبل' : '➡️ مثل ماه قبل') + (clsAvg != null && avg != null ? ' | میانگین کلاس ' + f2(clsAvg) : '');
   hero.append(tr); box.append(hero);
   // هدف شخصی
   const gk = 'sia_goal_' + SD.nid, goal = lsGet(gk, null), gc = el('div', 'card'); gc.append(el('div', 'lbl', '🎯 هدف من'));
@@ -2859,7 +3144,7 @@ function stuDash(box) {
       r.append(el('span', '', x.c), b, el('b', '', f2(x.me))); cc.append(r); }); cc.append(el('div', 'now-sub', 'خط عمودی = میانگین کلاس')); box.append(cc); }
   // یادآور
   const rc = el('div', 'card'); rc.append(el('div', 'lbl', '🔔 یادآور آزمون و تکلیف')); const rl = remList();
-  rc.append(rl.length ? el('div', 'now-sub', rl.map(x => x.text).join(' · ')) : el('div', 'now-sub', 'تا دو روز آینده آزمون یا تکلیفی در تقویم نیست.'));
+  rc.append(rl.length ? el('div', 'now-sub', rl.map(x => x.text).join(' | ')) : el('div', 'now-sub', 'تا دو روز آینده آزمون یا تکلیفی در تقویم نیست.'));
   if ('Notification' in window) { const on = lsGet('sia_rem_on', false) && Notification.permission === 'granted', nb = el('button', on ? 'btn' : 'send', on ? '✓ اعلان فعال است (خاموش کردن)' : 'فعال‌سازی اعلان یادآور'); nb.type = 'button'; nb.style.marginTop = '8px';
     nb.addEventListener('click', async () => { if (on) { lsSet('sia_rem_on', false); toast('اعلان خاموش شد'); stuNav('dash'); return; } const pm = await Notification.requestPermission(); if (pm !== 'granted') { toast('اجازه‌ی اعلان داده نشد.'); return; } lsSet('sia_rem_on', true); toast('اعلان فعال شد ✓'); remNotify(); stuNav('dash'); });
     rc.append(nb, el('div', 'now-sub', 'اعلان وقتی نمایش داده می‌شود که برنامه را باز کنی؛ برای اطمینان بیشتر هر روز یک‌بار سر بزن.')); }
@@ -2884,7 +3169,7 @@ function stuNav(k) {
 }
 function stuKar(box) {
   const c1 = el('div', 'card'), c2 = el('div', 'card'); c1.append(el('div', 'lbl', 'کارنامه — میانگین هر درس (از ۲۰)')); c2.append(el('div', 'lbl', 'نمره‌های هر آزمون'));
-  c1.append(SD.courses.length ? tbl(['درس', 'میانگین شما', 'میانگین کلاس'], SD.courses.map(x => [x.c, f2(x.me), f2(x.cls)]).concat([['معدل کل', f2(SD.overall.me), f2(SD.overall.cls)]])) : el('div', 'empty', 'هنوز نمره‌ای ثبت نشده است.'));
+  c1.append(SD.courses.length ? tbl(['درس', 'واحد', 'میانگین شما', 'میانگین کلاس'], SD.courses.map(x => [x.c, uTx(x.u), f2(x.me), f2(x.cls)]).concat([['معدل کل (وزنی)', uSum(SD.courses), f2(SD.overall.me), f2(SD.overall.cls)]])) : el('div', 'empty', 'هنوز نمره‌ای ثبت نشده است.'));
   c2.append(SD.grades.length ? tbl(['تاریخ', 'درس', 'آزمون', 'نمره', 'از ۲۰', 'میانگین کلاس'], SD.grades.slice().reverse().map(g => [g.d, g.c, g.e, g.a ? 'غایب' : fa(g.s) + ' از ' + fa(g.m), g.a ? '—' : f2(g.n), f2(g.ca)])) : el('div', 'empty', '—'));
   const bc = el('div', 'card'), c3 = el('div', 'card'), pr = el('button', 'btn', 'چاپ یا ذخیره‌ی کارنامه (PDF)');
   bc.append(el('div', 'lbl', 'نشان‌های شما'));
@@ -2916,7 +3201,7 @@ function stuAvg(box) {
   box.append(tc);
   const c = el('div', 'card'); c.append(el('div', 'lbl', 'میانگین شما در مقایسه با کلاس (از ۲۰)'));
   if (!SD.courses.length) c.append(el('div', 'empty', 'هنوز نمره‌ای ثبت نشده است.'));
-  else { c.append(mk('معدل کل', SD.overall.me, SD.overall.cls)); SD.courses.forEach(x => c.append(mk(x.c, x.me, x.cls))); }
+  else { c.append(mk('معدل کل (وزنی بر اساس واحد)', SD.overall.me, SD.overall.cls)); SD.courses.forEach(x => c.append(mk(x.c + (x.u ? ' — ' + fa(x.u) + ' واحد' : ''), x.me, x.cls))); }
   box.append(c);
 }
 setTimeout(() => {          // بازگرداندن نشست قبلی بعد از اجرای راه‌اندازی اصلی
@@ -2981,7 +3266,7 @@ function ptView() {
     const c = el('div', 'card'), hd = el('div'); hd.style.cssText = 'display:flex;justify-content:space-between;gap:8px;align-items:center';
     const tot = m.st.reduce((a, x) => a + x.tot, 0), rec = m.st.reduce((a, x) => a + (x.rec ? x.p + x.e + x.a : 0), 0), pr = m.st.reduce((a, x) => a + x.p, 0);
     hd.append(el('b', '', m.t), el('span', 'badge', fa(m.d)));
-    c.append(hd, el('div', 'now-sub', (m.all ? 'همه‌ی کلاس‌ها' : 'کلاس‌های ' + m.cl.map(fa).join('، ')) + (m.note ? ' · ' + m.note : '')));
+    c.append(hd, el('div', 'now-sub', (m.all ? 'همه‌ی کلاس‌ها' : 'کلاس‌های ' + m.cl.map(fa).join('، ')) + (m.note ? ' | ' + m.note : '')));
     c.append(el('div', 'now-sub', rec ? 'حضور اولیا: ' + fa(pr) + ' از ' + fa(tot) + ' دانش‌آموز (' + fa(Math.round(pr / (tot || 1) * 100)) + '٪)' : 'حضور و غیاب هنوز ثبت نشده است.'));
     const g = el('div', 'pt-g');
     m.st.forEach(x => { const b = el('button', 'chip' + (x.rec ? ' pt-ok' : ' pt-no'), ''); b.type = 'button';
@@ -3019,8 +3304,8 @@ function pvView() {
   sel.addEventListener('change', () => { PT.vf = sel.value; ptOpen(); }); f.append(sel); c.append(f);
   if (!PT.visits.length) c.append(el('div', 'empty', 'مراجعه‌ای ثبت نشده است.'));
   PT.visits.forEach(v => { const d = el('div', 'dir-it'); d.style.padding = '10px 14px';
-    const hd = el('div'); hd.style.cssText = 'display:flex;justify-content:space-between;gap:8px;align-items:center'; hd.append(el('b', '', v.n + ' · ' + fa(v.c)), el('span', 'badge', fa(v.d)));
-    d.append(hd, el('div', 'now-sub', 'مراجعه‌کننده: ' + v.w + ' · موضوع: ' + v.s)); if (v.note) d.append(el('div', 'now-sub', 'توضیح: ' + v.note));
+    const hd = el('div'); hd.style.cssText = 'display:flex;justify-content:space-between;gap:8px;align-items:center'; hd.append(el('b', '', v.n + ' | ' + fa(v.c)), el('span', 'badge', fa(v.d)));
+    d.append(hd, el('div', 'now-sub', 'مراجعه‌کننده: ' + v.w + ' | موضوع: ' + v.s)); if (v.note) d.append(el('div', 'now-sub', 'توضیح: ' + v.note));
     const r = el('div'); r.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px'; const ed = el('button', 'btn', '✏️ ویرایش'), dl = el('button', 'btn', '🗑 حذف'); ed.type = dl.type = 'button';
     ed.addEventListener('click', () => pvForm(v));
     dl.addEventListener('click', async () => { if (!confirm('این مراجعه حذف شود؟')) return; const q = await ptCall('pvDel', { id:v.id }); if (q.status !== 'ok') { toast(q.message || 'حذف نشد.'); return; } toast('حذف شد'); ptOpen(); });
@@ -3048,7 +3333,7 @@ function pvForm(v) {
 async function ptAtt(m, cls) {
   const h = $('#ptHost'); h.textContent = ''; h.append(el('div', 'now-sub', 'در حال دریافت…'));
   const r = await ptCall('ptGet', { id:m.id, cls:cls }); if (r.status !== 'ok') { toast(r.message || 'دریافت نشد.'); ptView(); return; }
-  h.textContent = ''; const c = el('div', 'card'); c.append(el('div', 'lbl', 'حضور اولیا — کلاس ' + fa(cls)), el('div', 'now-sub', m.t + ' · ' + fa(m.d)));
+  h.textContent = ''; const c = el('div', 'card'); c.append(el('div', 'lbl', 'حضور اولیا — کلاس ' + fa(cls)), el('div', 'now-sub', m.t + ' | ' + fa(m.d)));
   const rows = r.list.map(x => Object.assign({}, x)), sm = el('div', 'dir-sum'), list = el('div');
   const paint = () => { const n = k => rows.filter(x => x.s === k).length; sm.textContent = ''; sm.append(el('span', 'ok', '✓ حاضر: ' + fa(n('حاضر'))), el('span', 'bad', '✗ غایب: ' + fa(n('غایب'))), el('span', 'bad', 'موجه: ' + fa(n('موجه'))), el('span', 'bad', 'ثبت‌نشده: ' + fa(rows.filter(x => !x.s).length))); };
   const draw = () => { list.textContent = ''; rows.forEach(x => {
@@ -3073,7 +3358,7 @@ function myPairs() {            // null = بدون محدودیت (مدیر، ی
 function visClasses(st) { const pr = myPairs(), l = Object.keys(STUDENTS[st] || {}); return pr ? l.filter(c => pr.some(x => x.c === c)) : l; }
 function fixCourse() {
   const pr = myPairs();
-  if (!pr) { fillDatalist('courseList', uniq(lsGet('sia_rost_c', []).concat(P.courses))); return; }
+  if (!pr) { fillDatalist('courseList', curFor(S.cls) || uniq(lsGet('sia_rost_c', []).concat(P.courses))); return; }   // فهرست رسمی دروس رشته و پایه‌ی همین کلاس
   const cs = uniq(pr.filter(x => x.c === S.cls).map(x => x.s));
   fillDatalist('courseList', cs);
   if (cs.length === 1) S.course = cs[0]; else if (!cs.some(c => normT(c) === normT(S.course))) S.course = '';
@@ -3115,12 +3400,12 @@ function renderInb() {
   const box = $('#inbBody'); box.textContent = '';
   if (!INB || !INB.length) { box.append(el('div', 'empty', 'برای شما در برنامه‌ی هفتگی کلاس و درسی ثبت نشده است.')); return; }
   const x = INB[+$('#inbSel').value || 0], sm = el('div', 'card');
-  sm.append(el('div', 'now-t', x.c + ' · ' + x.s), el('div', 'now-sub', 'جلسات ثبت‌شده: ' + fa(x.sessions) + ' · میانگین کلاس: ' + f2(x.avg) + ' (از ۲۰)'));
-  if (x.top && x.top.length) sm.append(el('div', 'now-sub', x.top.map((t, i) => ['🥇', '🥈', '🥉'][i] + ' ' + t.n + ' (' + f2(t.avg) + ')').join('  ·  '))); box.append(sm); inbRisk(box, x); anaMount(box, x); qzMount(box, x);
+  sm.append(el('div', 'now-t', x.c + ' | ' + x.s), el('div', 'now-sub', 'جلسات ثبت‌شده: ' + fa(x.sessions) + ' | میانگین کلاس: ' + f2(x.avg) + ' (از ۲۰)'));
+  if (x.top && x.top.length) sm.append(el('div', 'now-sub', x.top.map((t, i) => ['🥇', '🥈', '🥉'][i] + ' ' + t.n + ' (' + f2(t.avg) + ')').join('  |  '))); box.append(sm); inbRisk(box, x); anaMount(box, x); qzMount(box, x);
   box.append(attCard(x));
   x.students.forEach(st => {
     const d = el('details', 'dir-it'), h = el('summary'), b = el('div', 'dir-b');
-    h.append(el('span', '', st.n), el('small', '', 'غ ' + fa(st.ab) + ' · ت ' + fa(st.lt) + ' · میانگین ' + f2(st.avg)));
+    h.append(el('span', '', st.n), el('small', '', 'غ ' + fa(st.ab) + ' | ت ' + fa(st.lt) + ' | میانگین ' + f2(st.avg)));
     b.append(
       el('div', 'lbl', 'نمرات'), st.gr.length ? tbl(['تاریخ', 'آزمون', 'نمره', 'از ۲۰', 'میانگین کلاس'], st.gr.map(g => [g.d, g.e, g.a ? 'غایب' : fa(g.s) + ' از ' + fa(g.m), g.a ? '—' : f2(g.n), f2(g.ca)])) : el('div', 'now-sub', 'نمره‌ای ثبت نشده.'));
     b.append(el('div', 'lbl', 'روند نمره'), trendSvg(st.gr.slice().reverse().filter(g => g.n != null)));
@@ -3144,7 +3429,7 @@ function attCard(x) {
   const c = el('div', 'card'); c.append(el('div', 'lbl', 'حضور و غیاب کلاس'));
   const ses = (x.ses || []).slice().sort((a, b) => a.d < b.d ? -1 : a.d > b.d ? 1 : a.t < b.t ? -1 : a.t > b.t ? 1 : 0);
   if (!ses.length || !x.students.length) { c.append(el('div', 'now-sub', 'هنوز حضور و غیابی برای این کلاس ثبت نشده است.')); return c; }
-  c.append(el('div', 'now-sub', 'ح: حاضر · غ: غایب · ت: تأخیر · م: موجه · —: معاف (مرخصی یا عدم حضور دبیر)'));
+  c.append(el('div', 'now-sub', 'ح: حاضر | غ: غایب | ت: تأخیر | م: موجه | —: معاف (مرخصی یا عدم حضور دبیر)'));
   const wrap = el('div', 'mx-wrap'), tb = el('table', 'mx'), thr = el('tr');
   thr.append(el('th', 'nm', 'نام'));
   ses.forEach(s => thr.append(el('th', s.ex ? 'ex' : '', fa(s.d.slice(5)) + '\n' + fa(s.t))));
@@ -3172,7 +3457,7 @@ function inbRisk(box, x) {
   const c = el('div', 'card'); c.style.borderColor = 'var(--late)'; c.append(el('div', 'lbl', '⚠️ نیازمند توجه در این کلاس (' + fa(l.length) + ' نفر)'));
   l.forEach(r => { const d = el('div', 'dir-it'), h = el('div'); d.style.padding = '10px 14px';
     h.style.cssText = 'display:flex;justify-content:space-between;gap:8px;align-items:center'; const b = el('span', 'badge', r.lv); if (r.lv === 'بالا') b.style.cssText = 'background:var(--absent);color:#fff'; else b.style.cssText = 'background:var(--late);color:#fff';
-    h.append(el('b', '', r.n), b); d.append(h, el('div', 'now-sub', r.why.join(' · '))); c.append(d); });
+    h.append(el('b', '', r.n), b); d.append(h, el('div', 'now-sub', r.why.join(' | '))); c.append(d); });
   c.append(el('div', 'now-sub', 'برای پیگیری می‌توانید از «یادداشت رفتاری» یا درخواست مشاوره استفاده کنید.')); box.append(c);
 }
 async function inbRiskLoad() {
@@ -3292,7 +3577,7 @@ function anaMount(box, x) {
     if (!names.length) { body.append(el('div', 'now-sub', empty)); return; }
     const w = el('div', 'pl-why'); names.forEach(q => w.append(el('span', q[1] || '', q[0]))); body.append(w);
     const cp = el('button', 'link-btn', '📋 کپی فهرست'); cp.type = 'button';
-    cp.addEventListener('click', async () => { const t = title + ' — ' + x.c + ' · ' + x.s + ' (' + o.e + ' ' + fa(o.d) + '):\n' + names.map(q => '• ' + q[0]).join('\n');
+    cp.addEventListener('click', async () => { const t = title + ' — ' + x.c + ' | ' + x.s + ' (' + o.e + ' ' + fa(o.d) + '):\n' + names.map(q => '• ' + q[0]).join('\n');
       try { await navigator.clipboard.writeText(t); toast('فهرست کپی شد ✓'); } catch (e) { toast('کپی در این مرورگر ممکن نیست'); } });
     if (note) body.append(el('div', 'now-sub', note)); body.append(cp);
   };
@@ -3812,7 +4097,7 @@ function qzPaperPrint(x, C, qs) {
 window.addEventListener('afterprint', () => { const pa = $('#printArea'); if (pa) pa.classList.remove('paper'); });
 
 /* ======================= نمودارها، کارنامه‌ی چاپی و نشان‌ها ======================= */
-const NS = 'http://www.w3.org/2000/svg', JM = ['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'], SCHOOL_NAME = 'دبیرستان صلاح‌الدین ایوبی';
+const NS = 'http://www.w3.org/2000/svg', JM = ['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];
 function sv(t, a, txt) { const e = document.createElementNS(NS, t); Object.keys(a || {}).forEach(k => e.setAttribute(k, a[k])); if (txt != null) e.textContent = txt; return e; }
 function legend(items) {
   const l = el('div', 'now-sub'); l.style.cssText = 'display:flex;gap:14px;flex-wrap:wrap;margin-top:6px';
@@ -3830,16 +4115,16 @@ function trendSvg(rows) {         // rows: [{d, n, ca}] از قدیم به جد�
     if (pts.length > 1) svg.append(sv('polyline', { points:pts.map(q => q.join(',')).join(' '), fill:'none', style:'stroke:' + col + ';stroke-width:2.5' + (dash ? ';stroke-dasharray:5 4' : '') }));
     pts.forEach(q => svg.append(sv('circle', { cx:q[0], cy:q[1], r:N === 1 ? 6 : 3.5, style:'fill:' + col })));
   };
-  line('ca', '#E0BC6B', true); line('n', '#2FA4A9');
+  line('ca', 'var(--c-cls)', true); line('n', 'var(--c-me)');
   if (N === 1) {                      // فقط یک نمره: مقدار نمره‌ی دانش‌آموز و میانگین کلاس کنار هم نوشته می‌شود
     const r = rows[0], up = r.ca == null || r.n >= r.ca;
     const tx = (v, col, above) => svg.append(sv('text', { x:X(0), y:Y(v) + (above ? -12 : 20), 'text-anchor':'middle', 'font-size':12, 'font-weight':800, style:'fill:' + col }, f2(v)));
-    if (r.n != null) tx(r.n, '#2FA4A9', up);
-    if (r.ca != null) tx(r.ca, '#B8923A', !up);
+    if (r.n != null) tx(r.n, 'var(--c-me)', up);
+    if (r.ca != null) tx(r.ca, 'var(--c-cls-tx)', !up);
   }
   const ix = N === 1 ? [0] : [0, N - 1];
   ix.forEach(i => svg.append(sv('text', { x:X(i), y:H - 8, 'text-anchor':'middle', 'font-size':10, style:'fill:var(--muted)' }, fa(String(rows[i].d).slice(5)))));
-  wrap.append(svg, legend([['#2FA4A9', 'نمره‌ی شما'], ['#E0BC6B', 'میانگین کلاس']]));
+  wrap.append(svg, legend([['var(--c-me)', 'نمره‌ی شما'], ['var(--c-cls)', 'میانگین کلاس']]));
   if (N === 1) wrap.append(el('div', 'now-sub', 'فقط یک نمره ثبت شده است؛ با ثبت نمره‌های بعدی، روند کامل نمایش داده می‌شود.'));
   return wrap;
 }
@@ -3848,11 +4133,11 @@ function absInit() { renderTop(); }
 function printCard(d) {
   const pa = $('#printArea'); pa.textContent = '';
   if (LOGO_BASE64) { const im = el('img'); im.src = $('#logo').src; im.alt = ''; im.style.cssText = 'width:76px;height:76px;float:left;margin:0 10px 6px 0'; pa.append(im); }
-  pa.append(el('h1', '', 'کارنامه تحصیلی — ' + SCHOOL_NAME), el('div', '', 'نام: ' + d.name + ' · کلاس: ' + d.cls + ' · تاریخ صدور: ' + fa(dateStr())), el('h2', '', 'میانگین درس‌ها (از ۲۰)'));
-  pa.append(d.courses.length ? tbl(['درس', 'میانگین دانش‌آموز', 'میانگین کلاس'], d.courses.map(x => [x.c, f2(x.me), f2(x.cls)]).concat([['معدل کل', f2(d.overall.me), f2(d.overall.cls)]])) : el('div', '', 'نمره‌ای ثبت نشده است.'));
+  pa.append(el('h1', '', 'کارنامه تحصیلی — ' + SCHOOL_NAME), el('div', '', 'نام: ' + d.name + ' | کلاس: ' + d.cls + ' | تاریخ صدور: ' + fa(dateStr())), el('h2', '', 'میانگین درس‌ها (از ۲۰)'));
+  pa.append(d.courses.length ? tbl(['درس', 'واحد', 'میانگین دانش‌آموز', 'میانگین کلاس'], d.courses.map(x => [x.c, uTx(x.u), f2(x.me), f2(x.cls)]).concat([['معدل کل (وزنی)', uSum(d.courses), f2(d.overall.me), f2(d.overall.cls)]])) : el('div', '', 'نمره‌ای ثبت نشده است.'));
   const a = d.att; pa.append(el('h2', '', 'حضور و غیاب'), tbl(['کل جلسات', 'حاضر', 'غایب', 'تأخیر', 'غیبت موجه'], [[a.sessions, a.present, a.absent, a.late, a.excused].map(fa)]));
   if (d.grades.length) pa.append(el('h2', '', 'نمره‌ی آزمون‌ها'), tbl(['تاریخ', 'درس', 'آزمون', 'نمره', 'از ۲۰'], d.grades.slice().sort(byDate).map(g => [g.d, g.c, g.e, g.a ? 'غایب' : fa(g.s) + ' از ' + fa(g.m), g.a ? '—' : f2(g.n)])));
-  if (d.badges && d.badges.length) pa.append(el('h2', '', 'نشان‌های تشویقی'), el('div', '', d.badges.map(b => b.i + ' ' + b.t).join('  ·  ')));
+  if (d.badges && d.badges.length) pa.append(el('h2', '', 'نشان‌های تشویقی'), el('div', '', d.badges.map(b => b.i + ' ' + b.t).join('  |  ')));
   if (d.visits && d.visits.length) pa.append(el('h2', '', 'مراجعه‌ی اولیا'), tbl(['تاریخ', 'مراجعه‌کننده', 'موضوع'], d.visits.map(x => [fa(x.d), x.w, x.s])));
   const ft = el('div', '', 'این کارنامه برای اطلاع اولیا از وضعیت تحصیلی فرزندشان تنظیم شده است.'); ft.style.marginTop = '18px'; pa.append(ft);
   document.body.classList.add('printing'); window.print();
@@ -3878,7 +4163,7 @@ function missing(now) {
   return out;
 }
 async function pollToday() {
-  if (!MG.pin || $('#mgBody').hidden) return;
+  if (!MG.pin || $('#mgBody').hidden || document.hidden) return;
   const r = await send({ action:'today', pin:MG.pin, date:dateStr(), key:ACCESS_KEY });
   if (r.status === 'ok') { TODAY = r.done || []; EXEMPT = r.exempt || []; renderAlerts(); }
 }
@@ -3889,13 +4174,14 @@ function renderAlerts() {
   card.hidden = !list.length; tab.classList.toggle('alert', list.length > 0 || LV_PEND > 0); box.textContent = ''; let fresh = false;
   list.forEach(x => {
     const r = el('div', 'dir-it red-it');
-    r.append(el('div', 'now-t', x.n + ' — ' + x.c + ' · ' + x.s), el('div', 'now-sub', 'زنگ ' + ORD[x.p - 1] + ' (' + x.t + ') · ✗ انجام نشده'));
+    r.append(el('div', 'now-t', x.n + ' — ' + x.c + ' | ' + x.s), el('div', 'now-sub', 'زنگ ' + ORD[x.p - 1] + ' (' + x.t + ') | ✗ انجام نشده'));
     const t = DIR.teachers.find(q => normT(q.n) === normT(x.n)); if (t && t.ph) { const a = el('a', 'tel', 'تماس با دبیر'); a.href = 'tel:' + t.ph; r.append(a); }
     box.append(r); const k = dateStr() + '|' + x.p + '|' + x.c + '|' + x.s; if (!SEEN[k]) { SEEN[k] = 1; fresh = true; }
   });
   if (fresh) { toast('⚠️ ' + fa(list.length) + ' زنگ بدون حضور و غیاب'); if (navigator.vibrate) navigator.vibrate([300, 100, 300]); }
 }
 setInterval(pollToday, 60000); setInterval(renderAlerts, 15000);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) pollToday(); });
 
 /* ======================= غیبت موجه (ثبت مدیر، قفل برای دبیر) و آزمون‌های آزمایشی ======================= */
 const INST = ['ماز', 'قلمچی', 'راه موفقیت', 'خیلی سبز', 'گزینه دو', 'سایر'];
@@ -3930,7 +4216,7 @@ async function excLoad() {
   if (r.status !== 'ok') { box.append(el('div', 'empty', r.message || 'بارگذاری نشد.')); return; }
   if (!r.list.length) { box.append(el('div', 'now-sub', 'برای این تاریخ غیبت موجهی ثبت نشده است.')); return; }
   r.list.forEach(x => {
-    const row = el('div', 'dir-r'), b = el('button', 'btn', 'حذف'); b.type = 'button'; row.append(el('span', '', x.n + ' · ' + x.c + (x.p && x.p.length && x.p.length < 3 ? ' · زنگ ' + x.p.map(fa).join(' و ') : ' · هر سه زنگ') + (x.r ? ' · ' + x.r : '')), b);
+    const row = el('div', 'dir-r'), b = el('button', 'btn', 'حذف'); b.type = 'button'; row.append(el('span', '', x.n + ' | ' + x.c + (x.p && x.p.length && x.p.length < 3 ? ' | زنگ ' + x.p.map(fa).join(' و ') : ' | هر سه زنگ') + (x.r ? ' | ' + x.r : '')), b);
     b.addEventListener('click', () => showModal({ icon:'warn', title:'حذف غیبت موجه', msg:x.n + ' دوباره «غایب» ثبت می‌شود. ادامه می‌دهید؟',
       buttons:[{ text:'حذف', primary:true, onClick:async () => { const q = await send({ action:'excDel', pin:MG.pin, date:x.d, cls:x.c, name:x.n, key:ACCESS_KEY }); toast(q.status === 'ok' ? 'حذف شد' : (q.message || 'ناموفق')); excLoad(); $('#mgReload').click(); } }, { text:'انصراف' }] }));
     box.append(row);
@@ -3963,7 +4249,7 @@ function mkRender() {
   if (!l.length) { box.append(el('div', 'empty', 'هنوز آزمونی ثبت نشده است.')); return; }
   l.slice(0, 40).forEach(x => {
     const d = el('details', 'dir-it'), h = el('summary'), b = el('div', 'dir-b');
-    h.append(el('span', '', x.n + ' · ' + x.c), el('small', '', x.i + ' · ' + x.e));
+    h.append(el('span', '', x.n + ' | ' + x.c), el('small', '', x.i + ' | ' + x.e));
     b.append(infoRow('تراز کل', x.z == null ? '' : fa(x.z)), infoRow('رتبه کشوری', x.k == null ? '' : fa(x.k)), infoRow('ثبت', fa(x.t)));
     if (x.d.length) b.append(tbl(['درس', 'تراز', 'درصد'], x.d.map(q => [q.s, q.t === '' ? '—' : fa(q.t), q.p === '' ? '—' : fa(q.p)])));
     if (x.f) { const v = el('button', 'btn', 'مشاهده‌ی کارنامه‌ی آپلودشده'); v.type = 'button';
@@ -3994,7 +4280,7 @@ function mockHist() {
   if (!SD.mocks || !SD.mocks.length) { c.append(el('div', 'now-sub', 'هنوز آزمونی ثبت نکرده‌اید.')); return c; }
   c.append(goalBox());
   SD.mocks.forEach(x => { const d = el('details', 'dir-it'), h = el('summary'), b = el('div', 'dir-b');
-    h.append(el('span', '', x.i + ' · ' + x.e), el('small', '', x.z == null ? '' : 'تراز ' + fa(x.z)));
+    h.append(el('span', '', x.i + ' | ' + x.e), el('small', '', x.z == null ? '' : 'تراز ' + fa(x.z)));
     b.append(infoRow('تراز کل', x.z == null ? '' : fa(x.z)), infoRow('رتبه کشوری', x.k == null ? '' : fa(x.k)));
     if (x.d.length) b.append(tbl(['درس', 'تراز', 'درصد'], x.d.map(q => [q.s, q.t === '' ? '—' : fa(q.t), q.p === '' ? '—' : fa(q.p)])));
     b.append(el('div', 'now-sub', '✓ کارنامه آپلود شده و برای مدیر قابل مشاهده است.')); d.append(h, b); c.append(d); });
@@ -4078,7 +4364,7 @@ function renderPer() {
     b.classList.add('ab-per'); b.style.gridTemplateColumns = 'repeat(' + Math.min(mine.length + 1, 4) + ',1fr)';
     mine.forEach(r => {
       const on = S.cls === r[0] && S.per === r[2], q = ps.find(x => x.p === r[2]);
-      const c = el('button', 'chip' + (on ? ' on' : '')); c.type = 'button'; c.setAttribute('aria-pressed', String(on)); c.title = r[0] + ' · ' + r[3];
+      const c = el('button', 'chip' + (on ? ' on' : '')); c.type = 'button'; c.setAttribute('aria-pressed', String(on)); c.title = r[0] + ' | ' + r[3];
       c.append(el('span', '', 'زنگ ' + fa(r[2]) + (auto === r ? ' ●' : '')), el('small', '', r[0]), el('small', '', q ? fa(q.t.split('–')[0]) : ''));
       c.addEventListener('click', () => {
         const go = () => { S.slotPick = { auto:slotKey(auto) }; applyMySlot(r); renderPer(); };
@@ -4093,7 +4379,7 @@ function renderPer() {
   }
   lb.textContent = 'زنگ (خودکار با ساعت؛ در صورت نیاز دستی انتخاب کنید)';
   b.classList.remove('ab-per'); b.style.gridTemplateColumns = 'repeat(4,1fr)';
-  [[0, 'خودکار · ' + fa(autoPeriod())], [1, 'زنگ ۱'], [2, 'زنگ ۲'], [3, 'زنگ ۳']].forEach(q => { const c = el('button', 'chip' + ((S.per || 0) === q[0] ? ' on' : '')); c.textContent = q[1]; c.type = 'button'; c.addEventListener('click', () => { S.per = q[0]; renderPer(); loadExc(); }); b.append(c); });
+  [[0, 'خودکار | ' + fa(autoPeriod())], [1, 'زنگ ۱'], [2, 'زنگ ۲'], [3, 'زنگ ۳']].forEach(q => { const c = el('button', 'chip' + ((S.per || 0) === q[0] ? ' on' : '')); c.textContent = q[1]; c.type = 'button'; c.addEventListener('click', () => { S.per = q[0]; renderPer(); loadExc(); }); b.append(c); });
   if (S.subMode && mySlotsToday().length) {
     const back = el('button', 'btn', '↩ بازگشت به زنگ‌های برنامه‌ی من'); back.type = 'button'; back.style.gridColumn = '1 / -1';
     back.addEventListener('click', () => { S.subMode = false; S.slotPick = null; autoSlotApply(); renderPer(); }); b.append(back);
@@ -4107,7 +4393,7 @@ function renderBoard() {
   const day = (now.getDay() + 1) % 7, sh = ps[0].sh, cls = uniq(allClasses().concat(SCH.map(r => r[0])).concat(TODAY.map(x => x.c))).sort((a, b) => a.localeCompare(b, 'fa'));
   if (!cls.length) { box.append(el('div', 'empty', 'کلاسی ثبت نشده است.')); return; }
   const g = el('div', 'brd'); g.append(el('span'));
-  ps.forEach(P => g.append(el('div', 'bh', 'زنگ ' + fa(P.p) + ' · ' + P.t.split('–')[0])));
+  ps.forEach(P => g.append(el('div', 'bh', 'زنگ ' + fa(P.p) + ' | ' + P.t.split('–')[0])));
   cls.forEach(c => {
     const any = SCH.some(x => x[0] === c && x[1] === day && (!x[5] || x[5] === SH_FA[sh])); g.append(el('div', 'bc-name', c));
     ps.forEach(P => {
@@ -4126,8 +4412,8 @@ function renderTop() {
   const cl = Object.keys(m).sort((a, b) => a.localeCompare(b, 'fa'));
   if (!cl.length) { box.append(el('div', 'empty', 'هنوز نمره‌ای ثبت نشده است.')); return; }
   cl.forEach(c => {
-    const rk = Object.keys(m[c]).map(s => ({ s:s, v:mean(Object.keys(m[c][s]).map(k => mean(m[c][s][k]))) })).sort((a, b) => b.v - a.v).slice(0, 3), row = el('div', 'dir-it'); row.style.padding = '10px 14px';
-    row.append(el('div', 'now-t', c), el('div', 'now-sub', rk.map((x, i) => ['🥇', '🥈', '🥉'][i] + ' ' + x.s + ' (' + f2(x.v) + ')').join('  ·  '))); box.append(row);
+    const rk = Object.keys(m[c]).map(s => ({ s:s, v:wMean(Object.keys(m[c][s]).map(k => [mean(m[c][s][k]), unitsOf(c, k)])) })).sort((a, b) => b.v - a.v).slice(0, 3), row = el('div', 'dir-it'); row.style.padding = '10px 14px';
+    row.append(el('div', 'now-t', c), el('div', 'now-sub', rk.map((x, i) => ['🥇', '🥈', '🥉'][i] + ' ' + x.s + ' (' + f2(x.v) + ')').join('  |  '))); box.append(row);
   });
 }
 
@@ -4152,7 +4438,7 @@ async function pfLoad() {
 }
 function bars3(title, a) {
   const w = el('div'); w.style.marginBottom = '12px'; w.append(el('div', 'now-t', title));
-  [['دانش‌آموز', a.me, '#2FA4A9'], ['میانگین کلاس', a.cls, '#E0BC6B'], ['میانگین پایه/رشته', a.str, '#9B8AD6']].forEach(q => {
+  [['دانش‌آموز', a.me, 'var(--c-me)'], ['میانگین کلاس', a.cls, 'var(--c-cls)'], ['میانگین پایه/رشته', a.str, 'var(--c-str)']].forEach(q => {
     const r = el('div', 'dir-r'), b = el('div', 'pbar'), i = el('i'); i.style.width = Math.min(100, (q[1] || 0) / 20 * 100) + '%'; i.style.background = q[2]; b.append(i);
     const v = el('span', '', f2(q[1])); v.style.minWidth = '46px'; r.append(el('span', 'k', q[0]), b, v); w.append(r); });
   return w;
@@ -4161,15 +4447,15 @@ function pfRender() {
   const box = $('#pfBody'), d = PF; box.textContent = '';
   const diff = (x, y, nm) => x == null || y == null ? '' : (x >= y ? '▲ ' + f2(x - y) + ' نمره بالاتر از ' : '▼ ' + f2(y - x) + ' نمره پایین‌تر از ') + nm;
   const hd = el('div', 'dir-it'); hd.style.padding = '12px 14px';
-  hd.append(el('div', 'now-t', d.name + ' · ' + d.cls), el('div', 'now-sub', 'پایه/رشته: ' + d.stream),
-    el('div', 'now-sub', 'رتبه در کلاس: ' + (d.rankCls.pos ? fa(d.rankCls.pos) + ' از ' + fa(d.rankCls.of) : '—') + ' · رتبه در پایه/رشته: ' + (d.rankStr.pos ? fa(d.rankStr.pos) + ' از ' + fa(d.rankStr.of) : '—')),
-    el('div', 'now-sub', [diff(d.overall.me, d.overall.cls, 'میانگین کلاس'), diff(d.overall.me, d.overall.str, 'میانگین پایه/رشته')].filter(String).join(' · ')));
+  hd.append(el('div', 'now-t', d.name + ' | ' + d.cls), el('div', 'now-sub', 'پایه/رشته: ' + d.stream),
+    el('div', 'now-sub', 'رتبه در کلاس: ' + (d.rankCls.pos ? fa(d.rankCls.pos) + ' از ' + fa(d.rankCls.of) : '—') + ' | رتبه در پایه/رشته: ' + (d.rankStr.pos ? fa(d.rankStr.pos) + ' از ' + fa(d.rankStr.of) : '—')),
+    el('div', 'now-sub', [diff(d.overall.me, d.overall.cls, 'میانگین کلاس'), diff(d.overall.me, d.overall.str, 'میانگین پایه/رشته')].filter(String).join(' | ')));
   box.append(hd);
   const c1 = el('div', 'card'); c1.append(el('div', 'lbl', 'وضعیت نمرات نسبت به کلاس و پایه/رشته (از ۲۰)'));
-  if (!d.courses.length) c1.append(el('div', 'empty', 'نمره‌ای ثبت نشده است.')); else { c1.append(bars3('معدل کل', d.overall)); d.courses.forEach(x => c1.append(bars3(x.c, x))); c1.append(legend([['#2FA4A9', 'دانش‌آموز'], ['#E0BC6B', 'کلاس'], ['#9B8AD6', 'پایه/رشته']])); }
+  if (!d.courses.length) c1.append(el('div', 'empty', 'نمره‌ای ثبت نشده است.')); else { c1.append(bars3('معدل کل (وزنی)', d.overall)); d.courses.forEach(x => c1.append(bars3(x.c + (x.u ? ' — ' + fa(x.u) + ' واحد' : ''), x))); c1.append(legend([['var(--c-me)', 'دانش‌آموز'], ['var(--c-cls)', 'کلاس'], ['var(--c-str)', 'پایه/رشته']])); }
   const c2 = el('div', 'card'), a = d.att; c2.append(el('div', 'lbl', 'حضور و غیاب'));
   c2.append(tbl(['', 'دانش‌آموز', 'میانگین کلاس', 'میانگین پایه/رشته'], [['غیبت', fa(a.absent), f2(d.cmp.abs.cls), f2(d.cmp.abs.str)], ['تأخیر', fa(a.late), f2(d.cmp.late.cls), f2(d.cmp.late.str)]]),
-    el('div', 'now-sub', 'کل جلسات کلاس: ' + fa(a.sessions) + ' · غیبت موجه: ' + fa(a.excused) + ' · (میانگین‌ها = تعداد برای هر دانش‌آموز)'));
+    el('div', 'now-sub', 'کل جلسات کلاس: ' + fa(a.sessions) + ' | غیبت موجه: ' + fa(a.excused) + ' | (میانگین‌ها = تعداد برای هر دانش‌آموز)'));
   const c3 = el('div', 'card'); c3.append(el('div', 'lbl', 'روند نمره در طول سال'), trendSvg(d.grades.filter(g => g.n != null).sort(byDate)));
   box.append(c1, c2, c3);
   const dt = (t, body) => { const x = el('details', 'dir-it'), s = el('summary'); s.append(el('span', '', t)); x.append(s, body); body.style.margin = '0 10px 10px'; return x; };
@@ -4228,7 +4514,7 @@ async function openFile(id, v) {
 function stuCal(box) {
   const c = el('div', 'card'); c.append(el('div', 'lbl', 'آزمون‌ها و تکالیف پیش‌رو'));
   if (!SD.cal || !SD.cal.length) c.append(el('div', 'empty', 'موردی ثبت نشده است.'));
-  else SD.cal.forEach(x => { const d = card1(); d.append(el('div', 'now-t', (x.k === 'آزمون' ? '📝 ' : '📚 ') + x.s + ' — ' + x.t), el('div', 'now-sub', x.k + ' · ' + fa(x.d) + (x.p ? ' · زنگ ' + fa(x.p) + calTm(x.d, x.p) : ''))); c.append(d); });
+  else SD.cal.forEach(x => { const d = card1(); d.append(el('div', 'now-t', (x.k === 'آزمون' ? '📝 ' : '📚 ') + x.s + ' — ' + x.t), el('div', 'now-sub', x.k + ' | ' + fa(x.d) + (x.p ? ' | زنگ ' + fa(x.p) + calTm(x.d, x.p) : ''))); c.append(d); });
   box.append(c);
 }
 function stuLeave(box) {
@@ -4245,7 +4531,7 @@ function stuLeave(box) {
   });
   const h = el('div', 'card'); h.append(el('div', 'lbl', 'درخواست‌های شما'));
   if (!SD.leaves || !SD.leaves.length) h.append(el('div', 'now-sub', 'درخواستی ثبت نشده است.'));
-  else SD.leaves.forEach(x => { const q = card1(); q.append(el('div', 'now-t', fa(x.d) + ' · ' + x.r), el('div', 'now-sub', ({ 'در انتظار':'⏳ در انتظار تصمیم مدیر', 'تأیید':'✓ تأیید شد؛ غیبت موجه ثبت شد', 'رد':'✗ رد شد' })[x.s] + (x.n ? ' — ' + x.n : ''))); h.append(q); });
+  else SD.leaves.forEach(x => { const q = card1(); q.append(el('div', 'now-t', fa(x.d) + ' | ' + x.r), el('div', 'now-sub', ({ 'در انتظار':'⏳ در انتظار تصمیم مدیر', 'تأیید':'✓ تأیید شد؛ غیبت موجه ثبت شد', 'رد':'✗ رد شد' })[x.s] + (x.n ? ' — ' + x.n : ''))); h.append(q); });
   box.append(c, h);
 }
 /* ======================= دانش‌آموز: برنامه‌ریز مطالعه‌ی هوشمند («امروز چی بخونم؟») =======================
@@ -4540,10 +4826,10 @@ function valSvg(vals, target) {
   const all = vals.concat(target ? [target] : []), lo = Math.min.apply(null, all), hi = Math.max.apply(null, all), pad = (hi - lo || 1) * .15, a = lo - pad, b = hi + pad;
   const X = i => W - R - i * (W - L - R) / (vals.length - 1), Y = v => T + (1 - (v - a) / (b - a)) * (H - T - B), svg = sv('svg', { viewBox:'0 0 ' + W + ' ' + H, width:'100%', role:'img', 'aria-label':'روند تراز کل' });
   [a + pad, (a + b) / 2, b - pad].forEach(v => svg.append(sv('line', { x1:L, x2:W - R, y1:Y(v), y2:Y(v), style:'stroke:var(--line)' }), sv('text', { x:L - 4, y:Y(v) + 4, 'text-anchor':'end', 'font-size':9, style:'fill:var(--muted)' }, fa(Math.round(v)))));
-  if (target) svg.append(sv('line', { x1:L, x2:W - R, y1:Y(target), y2:Y(target), style:'stroke:#E0BC6B;stroke-width:2;stroke-dasharray:6 4' }));
-  svg.append(sv('polyline', { points:vals.map((v, i) => X(i) + ',' + Y(v)).join(' '), fill:'none', style:'stroke:#2FA4A9;stroke-width:2.5' }));
-  vals.forEach((v, i) => svg.append(sv('circle', { cx:X(i), cy:Y(v), r:3.5, style:'fill:#2FA4A9' })));
-  wrap.append(svg, legend([['#2FA4A9', 'تراز کل']].concat(target ? [['#E0BC6B', 'هدف']] : []))); return wrap;
+  if (target) svg.append(sv('line', { x1:L, x2:W - R, y1:Y(target), y2:Y(target), style:'stroke:var(--c-cls);stroke-width:2;stroke-dasharray:6 4' }));
+  svg.append(sv('polyline', { points:vals.map((v, i) => X(i) + ',' + Y(v)).join(' '), fill:'none', style:'stroke:var(--c-me);stroke-width:2.5' }));
+  vals.forEach((v, i) => svg.append(sv('circle', { cx:X(i), cy:Y(v), r:3.5, style:'fill:var(--c-me)' })));
+  wrap.append(svg, legend([['var(--c-me)', 'تراز کل']].concat(target ? [['var(--c-cls)', 'هدف']] : []))); return wrap;
 }
 function goalBox() {
   const w = el('div'), key = 'sia_goal_' + SD.nid, gl = lsGet(key, {}), vals = SD.mocks.slice().reverse().map(x => x.z).filter(v => v != null);
@@ -4578,12 +4864,12 @@ function calPerFill() {
 function calInfo() {
   const q = jParse(CALP.get()), d = jGreg(q[0], q[1], q[2]), per = +$('#calPer').value || 1, kd = $('#calKind').value;
   if (d.getDay() === 5) { $('#calInfo').textContent = '⚠️ جمعه تعطیل است؛ روز دیگری انتخاب کنید.'; return; }
-  let txt = JWD[d.getDay()] + ' ' + fa(CALP.get()) + ' · شیفت ' + SH_FA[shiftOfDate(d)] + ' · ' + kd + ' در زنگ ' + fa(per) + ': ' + SHIFT_TIMES[shiftOfDate(d)][per - 1];
+  let txt = JWD[d.getDay()] + ' ' + fa(CALP.get()) + ' | شیفت ' + SH_FA[shiftOfDate(d)] + ' | ' + kd + ' در زنگ ' + fa(per) + ': ' + SHIFT_TIMES[shiftOfDate(d)][per - 1];
   const x = INB && INB[+$('#inbSel').value || 0];
   if (x) {
     const day = (d.getDay() + 1) % 7, c = SCH.filter(r => r[0] === x.c && r[1] === day && r[2] === per && (!r[5] || r[5] === SH_FA[shiftOfDate(d)]));
-    if (c.length) txt += ' · برنامه‌ی این زنگ: ' + uniq(c.map(r => r[3])).join('، ') + ' — ' + uniq(c.map(r => r[4])).join('، ');
-    else txt += ' · در برنامه‌ی این زنگ برای این کلاس درسی نیست';
+    if (c.length) txt += ' | برنامه‌ی این زنگ: ' + uniq(c.map(r => r[3])).join('، ') + ' — ' + uniq(c.map(r => r[4])).join('، ');
+    else txt += ' | در برنامه‌ی این زنگ برای این کلاس درسی نیست';
     const match = c.some(r => normT(r[3]) === normT(x.s) && normT(r[4]) === normT(S.teacher));
     if (!match && ROLE !== 'manager') txt += ' ⚠️ با برنامه مغایرت دارد؛ ثبت برای تأیید مدیر ارسال می‌شود.';
   }
@@ -4596,7 +4882,7 @@ async function calLoad() {
   if (!list.length) return box.append(el('div', 'now-sub', 'هنوز آزمون یا تکلیفی ثبت نشده است.'));
   uniq(list.map(x => x.c)).forEach(c => {
     const items = list.filter(x => x.c === c).sort((a, b) => a.d < b.d ? -1 : a.d > b.d ? 1 : (a.p || 0) - (b.p || 0));
-    box.append(el('div', 'lbl', c + ' · ' + fa(items.length) + ' مورد'));
+    box.append(el('div', 'lbl', c + ' | ' + fa(items.length) + ' مورد'));
     const wrap = el('div', 'mx-wrap'), tb = el('table', 'mx cal-mx'), thead = el('thead'), hr = el('tr'), tbody = el('tbody');
     ['تاریخ', 'زنگ', 'درس', 'نوع', 'عنوان', 'دبیر', 'وضعیت', ''].forEach(t => hr.append(el('th', '', t)));
     thead.append(hr); tb.append(thead, tbody); wrap.append(tb); box.append(wrap);
@@ -4628,10 +4914,10 @@ function renderRisk() {
   if (!l.length) { box.append(el('div', 'empty', RK.length ? 'در این کلاس موردی نیست.' : 'فعلاً دانش‌آموزی در معرض خطر شناسایی نشده است. 👏')); return; }
   l.forEach(x => {
     const d = card1(), h = el('div', 'dir-r'), pf = el('button', 'btn', 'پرونده'); pf.type = 'button';
-    h.append(el('span', 'now-t', x.n + ' · ' + x.c), el('span', 'badge ' + (x.lv === 'بالا' ? 'bad' : 'next'), 'خطر ' + x.lv));
+    h.append(el('span', 'now-t', x.n + ' | ' + x.c), el('span', 'badge ' + (x.lv === 'بالا' ? 'bad' : 'next'), 'خطر ' + x.lv));
     pf.addEventListener('click', () => { $('#pfCls').value = x.c; pfStus(); $('#pfStu').value = x.n; pfLoad(); mgGo('pfCard'); });
     const row = msgBtns(x.fp, 'اولیای گرامی، ' + x.n + ' در ' + SCHOOL_NAME + ': ' + x.why.join('، ') + '. لطفاً برای هماهنگی با مدرسه تماس بگیرید.'); row.append(pf);
-    d.append(h, el('div', 'now-sub', x.why.join(' · ')), row); box.append(d);
+    d.append(h, el('div', 'now-sub', x.why.join(' | ')), row); box.append(d);
   });
 }
 $('#riskCls').addEventListener('change', renderRisk);
@@ -4654,11 +4940,11 @@ function ngMgPaint() {
   if (!pend.length) box.append(el('div', 'now-sub', 'درخواست ویرایشی در انتظار نیست.'));
   pend.forEach(x => {
     const d = card1();
-    d.append(el('div', 'now-t', x.te + ' · ' + x.c + ' · ' + x.cs + ' · ' + (x.k || '')), el('div', 'now-sub', fa(x.d) + ' · ' + x.et + ' · ' + fa(x.ch.length) + ' تغییر'));
+    d.append(el('div', 'now-t', x.te + ' | ' + x.c + ' | ' + x.cs + ' | ' + (x.k || '')), el('div', 'now-sub', fa(x.d) + ' | ' + x.et + ' | ' + fa(x.ch.length) + ' تغییر'));
     d.append(tbl(['دانش‌آموز', 'قبلی', 'جدید'], x.ch.map(c => [c.n, fa(c.o), fa(c.w)])));
     const row = el('div'); row.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;margin-top:8px';
     const ok = el('button', 'btn', '✓ تأیید'), no = el('button', 'btn', '✗ رد'); ok.type = no.type = 'button';
-    ok.style.cssText = 'background:#1F7A55;color:#fff;border-color:#1F7A55';
+    ok.style.cssText = 'background:var(--present);color:var(--on-present);border-color:var(--present)';
     ok.addEventListener('click', () => ngDecide(x.id, true));
     no.addEventListener('click', () => ngDecide(x.id, false));
     row.append(ok, no); d.append(row); box.append(d);
@@ -4703,7 +4989,7 @@ async function taList() {
   if (!r.list.length) return box.append(el('div', 'now-sub', 'موردی ثبت نشده است.'));
   r.list.slice(0, 60).forEach(x => {
     const row = el('div', 'dir-r'), b = el('button', 'btn', 'حذف'); b.type = 'button';
-    row.append(el('span', '', fa(x.d) + ' · ' + x.day + ' · ' + x.n + ' · ' + (x.pr.length ? 'زنگ ' + fa(x.pr.join('، ')) : 'همه‌ی زنگ‌ها') + ' · ' + x.k + (x.k === 'تأخیر' ? ' (' + fa(x.m) + ' دقیقه)' : '')), b);
+    row.append(el('span', '', fa(x.d) + ' | ' + x.day + ' | ' + x.n + ' | ' + (x.pr.length ? 'زنگ ' + fa(x.pr.join('، ')) : 'همه‌ی زنگ‌ها') + ' | ' + x.k + (x.k === 'تأخیر' ? ' (' + fa(x.m) + ' دقیقه)' : '')), b);
     b.addEventListener('click', async () => { const q = await send({ action:'taDel', pin:MG.pin, key:ACCESS_KEY, id:x.id }); toast(q.status === 'ok' ? 'حذف شد' : (q.message || 'حذف نشد')); taList(); });
     box.append(row);
   });
@@ -4781,10 +5067,10 @@ function tlMgPaint() {
   box.textContent = '';
   if (!pend.length) box.append(el('div', 'empty', 'درخواستی در انتظار تصمیم نیست.'));
   pend.forEach(x => {
-    const d = card1(); d.append(el('div', 'now-t', x.n + ' · ' + x.day + ' ' + fa(x.d)), el('div', 'now-sub', 'زنگ‌ها: ' + (x.pr.length ? 'زنگ ' + fa(x.pr.join(' و ')) : 'همه‌ی زنگ‌ها') + ' · علت: ' + x.r));
+    const d = card1(); d.append(el('div', 'now-t', x.n + ' | ' + x.day + ' ' + fa(x.d)), el('div', 'now-sub', 'زنگ‌ها: ' + (x.pr.length ? 'زنگ ' + fa(x.pr.join(' و ')) : 'همه‌ی زنگ‌ها') + ' | علت: ' + x.r));
     const row = el('div'); row.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;margin-top:8px';
     const ok = el('button', 'btn', '✓ تأیید'), no = el('button', 'btn', '✗ رد'); ok.type = no.type = 'button';
-    ok.style.cssText = 'background:#1F7A55;color:#fff;border-color:#1F7A55';
+    ok.style.cssText = 'background:var(--present);color:var(--on-present);border-color:var(--present)';
     ok.addEventListener('click', () => tlDecide(x.id, true, ''));
     no.addEventListener('click', () => { const note = prompt('علت رد (اختیاری):'); if (note === null) return; tlDecide(x.id, false, note); });
     row.append(ok, no); d.append(row); box.append(d);
@@ -4826,11 +5112,11 @@ function renderLeaves() {
   (LV_SHOW ? pend.concat(done.slice(0, 40)) : pend).forEach(x => {
     const d = card1(), isP = x.s === 'در انتظار'; if (isP) d.classList.add('lv-new');
     const refresh = () => { loadLeaves(); excLoad(); $('#mgReload').click(); };
-    d.append(el('div', 'now-t', x.n + ' · ' + x.c), el('div', 'now-sub', 'تاریخ مرخصی: ' + fa(x.d) + ' · علت: ' + x.r));
+    d.append(el('div', 'now-t', x.n + ' | ' + x.c), el('div', 'now-sub', 'تاریخ مرخصی: ' + fa(x.d) + ' | علت: ' + x.r));
     const row = el('div'); row.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;margin-top:8px';
     const fileBtn = () => { if (!x.f) return; const v = el('button', 'btn', 'مشاهده‌ی مدرک'); v.type = 'button'; v.addEventListener('click', () => openFile(x.f, v)); row.append(v); };
     if (isP) {
-      const ok = el('button', 'btn', '✓ تأیید'), no = el('button', 'btn', '✗ رد'); ok.type = no.type = 'button'; ok.style.cssText = 'background:#1F7A55;color:#fff;border-color:#1F7A55';
+      const ok = el('button', 'btn', '✓ تأیید'), no = el('button', 'btn', '✗ رد'); ok.type = no.type = 'button'; ok.style.cssText = 'background:var(--present);color:var(--on-present);border-color:var(--present)';
       let pp = null;
       ok.addEventListener('click', () => {   // تأیید با انتخاب زنگ‌ها
         if (pp) { pp.remove(); pp = null; return; }
@@ -4840,7 +5126,7 @@ function renderLeaves() {
       no.addEventListener('click', async () => { const note = prompt('علت رد (اختیاری):'); if (note === null) return; const r = await send({ action:'leaveDecide', pin:MG.pin, id:x.id, ok:false, note:note, key:ACCESS_KEY }); toast(r.status === 'ok' ? 'رد شد' : (r.message || 'ناموفق')); loadLeaves(); });
       row.append(ok, no); fileBtn(); d.append(row);
     } else {
-      d.append(el('div', 'now-sub', (x.s === 'تأیید' ? '✓ تأیید شد · ' + perTxt(x.pr) : '✗ رد شد') + (x.note ? ' — ' + x.note : '')));
+      d.append(el('div', 'now-sub', (x.s === 'تأیید' ? '✓ تأیید شد | ' + perTxt(x.pr) : '✗ رد شد') + (x.note ? ' — ' + x.note : '')));
       const rs = el('button', 'btn', '↩ بازنشانی'); rs.type = 'button';
       rs.addEventListener('click', () => showModal({ icon:'warn', title:'بازنشانی مرخصی', msg:x.s === 'تأیید' ? 'مرخصی دوباره «در انتظار» می‌شود و غیبت موجه‌ی ثبت‌شده از آن برداشته می‌شود. بعد می‌توانید دوباره تأیید کنید و زنگ‌ها را مشخص کنید. ادامه می‌دهید؟' : 'درخواست دوباره «در انتظار» می‌شود. ادامه می‌دهید؟',
         buttons:[{ text:'بازنشانی', primary:true, onClick:async () => { const r = await send({ action:'leaveReset', pin:MG.pin, id:x.id, key:ACCESS_KEY }); toast(r.status === 'ok' ? 'بازنشانی شد؛ دوباره در انتظار است' : (r.message || 'ناموفق')); refresh(); } }, { text:'انصراف' }] }));
@@ -4874,18 +5160,184 @@ async function codeLoad(gen, reset) {
 $('#cdCls').addEventListener('change', () => codeLoad(false)); $('#cdGen').addEventListener('click', () => codeLoad(true));
 $('#cdPrint').addEventListener('click', () => {
   if (!CDL.length) return toast('ابتدا کلاس را انتخاب کنید'); const pa = $('#printArea'); pa.textContent = '';
-  pa.append(el('h1', '', 'کد ورود دانش‌آموزان — ' + $('#cdCls').value), el('div', '', SCHOOL_NAME + ' · ' + fa(dateStr())), tbl(['نام و نام خانوادگی', 'کد ورود'], CDL.map(x => [x.n, x.code])), el('p', '', 'دانش‌آموز عزیز: بار اول با کد ملی و این کد وارد شوید و یک رمز شخصی بسازید.'));
+  pa.append(el('h1', '', 'کد ورود دانش‌آموزان — ' + $('#cdCls').value), el('div', '', SCHOOL_NAME + ' | ' + fa(dateStr())), tbl(['نام و نام خانوادگی', 'کد ورود'], CDL.map(x => [x.n, x.code])), el('p', '', 'دانش‌آموز عزیز: بار اول با کد ملی و این کد وارد شوید و یک رمز شخصی بسازید.'));
   document.body.classList.add('printing'); window.print();
 });
 /* --- مدیر: گزارش ماهانه، سابقه‌ی تغییرات، یادداشت رفتاری --- */
+/* ======================= راه‌اندازی مدرسه از داخل برنامه (نسخه‌ی ۱٫۱۱) =======================
+   نام مدرسه، کلاس‌ها، دانش‌آموزان، دبیران، تخصیص درس، برنامه‌ی هفتگی و رمزهای ورود؛ بدون ویرایش مستقیم Google Sheet. */
+let SU = null;                       // پاسخ setupInfo
+function setSchoolName(n) {          // نام ذخیره‌شده در سرور جای مقدار پیش‌فرض بالای فایل را می‌گیرد
+  if (!n || n === SCHOOL_NAME) return; SCHOOL_NAME = n;
+  document.title = 'حضور و غیاب و ثبت نمرات | ' + n;
+  ['#schoolName', '#ftName', '#gSchool', '.mg-nh small'].forEach(q => { const e = document.querySelector(q); if (e) e.textContent = n; });
+  ['#logo', '#gateLogo'].forEach(q => { const e = document.querySelector(q); if (e) e.alt = 'لوگوی ' + n; });
+  try { if (HONOR) renderHonor(); } catch (e) {}
+}
+async function suSend(o, btn) {
+  if (btn) btn.disabled = true; const r = await send(Object.assign({ pin:MG.pin, key:ACCESS_KEY }, o)); if (btn) btn.disabled = false;
+  if (r.net) { toast('اینترنت در دسترس نیست.'); return null; } if (r.status !== 'ok') { toast(r.message || 'انجام نشد.'); return null; } return r;
+}
+const suClasses = () => { const o = []; Object.keys(STUDENTS).forEach(st => Object.keys(STUDENTS[st] || {}).forEach(c => o.push({ st:st, c:c, n:(STUDENTS[st][c] || []).length }))); return o.sort((a, b) => a.c.localeCompare(b.c, 'fa')); };
+const suStuOf = c => { for (const st of Object.keys(STUDENTS)) if (STUDENTS[st] && STUDENTS[st][c]) return STUDENTS[st][c]; return []; };
+async function suOpen() {
+  $('#suName').value = SCHOOL_NAME; fillDatalist('suStL', uniq(Object.keys(STUDENTS).concat(['تجربی', 'انسانی'])));
+  fillDatalist('taCourseL', curAll() || uniq(lsGet('sia_rost_c', []).concat(P.courses)));
+  suClsPreview(); suClsList(); suTeachers(); suPwInit(); suHub();
+  const r = await send({ action:'setupInfo', pin:MG.pin, key:ACCESS_KEY }); if (r.status === 'ok') { SU = r; setSchoolName(r.school); $('#suName').value = SCHOOL_NAME; }
+  if (!DIR.teachers.length && !DIR.students.length) await loadDir();
+  suTeachers(); suPwInit(); suHub();
+}
+async function suSoft() {             // فقط وضعیت راه‌اندازی و فهرست‌های همین بخش
+  const r = await send({ action:'setupInfo', pin:MG.pin, key:ACCESS_KEY }); if (r.status === 'ok') SU = r;
+  suClsList(); suTeachers(); suPwInit(); suHub();
+}
+async function suRefresh() {          // بعد از هر تغییر: فهرست کلاس‌ها، بانک اطلاعات و فرم‌های وابسته تازه می‌شوند
+  await loadRoster(); await loadDir();
+  const r = await send({ action:'setupInfo', pin:MG.pin, key:ACCESS_KEY }); if (r.status === 'ok') SU = r;
+  fillDatalist('saStreamL', Object.keys(STUDENTS)); fillDatalist('saClsL', allClasses()); fillDatalist('suStL', uniq(Object.keys(STUDENTS).concat(['تجربی', 'انسانی'])));
+  [typeof edInit === 'function' && edInit, typeof excInit === 'function' && excInit, typeof pfInit === 'function' && pfInit, typeof codeInit === 'function' && codeInit].forEach(f => { try { if (f) f(); } catch (e) {} });
+  suClsList(); suTeachers(); suPwInit(); suHub();
+}
+function suGo(id) {                 // رفتن به مرحله؛ اگر در همین بخش است فقط پیمایش، وگرنه رفتن به بخش دیگر
+  const c = document.getElementById(id); if (!c) return; const d = c.querySelector('details'); if (d) d.open = true;
+  const sec = c.closest('.mg-sec'); if (sec && !sec.hidden) c.scrollIntoView({ behavior:'smooth', block:'start' }); else mgGo(id);
+}
+function suHub() {
+  const box = $('#suSteps'); if (!box) return; box.textContent = '';
+  const cls = suClasses(), nStu = cls.reduce((a, x) => a + x.n, 0), T = DIR.teachers || [], noC = T.filter(t => !t.courses.length);
+  const schC = uniq(SCH.map(r => r[0])).filter(c => cls.some(x => x.c === c)), pw = [], pwSt = [];
+  if (SU && !SU.mgPinCustom) { pw.push('رمز مدیر هنوز رمز اولیه است'); pwSt.push('warn'); }
+  if (SU && T.length && !SU.tchAnyCode) { pw.push('دبیران کد ورود ندارند (ورود دبیران آزاد است)'); pwSt.push('warn'); }
+  else if (SU && SU.tchNoCode.length) { pw.push(fa(SU.tchNoCode.length) + ' دبیر بدون کد (نمی‌توانند وارد شوند)'); pwSt.push('warn'); }
+  if (SU) pw.push(SU.stu2fa ? 'ورود دانش‌آموز با رمز' : 'ورود دانش‌آموز فقط با کد ملی');
+  $('#suSchTx').textContent = cls.length ? fa(schC.length) + ' کلاس از ' + fa(cls.length) + ' کلاس برنامه‌ی هفتگی دارند.' : 'ابتدا کلاس‌ها را بسازید.';
+  [['نام مدرسه', SCHOOL_NAME, 'ok', 'suSchool'],
+   ['کلاس‌ها', cls.length ? fa(cls.length) + ' کلاس' : 'هنوز کلاسی ساخته نشده است', cls.length ? 'ok' : 'todo', 'suCls'],
+   ['دانش‌آموزان', nStu ? fa(nStu) + ' دانش‌آموز' : 'هنوز دانش‌آموزی ثبت نشده است', nStu ? 'ok' : 'todo', 'saCard'],
+   ['دبیران', T.length ? fa(T.length) + ' دبیر' : 'هنوز دبیری ثبت نشده است', T.length ? 'ok' : 'todo', 'taCard'],
+   ['تخصیص درس به دبیر', !T.length ? 'ابتدا دبیران را ثبت کنید' : noC.length ? fa(noC.length) + ' دبیر بدون درس: ' + noC.map(t => t.n).join('، ') : 'همه‌ی دبیران درس دارند', !T.length ? 'todo' : noC.length ? 'warn' : 'ok', 'suTc'],
+   ['برنامه‌ی هفتگی', $('#suSchTx').textContent, !cls.length || !schC.length ? 'todo' : schC.length < cls.length ? 'warn' : 'ok', 'suSch'],
+   ['رمزهای ورود', SU ? pw.join(' | ') : 'در حال بررسی…', !SU ? 'todo' : pwSt.length ? 'warn' : 'ok', 'suPw']
+  ].forEach((s, i) => {
+    const b = el('button', 'su-step ' + s[2]), tx = el('span'); b.type = 'button';
+    tx.append(el('b', '', s[0]), el('small', '', s[1]));
+    b.append(el('i', '', s[2] === 'ok' ? '✓' : s[2] === 'warn' ? '!' : fa(i + 1)), tx, el('em', '', '‹'));
+    b.setAttribute('aria-label', s[0] + ': ' + s[1]); b.addEventListener('click', () => suGo(s[3])); box.append(b);
+  });
+}
+$('#suNameGo').addEventListener('click', async () => {
+  const n = $('#suName').value.trim(); if (n.length < 3) return toast('نام مدرسه را کامل بنویسید.');
+  const r = await suSend({ action:'setSchool', name:n }, $('#suNameGo')); if (!r) return;
+  setSchoolName(r.school); const rr = lsGet(R_KEY, null); if (rr) { rr.school = r.school; lsSet(R_KEY, rr); } toast('نام مدرسه ذخیره شد ✓'); suHub();
+});
+/* --- کلاس‌ها --- */
+function suClsName() {
+  const raw = $('#suClsN').value.trim(), st = $('#suClsSt').value.trim(); if (!raw) return '';
+  return GRADES.some(g => raw.indexOf(g) >= 0) ? raw : [$('#suClsG').value, st, fa(raw)].filter(Boolean).join(' ');   // «یازدهم تجربی ۲۰۱»
+}
+function suClsPreview() { const n = suClsName(); $('#suClsPrev').textContent = n ? 'نام کلاس: «' + n + '»' : 'مثلاً پایه‌ی یازدهم، رشته‌ی تجربی و شماره‌ی ۲۰۱ ← «یازدهم تجربی ۲۰۱». نام کامل هم می‌توانید بنویسید.'; }
+['#suClsN', '#suClsSt', '#suClsG'].forEach(q => { $(q).addEventListener('input', suClsPreview); $(q).addEventListener('change', suClsPreview); });
+$('#suClsGo').addEventListener('click', async () => {
+  const st = $('#suClsSt').value.trim(), c = suClsName(); if (!st || !c) return toast('رشته و شماره‌ی کلاس را بنویسید.');
+  const r = await suSend({ action:'clsAdd', stream:st, cls:c }, $('#suClsGo')); if (!r) return;
+  toast('کلاس «' + c + '» ساخته شد ✓'); $('#suClsN').value = ''; suClsPreview(); suRefresh();
+});
+function suClsList() {
+  const box = $('#suClsList'); box.textContent = ''; const L = suClasses();
+  if (!L.length) { box.append(el('div', 'empty', 'هنوز کلاسی ساخته نشده است.')); return; }
+  L.forEach(x => {
+    const row = el('div', 'su-cls'), nm = el('div'), ed = el('button', 'btn', 'ویرایش'), dl = el('button', 'btn', 'حذف'); ed.type = dl.type = 'button';
+    nm.append(el('b', '', x.c), el('small', '', 'رشته‌ی ' + x.st + ' | ' + (gradeOfCls(x.c) ? 'پایه‌ی ' + gradeOfCls(x.c) : 'پایه نامشخص') + ' | ' + (x.n ? fa(x.n) + ' دانش‌آموز' : 'بدون دانش‌آموز')));
+    if (x.n) { dl.disabled = true; dl.title = 'کلاس دارای دانش‌آموز را نمی‌توان حذف کرد'; }
+    ed.addEventListener('click', () => suClsEdit(row, x));
+    dl.addEventListener('click', () => showModal({ icon:'warn', title:'حذف کلاس', msg:'کلاس «' + x.c + '» و برنامه‌ی هفتگی آن حذف می‌شود. سوابق قبلی دست نمی‌خورد. ادامه می‌دهید؟',
+      buttons:[{ text:'حذف کلاس', primary:true, onClick:async () => { const r = await suSend({ action:'clsDel', cls:x.c }); if (r) { toast('کلاس «' + x.c + '» حذف شد'); suRefresh(); } } }, { text:'انصراف' }] }));
+    row.append(nm, ed, dl); box.append(row);
+  });
+}
+function suClsEdit(row, x) {
+  row.textContent = ''; row.classList.add('ed');
+  const n = el('input'), s = el('input'), ok = el('button', 'btn', 'ذخیره'), no = el('button', 'btn', 'انصراف'), g = el('div', 'grid2'), b = el('div', 'grid2');
+  n.type = s.type = 'text'; n.value = x.c; s.value = x.st; s.setAttribute('list', 'suStL'); n.setAttribute('aria-label', 'نام کلاس'); s.setAttribute('aria-label', 'رشته'); ok.type = no.type = 'button';
+  g.append(n, s); b.append(ok, no); row.append(g, el('div', 'now-sub', 'نام کلاس در همه‌ی سوابق (حضور و غیاب، نمرات، برنامه‌ی هفتگی و …) هم عوض می‌شود.'), b);
+  no.addEventListener('click', suClsList);
+  ok.addEventListener('click', async () => {
+    const nc = n.value.trim(), st = s.value.trim(); if (nc === x.c && st === x.st) return suClsList(); if (!st) return toast('رشته را بنویسید.');
+    const r = await suSend({ action:'clsRen', oc:x.c, nc:nc, stream:st !== x.st ? st : '' }, ok); if (!r) return;
+    if (S.cls === x.c) S.cls = ''; toast('ذخیره شد ✓' + (r.moved ? ' | ' + fa(r.moved) + ' ردیف از سوابق به‌روز شد' : '')); suRefresh();
+  });
+}
+/* --- تخصیص درس به دبیر --- */
+function suTeachers() {
+  const sel = $('#suTcT'), cur = sel.value, T = (DIR.teachers || []).slice().sort((a, b) => a.n.localeCompare(b.n, 'fa')); sel.textContent = '';
+  const o0 = el('option', '', T.length ? '— انتخاب دبیر —' : 'ابتدا در مرحله‌ی ۴ دبیر ثبت کنید'); o0.value = ''; sel.append(o0);
+  T.forEach(t => { const o = el('option', '', t.n + (t.courses.length ? ' (' + fa(t.courses.length) + ' درس)' : ' (بدون درس)')); o.value = t.n; sel.append(o); });
+  sel.value = T.some(t => t.n === cur) ? cur : ''; suTcRender();
+}
+function suTcRender() {
+  const box = $('#suTcList'); box.textContent = ''; const t = (DIR.teachers || []).find(x => x.n === $('#suTcT').value); if (!t) return;
+  if (!t.courses.length) box.append(el('div', 'now-sub', 'هنوز درسی به این دبیر داده نشده است.'));
+  t.courses.forEach(c => {
+    const ch = el('span', 'su-chip'), x = el('button', '', '✕'); x.type = 'button'; x.setAttribute('aria-label', 'برداشتن درس ' + c); x.title = 'برداشتن درس';
+    x.addEventListener('click', async () => { const r = await suSend({ action:'tchCourse', n:t.n, del:c }, x); if (!r) return;
+      toast('درس «' + c + '» از ' + t.n + ' برداشته شد' + (r.inSch ? ' | هنوز ' + fa(r.inSch) + ' زنگ در برنامه‌ی هفتگی دارد' : '')); suRefresh(); });
+    ch.append(el('span', '', c), x); box.append(ch);
+  });
+}
+$('#suTcT').addEventListener('change', suTcRender);
+$('#suTcGo').addEventListener('click', async () => {
+  const n = $('#suTcT').value, c = $('#suTcC').value.trim(); if (!n) return toast('دبیر را انتخاب کنید.'); if (!c) return toast('درس را بنویسید یا از فهرست انتخاب کنید.');
+  const r = await suSend({ action:'tchCourse', n:n, add:c }, $('#suTcGo')); if (!r) return; toast('درس «' + c + '» به ' + n + ' داده شد ✓'); $('#suTcC').value = ''; suRefresh();
+});
+$('#suSchGo').addEventListener('click', () => mgGo('edCard'));
+/* --- رمزهای ورود --- */
+function suPwInit() {
+  const t = $('#suPwT'), tc = t.value; t.textContent = ''; const o0 = el('option', '', '— انتخاب دبیر —'); o0.value = ''; t.append(o0);
+  (DIR.teachers || []).map(x => x.n).sort((a, b) => a.localeCompare(b, 'fa')).forEach(n => { const o = el('option', '', n + (SU && SU.tchNoCode.indexOf(n) >= 0 ? ' (بدون کد)' : '')); o.value = n; t.append(o); }); t.value = tc;
+  const c = $('#suPwC'), cc = c.value; c.textContent = ''; const o1 = el('option', '', '— کلاس —'); o1.value = ''; c.append(o1);
+  allClasses().forEach(x => { const o = el('option', '', x); o.value = x; c.append(o); }); c.value = allClasses().includes(cc) ? cc : ''; suPwStu();
+  $('#suStu2fa').checked = !!(SU && SU.stu2fa);
+  $('#suStu2faTx').textContent = !SU ? '' : SU.stu2fa ? 'روشن: دانش‌آموز با کد ملی و رمز شخصی (یا کد ورود یک‌بار مصرف) وارد می‌شود. کدهای هر کلاس را از «دانش‌آموزان ← کد ورود» چاپ کنید.'
+    : 'خاموش: دانش‌آموز فقط با کد ملی وارد می‌شود.' + (SU.stuNoCode ? ' با روشن‌کردن، برای ' + fa(SU.stuNoCode) + ' دانش‌آموز بدون کد، کد ورود ساخته می‌شود.' : '');
+  $('#suMgTx').textContent = !SU ? '' : SU.mgPinCustom ? '✓ رمز مدیر تغییر داده شده است.' : '⚠️ رمز مدیر هنوز رمز اولیه‌ی فایل Code.gs است؛ آن را تغییر دهید.';
+}
+function suPwStu() {
+  const s = $('#suPwS'), c = $('#suPwC').value; s.textContent = ''; const o0 = el('option', '', c ? '— دانش‌آموز —' : 'ابتدا کلاس'); o0.value = ''; s.append(o0);
+  suStuOf(c).slice().sort((a, b) => a.localeCompare(b, 'fa')).forEach(n => { const o = el('option', '', n); o.value = n; s.append(o); });
+}
+$('#suPwC').addEventListener('change', suPwStu);
+$('#suMgPw').addEventListener('click', () => mgShow('set', true));
+$('#suPwTGo').addEventListener('click', async () => {
+  const n = $('#suPwT').value, c = en($('#suPwTc').value.trim()); if (!n) return toast('دبیر را انتخاب کنید.'); if (c.length < 4) return toast('کد ورود باید دست‌کم ۴ نویسه باشد.');
+  const r = await suSend({ action:'tchCode', n:n, code:c }, $('#suPwTGo')); if (!r) return; $('#suPwTc').value = '';
+  if (r.noCode && r.noCode.length) showModal({ icon:'warn', title:'کد ورود ذخیره شد', msg:'این دبیران هنوز کد ورود ندارند و تا کد نگیرند نمی‌توانند وارد شوند: ' + r.noCode.join('، '), buttons:[{ text:'متوجه شدم', primary:true }] });
+  else toast('کد ورود ' + n + ' ذخیره شد ✓'); suRefresh();
+});
+$('#suStu2fa').addEventListener('change', e => {
+  const on = e.target.checked; e.target.checked = !on;
+  showModal({ icon:'warn', title:on ? 'ورود دانش‌آموز با رمز' : 'ورود فقط با کد ملی', msg:on ? 'از این پس دانش‌آموز علاوه بر کد ملی به رمز نیاز دارد. برای دانش‌آموزانی که کد ورود ندارند کد ساخته می‌شود؛ کدها را از «دانش‌آموزان ← کد ورود» چاپ و توزیع کنید.' : 'دانش‌آموزان فقط با کد ملی وارد می‌شوند و رمز بررسی نمی‌شود.',
+    buttons:[{ text:on ? 'روشن کن' : 'خاموش کن', primary:true, onClick:async () => { const r = await suSend({ action:'setStu2fa', on:on }); if (!r) return; toast(on ? 'ورود با رمز روشن شد' + (r.made ? ' | ' + fa(r.made) + ' کد ورود تازه ساخته شد' : '') : 'ورود با رمز خاموش شد'); suRefresh(); } }, { text:'انصراف' }] });
+});
+$('#suPwSGo').addEventListener('click', async () => {
+  const c = $('#suPwC').value, n = $('#suPwS').value, pw = $('#suPwSp').value.trim(), out = $('#suPwOut'); out.textContent = '';
+  if (!c || !n) return toast('کلاس و دانش‌آموز را انتخاب کنید.'); if (pw && pw.length < 6) return toast('رمز باید دست‌کم ۶ نویسه باشد.');
+  const r = await suSend({ action:'stuPass', cls:c, n:n, newPass:pw }, $('#suPwSGo')); if (!r) return; $('#suPwSp').value = '';
+  const box = el('div', 'su-out'); if (r.code) { box.append(document.createTextNode('کد ورود تازه‌ی ' + n + ': '), el('code', '', r.code)); box.append(el('div', 'now-sub', 'دانش‌آموز با کد ملی و همین کد وارد می‌شود و سپس رمز شخصی خودش را می‌سازد.')); }
+  else box.append(document.createTextNode('رمز ' + n + ' تعیین شد ✓'));
+  if (SU && !SU.stu2fa) box.append(el('div', 'now-sub', 'توجه: «ورود دانش‌آموز با رمز» خاموش است؛ رمز تا روشن‌شدن آن بررسی نمی‌شود.'));
+  out.append(box);
+});
+
 /* --- مدیر: درج دانش‌آموز و دبیر، و حذف نمره‌ی ثبت‌شده --- */
 function addInit() {
   fillDatalist('saStreamL', Object.keys(STUDENTS));
   fillDatalist('saClsL', allClasses());
-  fillDatalist('taCourseL', uniq(lsGet('sia_rost_c', []).concat(P.courses)));
+  fillDatalist('taCourseL', curAll() || uniq(lsGet('sia_rost_c', []).concat(P.courses)));
 }
 async function afterAdd(newClass) {
-  await loadRoster(); edInit(); loadDir(); addInit();
+  await loadRoster(); edInit(); await loadDir(); addInit();
+  { const ss = document.querySelector('.mg-sec[data-sec="setup"]'); if (ss && !ss.hidden) suSoft(); }   // مراحل راه‌اندازی به‌روز شود
   if (newClass) mgLoad();                       // کلاس تازه: فهرست کلاس‌ها در همه‌ی بخش‌های پنل به‌روز شود
 }
 const digitsOnly = v => en(String(v || '')).replace(/\D/g, '');
@@ -4906,7 +5358,7 @@ async function stuSend(rows, btn) {
   btn.disabled = false;
   if (r.net) { toast('اینترنت در دسترس نیست.'); return null; }
   if (r.status !== 'ok') { toast(r.message || 'ثبت نشد.'); return null; }
-  toast(fa(r.added || 0) + ' دانش‌آموز ثبت شد' + ((r.skipped || []).length ? ' · ردشده: ' + r.skipped.join('، ') : '') + ' ✓');
+  toast(fa(r.added || 0) + ' دانش‌آموز ثبت شد' + ((r.skipped || []).length ? ' | ردشده: ' + r.skipped.join('، ') : '') + ' ✓');
   afterAdd(isNew && (r.added || 0) > 0);
   return r;
 }
@@ -4954,7 +5406,7 @@ function gdRender() {
   if (!keys.length) { box.append(el('div', 'empty', 'نمره‌ای برای این کلاس ثبت نشده است.')); return; }
   keys.forEach(k => {
     const rows = groups[k], h = rows[0], d = el('details', 'dir-it'), sm = el('summary'), b = el('div', 'dir-b');
-    sm.append(el('span', '', h[4] + ' — ' + h[7]), el('small', '', fa(h[0]) + ' · ' + fa(rows.length) + ' نفر'));
+    sm.append(el('span', '', h[4] + ' — ' + h[7]), el('small', '', fa(h[0]) + ' | ' + fa(rows.length) + ' نفر'));
     rows.forEach(r => {
       const row = el('div', 'dir-r'), v = String(r[9]) === 'غایب' ? 'غایب' : fa(r[10]) + ' از ' + fa(r[8]);
       const ed = el('button', 'btn', 'ویرایش'); ed.type = 'button'; ed.addEventListener('click', () => gdEdit(r));
@@ -4981,7 +5433,7 @@ async function gdEdit(r) {                     // مدیر: ویرایش مست�
 }
 function gdAsk(r, name) {
   const what = name ? 'نمره‌ی «' + name + '»' : 'همه‌ی نمره‌های این ارزیابی';
-  showModal({ icon:'warn', title:'حذف نمره', msg:what + ' (' + r[3] + ' · ' + r[4] + ' · ' + r[7] + ' · ' + fa(r[0]) + ') حذف شود؟ این کار برگشت‌پذیر نیست.',
+  showModal({ icon:'warn', title:'حذف نمره', msg:what + ' (' + r[3] + ' | ' + r[4] + ' | ' + r[7] + ' | ' + fa(r[0]) + ') حذف شود؟ این کار برگشت‌پذیر نیست.',
     buttons:[{ text:'حذف', primary:true, onClick:async () => {
       const q = await send({ action:'grDel', pin:MG.pin, key:ACCESS_KEY, date:String(r[0]), cls:String(r[3]), course:String(r[4]), examType:String(r[7]), name:name });
       if (q.net) return toast('اینترنت در دسترس نیست.');
@@ -5001,7 +5453,7 @@ $('#auLoad').addEventListener('click', async () => {
   if (r.status !== 'ok') { box.append(el('div', 'empty', r.message || 'بارگذاری نشد.')); return; }
   if (!r.list.length) return box.append(el('div', 'now-sub', 'موردی ثبت نشده است.'));
   r.list.forEach(x => {
-    const row = el('div', 'dir-r'), txt = el('span', '', fa(x.t) + ' · ' + x.w + ' · ' + x.a + ' · ' + x.d);
+    const row = el('div', 'dir-r'), txt = el('span', '', fa(x.t) + ' | ' + x.w + ' | ' + x.a + ' | ' + x.d);
     row.append(txt);
     if (x.r) { const b = el('button', 'btn', 'بازنشانی'); b.type = 'button'; b.addEventListener('click', () => auRestore(x)); row.append(b); }
     else if (x.rs) row.append(el('span', 'now-sub', x.rs ? 'بازنشانی شده' : ''));
@@ -5014,7 +5466,7 @@ async function pfBeh() {
   const row = el('div'); row.style.cssText = 'display:grid;grid-template-columns:1fr auto auto;gap:6px;margin-top:8px'; row.append(inp, kind, add); box.append(row); $('#pfBody').append(box);
   const ld = async () => { const r = await send({ action:'behList', pin:MG.pin, cls:PF.cls, name:PF.name, key:ACCESS_KEY }); lst.textContent = ''; if (r.status !== 'ok') return;
     if (!r.list.length) lst.append(el('div', 'now-sub', 'یادداشتی ثبت نشده است.'));
-    r.list.forEach(x => { const d = card1(); d.append(el('div', 'now-t', ({ 'مثبت':'👍 ', 'منفی':'⚠️ ', 'مشاوره':'💬 ' })[x.k] + x.k + ' · ' + x.w), el('div', 'now-sub', x.n + ' — ' + fa(x.t))); lst.append(d); }); };
+    r.list.forEach(x => { const d = card1(); d.append(el('div', 'now-t', ({ 'مثبت':'👍 ', 'منفی':'⚠️ ', 'مشاوره':'💬 ' })[x.k] + x.k + ' | ' + x.w), el('div', 'now-sub', x.n + ' — ' + fa(x.t))); lst.append(d); }); };
   add.addEventListener('click', async () => { if (!inp.value.trim()) return; const r = await send({ action:'behAdd', pin:MG.pin, cls:PF.cls, name:PF.name, kind:kind.value, note:inp.value.trim(), key:ACCESS_KEY }); if (r.status !== 'ok') return toast(r.message || 'ثبت نشد'); inp.value = ''; toast('ثبت شد ✓'); ld(); });
   ld();
 }
@@ -5060,12 +5512,13 @@ function jPicker(dS, mS, yS, on) {          // انتخاب‌گر تاریخ ش
 /* ---------- افتخارآفرینان: نفرات برتر هر کلاس (صفحه اول، ورودی و صفحه‌ی دانش‌آموز) ---------- */
 let HONOR = null;
 async function loadHonor() {
+  if (document.hidden && HONOR) return;
   const r = await send({ action:'topList', key:ACCESS_KEY });
   if (r.status === 'ok') { HONOR = r.classes || {}; renderHonor(); }
 }
 function honorCard() {
   const c = el('div', 'card honor-card');
-  c.append(el('div', 'honor-t', '🏆 افتخارآفرینان دبیرستان صلاح‌الدین ایوبی'));
+  c.append(el('div', 'honor-t', '🏆 افتخارآفرینان ' + SCHOOL_NAME));
   const names = Object.keys(HONOR || {}).sort((a, b) => a.localeCompare(b, 'fa'));
   if (!names.length) { c.append(el('div', 'now-sub', 'هنوز نمره‌ای برای نمایش ثبت نشده است.')); return c; }
   const grid = el('div', 'honor-grid');
@@ -5129,11 +5582,11 @@ function cnsCard(x, mode, reload, hist) {          // mode: c مشاور، t د�
   if (mode !== 'c' && fin && !(mode === 't' ? x.et : x.em)) d.append(el('div', 'cns-note', '🔔 مشاوره‌ی «' + x.n + '» پایان یافت'));
   else if (mode !== 'c' && !fin && !(mode === 't' ? x.ct : x.cm)) d.append(el('div', 'cns-note', '📝 درخواست مشاوره برای «' + x.n + '» منتظر تأیید شماست'));
   const L = t => d.append(el('div', 'now-sub', t));
-  L('📅 ' + fa(x.d) + ' · زنگ ' + fa(x.p) + calTm(x.d, x.p));
-  L('درس: ' + (x.s || '—') + ' · دبیر: ' + (x.te || '—')); L('موضوع: ' + x.tp);
-  if (x.b || x.en) L('زمان مشاوره: ' + (x.b ? 'شروع ' + fa(x.b) : '') + (x.en ? ' · پایان ' + fa(x.en) : '') + (fin ? ' · مدت ' + fa(x.du) + ' دقیقه' : ''));
-  L('تأیید دبیر: ' + (x.ct ? '✓ ' + fa(x.ct) : 'در انتظار') + ' · تأیید مدیر: ' + (x.cm ? '✓ ' + fa(x.cm) : 'در انتظار'));
-  if (fin) L('تأیید پایان — دبیر: ' + (x.et ? '✓ ' + fa(x.et) : 'در انتظار') + ' · مدیر: ' + (x.em ? '✓ ' + fa(x.em) : 'در انتظار'));
+  L('📅 ' + fa(x.d) + ' | زنگ ' + fa(x.p) + calTm(x.d, x.p));
+  L('درس: ' + (x.s || '—') + ' | دبیر: ' + (x.te || '—')); L('موضوع: ' + x.tp);
+  if (x.b || x.en) L('زمان مشاوره: ' + (x.b ? 'شروع ' + fa(x.b) : '') + (x.en ? ' | پایان ' + fa(x.en) : '') + (fin ? ' | مدت ' + fa(x.du) + ' دقیقه' : ''));
+  L('تأیید دبیر: ' + (x.ct ? '✓ ' + fa(x.ct) : 'در انتظار') + ' | تأیید مدیر: ' + (x.cm ? '✓ ' + fa(x.cm) : 'در انتظار'));
+  if (fin) L('تأیید پایان — دبیر: ' + (x.et ? '✓ ' + fa(x.et) : 'در انتظار') + ' | مدیر: ' + (x.em ? '✓ ' + fa(x.em) : 'در انتظار'));
   if (x.sm && mode !== 't') { const s = el('div', 'now-sub', 'شرح مشاور: ' + x.sm); s.style.color = 'var(--ink)'; d.append(s); }
   const bt = el('div', 'mg-bar'); bt.style.marginTop = '8px'; let ef = null;
   const btn = (txt, fn, cls) => { const b = el('button', 'btn' + (cls ? ' ' + cls : ''), txt); b.type = 'button'; b.addEventListener('click', fn); bt.append(b); return b; };
@@ -5185,7 +5638,7 @@ function cfTch() {
 }
 function cfInfo() {
   const q = jParse(CF.get()), d = jGreg(q[0], q[1], q[2]), per = +$('#cfPer').value || 1, s = cfSlot(), b = $('#cfInfo');
-  b.textContent = d.getDay() === 5 ? '⚠️ جمعه تعطیل است.' : JWD[d.getDay()] + ' ' + fa(CF.get()) + ' · زنگ ' + fa(per) + ': ' + SHIFT_TIMES[shiftOfDate(d)][per - 1] + (s ? ' · طبق برنامه: ' + s[3] + ' با ' + s[4] : '');
+  b.textContent = d.getDay() === 5 ? '⚠️ جمعه تعطیل است.' : JWD[d.getDay()] + ' ' + fa(CF.get()) + ' | زنگ ' + fa(per) + ': ' + SHIFT_TIMES[shiftOfDate(d)][per - 1] + (s ? ' | طبق برنامه: ' + s[3] + ' با ' + s[4] : '');
 }
 function cfRefresh() {
   const q = jParse(CF.get()), d = jGreg(q[0], q[1], q[2]), sh = d.getDay() === 5 ? null : shiftOfDate(d), per = $('#cfPer'), cur = per.value; per.textContent = '';
@@ -5235,15 +5688,15 @@ async function cnsProfile(box, name, cls) {
   const r = await send({ action:'cnsStudent', cpin:CPIN, cls:cls, name:name, key:ACCESS_KEY });
   box.textContent = ''; if (r.status !== 'ok') { box.append(el('div', 'empty', r.message || 'بارگذاری نشد.')); box.dataset.ok = ''; return; }
   box.append(el('div', 'lbl', 'مشخصات و وضعیت تحصیلی'), infoRow('رشته', r.stream));
-  if (r.overall) box.append(infoRow('معدل (از ۲۰)', f2(r.overall.me) + (r.overall.cls != null ? ' · میانگین کلاس ' + f2(r.overall.cls) : '')));
+  if (r.overall) box.append(infoRow('معدل وزنی (از ۲۰)', f2(r.overall.me) + (r.overall.cls != null ? ' | میانگین کلاس ' + f2(r.overall.cls) : '')));
   if (r.rank && r.rank.pos) box.append(infoRow('رتبه در کلاس', fa(r.rank.pos) + ' از ' + fa(r.rank.of)));
-  if (r.att) box.append(infoRow('حضور و غیاب', 'غیبت ' + fa(r.att.absent) + ' · تأخیر ' + fa(r.att.late) + ' · موجه ' + fa(r.att.excused)));
+  if (r.att) box.append(infoRow('حضور و غیاب', 'غیبت ' + fa(r.att.absent) + ' | تأخیر ' + fa(r.att.late) + ' | موجه ' + fa(r.att.excused)));
   if (r.risk) box.append(infoRow('هشدار', 'سطح ' + r.risk.lv + ': ' + r.risk.why.join('، ')));
   box.append(telRow('پدر', r.fn, r.fp), telRow('مادر', r.mn, r.mp), telRow('دانش‌آموز', '', r.sp));
-  if (r.courses && r.courses.length) box.append(el('div', 'lbl', 'میانگین درس‌ها'), tbl(['درس', 'دانش‌آموز', 'کلاس'], r.courses.map(x => [x.c, f2(x.me), f2(x.cls)])));
+  if (r.courses && r.courses.length) box.append(el('div', 'lbl', 'میانگین درس‌ها'), tbl(['درس', 'واحد', 'دانش‌آموز', 'کلاس'], r.courses.map(x => [x.c, uTx(x.u), f2(x.me), f2(x.cls)])));
   if (r.beh && r.beh.length) box.append(el('div', 'lbl', 'یادداشت‌های رفتاری'), tbl(['زمان', 'نوع', 'یادداشت', 'ثبت‌کننده'], r.beh.map(x => [fa(x.t), x.k, x.n, x.w])));
   const act = r.sessions.filter(x => x.st !== 'لغو'), tot = act.filter(x => x.st === 'پایان').reduce((a, x) => a + x.du, 0);
-  box.append(el('div', 'lbl', 'امور مشاوره و زمان آن — ' + fa(act.length) + ' جلسه · مجموع ' + fa(tot) + ' دقیقه'));
+  box.append(el('div', 'lbl', 'امور مشاوره و زمان آن — ' + fa(act.length) + ' جلسه | مجموع ' + fa(tot) + ' دقیقه'));
   if (!act.length) box.append(el('div', 'now-sub', 'مشاوره‌ای ثبت نشده است.')); else act.forEach(x => box.append(cnsCard(x, 'c', cnsC, true)));
 }
 /* --- مدیر --- */
@@ -5269,7 +5722,7 @@ function cmPaint() {
   if (nm) {
     const tot = rows.filter(x => x.st === 'پایان').reduce((a, x) => a + x.du, 0), pb = el('button', 'btn', 'چاپ سوابق این دانش‌آموز'); pb.type = 'button'; pb.style.cssText = 'width:100%;margin-bottom:8px';
     pb.addEventListener('click', () => cmPrint(rows, nm + ' (' + cls + ')'));
-    box.append(el('div', 'now-sub', fa(rows.length) + ' جلسه · مجموع زمان ' + fa(tot) + ' دقیقه'), pb); rows.forEach(x => box.append(cnsCard(x, 'm', cmLoad)));
+    box.append(el('div', 'now-sub', fa(rows.length) + ' جلسه | مجموع زمان ' + fa(tot) + ' دقیقه'), pb); rows.forEach(x => box.append(cnsCard(x, 'm', cmLoad)));
   } else {
     const g = {}; rows.forEach(x => { const k = x.c + '|' + x.n, o = g[k] = g[k] || { c:x.c, n:x.n, k:0, m:0, last:'' }; o.k++; if (x.st === 'پایان') o.m += x.du; if (x.d > o.last) o.last = x.d; });
     box.append(tbl(['دانش‌آموز', 'کلاس', 'جلسات', 'مجموع زمان (دقیقه)', 'آخرین مشاوره'], Object.keys(g).map(k => g[k]).sort((a, b) => a.last < b.last ? 1 : -1).map(o => [o.n, o.c, fa(o.k), fa(o.m), fa(o.last)])),
@@ -5278,7 +5731,7 @@ function cmPaint() {
 }
 function cmPrint(rows, title) {
   const pa = $('#printArea'); pa.textContent = '';
-  pa.append(el('h1', '', 'سوابق مشاوره — ' + SCHOOL_NAME), el('div', '', 'دانش‌آموز: ' + title + ' · تاریخ صدور: ' + fa(dateStr())),
+  pa.append(el('h1', '', 'سوابق مشاوره — ' + SCHOOL_NAME), el('div', '', 'دانش‌آموز: ' + title + ' | تاریخ صدور: ' + fa(dateStr())),
     tbl(['تاریخ', 'زنگ', 'موضوع', 'درس و دبیر', 'شروع', 'پایان', 'مدت (دقیقه)', 'وضعیت', 'شرح مشاور'], rows.slice().sort((a, b) => a.d < b.d ? -1 : 1).map(x => [fa(x.d), fa(x.p), x.tp, x.s + ' — ' + x.te, fa(x.b || '—'), fa(x.en || '—'), x.st === 'پایان' ? fa(x.du) : '—', x.st, x.sm || ''])));
   document.body.classList.add('printing'); window.print();
 }
@@ -5300,7 +5753,7 @@ async function stfOpen() {
 }
 function stfPaint() {
   const r = STF; $('#stfNow').textContent = JWD[new Date().getDay()] + ' ' + fa(r.date) + ' — ساعت ' + fa(r.time);
-  $('#stfState').textContent = 'ورود: ' + (r.in ? fa(r.in) : 'ثبت نشده') + ' · خروج: ' + (r.out ? fa(r.out) : 'ثبت نشده');
+  $('#stfState').textContent = 'ورود: ' + (r.in ? fa(r.in) : 'ثبت نشده') + ' | خروج: ' + (r.out ? fa(r.out) : 'ثبت نشده');
   $('#stfIn').disabled = !!r.in; $('#stfOut').disabled = !r.in;
   const h = $('#stfHist'); h.textContent = ''; h.append(r.hist.length ? tbl(['تاریخ', 'ورود', 'خروج'], r.hist.map(x => [fa(x.d), x.i ? fa(x.i) : '—', x.o ? fa(x.o) : '—'])) : el('div', 'now-sub', 'هنوز سابقه‌ای ثبت نشده است.'));
 }
@@ -5410,7 +5863,7 @@ function srCompute(rg, data) {
       if (rec && rec.i) {
         stt = 'حاضر'; S2.pres++; late = Math.max(0, toMin(rec.i) - first); if (late) stt = 'حاضر با تأخیر';
         if (rec.o) early = Math.max(0, last - toMin(rec.o)); else if (over) { stt += ' (خروج ثبت نشده)'; S2.noOut++; }
-        if (early) stt += ' · خروج زودتر';
+        if (early) stt += ' | خروج زودتر';
       } else if (ds > data.today || (ds === data.today && nowMin < first)) { stt = 'هنوز موعد نرسیده'; counted = false; }
       else if (!over) { stt = 'ورود ثبت نشده (امروز)'; counted = false; }
       else { stt = 'غایب'; S2.abs++; S2.absD.push(fa(ds)); }
@@ -5436,7 +5889,7 @@ function srDraw() {
 function srPrint() {
   const R = SR.rep; if (!R) return toast('ابتدا «نمایش» را بزنید');
   const pa = $('#printArea'); pa.textContent = '';
-  pa.append(el('h1', '', 'گزارش حضور و خروج همکاران — ' + SCHOOL_NAME), el('div', '', R.title + ' · تاریخ صدور: ' + fa(dateStr())));
+  pa.append(el('h1', '', 'گزارش حضور و خروج همکاران — ' + SCHOOL_NAME), el('div', '', R.title + ' | تاریخ صدور: ' + fa(dateStr())));
   if (R.kind !== 'd') pa.append(el('h2', '', 'خلاصه‌ی هر دبیر'), tbl(R.sumHead, R.sumRows));
   if (R.kind !== 'm') pa.append(el('h2', '', 'جزئیات'), tbl(R.detHead, R.detRows));
   pa.append(el('div', '', R.notes));
@@ -5449,7 +5902,7 @@ function init() {
   if (P.pin) { P.pin = ''; savePrefs(); }   // پاک‌کردن رمزی که نسخه‌های قبلی روی دستگاه نگه داشته بودند
   S.teacher = P.teacher; S.course = P.course; S.pin = ''; $('#teacher').value = S.teacher; $('#course').value = S.course; $('#pin').value = S.pin;
   applyRoster(lsGet(R_KEY, null));
-  fillDatalist('teacherList', P.teachers); fillDatalist('courseList', P.courses);
+  fillDatalist('teacherList', P.teachers); fillDatalist('courseList', curAll() || P.courses);
   buildStreams(); buildAssess(); refreshNow(true);
   S.stream = STUDENTS[P.stream] ? P.stream : ''; S.cls = S.stream && STUDENTS[S.stream][P.cls] ? P.cls : '';
   if (S.stream && !S.cls) { const l = Object.keys(STUDENTS[S.stream]); if (l.length === 1) S.cls = l[0]; }
@@ -5561,14 +6014,14 @@ function abEdit(o, ds) {          // ویرایش (یا ثبت) حضور و غی
   const cur = names.map(n => ({ n:n, st:0, note:'', lock:false }));
   o.rows.forEach(r => { const x = cur.find(c => normT(c.n) === normT(r.n)); if (!x) return; x.st = abStIdx(r.st); x.note = r.why || ''; x.lock = x.st === 3; });
   const sh = $('#sheet'); sh.textContent = '';
-  sh.append(el('h3', '', o.rec ? 'ویرایش حضور و غیاب' : 'ثبت حضور و غیاب توسط مدیر'), el('p', '', o.c + ' · ' + o.s + ' · زنگ ' + fa(o.p) + ' · ' + plDayName(ds) + ' ' + fa(ds)));
+  sh.append(el('h3', '', o.rec ? 'ویرایش حضور و غیاب' : 'ثبت حضور و غیاب توسط مدیر'), el('p', '', o.c + ' | ' + o.s + ' | زنگ ' + fa(o.p) + ' | ' + plDayName(ds) + ' ' + fa(ds)));
   const ul = el('ul', 'list'); ul.style.cssText = 'max-height:46vh;overflow:auto;margin:8px 0;text-align:start';
   const paint = (li, x) => { li.dataset.st = STATUS[x.st].key; li.querySelector('.badge').textContent = STATUS[x.st].label + (x.lock ? ' 🔒' : ''); };
   cur.forEach((x, i) => {
     const li = el('li', 'row'), m = el('button', 'row-main'); m.type = 'button'; m.append(el('span', 'num', fa(i + 1)), el('span', 'nm', x.n), el('span', 'badge', '')); li.append(m); ul.append(li); paint(li, x);
     m.addEventListener('click', () => { if (x.lock) return toast('غیبت موجه را از «ثبت غیبت موجه» یا بخش مرخصی تغییر دهید'); x.st = (x.st + 1) % 3; if (!x.st) x.note = ''; paint(li, x); });
   });
-  const hint = el('div', 'now-sub', 'هر تپ روی نام: غایب ← تأخیر ← حاضر · 🔒 غیبت موجه‌ی ثبت‌شده توسط مدیر');
+  const hint = el('div', 'now-sub', 'هر تپ روی نام: غایب ← تأخیر ← حاضر | 🔒 غیبت موجه‌ی ثبت‌شده توسط مدیر');
   const bt = el('div', 'btns'), save = el('button', 'btn primary', 'ذخیره‌ی تغییرات'), no = el('button', 'btn', 'انصراف'); save.type = no.type = 'button';
   no.addEventListener('click', closeModal);
   save.addEventListener('click', async () => {
@@ -5606,7 +6059,7 @@ function mcPerFill() {
 }
 function mcInfo() {
   if (!MC.pk) return; const q = jParse(MC.pk.get()); if (!q) return; const d = jGreg(q[0], q[1], q[2]), per = +$('#mcPer').value || 1;
-  $('#mcInfo').textContent = d.getDay() === 5 ? '⚠️ جمعه تعطیل است؛ روز دیگری انتخاب کنید.' : JWD[d.getDay()] + ' ' + fa(MC.pk.get()) + ' · شیفت ' + SH_FA[shiftOfDate(d)] + ' · ' + $('#mcKind').value + ' در زنگ ' + fa(per) + ': ' + SHIFT_TIMES[shiftOfDate(d)][per - 1];
+  $('#mcInfo').textContent = d.getDay() === 5 ? '⚠️ جمعه تعطیل است؛ روز دیگری انتخاب کنید.' : JWD[d.getDay()] + ' ' + fa(MC.pk.get()) + ' | شیفت ' + SH_FA[shiftOfDate(d)] + ' | ' + $('#mcKind').value + ' در زنگ ' + fa(per) + ': ' + SHIFT_TIMES[shiftOfDate(d)][per - 1];
 }
 async function mcInit() {
   if (!$('#mcBoard')) return;
@@ -5636,12 +6089,12 @@ function mcRender() {
     col.append(el('h4', '', c)); if (!items.length) col.append(el('div', 'mc-none', 'موردی نیست'));
     items.forEach(x => {
       const it = el('div', 'mc-it ' + (x.k === 'آزمون' ? 'ex' : 'hw') + (en(x.d) < today ? ' mc-past' : '')), dl = el('button', 'mc-del', '✕'); dl.type = 'button'; dl.title = 'حذف'; dl.setAttribute('aria-label', 'حذف');
-      it.append(el('div', 'd', (x.k === 'آزمون' ? '📝 ' : '📚 ') + fa(x.d)), el('div', '', x.s + (x.p ? ' · زنگ ' + fa(x.p) : '')), el('div', 't', x.t), dl);
+      it.append(el('div', 'd', (x.k === 'آزمون' ? '📝 ' : '📚 ') + fa(x.d)), el('div', '', x.s + (x.p ? ' | زنگ ' + fa(x.p) : '')), el('div', 't', x.t), dl);
       dl.addEventListener('click', () => showModal({ icon:'warn', title:'حذف از تقویم آموزشی', msg:x.k + ' «' + x.t + '» کلاس ' + x.c + ' (' + fa(x.d) + ') حذف شود؟',
         buttons:[{ text:'حذف', primary:true, onClick:async () => { const q = await send({ action:'calDel', teacher:'', pin:MG.pin, date:x.d, cls:x.c, course:x.s, title:x.t, key:ACCESS_KEY }); toast(q.status === 'ok' ? 'حذف شد' : (q.message || 'حذف نشد')); mcLoad(); } }, { text:'انصراف' }] }));
       if (x.pend) {
         const okb = el('button', 'btn', '✓ تأیید'), nob = el('button', 'btn', '✗ رد'); okb.type = nob.type = 'button';
-        okb.style.cssText = 'background:#1F7A55;color:#fff;border-color:#1F7A55';
+        okb.style.cssText = 'background:var(--present);color:var(--on-present);border-color:var(--present)';
         okb.addEventListener('click', () => calDecide(x, true)); nob.addEventListener('click', () => calDecide(x, false));
         it.append(el('div', 'now-sub', '⏳ در انتظار تأیید شما — دبیر: ' + x.te), okb, nob);
       }
@@ -5654,7 +6107,7 @@ function mcRender() {
 /* --- تداخل در تقویم: آزمون/تکلیف دوم در یک روز فقط با تأیید مدیر --- */
 function calConflict(r, base, after) {
   const isM = base.teacher === 'مدیر';
-  const rows = (r.existing || []).map(x => '• ' + x.k + ' «' + x.t + '» — درس ' + x.s + ' · دبیر: ' + x.te + (x.pend ? ' (در انتظار تأیید)' : '')).join('\n');
+  const rows = (r.existing || []).map(x => '• ' + x.k + ' «' + x.t + '» — درس ' + x.s + ' | دبیر: ' + x.te + (x.pend ? ' (در انتظار تأیید)' : '')).join('\n');
   showModal({ icon:'warn', title:'هشدار تداخل در تقویم', msg:(r.message || '') + (rows ? '\n' + rows : '') + (r.status === 'mismatch' ? '\n\nاین مورد با برنامه‌ی هفتگی مغایرت دارد؛ فقط با تأیید نهایی مدیر ثبت می‌شود.' : '\n\nثبت آزمون یا تکلیف دوم در همان روز فقط با تأیید نهایی مدیر امکان‌پذیر است.'),
     buttons:[
       isM ? { text:'ثبت با تأیید مدیر', primary:true, onClick:async () => { const q = await send(Object.assign({}, base, { confirm:true })); after(q); } }
@@ -5772,17 +6225,17 @@ function dsItem(x, o) {
     if (op && x.due) { if (x.due < td) tags.append(el('span', 'ds-tag sev2', 'سررسید گذشته')); else if (x.due === td) tags.append(el('span', 'ds-tag sev1', 'امروز')); }
   }
   h.append(tags); d.append(h);
-  const sub = []; if (!o.noStu) sub.push(x.name + ' · ' + x.cls);
+  const sub = []; if (!o.noStu) sub.push(x.name + ' | ' + x.cls);
   if (E === 'fam') { sub.push('ثبت ' + fa(x.day)); if (x.due) sub.push('موعد ' + fa(x.due)); } else sub.push('تاریخ ' + fa(x.date));
-  d.append(el('div', 'ds-meta', sub.join(' · ')));
+  d.append(el('div', 'ds-meta', sub.join(' | ')));
   if (x.rel) { const rb = o.relMap && o.relMap[x.rel]; d.append(el('div', 'ds-meta', '🔗 مرتبط با: ' + (rb || 'مورد دیگر'))); }
   const body = E === 'fam' ? x.result : x.desc; if (E !== 'fam' && body) d.append(el('div', 'ds-desc', body));
   if (E === 'fam') {
-    if (x.cdate || x.method || x.who) d.append(el('div', 'ds-meta', '☎️ ' + [x.cdate ? fa(x.cdate) : '', x.method, x.who ? 'با ' + x.who : ''].filter(String).join(' · ')));
+    if (x.cdate || x.method || x.who) d.append(el('div', 'ds-meta', '☎️ ' + [x.cdate ? fa(x.cdate) : '', x.method, x.who ? 'با ' + x.who : ''].filter(String).join(' | ')));
     if (x.result) d.append(el('div', 'ds-desc', 'نتیجه: ' + x.result));
     if (x.ph) { const pr = el('div', 'ds-acts'); [['پدر', x.ph.fn, x.ph.fp], ['مادر', x.ph.mn, x.ph.mp], ['دانش‌آموز', '', x.ph.sp]].forEach(q => { if (!q[2]) return; const a = el('a', 'tel', '📞 ' + q[0] + (q[1] ? ' (' + q[1] + ')' : '')); a.href = 'tel:' + q[2].replace(/[^\d+]/g, ''); a.style.minHeight = '40px'; pr.append(a); }); if (pr.children.length) d.append(pr); }
   }
-  d.append(el('div', 'ds-meta', 'ثبت: ' + x.by + ' · ' + fa(x.t) + (x.ed ? ' — ویرایش: ' + (x.edBy || '') + ' ' + fa(x.ed) : '')));
+  d.append(el('div', 'ds-meta', 'ثبت: ' + x.by + ' | ' + fa(x.t) + (x.ed ? ' — ویرایش: ' + (x.edBy || '') + ' ' + fa(x.ed) : '')));
   if (x.vd) d.append(el('div', 'ds-void', '⛔ ابطال‌شده — دلیل: ' + x.vw));
   const ac = el('div', 'ds-acts');
   if (E === 'fam' && !x.vd && x.can && dsIsOpen(x)) { const b = el('button', 'btn', '✅ ثبت نتیجه‌ی تماس'); b.type = 'button'; b.addEventListener('click', () => dsEdit(x, true)); ac.append(b); }
@@ -5865,7 +6318,7 @@ function dsViewNew(box) {
 }
 async function dsRelLoad() {
   const rs = $('#dsRel'), st = DIS.sel; if (!rs) return; const E = DIS.edit ? DIS.edit.e : DIS.ent;
-  const fill = r => { if (!$('#dsRel') || $('#dsRel') !== rs) return; rs.textContent = ''; dsOpt(rs, '', '— بدون ارتباط —'); const l = (r.rec || []).concat(E === 'fam' ? (r.act || []) : []).filter(x => !x.vd); l.forEach(x => dsOpt(rs, x.id, fa(x.date) + ' · ' + (x.e === 'rec' ? x.cat : x.type))); if (DIS.f.rel && !l.some(x => x.id === DIS.f.rel)) dsOpt(rs, DIS.f.rel, '(مورد ابطال‌شده یا نامشخص)'); rs.value = DIS.f.rel || ''; };
+  const fill = r => { if (!$('#dsRel') || $('#dsRel') !== rs) return; rs.textContent = ''; dsOpt(rs, '', '— بدون ارتباط —'); const l = (r.rec || []).concat(E === 'fam' ? (r.act || []) : []).filter(x => !x.vd); l.forEach(x => dsOpt(rs, x.id, fa(x.date) + ' | ' + (x.e === 'rec' ? x.cat : x.type))); if (DIS.f.rel && !l.some(x => x.id === DIS.f.rel)) dsOpt(rs, DIS.f.rel, '(مورد ابطال‌شده یا نامشخص)'); rs.value = DIS.f.rel || ''; };
   if (!st.cls || !st.name) return; const key = st.cls + '|' + st.name;
   if (DIS.rel[key]) return fill(DIS.rel[key]);
   const r = await dsCall('disFile', { cls:st.cls, name:st.name }); if (r.status !== 'ok') return; DIS.rel[key] = r; if (st.cls + '|' + st.name === key) fill(r);
@@ -5944,19 +6397,19 @@ function dsViewFile(box) {
     out.append(el('div', 'empty', 'در حال بارگذاری…')); const r = await dsCall('disFile', { cls:P.cls, name:P.name, inc:!!P.inc });
     out.textContent = ''; if (r.status !== 'ok') { out.append(el('div', 'card empty', dsFail(r))); return; }
     DIS.rel[P.cls + '|' + P.name] = r;
-    const n = dsCounts(r), hd = el('div', 'card'); hd.append(el('div', 'now-t', r.stu.name), el('div', 'now-sub', 'کلاس ' + r.stu.cls + (r.stu.stream ? ' · رشته‌ی ' + r.stu.stream : '')));
+    const n = dsCounts(r), hd = el('div', 'card'); hd.append(el('div', 'now-t', r.stu.name), el('div', 'now-sub', 'کلاس ' + r.stu.cls + (r.stu.stream ? ' | رشته‌ی ' + r.stu.stream : '')));
     const tiles = el('div', 'ds-tiles');
-    [['⚠️ انضباطی', n.neg, n.neg ? 'سبک ' + fa(n.sv[0]) + ' · متوسط ' + fa(n.sv[1]) + ' · شدید ' + fa(n.sv[2]) : ''], ['🌟 تشویق', n.pos, ''], ['🎯 پرورشی', n.edu, ''], ['🛠 اقدام', n.act, ''], ['📞 پیگیری باز', n.famOpen, 'از ' + fa(n.fam) + ' تماس']].forEach(q => { const t = el('div', 'ds-tile'); t.append(el('div', 'now-sub', q[0]), el('div', 'now-t', fa(q[1]))); if (q[2]) t.append(el('div', 'ds-meta', q[2])); tiles.append(t); });
+    [['⚠️ انضباطی', n.neg, n.neg ? 'سبک ' + fa(n.sv[0]) + ' | متوسط ' + fa(n.sv[1]) + ' | شدید ' + fa(n.sv[2]) : ''], ['🌟 تشویق', n.pos, ''], ['🎯 پرورشی', n.edu, ''], ['🛠 اقدام', n.act, ''], ['📞 پیگیری باز', n.famOpen, 'از ' + fa(n.fam) + ' تماس']].forEach(q => { const t = el('div', 'ds-tile'); t.append(el('div', 'now-sub', q[0]), el('div', 'now-t', fa(q[1]))); if (q[2]) t.append(el('div', 'ds-meta', q[2])); tiles.append(t); });
     hd.append(tiles);
     if (r.ph) { const pr = el('div', 'ds-acts'); [['پدر', r.ph.fn, r.ph.fp], ['مادر', r.ph.mn, r.ph.mp], ['دانش‌آموز', '', r.ph.sp]].forEach(q => { if (!q[2]) return; const a = el('a', 'tel', '📞 ' + q[0] + (q[1] ? ' (' + q[1] + ')' : '')); a.href = 'tel:' + q[2].replace(/[^\d+]/g, ''); a.style.minHeight = '40px'; pr.append(a); }); if (pr.children.length) hd.append(pr); }
     const ab = el('div', 'ds-acts'), nb = el('button', 'btn', '➕ ثبت برای این دانش‌آموز'); nb.type = 'button'; nb.addEventListener('click', () => { DIS.sel = { cls:P.cls, name:P.name }; DIS.view = 'new'; disRender(); window.scrollTo({ top:0, behavior:'smooth' }); }); ab.append(nb);
     if (dsMgr()) { const pb = el('button', 'btn', '🖨 چاپ پرونده'); pb.type = 'button'; pb.addEventListener('click', () => dsPrint({ scope:'student', stu:r.stu, ph:r.ph, rec:r.rec, act:r.act, fam:r.fam, td:r.td })); ab.append(pb); }
     hd.append(ab); out.append(hd);
-    const relMap = {}; r.rec.concat(r.act).forEach(x => { relMap[x.id] = fa(x.date) + ' · ' + (x.e === 'rec' ? x.cat : x.type); });
+    const relMap = {}; r.rec.concat(r.act).forEach(x => { relMap[x.id] = fa(x.date) + ' | ' + (x.e === 'rec' ? x.cat : x.type); });
     const all = r.rec.concat(r.act, r.fam).map(x => ({ x:x, d:x.e === 'fam' ? x.day : x.date })).sort((a, b) => a.d < b.d ? 1 : a.d > b.d ? -1 : 0);
     const tl = el('div', 'card'); tl.append(el('div', 'lbl', 'سوابق (جدیدترین بالا)')); if (!all.length) tl.append(el('div', 'empty', 'هنوز چیزی ثبت نشده است.'));
     all.forEach(q => tl.append(dsItem(q.x, { noStu:true, relMap:relMap, reload:load }))); out.append(tl);
-    if (r.beh && r.beh.length) { const d = el('details', 'dir-it'), s = el('summary'); s.append(el('span', '', 'یادداشت‌های رفتاری قبلی (' + fa(r.beh.length) + ')')); d.append(s); r.beh.forEach(b => { const it = el('div', 'ds-meta'); it.style.padding = '4px 14px 8px'; it.textContent = fa(b.t) + ' · ' + b.k + ' · ' + b.w + ' — ' + b.n; d.append(it); }); out.append(d); }
+    if (r.beh && r.beh.length) { const d = el('details', 'dir-it'), s = el('summary'); s.append(el('span', '', 'یادداشت‌های رفتاری قبلی (' + fa(r.beh.length) + ')')); d.append(s); r.beh.forEach(b => { const it = el('div', 'ds-meta'); it.style.padding = '4px 14px 8px'; it.textContent = fa(b.t) + ' | ' + b.k + ' | ' + b.w + ' — ' + b.n; d.append(it); }); out.append(d); }
   }
   load();
 }
@@ -5990,7 +6443,7 @@ function dsReportNodes(d) {
     const sc = st ? [] : ['دانش‌آموز', 'کلاس'];
     if (rec.length) { nodes.push(el('h2', '', 'موارد انضباطی، تشویق‌ها و فعالیت‌های پرورشی')); nodes.push(tbl(sc.concat(['تاریخ', 'نوع', 'عنوان', 'شدت', 'شرح', 'ثبت‌کننده']), rec.map(x => (st ? [] : [x.name, x.cls]).concat([fa(x.date), x.kind, x.cat, x.sev || '—', x.desc || '—', x.by])))); }
     if (act.length) { nodes.push(el('h2', '', 'اقدامات تربیتی')); nodes.push(tbl(sc.concat(['تاریخ', 'اقدام', 'شرح', 'ثبت‌کننده']), act.map(x => (st ? [] : [x.name, x.cls]).concat([fa(x.date), x.type, x.desc || '—', x.by])))); }
-    if (fam.length) { nodes.push(el('h2', '', 'پیگیری تماس با خانواده')); nodes.push(tbl(sc.concat(['تاریخ ثبت', 'موضوع', 'وضعیت', 'موعد', 'تاریخ تماس', 'روش و طرف تماس', 'نتیجه']), fam.map(x => (st ? [] : [x.name, x.cls]).concat([fa(x.day), x.topic, x.st, x.due ? fa(x.due) : '—', x.cdate ? fa(x.cdate) : '—', [x.method, x.who].filter(String).join(' · ') || '—', x.result || '—'])))); }
+    if (fam.length) { nodes.push(el('h2', '', 'پیگیری تماس با خانواده')); nodes.push(tbl(sc.concat(['تاریخ ثبت', 'موضوع', 'وضعیت', 'موعد', 'تاریخ تماس', 'روش و طرف تماس', 'نتیجه']), fam.map(x => (st ? [] : [x.name, x.cls]).concat([fa(x.day), x.topic, x.st, x.due ? fa(x.due) : '—', x.cdate ? fa(x.cdate) : '—', [x.method, x.who].filter(String).join(' | ') || '—', x.result || '—'])))); }
     if (!rec.length && !act.length && !fam.length) nodes.push(el('div', '', 'در این بازه موردی ثبت نشده است.'));
   }
   return nodes;
@@ -6001,9 +6454,9 @@ function dsPrint(d) {
   const title = d.scope === 'student' ? 'پرونده‌ی انضباطی و پرورشی دانش‌آموز' : 'گزارش انضباطی و پرورشی';
   pa.append(el('h1', '', title + ' — ' + SCHOOL_NAME));
   let info = '';
-  if (d.scope === 'student') info = 'نام: ' + d.stu.name + ' · کلاس: ' + d.stu.cls + (d.stu.stream ? ' · رشته: ' + d.stu.stream : '') + (d.ph && (d.ph.fn || d.ph.mn) ? ' · ولی: ' + [d.ph.fn, d.ph.mn].filter(String).join(' / ') : '');
-  else info = (d.scope === 'class' ? 'کلاس: ' + d.cls : 'کل مدرسه') + (d.from || d.to ? ' · بازه: ' + (d.from ? 'از ' + fa(d.from) : '') + (d.to ? ' تا ' + fa(d.to) : '') : ' · همه‌ی سوابق');
-  pa.append(el('div', '', info + ' · تاریخ صدور: ' + fa(d.td || dateStr())));
+  if (d.scope === 'student') info = 'نام: ' + d.stu.name + ' | کلاس: ' + d.stu.cls + (d.stu.stream ? ' | رشته: ' + d.stu.stream : '') + (d.ph && (d.ph.fn || d.ph.mn) ? ' | ولی: ' + [d.ph.fn, d.ph.mn].filter(String).join(' / ') : '');
+  else info = (d.scope === 'class' ? 'کلاس: ' + d.cls : 'کل مدرسه') + (d.from || d.to ? ' | بازه: ' + (d.from ? 'از ' + fa(d.from) : '') + (d.to ? ' تا ' + fa(d.to) : '') : ' | همه‌ی سوابق');
+  pa.append(el('div', '', info + ' | تاریخ صدور: ' + fa(d.td || dateStr())));
   dsReportNodes(d).forEach(n => pa.append(n));
   const nt = el('div', '', 'موارد ابطال‌شده در این گزارش نیامده است. این گزارش محرمانه است و فقط برای استفاده‌ی مدیریت مدرسه و اولیای دانش‌آموز مربوط تنظیم شده است.'); nt.style.marginTop = '14px'; pa.append(nt);
   const sg = el('div', 'pa-sign'); ['مدیر مدرسه', 'مسئول انضباطی و پرورشی'].concat(d.scope === 'student' ? ['ولی دانش‌آموز (مشاهده شد)'] : []).forEach(t => sg.append(el('div', '', t))); pa.append(sg);
@@ -6045,7 +6498,7 @@ function dsViewLog(box) {
   async function load() {
     out.textContent = ''; out.append(el('div', 'empty', 'در حال بارگذاری…')); const r = await dsCall('disLog', { cls:G.cls, name:G.name }); out.textContent = '';
     if (r.status !== 'ok') { out.append(el('div', 'card empty', dsFail(r))); return; }
-    const cd = el('div', 'card'); cd.append(r.list.length ? tbl(['زمان', 'کاربر', 'عملیات', 'بخش', 'دانش‌آموز', 'فیلد', 'قبلاً', 'اکنون'], r.list.map(x => [fa(x.t), x.w, x.op, x.sec, x.name + ' · ' + x.cls, x.f, x.a || '—', x.b || '—'])) : el('div', 'empty', 'سابقه‌ای نیست.')); out.append(cd);
+    const cd = el('div', 'card'); cd.append(r.list.length ? tbl(['زمان', 'کاربر', 'عملیات', 'بخش', 'دانش‌آموز', 'فیلد', 'قبلاً', 'اکنون'], r.list.map(x => [fa(x.t), x.w, x.op, x.sec, x.name + ' | ' + x.cls, x.f, x.a || '—', x.b || '—'])) : el('div', 'empty', 'سابقه‌ای نیست.')); out.append(cd);
   }
   load();
 }
@@ -6064,9 +6517,11 @@ function mgShow(k, scroll) {
   secs.forEach(x => { x.hidden = x.dataset.sec !== k; });
   $$('#mgNav button').forEach(b => { const on = b.dataset.sec === k; b.classList.toggle('on', on); b.setAttribute('aria-pressed', String(on)); });
   try { localStorage.setItem(MG_SEC_K, k); } catch (e) {}
+  if (window.innerWidth < 900) { const ab = $('#mgNav .mg-nb.on'); if (ab && ab.scrollIntoView) ab.scrollIntoView({ block:'nearest', inline:'center' }); }   // منوی افقی موبایل: بخش فعال دیده شود
   if (k === 'dis' && MG.pin && !$('#mgBody').hidden) disOpen('m');
   if (k === 'pta' && MG.pin && !$('#mgBody').hidden) ptOpen();
   if (k === 'set' && MG.pin && !$('#mgBody').hidden) setOpen();
+  if (k === 'setup' && MG.pin && !$('#mgBody').hidden) suOpen();
   if (scroll) { const r = $('#mgNav').getBoundingClientRect(); if (r.top < 0) $('#mgNav').scrollIntoView({ behavior:'smooth', block:'start' }); }
 }
 function mgGo(id) {               // رفتن به یک کارت، حتی اگر در بخش دیگری باشد
@@ -6120,7 +6575,7 @@ function mgGo(id) {               // رفتن به یک کارت، حتی اگر
   var head = mk('div', 'mg-nh'), lg = $('#logo');
   if (lg && lg.getAttribute('src')) { var im = mk('img'); im.alt = ''; im.src = lg.getAttribute('src'); head.append(im); }
   var ht = mk('div'); ht.append(mk('b', '', 'پنل مدیریت'), mk('small', '', typeof SCHOOL_NAME !== 'undefined' ? SCHOOL_NAME : '')); head.append(ht);
-  var groups = [['نمای کلی', ['today', 'cal']], ['مدیریت', ['stu', 'dis', 'tch']], ['گزارش و سامانه', ['rep', 'sys']]], used = {}, frag = d.createDocumentFragment();
+  var groups = [['میز کار', ['today', 'cal']], ['دانش‌آموزان و اولیا', ['stu', 'dis', 'pta']], ['کادر آموزشی', ['tch']], ['گزارش و سامانه', ['rep', 'sys']], ['راه‌اندازی و تنظیمات', ['setup', 'set']]], used = {}, frag = d.createDocumentFragment();
   frag.append(head);
   groups.forEach(function(g){
     var items = g[1].map(btn).filter(Boolean); if (!items.length) return;
