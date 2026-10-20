@@ -4871,10 +4871,22 @@ function gdAsk(r, name) {
     } }, { text:'انصراف' }] });
 }
 $('#gdCls').addEventListener('change', gdRender);
+function auRestore(x) {
+  showModal({ icon:'warn', title:'بازنشانی آزمون/تکلیف', msg:'این آزمون یا تکلیف دوباره در فهرست آزمون‌های ثبت‌شده برگردانده شود؟\n' + x.d, buttons:[
+    { text:'بازنشانی', primary:true, onClick:async () => { const q = await send({ action:'calRestore', pin:MG.pin, key:ACCESS_KEY, id:x.id }); toast(q.status === 'ok' ? 'بازنشانی شد ✓' : (q.message || 'ناموفق')); $('#auLoad').click(); } },
+    { text:'انصراف' } ] });
+}
 $('#auLoad').addEventListener('click', async () => {
   const box = $('#auList'); box.textContent = 'در حال بارگذاری…'; const r = await send({ action:'auditList', pin:MG.pin, key:ACCESS_KEY }); box.textContent = '';
   if (r.status !== 'ok') { box.append(el('div', 'empty', r.message || 'بارگذاری نشد.')); return; }
-  box.append(r.list.length ? tbl(['زمان', 'کاربر', 'عملیات', 'جزئیات'], r.list.map(x => [fa(x.t), x.w, x.a, x.d])) : el('div', 'now-sub', 'موردی ثبت نشده است.'));
+  if (!r.list.length) return box.append(el('div', 'now-sub', 'موردی ثبت نشده است.'));
+  r.list.forEach(x => {
+    const row = el('div', 'dir-r'), txt = el('span', '', fa(x.t) + ' · ' + x.w + ' · ' + x.a + ' · ' + x.d);
+    row.append(txt);
+    if (x.r) { const b = el('button', 'btn', 'بازنشانی'); b.type = 'button'; b.addEventListener('click', () => auRestore(x)); row.append(b); }
+    else if (x.rs) row.append(el('span', 'now-sub', x.rs ? 'بازنشانی شده' : ''));
+    box.append(row);
+  });
 });
 async function pfBeh() {
   const box = el('div', 'card'), lst = el('div'), inp = el('input'), kind = el('select'), add = el('button', 'btn', 'ثبت یادداشت'); box.append(el('div', 'lbl', 'یادداشت‌های رفتاری و تربیتی'), lst);
