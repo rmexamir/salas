@@ -1396,6 +1396,7 @@ input:focus,select:focus{border-color:var(--teal);box-shadow:var(--ring);backgro
         <input id="customTitle" type="text" autocomplete="off" placeholder="مثلاً آزمون فصل ۳">
       </div>
       <p class="hint">فقط نمره‌های واردشده ارسال می‌شود؛ خانه خالی نادیده گرفته می‌شود. با «بعدی» کیبورد به نفر بعد می‌روید.</p>
+      <div id="grSaved" class="card" hidden style="margin-bottom:10px"></div>
       <ul id="grList" class="list"></ul>
       <div id="grEmpty" class="empty">ابتدا رشته و کلاس را انتخاب کنید.</div>
     </div>
@@ -2055,7 +2056,42 @@ function gradeInfo() {
   });
   return { max, vals, abs, bad, firstBad };
 }
+/* --- نمرات ثبت‌شده‌ی همین روز و زنگ؛ درخواست ویرایش فردی برای هر دانش‌آموز --- */
+let GRS_KEY = '';
+async function grSavedLoad(force) {
+  const box = $('#grSaved');
+  if (!box || !S.cls || !S.course.trim() || !S.teacher.trim()) { if (box) { box.textContent = ''; box.hidden = true; } return; }
+  const key = [dateStr(), S.cls, S.course.trim(), S.d.time].join('|');
+  if (key === GRS_KEY && !force) return;
+  GRS_KEY = key;
+  const r = await send(Object.assign(base(), { action:'grFor' }));
+  if (GRS_KEY !== key) return;
+  box.textContent = '';
+  if (r.status !== 'ok' || !r.list.length) { box.hidden = true; return; }
+  box.hidden = false;
+  box.append(el('div', 'lbl', 'نمرات ثبت‌شده‌ی این روز و زنگ'), el('div', 'now-sub', 'برای تغییر هر نمره، درخواست ویرایش بدهید؛ پس از تأیید مدیر جایگزین می‌شود.'));
+  r.list.forEach(ex => {
+    box.append(el('div', 'now-t', ex.et + ' · سقف ' + fa(ex.max)));
+    ex.rows.forEach(x => {
+      const row = el('div', 'dir-r'), b = el('button', 'btn', '✎ درخواست ویرایش'); b.type = 'button';
+      b.addEventListener('click', () => grSingleEdit(ex, x));
+      row.append(el('span', '', x.n + ' — ' + (x.abs ? 'غایب' : fa(x.sc))), b); box.append(row);
+    });
+  });
+}
+async function grSingleEdit(ex, x) {
+  const v = prompt('نمره‌ی جدید برای ' + x.n + ' (۰ تا ' + fa(ex.max) + ') یا «غایب»:', x.abs ? 'غایب' : x.sc);
+  if (v === null) return;
+  const t = v.trim(); let extra;
+  if (t === 'غایب') extra = { absent:true };
+  else { const n = Number(toEn(t)); if (t === '' || !isFinite(n) || n < 0 || n > ex.max) return toast('نمره‌ی نامعتبر است'); extra = { absent:false, score:n }; }
+  const r = await send(Object.assign(base(), { action:'grSingle', examType:ex.et, max:ex.max, student:x.n }, extra));
+  if (r.net) return toast('اینترنت در دسترس نیست');
+  if (r.status === 'pending') return showModal({ icon:'ok', title:'در انتظار تأیید مدیر', msg:r.message, buttons:[{ text:'متوجه شدم', primary:true }] });
+  toast(r.message || 'ثبت نشد');
+}
 function updateGr() {
+  grSavedLoad();
   const g = gradeInfo(), v = g.vals;
   $('#sN').textContent = fa(v.length + g.abs);
   if (v.length) {
@@ -2105,6 +2141,7 @@ async function submit(payload, info) {
       extra = m.net ? ' — پیامک ارسال نشد (اینترنت قطع است).' : m.status === 'ok'
         ? ' ' + fa(m.sent || 0) + ' پیامک به اولیا ارسال شد' + (m.skipped ? '، ' + fa(m.skipped) + ' نفر بدون شماره' : '') + (m.failed ? '، ' + fa(m.failed) + ' ناموفق' : '') + '.'
         : ' — پیامک ارسال نشد: ' + (m.message || 'خطا'); }
+    if (payload.action === 'grades') grSavedLoad(true);
     showModal({ icon:'ok', title:'ثبت شد', msg:info.msg + extra, buttons:[{ text:'ثبت کلاس بعدی', primary:true, onClick:nextClass }, { text:'بستن' }] }); return; }
   if (r.status === 'exempt') {
     showModal({ icon:'ok', title:'معاف شد', msg:r.message || 'حضور و غیاب این زنگ ثبت نشد.', buttons:[{ text:'ثبت کلاس بعدی', primary:true, onClick:nextClass }, { text:'بستن' }] });
@@ -4493,7 +4530,7 @@ function ngMgPaint() {
   if (!pend.length) box.append(el('div', 'now-sub', 'درخواست ویرایشی در انتظار نیست.'));
   pend.forEach(x => {
     const d = card1();
-    d.append(el('div', 'now-t', x.te + ' · ' + x.c + ' · ' + x.cs), el('div', 'now-sub', fa(x.d) + ' · ' + x.et + ' · ' + fa(x.ch.length) + ' تغییر'));
+    d.append(el('div', 'now-t', x.te + ' · ' + x.c + ' · ' + x.cs + ' · ' + (x.k || '')), el('div', 'now-sub', fa(x.d) + ' · ' + x.et + ' · ' + fa(x.ch.length) + ' تغییر'));
     d.append(tbl(['دانش‌آموز', 'قبلی', 'جدید'], x.ch.map(c => [c.n, fa(c.o), fa(c.w)])));
     const row = el('div'); row.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;margin-top:8px';
     const ok = el('button', 'btn', '✓ تأیید'), no = el('button', 'btn', '✗ رد'); ok.type = no.type = 'button';
