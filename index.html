@@ -1666,18 +1666,6 @@ input:focus,select:focus{border-color:var(--teal);box-shadow:var(--ring);backgro
       </div>
       <div class="mg-sec" data-sec="tch" data-t="دبیران و برنامه" hidden>
       <div class="mg-sec-d">حضور و خروج همکاران، ابلاغ و ساعات، و ویرایش برنامه‌ی هفتگی.</div>
-      <div class="card" id="tdCard">
-        <div class="lbl" style="margin-bottom:8px">پرونده انضباطی دبیران</div>
-        <div class="now-sub" style="margin-bottom:8px">فقط موارد مثبت یا منفی از فهرست ثبت می‌شود. برای موارد منفی ثبت مورد کافی است؛ برای موارد مثبت توضیحات الزامی است.</div>
-        <div class="mg-bar"><select id="tdT" aria-label="دبیر"></select><select id="tdK" aria-label="نوع"><option>منفی</option><option>مثبت</option></select></div>
-        <div class="field"><select id="tdTopic" aria-label="موضوع"></select></div>
-        <div class="mg-bar jp"><select id="tdD" aria-label="روز"></select><select id="tdM" aria-label="ماه"></select><select id="tdY" aria-label="سال"></select></div>
-        <div class="field"><textarea id="tdDesc" rows="2" maxlength="300" placeholder="توضیحات (برای مورد مثبت الزامی)" style="width:100%;border-radius:12px;border:1px solid var(--line);background:var(--input);color:var(--ink);padding:10px;font:inherit"></textarea></div>
-        <button id="tdSend" class="send" type="button">ثبت در پرونده</button>
-        <div class="lbl" style="margin:12px 0 8px">سوابق پرونده<span id="tdCnt"></span></div>
-        <div id="tdSum"></div>
-        <div id="tdList"></div>
-      </div>
       <div class="card" id="ngCard">
         <div class="lbl" style="margin-bottom:8px">درخواست‌های ویرایش نمره<span id="ngCnt"></span></div>
         <div id="ngList"></div>
@@ -3103,7 +3091,8 @@ async function loadInbox() {
   const r = await send({ action:'inbox', teacher:S.teacher.trim(), pin:S.pin.trim(), key:ACCESS_KEY });
   if (r.net) { box.textContent = 'اینترنت در دسترس نیست.'; return; }
   if (r.status !== 'ok') { box.textContent = r.message || 'بارگذاری نشد.'; return; }
-  INB = r.items; const sel = $('#inbSel'), cur = +sel.value || 0; sel.textContent = '';
+  INB = r.items; if (ISMGR) INB = INB.filter(x => inbGrCount(x) > 0);
+  const sel = $('#inbSel'), cur = +sel.value || 0; sel.textContent = '';
   INB.forEach((x, i) => { const o = el('option', '', (inbGrCount(x) ? '✅ ' : '') + x.c + ' — ' + x.s); o.value = i; sel.append(o); }); sel.value = INB[cur] ? cur : 0; renderInb(); inbChips(); calLoad(); inbRiskLoad(); taMineLoad();
 }
 /* نشانگر درس‌های دارای نمره: ✓ سبز؛ تا وقتی دبیر آن را باز نکرده (یا نمره‌ی تازه آمده) چشمک می‌زند */
@@ -4588,7 +4577,17 @@ function calPerFill() {
 }
 function calInfo() {
   const q = jParse(CALP.get()), d = jGreg(q[0], q[1], q[2]), per = +$('#calPer').value || 1, kd = $('#calKind').value;
-  $('#calInfo').textContent = d.getDay() === 5 ? '⚠️ جمعه تعطیل است؛ روز دیگری انتخاب کنید.' : JWD[d.getDay()] + ' ' + fa(CALP.get()) + ' · شیفت ' + SH_FA[shiftOfDate(d)] + ' · ' + kd + ' در زنگ ' + fa(per) + ': ' + SHIFT_TIMES[shiftOfDate(d)][per - 1];
+  if (d.getDay() === 5) { $('#calInfo').textContent = '⚠️ جمعه تعطیل است؛ روز دیگری انتخاب کنید.'; return; }
+  let txt = JWD[d.getDay()] + ' ' + fa(CALP.get()) + ' · شیفت ' + SH_FA[shiftOfDate(d)] + ' · ' + kd + ' در زنگ ' + fa(per) + ': ' + SHIFT_TIMES[shiftOfDate(d)][per - 1];
+  const x = INB && INB[+$('#inbSel').value || 0];
+  if (x) {
+    const day = (d.getDay() + 1) % 7, c = SCH.filter(r => r[0] === x.c && r[1] === day && r[2] === per && (!r[5] || r[5] === SH_FA[shiftOfDate(d)]));
+    if (c.length) txt += ' · برنامه‌ی این زنگ: ' + uniq(c.map(r => r[3])).join('، ') + ' — ' + uniq(c.map(r => r[4])).join('، ');
+    else txt += ' · در برنامه‌ی این زنگ برای این کلاس درسی نیست';
+    const match = c.some(r => normT(r[3]) === normT(x.s) && normT(r[4]) === normT(S.teacher));
+    if (!match && ROLE !== 'manager') txt += ' ⚠️ با برنامه مغایرت دارد؛ ثبت برای تأیید مدیر ارسال می‌شود.';
+  }
+  $('#calInfo').textContent = txt;
 }
 async function calLoad() {
   const box = $('#calList'); if (!box) return; calInit(); calPerFill();
@@ -4612,9 +4611,10 @@ async function calLoad() {
 $('#calAdd').addEventListener('click', async () => {
   const x = INB && INB[+$('#inbSel').value || 0]; if (!x) return toast('ابتدا کلاس و درس را انتخاب کنید');
   calInit(); const q = jParse(CALP.get()); if (jGreg(q[0], q[1], q[2]).getDay() === 5) return toast('جمعه تعطیل است؛ روز دیگری انتخاب کنید');
-  const base = { action:'calAdd', teacher:S.teacher.trim(), pin:S.pin.trim(), cls:x.c, course:x.s, date:CALP.get(), period:+$('#calPer').value || 1, kind:$('#calKind').value, title:$('#calTitle').value.trim(), key:ACCESS_KEY };
+  const qd = jParse(CALP.get()), dd = jGreg(qd[0], qd[1], qd[2]);
+  const base = { action:'calAdd', teacher:S.teacher.trim(), pin:S.pin.trim(), cls:x.c, course:x.s, date:CALP.get(), period:+$('#calPer').value || 1, kind:$('#calKind').value, title:$('#calTitle').value.trim(), shift:dd.getDay() === 5 ? '' : SH_FA[shiftOfDate(dd)], key:ACCESS_KEY };
   const r = await send(base);
-  if (r.status === 'conflict') return calConflict(r, base, q => { if (q.status === 'ok' || q.status === 'pending') { $('#calTitle').value = ''; calLoad(); } });
+  if (r.status === 'conflict' || r.status === 'mismatch') return calConflict(r, base, q => { if (q.status === 'ok' || q.status === 'pending') { $('#calTitle').value = ''; calLoad(); } });
   if (r.status === 'pending') { $('#calTitle').value = ''; toast('برای تأیید مدیر ارسال شد ⏳'); return calLoad(); }
   if (r.status !== 'ok') return toast(r.message || 'ثبت نشد'); $('#calTitle').value = ''; toast('ثبت شد ✓'); calLoad();
 });
@@ -4666,52 +4666,6 @@ function ngMgPaint() {
   const hb = $('#ngHist'); hb.textContent = '';
   const hist = NGM.filter(x => x.st !== NG_PEND_).slice(0, 40);
   if (hist.length) hb.append(tbl(['تاریخ', 'دبیر', 'کلاس', 'درس', 'ارزیابی', 'وضعیت'], hist.map(x => [fa(x.d), x.te, x.c, x.cs, x.et, x.st])));
-}
-/* --- مدیر: پرونده انضباطی دبیران (مثبت و منفی) --- */
-const TD = { pk:null };
-const TD_TOPICS = {
-  'منفی': ['اخراج دانش‌آموز از کلاس', 'همراه داشتن گوشی در کلاس', 'حرف زدن و بی‌نظمی در کلاس', 'تأخیر در ورود به کلاس', 'غیبت یا تأخیر بدون اطلاع', 'برخورد نامناسب با دانش‌آموز', 'عدم رعایت مقررات مدرسه', 'سایر موارد منفی'],
-  'مثبت': ['فعالیت و تدریس خلاقانه در کلاس', 'مشارکت فعال در بحث‌های کلاسی', 'پیگیری مشکلات دانش‌آموزان', 'همکاری در برنامه‌های مدرسه', 'ارائه‌ی محتوای تکمیلی', 'سایر موارد مثبت']
-};
-function tdInit() {
-  if (window.__tdInit) return; window.__tdInit = true;
-  TD.pk = jPicker($('#tdD'), $('#tdM'), $('#tdY'), () => {});
-  $('#tdK').addEventListener('change', tdTopics); $('#tdSend').addEventListener('click', tdSubmit);
-  tdTopics(); tdFill(); tdList();
-}
-function tdTopics() {
-  const sel = $('#tdTopic'), k = $('#tdK').value; sel.textContent = '';
-  TD_TOPICS[k].forEach(t => { const o = el('option', '', t); o.value = t; sel.append(o); });
-}
-function tdFill() {
-  const sel = $('#tdT'), keep = sel.value, names = uniq(SCH.map(r => r[4]).filter(Boolean)).sort((a, b) => a.localeCompare(b, 'fa'));
-  sel.textContent = ''; names.forEach(n => { const o = el('option', '', n); o.value = n; sel.append(o); });
-  if (names.includes(keep)) sel.value = keep;
-  if (!names.length && !TA.tried) { TA.tried = true; loadSchedule().then(tdFill); }
-}
-async function tdSubmit() {
-  const q = jParse(TD.pk.get()), t = $('#tdT').value, k = $('#tdK').value, desc = $('#tdDesc').value.trim();
-  if (!t) return toast('دبیر را انتخاب کنید');
-  if (!q) return toast('تاریخ نامعتبر است');
-  if (k === 'مثبت' && !desc) return toast('برای موارد مثبت، توضیحات را بنویسید');
-  const r = await send({ action:'tdisAdd', pin:MG.pin, key:ACCESS_KEY, target:t, type:k, topic:$('#tdTopic').value, date:TD.pk.get(), desc:desc });
-  if (r.net) return toast('اینترنت در دسترس نیست');
-  if (r.status !== 'ok') return toast(r.message || 'ثبت نشد');
-  $('#tdDesc').value = ''; toast('در پرونده ثبت شد ✓'); tdList();
-}
-async function tdList() {
-  const box = $('#tdList'), sum = $('#tdSum'); if (!box || !MG.pin) return;
-  const r = await send({ action:'tdisList', pin:MG.pin, key:ACCESS_KEY }); if (r.status !== 'ok') return;
-  box.textContent = ''; sum.textContent = ''; $('#tdCnt').textContent = r.list.length ? ' (' + fa(r.list.length) + ')' : '';
-  const names = uniq(r.list.map(x => x.n)).sort((a, b) => a.localeCompare(b, 'fa'));
-  if (names.length) sum.append(tbl(['دبیر', 'موارد مثبت', 'موارد منفی'], names.map(n => [n, fa(r.list.filter(x => x.n === n && x.k === 'مثبت').length), fa(r.list.filter(x => x.n === n && x.k === 'منفی').length)])));
-  if (!r.list.length) return box.append(el('div', 'now-sub', 'موردی ثبت نشده است.'));
-  r.list.slice(0, 80).forEach(x => {
-    const row = el('div', 'dir-r'), b = el('button', 'btn', 'حذف'); b.type = 'button';
-    row.append(el('span', '', (x.k === 'مثبت' ? '✅ ' : '⚠️ ') + fa(x.d) + ' · ' + x.n + ' · ' + x.t + (x.desc ? ' — ' + x.desc : '')), b);
-    b.addEventListener('click', async () => { const q = await send({ action:'tdisDel', pin:MG.pin, key:ACCESS_KEY, id:x.id }); toast(q.status === 'ok' ? 'حذف شد' : (q.message || 'حذف نشد')); tdList(); });
-    box.append(row);
-  });
 }
 /* --- عدم حضور و تأخیر دبیر (ثبت مدیر؛ کارتابل دبیر) --- */
 const TA = { pk:null, tried:false };
@@ -5064,7 +5018,7 @@ async function pfBeh() {
   add.addEventListener('click', async () => { if (!inp.value.trim()) return; const r = await send({ action:'behAdd', pin:MG.pin, cls:PF.cls, name:PF.name, kind:kind.value, note:inp.value.trim(), key:ACCESS_KEY }); if (r.status !== 'ok') return toast(r.message || 'ثبت نشد'); inp.value = ''; toast('ثبت شد ✓'); ld(); });
   ld();
 }
-function v3Init() { cmInit(); srInit(); loadRisk(); loadLeaves(); tlMgWire(); tlMgLoad(); taFormInit(); taList(); ngMgLoad(); dgInit(); tdInit(); codeInit(); mcInit(); if (!window.__lvPoll) window.__lvPoll = setInterval(() => { if (MG.pin && !$('#mgBody').hidden) { loadLeaves(); tlMgLoad(); ngMgLoad(); } }, 60000); }   // درخواست‌های مرخصی هر دقیقه بررسی می‌شود
+function v3Init() { cmInit(); srInit(); loadRisk(); loadLeaves(); tlMgWire(); tlMgLoad(); taFormInit(); taList(); ngMgLoad(); dgInit(); codeInit(); mcInit(); if (!window.__lvPoll) window.__lvPoll = setInterval(() => { if (MG.pin && !$('#mgBody').hidden) { loadLeaves(); tlMgLoad(); ngMgLoad(); } }, 60000); }   // درخواست‌های مرخصی هر دقیقه بررسی می‌شود
 
 /* ---------- گزینه پیامک ---------- */
 if (!SMS_ENABLED) $('#smsOpt').hidden = true;
@@ -5701,7 +5655,7 @@ function mcRender() {
 function calConflict(r, base, after) {
   const isM = base.teacher === 'مدیر';
   const rows = (r.existing || []).map(x => '• ' + x.k + ' «' + x.t + '» — درس ' + x.s + ' · دبیر: ' + x.te + (x.pend ? ' (در انتظار تأیید)' : '')).join('\n');
-  showModal({ icon:'warn', title:'هشدار تداخل در تقویم', msg:(r.message || '') + '\n' + rows + '\n\nثبت آزمون یا تکلیف دوم در همان روز فقط با تأیید نهایی مدیر امکان‌پذیر است.',
+  showModal({ icon:'warn', title:'هشدار تداخل در تقویم', msg:(r.message || '') + (rows ? '\n' + rows : '') + (r.status === 'mismatch' ? '\n\nاین مورد با برنامه‌ی هفتگی مغایرت دارد؛ فقط با تأیید نهایی مدیر ثبت می‌شود.' : '\n\nثبت آزمون یا تکلیف دوم در همان روز فقط با تأیید نهایی مدیر امکان‌پذیر است.'),
     buttons:[
       isM ? { text:'ثبت با تأیید مدیر', primary:true, onClick:async () => { const q = await send(Object.assign({}, base, { confirm:true })); after(q); } }
           : { text:'ارسال برای تأیید مدیر', primary:true, onClick:async () => { const q = await send(Object.assign({}, base, { request:true })); if (q.status === 'pending') toast('برای تأیید مدیر ارسال شد ⏳'); else toast(q.message || 'ارسال نشد'); after(q); } },
