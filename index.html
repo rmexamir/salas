@@ -490,6 +490,10 @@ body.qz-lock{overflow:hidden}
 .qz-qh{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px;font-weight:900}
 .qz-qh .link-btn{height:34px;padding:0 10px;color:var(--absent)}
 .qz-q .link-btn{margin-top:8px}
+.qz-img{margin:8px 0}.qz-img img{max-width:100%;border-radius:12px;display:block}
+.qz-imgrow{margin:6px 0;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.qz-files{margin-top:8px}.qz-file{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 0;font-size:14px}
+.qz-att{display:flex;flex-direction:column;gap:8px;margin-bottom:10px}
 .qz-o{display:flex;align-items:center;gap:8px;margin-top:8px}
 .qz-o input[type=radio]{width:24px;height:24px;flex:none;accent-color:var(--present)}
 .qz-o b{width:28px;flex:none;text-align:center;color:var(--muted);font-size:13px}
@@ -1446,7 +1450,7 @@ input:focus,select:focus{border-color:var(--teal);box-shadow:var(--ring);backgro
       <button id="calAdd" class="send" type="button">ثبت در تقویم دانش‌آموزان</button>
       <div id="calList" style="margin-top:10px"></div>
     </div>
-    <div id="inbBody"></div>
+    <div id="taMine"></div><div id="inbBody"></div>
   </section>
 
   <section id="p-cns" hidden>
@@ -1639,6 +1643,17 @@ input:focus,select:focus{border-color:var(--teal);box-shadow:var(--ring);backgro
         <div id="tlMgSum"></div>
         <div class="mg-bar" style="margin-top:10px"><select id="tlFilt" aria-label="دبیر"></select><button id="tlCsv" class="btn" type="button">CSV</button></div>
         <div id="tlMgHist" class="mg-wrap" style="margin-top:8px"></div>
+      </div>
+      <div class="card" id="taCard">
+        <div class="lbl" style="margin-bottom:8px">ثبت عدم حضور یا تأخیر دبیر</div>
+        <div class="field"><select id="taT" aria-label="دبیر"></select></div>
+        <div class="mg-bar jp"><select id="taD" aria-label="روز"></select><select id="taM" aria-label="ماه"></select><select id="taY" aria-label="سال"></select></div>
+        <div class="mg-bar"><select id="taP" aria-label="زنگ"><option value="">همه‌ی زنگ‌ها</option><option value="1">زنگ ۱</option><option value="2">زنگ ۲</option><option value="3">زنگ ۳</option></select><select id="taK" aria-label="نوع"><option>عدم حضور</option><option>تأخیر</option></select></div>
+        <div class="mg-bar"><input id="taMin" type="number" min="1" max="180" placeholder="دقیقه‌ی تأخیر" aria-label="دقیقه تأخیر"><input id="taNote" type="text" maxlength="150" placeholder="توضیح (اختیاری)" aria-label="توضیح"></div>
+        <button id="taSend" class="send" type="button">ثبت</button>
+        <div class="now-sub" style="margin-top:8px">«عدم حضور» برای آن زنگ، حضور و غیاب کلاس را معاف می‌کند. «تأخیر» فقط ثبت و در کارتابل دبیر دیده می‌شود.</div>
+        <div class="lbl" style="margin:12px 0 8px">سابقه‌ی ثبت‌شده</div>
+        <div id="taList"></div>
       </div>
       <div class="card" id="stfRepCard">
         <div class="lbl" style="margin-bottom:8px">گزارش حضور و خروج همکاران</div>
@@ -2085,6 +2100,10 @@ async function submit(payload, info) {
         ? ' ' + fa(m.sent || 0) + ' پیامک به اولیا ارسال شد' + (m.skipped ? '، ' + fa(m.skipped) + ' نفر بدون شماره' : '') + (m.failed ? '، ' + fa(m.failed) + ' ناموفق' : '') + '.'
         : ' — پیامک ارسال نشد: ' + (m.message || 'خطا'); }
     showModal({ icon:'ok', title:'ثبت شد', msg:info.msg + extra, buttons:[{ text:'ثبت کلاس بعدی', primary:true, onClick:nextClass }, { text:'بستن' }] }); return; }
+  if (r.status === 'exempt') {
+    showModal({ icon:'ok', title:'معاف شد', msg:r.message || 'حضور و غیاب این زنگ ثبت نشد.', buttons:[{ text:'ثبت کلاس بعدی', primary:true, onClick:nextClass }, { text:'بستن' }] });
+    return;
+  }
   if (r.status === 'duplicate') {
     showModal({ icon:'warn', title:'قبلاً ثبت شده است', msg:r.message || 'برای همین کلاس، درس و زمان قبلاً ثبت شده است.',
       buttons:[{ text:'ثبت مجدد (جایگزین قبلی)', primary:true, onClick:() => submit(Object.assign({}, payload, { force:true }), info) }, { text:'انصراف' }] });
@@ -2960,7 +2979,7 @@ async function loadInbox() {
   if (r.net) { box.textContent = 'اینترنت در دسترس نیست.'; return; }
   if (r.status !== 'ok') { box.textContent = r.message || 'بارگذاری نشد.'; return; }
   INB = r.items; const sel = $('#inbSel'), cur = +sel.value || 0; sel.textContent = '';
-  INB.forEach((x, i) => { const o = el('option', '', (inbGrCount(x) ? '✅ ' : '') + x.c + ' — ' + x.s); o.value = i; sel.append(o); }); sel.value = INB[cur] ? cur : 0; renderInb(); inbChips(); calLoad(); inbRiskLoad();
+  INB.forEach((x, i) => { const o = el('option', '', (inbGrCount(x) ? '✅ ' : '') + x.c + ' — ' + x.s); o.value = i; sel.append(o); }); sel.value = INB[cur] ? cur : 0; renderInb(); inbChips(); calLoad(); inbRiskLoad(); taMineLoad();
 }
 /* نشانگر درس‌های دارای نمره: ✓ سبز؛ تا وقتی دبیر آن را باز نکرده (یا نمره‌ی تازه آمده) چشمک می‌زند */
 const inbGrCount = x => (x.students || []).reduce((n, st) => n + (st.gr ? st.gr.length : 0), 0);
@@ -3255,13 +3274,24 @@ function qzParseText(txt) {       // «۱) متن سؤال» + «الف) گزی�
 function qzEdit(x, q, reload) {
   const locked = !!(q && q.started), dk = 'sia_qz_draft:' + normT(x.c) + '|' + normT(x.s), now = qzNow();
   const blank = () => ({ q:'', o:['', '', '', ''], a:-1 });
-  const D = q ? { id:q.id, ti:q.ti, qs:q.qs.map(z => ({ q:z.q, o:z.o.concat(['', '', '', '']).slice(0, Math.max(4, z.o.length)), a:z.a })), st:q.st, en:q.en, du:q.du, rv:q.rv || 'close', sh:q.sh !== false, now:false }
-    : Object.assign({ ti:'', qs:[blank()], st:now, en:now + 864e5, du:15, rv:'close', sh:true, now:true }, lsGet(dk, {}));
+  const D = q ? { id:q.id, ti:q.ti, qs:q.qs.map(z => ({ q:z.q, o:z.o.concat(['', '', '', '']).slice(0, Math.max(4, z.o.length)), a:z.a, img:z.img || '' })), files:q.files || [], st:q.st, en:q.en, du:q.du, rv:q.rv || 'close', sh:q.sh !== false, now:false }
+    : Object.assign({ ti:'', qs:[blank()], files:[], st:now, en:now + 864e5, du:15, rv:'close', sh:true, now:true }, lsGet(dk, {}));
   const O = qzOv((q ? (locked ? 'زمان آزمونک' : 'ویرایش آزمونک') : 'آزمونک تازه') + ' — ' + x.c + '، ' + x.s);
-  let tSave; const keep = () => { if (q) return; clearTimeout(tSave); tSave = setTimeout(() => lsSet(dk, { ti:D.ti, qs:D.qs, du:D.du, rv:D.rv, sh:D.sh }), 400); };
+  let tSave; const keep = () => { if (q) return; clearTimeout(tSave); tSave = setTimeout(() => lsSet(dk, { ti:D.ti, qs:D.qs.map(z => ({ q:z.q, o:z.o, a:z.a, img:z.img || '' })), files:D.files, du:D.du, rv:D.rv, sh:D.sh }), 400); };
   // عنوان
   const s1 = qzSec(O.body), ti = el('input'); ti.type = 'text'; ti.maxLength = 80; ti.placeholder = 'عنوان، مثلاً «آزمونک فصل ۲ — تابع»'; ti.value = D.ti; ti.disabled = locked;
   ti.addEventListener('input', () => { D.ti = ti.value; keep(); }); const tf = el('div', 'field'), tl = el('label', '', 'عنوان آزمونک'); ti.id = 'qzTi'; tl.htmlFor = 'qzTi'; tf.append(tl, ti); s1.append(tf);
+  // فایل‌های ضمیمه‌ی کل آزمونک (عکس یا PDF)
+  const fl = el('div', 'qz-files');
+  const paintFiles = () => { fl.textContent = ''; D.files.forEach((f, k) => { const rw = el('div', 'qz-file'); rw.append(el('span', '', '📎 ' + f.n));
+    if (!locked) { const rm = el('button', 'link-btn', '🗑 حذف'); rm.type = 'button'; rm.addEventListener('click', () => { D.files.splice(k, 1); keep(); paintFiles(); }); rw.append(rm); }
+    fl.append(rw); }); };
+  if (!locked && D.files.length < 5) { const fi = el('input'); fi.type = 'file'; fi.accept = 'image/*,application/pdf'; fi.hidden = true;
+    const up = el('button', 'btn', '📎 افزودن فایل (عکس یا PDF)'); up.type = 'button'; up.addEventListener('click', () => fi.click());
+    fi.addEventListener('change', async () => { const f = fi.files && fi.files[0]; if (!f) return; up.disabled = true; const r = await qzUploadFile(f, qzAuth); up.disabled = false;
+      if (!r) return; D.files.push({ id:r.id, n:r.n, m:r.m }); keep(); paintFiles(); });
+    s1.append(fi, up); }
+  s1.append(fl); paintFiles();
   // سؤال‌ها
   const s2 = qzSec(O.body), qbox = el('div'), info = el('div', 'now-sub');
   const paintQ = () => {
@@ -3270,7 +3300,7 @@ function qzEdit(x, q, reload) {
       const c = el('div', 'qz-q'), h = el('div', 'qz-qh'); h.append(el('span', '', 'سؤال ' + fa(i + 1)));
       if (!locked && D.qs.length > 1) { const d = el('button', 'link-btn', '🗑 حذف'); d.type = 'button'; d.addEventListener('click', () => { D.qs.splice(i, 1); keep(); paintQ(); }); h.append(d); }
       const ta = el('textarea', 'ana-ta'); ta.rows = 2; ta.maxLength = 600; ta.placeholder = 'متن سؤال'; ta.value = z.q; ta.disabled = locked; ta.setAttribute('aria-label', 'متن سؤال ' + (i + 1));
-      ta.addEventListener('input', () => { z.q = ta.value; keep(); }); c.append(h, ta);
+      ta.addEventListener('input', () => { z.q = ta.value; keep(); }); c.append(h, ta, qzImgRow(D, z, locked, () => paintQ(), keep));
       z.o.forEach((ov, k) => {
         const r = el('div', 'qz-o' + (z.a === k ? ' ok' : '')), rd = el('input'), inp = el('input');
         rd.type = 'radio'; rd.name = 'qzA' + i; rd.checked = z.a === k; rd.disabled = locked; rd.setAttribute('aria-label', 'گزینه‌ی ' + QZ_L[k] + ' درست است');
@@ -3340,7 +3370,7 @@ function qzEdit(x, q, reload) {
     if (!isFinite(enT)) return fail('تاریخ یا ساعت پایان درست نیست.');
     if (enT <= st) return fail('پایان مهلت باید بعد از شروع باشد.'); if (enT <= qzNow()) return fail('پایان مهلت گذشته است.');
     pub.disabled = true;
-    const r = await send(Object.assign({ action:'qzSave', id:D.id || '', cls:x.c, course:x.s, title:D.ti.trim(), qs:qs, start:!locked && D.now ? 'now' : st, end:enT, dur:D.du, rv:D.rv, sh:D.sh }, qzAuth()));
+    const r = await send(Object.assign({ action:'qzSave', id:D.id || '', cls:x.c, course:x.s, title:D.ti.trim(), qs:qs, files:D.files, start:!locked && D.now ? 'now' : st, end:enT, dur:D.du, rv:D.rv, sh:D.sh }, qzAuth()));
     pub.disabled = false; if (r.net) return fail('اینترنت در دسترس نیست؛ پیش‌نویس روی گوشی ذخیره است.'); if (r.status !== 'ok') return fail(r.message || 'ذخیره نشد.');
     if (!q) { try { localStorage.removeItem(dk); } catch (e) {} }
     qzOvClose(); toast(q ? 'تغییرات ذخیره شد ✓' : 'آزمونک منتشر شد ✓'); reload && reload();
@@ -3428,6 +3458,69 @@ function qzStuItem(q) {
   } else if (st === 'over') it.append(el('div', 'now-sub', 'در این آزمونک شرکت نکردی.'));
   return it;
 }
+/* --- عکس و فایل آزمونک --- */
+const QZ_IMG_C = {};
+function qzFileBox(qid, fid, auth) {        // عکس را یک‌بار از سرور می‌گیرد و کش می‌کند
+  const box = el('div', 'qz-img'), im = el('img'); im.alt = 'تصویر سؤال'; box.append(im);
+  const key = qid + '|' + fid;
+  if (!QZ_IMG_C[key]) QZ_IMG_C[key] = send(Object.assign({ action:'qzFile', id:qid, fid:fid }, auth())).then(r => r.status === 'ok' ? 'data:' + r.mime + ';base64,' + r.data : null);
+  QZ_IMG_C[key].then(u => { if (u) im.src = u; else box.textContent = 'تصویر در دسترس نیست'; });
+  return box;
+}
+function qzAttach(qid, files, auth) {       // ضمیمه‌های کل آزمونک
+  const box = el('div', 'qz-att');
+  (files || []).forEach(f => {
+    if (/^image\//.test(f.m)) box.append(qzFileBox(qid, f.id, auth));
+    else { const b = el('button', 'btn', '📄 ' + (f.n || 'فایل ضمیمه')); b.type = 'button'; b.addEventListener('click', () => qzDownload(qid, f, auth)); box.append(b); }
+  });
+  return box;
+}
+async function qzDownload(qid, f, auth) {
+  const r = await send(Object.assign({ action:'qzFile', id:qid, fid:f.id }, auth()));
+  if (r.status !== 'ok') return toast(r.message || 'باز نشد');
+  const bin = atob(r.data), u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i);
+  const url = URL.createObjectURL(new Blob([u], { type:r.mime })), a = document.createElement('a');
+  a.href = url; a.download = f.n || 'file'; document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 60000);
+}
+function qzB64(f) { return new Promise((res, rej) => { const rd = new FileReader(); rd.onload = () => res(String(rd.result).split(',')[1]); rd.onerror = rej; rd.readAsDataURL(f); }); }
+function qzShrink(f) {                      // عکس را تا ۱۲۸۰ پیکسل و JPEG فشرده می‌کند
+  return new Promise((res, rej) => { const url = URL.createObjectURL(f), im = new Image();
+    im.onload = () => { const k = Math.min(1, 1280 / Math.max(im.width, im.height)), c = document.createElement('canvas');
+      c.width = Math.round(im.width * k); c.height = Math.round(im.height * k); c.getContext('2d').drawImage(im, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(url); res(c.toDataURL('image/jpeg', 0.8)); };
+    im.onerror = () => { URL.revokeObjectURL(url); rej(new Error('image')); }; im.src = url; });
+}
+async function qzUploadFile(f, auth) {      // بارگذاری عکس یا PDF؛ برمی‌گرداند {id, n, m, pv}
+  try {
+    const isPdf = f.type === 'application/pdf';
+    if (!isPdf && !/^image\//.test(f.type)) { toast('فقط عکس یا PDF'); return null; }
+    let mime = f.type, data, pv = '';
+    if (isPdf) { if (f.size > 2.5e6) { toast('PDF بیش از ۲٫۵ مگابایت است'); return null; } data = await qzB64(f); }
+    else { pv = await qzShrink(f); mime = 'image/jpeg'; data = pv.split(',')[1]; }
+    const r = await send(Object.assign({ action:'qzUpload', file:{ name:f.name, mime:mime, data:data } }, auth()));
+    if (r.net) { toast('اینترنت در دسترس نیست'); return null; }
+    if (r.status !== 'ok') { toast(r.message || 'بارگذاری نشد'); return null; }
+    return { id:r.id, n:r.n, m:r.m, pv:pv };
+  } catch (e) { toast('فایل خوانده نشد'); return null; }
+}
+function qzImgRow(D, z, locked, repaint, keep) {   // ردیف عکس هر سؤال در ویرایشگر
+  const row = el('div', 'qz-imgrow');
+  if (z.img) {
+    if (z.pv) { const w = el('div', 'qz-img'), im = el('img'); im.src = z.pv; im.alt = 'تصویر سؤال'; w.append(im); row.append(w); }
+    else if (D.id) row.append(qzFileBox(D.id, z.img, qzAuth));
+    else row.append(el('div', 'now-sub', '🖼 عکس پیوست است؛ پس از انتشار نمایش داده می‌شود'));
+  }
+  if (!locked) {
+    const fi = el('input'); fi.type = 'file'; fi.accept = 'image/*'; fi.hidden = true;
+    const up = el('button', 'link-btn', z.img ? '🔄 تغییر عکس' : '🖼 افزودن عکس'); up.type = 'button';
+    up.addEventListener('click', () => fi.click());
+    fi.addEventListener('change', async () => { const f = fi.files && fi.files[0]; if (!f) return; up.disabled = true; const r = await qzUploadFile(f, qzAuth); up.disabled = false;
+      if (!r) return; z.img = r.id; z.pv = r.pv; keep(); repaint(); });
+    row.append(fi, up);
+    if (z.img) { const rm = el('button', 'link-btn', '🗑 حذف عکس'); rm.type = 'button'; rm.addEventListener('click', () => { z.img = ''; z.pv = ''; keep(); repaint(); }); row.append(rm); }
+  }
+  return row;
+}
 async function qzTake(id) {
   const r = await send(Object.assign({ action:'qzStart', id:id }, qzSAuth()));
   if (r.net) return toast('اینترنت در دسترس نیست'); if (r.status !== 'ok') { showModal({ icon:'err', title:'شروع نشد', msg:r.message || '' }); QZS = null; return; }
@@ -3440,12 +3533,12 @@ async function qzTake(id) {
   const O = qzOv(q.ti, () => { if (finished) { leave(); return false; } if (sending) return false; showModal({ icon:'warn', title:'آزمونک هنوز ادامه دارد', msg:'پاسخ‌هایت روی گوشی ذخیره شده، ولی زمان متوقف نمی‌شود. از «آزمونک‌ها» می‌توانی ادامه بدهی.', buttons:[{ text:'خروج', primary:true, onClick:leave }, { text:'برگشت به آزمونک' }] }); return false; });
   const tm = el('div', 'qz-tm'); O.hd.insertBefore(tm, O.hd.lastChild);
   const dots = el('div', 'qz-dots'), view = el('div', 'qz-view'), nav = el('div', 'qz-nav'), sb = el('button', 'send', 'ارسال پاسخ‌ها'); sb.type = 'button';
-  O.body.append(el('div', 'now-sub', q.s + '؛ ' + fa(n) + ' سؤال'), dots, view, nav, sb);
+  O.body.append(el('div', 'now-sub', q.s + '؛ ' + fa(n) + ' سؤال'), qzAttach(id, q.files || [], qzSAuth), dots, view, nav, sb);
   const paint = () => {
     dots.textContent = ''; ord.forEach((qi, p) => { const d = el('button', (ans[qi] >= 0 ? 'on' : '') + (p === cur ? ' cur' : ''), fa(p + 1)); d.type = 'button'; d.setAttribute('aria-label', 'سؤال ' + (p + 1) + (ans[qi] >= 0 ? '، پاسخ داده شده' : ''));
       d.addEventListener('click', () => { cur = p; save(); paint(); }); dots.append(d); });
     const qi = ord[cur], z = q.qs[qi]; view.textContent = '';
-    view.append(el('div', 'qz-qn', 'سؤال ' + fa(cur + 1) + ' از ' + fa(n)), el('div', 'qz-qt', z.q));
+    view.append(el('div', 'qz-qn', 'سؤال ' + fa(cur + 1) + ' از ' + fa(n)), el('div', 'qz-qt', z.q)); if (z.img) view.append(qzFileBox(id, z.img, qzSAuth));
     opt[qi].forEach((oi, p) => { const b = el('button', 'qz-op' + (ans[qi] === oi ? ' sel' : '')); b.type = 'button'; b.setAttribute('aria-pressed', String(ans[qi] === oi)); b.append(el('b', '', QZ_L[p]), el('bdi', '', z.o[oi]));
       b.addEventListener('click', () => { if (sending) return; ans[qi] = ans[qi] === oi ? -1 : oi; vib(); save(); paint(); }); view.append(b); });
     nav.textContent = ''; const pv = el('button', 'btn', '→ قبلی'), nx = el('button', 'btn' + (cur < n - 1 ? ' primary' : ''), 'بعدی ←'); pv.type = nx.type = 'button';
@@ -3492,7 +3585,7 @@ function qzCollect(D) {           // سؤال‌های ویرایشگر را ت�
     if (!String(z.q).trim()) return { err:'متن سؤال ' + fa(i + 1) + ' خالی است.' };
     if (o.length < 2) return { err:'سؤال ' + fa(i + 1) + ' دست‌کم دو گزینه‌ی پر لازم دارد.' };
     if (map[z.a] == null) return { err:'گزینه‌ی درست سؤال ' + fa(i + 1) + ' مشخص نشده است.' };
-    qs.push({ q:String(z.q).trim(), o:o, a:map[z.a] });
+    qs.push(z.img ? { q:String(z.q).trim(), o:o, a:map[z.a], img:z.img } : { q:String(z.q).trim(), o:o, a:map[z.a] });
   }
   return { qs:qs };
 }
@@ -4370,6 +4463,55 @@ function renderRisk() {
 }
 $('#riskCls').addEventListener('change', renderRisk);
 /* --- مدیر: مرخصی --- */
+/* --- عدم حضور و تأخیر دبیر (ثبت مدیر؛ کارتابل دبیر) --- */
+const TA = { pk:null, tried:false };
+function taFormInit() {
+  if (window.__taInit) return; window.__taInit = true;
+  TA.pk = jPicker($('#taD'), $('#taM'), $('#taY'), () => {});
+  $('#taK').addEventListener('change', () => { $('#taMin').hidden = $('#taK').value !== 'تأخیر'; });
+  $('#taMin').hidden = true;
+  $('#taSend').addEventListener('click', taSubmit);
+  taFill();
+}
+function taFill() {
+  const sel = $('#taT'), keep = sel.value, names = uniq(SCH.map(r => r[4]).filter(Boolean)).sort((a, b) => a.localeCompare(b, 'fa'));
+  sel.textContent = ''; names.forEach(n => { const o = el('option', '', n); o.value = n; sel.append(o); });
+  if (names.includes(keep)) sel.value = keep;
+  if (!names.length && !TA.tried) { TA.tried = true; loadSchedule().then(taFill); }
+}
+async function taSubmit() {
+  const t = $('#taT').value, q = jParse(TA.pk.get());
+  if (!t) return toast('دبیر را انتخاب کنید');
+  if (!q) return toast('تاریخ نامعتبر است');
+  if (jGreg(q[0], q[1], q[2]).getDay() === 5) return toast('جمعه تعطیل است');
+  const k = $('#taK').value, min = +$('#taMin').value || 0;
+  if (k === 'تأخیر' && (min < 1 || min > 180)) return toast('دقیقه‌ی تأخیر را بین ۱ تا ۱۸۰ وارد کنید');
+  const r = await send({ action:'taAdd', pin:MG.pin, key:ACCESS_KEY, target:t, date:TA.pk.get(), period:$('#taP').value, type:k, minutes:k === 'تأخیر' ? min : 0, note:$('#taNote').value.trim() });
+  if (r.net) return toast('اینترنت در دسترس نیست');
+  if (r.status !== 'ok') return toast(r.message || 'ثبت نشد');
+  $('#taNote').value = ''; toast('ثبت شد ✓'); taList();
+}
+async function taList() {
+  const box = $('#taList'); if (!box || !MG.pin) return;
+  const r = await send({ action:'taList', pin:MG.pin, key:ACCESS_KEY }); if (r.status !== 'ok') return;
+  box.textContent = '';
+  if (!r.list.length) return box.append(el('div', 'now-sub', 'موردی ثبت نشده است.'));
+  r.list.slice(0, 60).forEach(x => {
+    const row = el('div', 'dir-r'), b = el('button', 'btn', 'حذف'); b.type = 'button';
+    row.append(el('span', '', fa(x.d) + ' · ' + x.day + ' · ' + x.n + ' · ' + (x.pr.length ? 'زنگ ' + fa(x.pr.join('، ')) : 'همه‌ی زنگ‌ها') + ' · ' + x.k + (x.k === 'تأخیر' ? ' (' + fa(x.m) + ' دقیقه)' : '')), b);
+    b.addEventListener('click', async () => { const q = await send({ action:'taDel', pin:MG.pin, key:ACCESS_KEY, id:x.id }); toast(q.status === 'ok' ? 'حذف شد' : (q.message || 'حذف نشد')); taList(); });
+    box.append(row);
+  });
+}
+async function taMineLoad() {                 // کارتابل دبیر: عدم حضور، تأخیر و مرخصی‌های خودش
+  const box = $('#taMine'); if (!box || !S.teacher.trim() || ROLE !== 'teacher') { if (box) box.textContent = ''; return; }
+  const r = await send({ action:'taMine', teacher:S.teacher.trim(), pin:S.pin.trim(), key:ACCESS_KEY });
+  if (r.status !== 'ok') return; box.textContent = '';
+  if (!r.list.length) return;
+  const c = el('div', 'card'); c.append(el('div', 'lbl', 'عدم حضور، تأخیر و مرخصی شما'));
+  c.append(tbl(['تاریخ', 'روز', 'زنگ‌ها', 'نوع', 'وضعیت / توضیح'], r.list.map(x => [fa(x.d), x.day, x.pr.length ? fa(x.pr.join('، ')) : 'همه', x.k + (x.k === 'تأخیر' ? ' (' + fa(x.m) + ' دقیقه)' : ''), (x.s ? x.s + ' — ' : '') + (x.note || '—')])));
+  box.append(c);
+}
 /* --- مدیر: تأیید یا رد مرخصی دبیران و سابقه‌ی عدم حضور آنان --- */
 let TLM = [];
 async function tlMgLoad() {
@@ -4605,7 +4747,7 @@ async function pfBeh() {
   add.addEventListener('click', async () => { if (!inp.value.trim()) return; const r = await send({ action:'behAdd', pin:MG.pin, cls:PF.cls, name:PF.name, kind:kind.value, note:inp.value.trim(), key:ACCESS_KEY }); if (r.status !== 'ok') return toast(r.message || 'ثبت نشد'); inp.value = ''; toast('ثبت شد ✓'); ld(); });
   ld();
 }
-function v3Init() { cmInit(); srInit(); loadRisk(); loadLeaves(); tlMgWire(); tlMgLoad(); codeInit(); mcInit(); if (!window.__lvPoll) window.__lvPoll = setInterval(() => { if (MG.pin && !$('#mgBody').hidden) { loadLeaves(); tlMgLoad(); } }, 60000); }   // درخواست‌های مرخصی هر دقیقه بررسی می‌شود
+function v3Init() { cmInit(); srInit(); loadRisk(); loadLeaves(); tlMgWire(); tlMgLoad(); taFormInit(); taList(); codeInit(); mcInit(); if (!window.__lvPoll) window.__lvPoll = setInterval(() => { if (MG.pin && !$('#mgBody').hidden) { loadLeaves(); tlMgLoad(); } }, 60000); }   // درخواست‌های مرخصی هر دقیقه بررسی می‌شود
 
 /* ---------- گزینه پیامک ---------- */
 if (!SMS_ENABLED) $('#smsOpt').hidden = true;
