@@ -328,6 +328,8 @@ a.tel{display:inline-flex;align-items:center;min-height:44px;padding:0 14px;bord
 .bc{display:flex;flex-direction:column;gap:1px;justify-content:center;text-align:center;border-radius:10px;padding:6px 3px;font-size:11px;line-height:1.35;min-height:62px;background:var(--input);color:var(--muted)}
 .bc b{font-size:11.5px;color:var(--ink)} .bc em{font-style:normal;font-weight:800;font-size:10.5px}
 .bc.ok{background:var(--present-bg);color:var(--present)} .bc.miss{background:var(--absent-bg);color:var(--absent)} .bc.pend{background:var(--late-bg);color:var(--late)} .bc.ex{background:var(--input);color:var(--muted)}
+.dg-h{display:inline-block;cursor:grab;touch-action:none;user-select:none;font-size:12px;color:var(--muted);border:1px dashed var(--line);border-radius:8px;padding:2px 8px;margin-bottom:6px}
+.card.dragging{opacity:.7;outline:2px dashed var(--muted)}
 .dir-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
 .dir-grid .dir-it{margin-bottom:0} .dir-grid .dir-it[open],.dir-grid .empty,.dir-grid .now-sub{grid-column:1/-1}
 .bc.miss{background:#C93C42;color:#fff} .bc.miss b,.bc.miss span,.bc.miss em{color:#fff}
@@ -1517,7 +1519,7 @@ input:focus,select:focus{border-color:var(--teal);box-shadow:var(--ring);backgro
     </div>
     <div id="mgBody" hidden>
       <div class="mg-desk">
-        <div class="mg-desk-h"><b>میز کار مدیر</b><span id="mgDeskStamp"></span></div>
+        <div class="mg-desk-h"><b>میز کار مدیر</b><span id="mgDeskStamp"></span><button id="dgReset" class="link-btn" type="button">بازگردانی چیدمان</button></div>
         <div class="mg-att" id="mgAttn"></div>
       </div>
       <nav class="mg-nav" id="mgNav" aria-label="بخش‌های پنل مدیر"></nav>
@@ -4595,6 +4597,47 @@ async function taMineLoad() {                 // کارتابل دبیر: عدم
   c.append(tbl(['تاریخ', 'روز', 'زنگ‌ها', 'نوع', 'وضعیت / توضیح'], r.list.map(x => [fa(x.d), x.day, x.pr.length ? fa(x.pr.join('، ')) : 'همه', x.k + (x.k === 'تأخیر' ? ' (' + fa(x.m) + ' دقیقه)' : ''), (x.s ? x.s + ' — ' : '') + (x.note || '—')])));
   box.append(c);
 }
+/* --- چیدمان پنل‌های مدیر: کشیدن و جابجایی کارت‌ها در هر بخش (ذخیره روی همین دستگاه) --- */
+const DG_KEY = 'sia_mg_order_v1';
+function dgCards(sec) { return Array.from(sec.children).filter(c => c.classList.contains('card')); }
+function dgApply(sec) {
+  const cards = dgCards(sec); if (cards.length < 2) return;
+  const order = (lsGet(DG_KEY, {})[sec.dataset.sec]) || [];
+  const rank = c => { const i = order.indexOf(c.dataset.dg); return i < 0 ? 1e6 + cards.indexOf(c) : i; };
+  const sorted = cards.slice().sort((a, b) => rank(a) - rank(b));
+  const after = cards[cards.length - 1].nextSibling;
+  sorted.forEach(c => sec.insertBefore(c, after));
+}
+function dgSave(sec) {
+  const all = lsGet(DG_KEY, {}); all[sec.dataset.sec] = dgCards(sec).map(c => c.dataset.dg); lsSet(DG_KEY, all);
+}
+function dgInit() {
+  document.querySelectorAll('#mgBody .mg-sec').forEach(sec => {
+    dgCards(sec).forEach((c, i) => {
+      if (!c.dataset.dg) c.dataset.dg = c.id || ('c' + i);
+      if (c.querySelector(':scope > .dg-h')) return;
+      const h = el('div', 'dg-h', '⠿ جابجایی'); h.title = 'برای جابجایی این پنل، بکشید';
+      c.prepend(h);
+      h.addEventListener('pointerdown', e => dgStart(e, c, sec));
+    });
+    dgApply(sec);
+  });
+}
+function dgStart(e, card, sec) {
+  e.preventDefault(); const h = e.currentTarget; h.setPointerCapture(e.pointerId); card.classList.add('dragging');
+  const move = ev => {
+    const sibs = dgCards(sec).filter(c => c !== card && c.offsetParent !== null);
+    for (const s of sibs) {
+      const r = s.getBoundingClientRect();
+      if (ev.clientY < r.top + r.height / 2) { if (card.nextElementSibling !== s) sec.insertBefore(card, s); return; }
+    }
+    const last = sibs[sibs.length - 1];
+    if (last && last.nextElementSibling !== card) sec.insertBefore(card, last.nextSibling);
+  };
+  const up = () => { h.removeEventListener('pointermove', move); h.removeEventListener('pointerup', up); h.removeEventListener('pointercancel', up); card.classList.remove('dragging'); dgSave(sec); };
+  h.addEventListener('pointermove', move); h.addEventListener('pointerup', up); h.addEventListener('pointercancel', up);
+}
+$('#dgReset').addEventListener('click', () => { lsSet(DG_KEY, {}); location.reload(); });
 /* --- مدیر: تأیید یا رد مرخصی دبیران و سابقه‌ی عدم حضور آنان --- */
 let TLM = [];
 async function tlMgLoad() {
@@ -4794,14 +4837,27 @@ function gdRender() {
     sm.append(el('span', '', h[4] + ' — ' + h[7]), el('small', '', fa(h[0]) + ' · ' + fa(rows.length) + ' نفر'));
     rows.forEach(r => {
       const row = el('div', 'dir-r'), v = String(r[9]) === 'غایب' ? 'غایب' : fa(r[10]) + ' از ' + fa(r[8]);
+      const ed = el('button', 'btn', 'ویرایش'); ed.type = 'button'; ed.addEventListener('click', () => gdEdit(r));
       const x = el('button', 'btn', 'حذف'); x.type = 'button'; x.setAttribute('aria-label', 'حذف نمره‌ی ' + r[6]);
       x.addEventListener('click', () => gdAsk(r, r[6]));
-      row.append(el('span', '', r[6]), el('span', 'now-sub', v), x); b.append(row);
+      row.append(el('span', '', r[6]), el('span', 'now-sub', v), ed, x); b.append(row);
     });
     const all = el('button', 'btn', 'حذف کل این ارزیابی (' + fa(rows.length) + ' نمره)'); all.type = 'button'; all.style.width = '100%';
     all.addEventListener('click', () => gdAsk(h, ''));
     b.append(all); d.append(sm, b); box.append(d);
   });
+}
+async function gdEdit(r) {                     // مدیر: ویرایش مستقیم یک نمره
+  const cur = String(r[9]) === 'غایب' ? 'غایب' : String(r[10]);
+  const v = prompt('نمره‌ی جدید «' + r[6] + '» (۰ تا ' + fa(r[8]) + ') یا «غایب»:', cur);
+  if (v === null) return;
+  const t = v.trim(); let extra;
+  if (t === 'غایب') extra = { absent:true };
+  else { const n = Number(toEn(t)); if (t === '' || !isFinite(n) || n < 0 || n > Number(r[8])) return toast('نمره‌ی نامعتبر است'); extra = { absent:false, score:n }; }
+  const q = await send(Object.assign({ action:'grEdit', pin:MG.pin, key:ACCESS_KEY, date:String(r[0]), time:String(r[1]), cls:String(r[3]), course:String(r[4]), examType:String(r[7]), student:String(r[6]), max:Number(r[8]) }, extra));
+  if (q.net) return toast('اینترنت در دسترس نیست.');
+  if (q.status !== 'ok') return toast(q.message || 'ویرایش نشد.');
+  toast('نمره ویرایش شد ✓'); $('#mgReload').click();
 }
 function gdAsk(r, name) {
   const what = name ? 'نمره‌ی «' + name + '»' : 'همه‌ی نمره‌های این ارزیابی';
@@ -4830,7 +4886,7 @@ async function pfBeh() {
   add.addEventListener('click', async () => { if (!inp.value.trim()) return; const r = await send({ action:'behAdd', pin:MG.pin, cls:PF.cls, name:PF.name, kind:kind.value, note:inp.value.trim(), key:ACCESS_KEY }); if (r.status !== 'ok') return toast(r.message || 'ثبت نشد'); inp.value = ''; toast('ثبت شد ✓'); ld(); });
   ld();
 }
-function v3Init() { cmInit(); srInit(); loadRisk(); loadLeaves(); tlMgWire(); tlMgLoad(); taFormInit(); taList(); ngMgLoad(); codeInit(); mcInit(); if (!window.__lvPoll) window.__lvPoll = setInterval(() => { if (MG.pin && !$('#mgBody').hidden) { loadLeaves(); tlMgLoad(); ngMgLoad(); } }, 60000); }   // درخواست‌های مرخصی هر دقیقه بررسی می‌شود
+function v3Init() { cmInit(); srInit(); loadRisk(); loadLeaves(); tlMgWire(); tlMgLoad(); taFormInit(); taList(); ngMgLoad(); dgInit(); codeInit(); mcInit(); if (!window.__lvPoll) window.__lvPoll = setInterval(() => { if (MG.pin && !$('#mgBody').hidden) { loadLeaves(); tlMgLoad(); ngMgLoad(); } }, 60000); }   // درخواست‌های مرخصی هر دقیقه بررسی می‌شود
 
 /* ---------- گزینه پیامک ---------- */
 if (!SMS_ENABLED) $('#smsOpt').hidden = true;
