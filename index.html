@@ -2159,7 +2159,9 @@ function addHist(key, val) {
   P[key] = [val].concat(P[key].filter(x => x !== val)).slice(0, 25); savePrefs();
   fillDatalist(key === 'teachers' ? 'teacherList' : 'courseList', P[key]);
 }
-$('#teacher').addEventListener('input', e => { S.teacher = e.target.value; P.teacher = S.teacher; savePrefs(); });
+$('#teacher').addEventListener('input', e => { S.teacher = e.target.value; P.teacher = S.teacher; savePrefs(); if (teacherCourses()) fillDatalist('courseList', teacherCourses()); });
+/* دروس تخصیص‌یافته‌ی دبیر (از برگه‌ی دبیران)؛ اگر نباشد null */
+function teacherCourses() { const a = lsGet('sia_assign', {}), k = normT(S.teacher || ''); const key = Object.keys(a).find(n => normT(n) === k); return key && a[key].length ? a[key] : null; }
 $('#course').addEventListener('input', e => { S.course = e.target.value; P.course = S.course; savePrefs(); });
 $('#pin').addEventListener('input', e => { S.pin = e.target.value; try { sessionStorage.setItem('sia_tpin', S.pin); } catch (x) {} });
 
@@ -2559,7 +2561,7 @@ function applyRoster(r) {
   $('#pinField').hidden = !S.authReq;
   fillDatalist('teacherList', uniq((r.teachers || []).concat(P.teachers)));
   fillDatalist('courseList', curFor(S.cls) || uniq((r.courses || []).concat(P.courses)));
-  lsSet('sia_rost_t', r.teachers || []); lsSet('sia_rost_c', r.courses || []); gateFill(); curRender();
+  lsSet('sia_rost_t', r.teachers || []); lsSet('sia_rost_c', r.courses || []); lsSet('sia_assign', r.assign || {}); gateFill(); curRender();
 }
 async function loadRoster() {
   if (!SCRIPT_URL || !navigator.onLine) return;
@@ -3365,7 +3367,7 @@ function myPairs() {            // null = بدون محدودیت (مدیر، ی
 function visClasses(st) { const pr = myPairs(), l = Object.keys(STUDENTS[st] || {}); return pr ? l.filter(c => pr.some(x => x.c === c)) : l; }
 function fixCourse() {
   const pr = myPairs();
-  if (!pr) { fillDatalist('courseList', curFor(S.cls) || uniq(lsGet('sia_rost_c', []).concat(P.courses))); return; }   // فهرست رسمی دروس رشته و پایه‌ی همین کلاس
+  if (!pr) { fillDatalist('courseList', teacherCourses() || curFor(S.cls) || uniq(lsGet('sia_rost_c', []).concat(P.courses))); return; }   // فهرست رسمی دروس رشته و پایه‌ی همین کلاس
   const cs = uniq(pr.filter(x => x.c === S.cls).map(x => x.s));
   fillDatalist('courseList', cs);
   if (cs.length === 1) S.course = cs[0]; else if (!cs.some(c => normT(c) === normT(S.course))) S.course = '';
