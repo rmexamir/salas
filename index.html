@@ -328,6 +328,22 @@ a.tel{display:inline-flex;align-items:center;min-height:44px;padding:0 14px;bord
 .bc{display:flex;flex-direction:column;gap:1px;justify-content:center;text-align:center;border-radius:10px;padding:6px 3px;font-size:11px;line-height:1.35;min-height:62px;background:var(--input);color:var(--muted)}
 .bc b{font-size:11.5px;color:var(--ink)} .bc em{font-style:normal;font-weight:800;font-size:10.5px}
 .bc.ok{background:var(--present-bg);color:var(--present)} .bc.miss{background:var(--absent-bg);color:var(--absent)} .bc.pend{background:var(--late-bg);color:var(--late)} .bc.ex{background:var(--input);color:var(--muted)}
+.mx-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin-top:6px}
+.mx{border-collapse:collapse;font-size:12px;width:100%}
+.mx th,.mx td{border:1px solid var(--line);padding:5px 6px;text-align:center;white-space:nowrap;background:var(--card)}
+.mx th{background:var(--input);font-weight:700;white-space:pre-line;line-height:1.4}
+.mx td.nm,.mx th.nm{text-align:right;position:sticky;right:0;z-index:1;font-weight:700}
+.mx th.ex{color:var(--muted)}
+.mx td.ok{color:var(--present)} .mx td.bad{background:var(--absent-bg);color:var(--absent);font-weight:800}
+.mx td.late{background:var(--late-bg);color:var(--late);font-weight:800} .mx td.exc{background:var(--input);color:var(--ink);font-weight:700}
+.mx td.ex{color:var(--muted)}
+.mx .pend{color:var(--late);font-weight:700}
+.honor-card{border-color:var(--late)}
+.honor-t{font-weight:900;font-size:16px;margin-bottom:10px;text-align:center}
+.honor-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.honor-cls{border:1px solid var(--line);border-radius:12px;padding:8px 10px;background:var(--input)}
+.honor-c{font-weight:800;margin-bottom:6px;font-size:14px}
+.honor-r{font-size:14px;padding:2px 0}
 .dg-h{display:inline-block;cursor:grab;touch-action:none;user-select:none;font-size:12px;color:var(--muted);border:1px dashed var(--line);border-radius:8px;padding:2px 8px;margin-bottom:6px}
 .card.dragging{opacity:.7;outline:2px dashed var(--muted)}
 .dir-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
@@ -1259,6 +1275,7 @@ input:focus,select:focus{border-color:var(--teal);box-shadow:var(--ring);backgro
     <div class="app-ver" id="gVer"></div>
     <div class="credit">طراح و گردآورنده برنامه: <b>محسن محمودی</b><br>آیدی تلگرام و روبیکا: <b dir="ltr">@salas6992</b><br><a href="https://t.me/salas6992" target="_blank" rel="noopener">تلگرام</a> · <a href="https://rubika.ir/salas6992" target="_blank" rel="noopener">روبیکا</a></div>
   </div>
+  <div id="honorGate"></div>
   <div class="tmw-host" id="tmGate"></div>
  </div>
 </div>
@@ -1269,8 +1286,13 @@ input:focus,select:focus{border-color:var(--teal);box-shadow:var(--ring);backgro
     <span class="q-ic" aria-hidden="true">✨</span>
     <div aria-hidden="true"><div class="q-lbl">پیام امروز</div><p id="qText" class="q-tx"></p></div>
   </div>
+  <section id="p-tprof" hidden></section>
   <nav class="tabs" role="tablist" aria-label="بخش‌ها">
-    <button class="tab active" type="button" role="tab" data-tab="att" aria-selected="true">
+    <button class="tab active" type="button" role="tab" data-tab="home" aria-selected="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/></svg>
+      صفحه اول
+    </button>
+    <button class="tab" type="button" role="tab" data-tab="att" aria-selected="false">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4h6v3H9z"/><path d="M9 14l2 2 4-4"/></svg>
       حضور و غیاب
     </button>
@@ -1355,7 +1377,11 @@ input:focus,select:focus{border-color:var(--teal);box-shadow:var(--ring);backgro
   </section>
 
   <!-- حضور و غیاب -->
-  <section id="p-att">
+  <section id="p-home" hidden>
+  <div id="honorHome"></div>
+  <div class="tmw-host" id="tmHome"></div>
+</section>
+<section id="p-att">
     <div class="card">
       <div class="field"><span class="lbl" id="perLbl">زنگ (خودکار با ساعت؛ در صورت نیاز دستی انتخاب کنید)</span><div id="perChips" class="chips" style="grid-template-columns:repeat(4,1fr)"></div></div>
       <div id="attTools" class="tools" hidden>
@@ -1416,6 +1442,7 @@ input:focus,select:focus{border-color:var(--teal);box-shadow:var(--ring);backgro
   </section>
 
   <section id="p-stu" hidden>
+    <div id="honorStu"></div>
     <div class="card"><div id="stuHead" style="margin-bottom:10px"></div><div id="stuNav" class="chips" style="grid-template-columns:1fr 1fr"></div></div>
     <div id="stuBody" hidden></div>
   </section>
@@ -1639,6 +1666,18 @@ input:focus,select:focus{border-color:var(--teal);box-shadow:var(--ring);backgro
       </div>
       <div class="mg-sec" data-sec="tch" data-t="دبیران و برنامه" hidden>
       <div class="mg-sec-d">حضور و خروج همکاران، ابلاغ و ساعات، و ویرایش برنامه‌ی هفتگی.</div>
+      <div class="card" id="tdCard">
+        <div class="lbl" style="margin-bottom:8px">پرونده انضباطی دبیران</div>
+        <div class="now-sub" style="margin-bottom:8px">فقط موارد مثبت یا منفی از فهرست ثبت می‌شود. برای موارد منفی ثبت مورد کافی است؛ برای موارد مثبت توضیحات الزامی است.</div>
+        <div class="mg-bar"><select id="tdT" aria-label="دبیر"></select><select id="tdK" aria-label="نوع"><option>منفی</option><option>مثبت</option></select></div>
+        <div class="field"><select id="tdTopic" aria-label="موضوع"></select></div>
+        <div class="mg-bar jp"><select id="tdD" aria-label="روز"></select><select id="tdM" aria-label="ماه"></select><select id="tdY" aria-label="سال"></select></div>
+        <div class="field"><textarea id="tdDesc" rows="2" maxlength="300" placeholder="توضیحات (برای مورد مثبت الزامی)" style="width:100%;border-radius:12px;border:1px solid var(--line);background:var(--input);color:var(--ink);padding:10px;font:inherit"></textarea></div>
+        <button id="tdSend" class="send" type="button">ثبت در پرونده</button>
+        <div class="lbl" style="margin:12px 0 8px">سوابق پرونده<span id="tdCnt"></span></div>
+        <div id="tdSum"></div>
+        <div id="tdList"></div>
+      </div>
       <div class="card" id="ngCard">
         <div class="lbl" style="margin-bottom:8px">درخواست‌های ویرایش نمره<span id="ngCnt"></span></div>
         <div id="ngList"></div>
@@ -1753,7 +1792,6 @@ input:focus,select:focus{border-color:var(--teal);box-shadow:var(--ring);backgro
       </div>
     </div>
   </section>
-  <div class="tmw-host" id="tmMain"></div>
 </main>
 
 <footer><b id="ftName"></b><br><span id="ftYear"></span><div class="app-ver" id="ftVer"></div><div class="credit">طراح و گردآورنده برنامه: <b>محسن محمودی</b><br>آیدی تلگرام و روبیکا: <b dir="ltr">@salas6992</b><br><a href="https://t.me/salas6992" target="_blank" rel="noopener">تلگرام</a> · <a href="https://rubika.ir/salas6992" target="_blank" rel="noopener">روبیکا</a></div></footer>
@@ -1781,7 +1819,7 @@ const vib = () => { try { navigator.vibrate && navigator.vibrate(8); } catch (e)
 const LS_KEY = 'sia_prefs_v1', Q_KEY = 'sia_queue_v1';
 const lsGet = (k, d) => { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } };
 const lsSet = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
-const P = Object.assign({ teacher:'', pin:'', course:'', stream:'', cls:'', tab:'att', theme:'', assess:ASSESSMENT_TYPES[0], custom:'', max:String(DEFAULT_MAX_SCORE), teachers:[], courses:[] }, lsGet(LS_KEY, {}));
+const P = Object.assign({ teacher:'', pin:'', course:'', stream:'', cls:'', tab:'home', theme:'', assess:ASSESSMENT_TYPES[0], custom:'', max:String(DEFAULT_MAX_SCORE), teachers:[], courses:[] }, lsGet(LS_KEY, {}));
 const savePrefs = () => lsSet(LS_KEY, P);
 
 /* ---------- تبدیل تاریخ میلادی به شمسی (الگوریتم داخلی) ---------- */
@@ -1930,12 +1968,12 @@ function loadClass() {
 
 /* ---------- تب‌ها ---------- */
 function setTab(t) {
-  if (ROLE === 'student') return;      // دانش‌آموز هیچ‌وقت بخش‌های دبیر (کارتابل، ثبت آزمون و ...) را نمی‌بیند
+  if (ROLE === 'student' || TCH.locked) return;      // دانش‌آموز هیچ‌وقت بخش‌های دبیر (کارتابل، ثبت آزمون و ...) را نمی‌بیند
   S.tab = t; P.tab = t; savePrefs();
   $$('.tab').forEach(b => { const on = b.dataset.tab === t; b.classList.toggle('active', on); b.setAttribute('aria-selected', on); });
-  ['att', 'gr', 'mg', 'sch', 'inb', 'cns', 'stf', 'dis'].forEach(k => { $('#p-' + k).hidden = t !== k; });
-  $('#common').hidden = ['sch', 'inb', 'cns', 'stf', 'dis'].includes(t);
-  if (t === 'att') autoSlotApply(); if (t === 'sch') renderSch(); if (t === 'inb') loadInbox(); if (t === 'cns') cnsOpen(); if (t === 'stf') { stfOpen(); tlMineLoad(); } if (t === 'dis') disOpen('t');
+  ['home', 'att', 'gr', 'mg', 'sch', 'inb', 'cns', 'stf', 'dis'].forEach(k => { $('#p-' + k).hidden = t !== k; });
+  $('#common').hidden = ['home', 'sch', 'inb', 'cns', 'stf', 'dis'].includes(t);
+  if (t === 'home') loadHonor(); if (t === 'att') autoSlotApply(); if (t === 'sch') renderSch(); if (t === 'inb') loadInbox(); if (t === 'cns') cnsOpen(); if (t === 'stf') { stfOpen(); tlMineLoad(); } if (t === 'dis') disOpen('t');
 }
 $$('.tab').forEach(b => b.addEventListener('click', () => setTab(b.dataset.tab)));
 
@@ -2650,6 +2688,40 @@ function gateMode() {
   [['s', 'دانش‌آموز'], ['t', 'دبیر'], ['c', 'مشاور'], ['m', 'مدیر']].forEach(q => { const b = el('button', 'chip' + (GM === q[0] ? ' on' : ''), q[1]); b.type = 'button'; b.addEventListener('click', () => { GM = q[0]; $('#gErr').hidden = true; gateMode(); }); rb.append(b); });
   $('#gS').hidden = GM !== 's'; $('#gT').hidden = GM === 's'; $('#gTeacher').closest('.field').hidden = GM === 'm' || GM === 'c'; document.querySelector('label[for="gPin"]').textContent = GM === 'm' ? 'رمز مدیر' : GM === 'c' ? 'رمز مشاور (بصیر کریمی)' : 'کد ورود';
 }
+/* --- تکمیل اطلاعات دبیر: تا کامل نشود، بقیه‌ی بخش‌ها بسته است --- */
+const TCH = { locked:false };
+async function tchGate() {
+  if (ROLE !== 'teacher' || ISMGR) { if (TCH.locked) tchLockUI(false); return; }
+  const r = await send({ action:'tchProf', teacher:S.teacher.trim(), pin:S.pin.trim(), key:ACCESS_KEY });
+  if (r.net || r.status !== 'ok') return;
+  if (r.miss.length) { tchProfRender(r.prof, r.miss); tchLockUI(true); }
+  else if (TCH.locked) tchLockUI(false);
+}
+function tchLockUI(on) {
+  TCH.locked = on;
+  $('#p-tprof').hidden = !on; $('.tabs').hidden = on;
+  if (on) { ['home', 'att', 'gr', 'mg', 'sch', 'inb', 'cns', 'stf', 'dis'].forEach(k => { $('#p-' + k).hidden = true; }); $('#common').hidden = true; }
+  else setTab(P.tab && P.tab !== 'mg' ? P.tab : 'home');
+}
+function tchProfRender(prof, miss) {
+  const box = $('#p-tprof'); box.textContent = '';
+  const c = el('div', 'card'); c.append(el('div', 'lbl', 'تکمیل اطلاعات دبیر'));
+  c.append(el('div', 'dir-miss', 'برای ورود به بخش‌های برنامه، ابتدا اطلاعات زیر را کامل کنید. موارد خالی: ' + miss.join('، ')));
+  const F = [['pc', 'کد پرسنلی', 0], ['id', 'کد ملی (۱۰ رقم)', 1], ['ph', 'شماره تماس موبایل (۰۹…)', 1], ['deg', 'مدرک تحصیلی', 0]], I = {};
+  F.forEach(q => { const f = el('div', 'field'), inp = el('input'); inp.type = 'text'; inp.autocomplete = 'off'; inp.value = prof[q[0]] || '';
+    if (q[2]) { inp.inputMode = 'numeric'; inp.style.direction = 'ltr'; inp.style.textAlign = 'right'; }
+    if (!prof[q[0]]) inp.style.borderColor = 'var(--absent)'; I[q[0]] = inp; f.append(el('label', '', q[1]), inp); c.append(f); });
+  const ok = el('button', 'send', 'ذخیره و ادامه'); ok.type = 'button'; c.append(ok); box.append(c);
+  ok.addEventListener('click', async () => {
+    const v = k => toEn(I[k].value.trim());
+    ok.disabled = true; ok.textContent = 'در حال ذخیره…';
+    const r = await send({ action:'tchSave', teacher:S.teacher.trim(), pin:S.pin.trim(), key:ACCESS_KEY, pc:v('pc'), id:v('id'), ph:v('ph'), deg:I.deg.value.trim() });
+    ok.disabled = false; ok.textContent = 'ذخیره و ادامه';
+    if (r.net) return toast('اینترنت در دسترس نیست.');
+    if (r.status !== 'ok') return toast(r.message || 'ذخیره نشد.');
+    toast('ممنون! اطلاعات کامل شد ✓'); tchLockUI(false);
+  });
+}
 function applyRole() {
   const st = ROLE === 'student', mgr = ROLE === 'manager', cn = ROLE === 'counselor', staff = ROLE === 'teacher' || mgr;
   $('#gate').hidden = !!ROLE; $('#whoBar').hidden = !ROLE; $('#p-stu').hidden = !st;
@@ -2659,6 +2731,7 @@ function applyRole() {
   $('#schWho').closest('.field').hidden = st; $('#nowLbl').textContent = st ? 'زنگ فعلی کلاس شما' : 'زنگ فعلی — همه‌ی کلاس‌ها';
   $('#whoName').textContent = st && SD ? SD.name + ' · ' + SD.cls : mgr ? 'مدیر مدرسه' : cn ? 'مشاور: ' + COUNSELOR_NAME : ROLE === 'teacher' ? 'دبیر: ' + S.teacher : '';
   $('#cnsC').hidden = !cn; $('#cnsT').hidden = ROLE !== 'teacher';
+  setTimeout(tchGate, 0);
   if (st && SD) {
     ['att', 'gr', 'mg', 'inb', 'cns', 'stf', 'dis'].forEach(k => { $('#p-' + k).hidden = true; }); $('#common').hidden = true;
     const h = $('#stuHead'); h.textContent = ''; h.append(el('div', 'now-t', SD.name), el('div', 'now-sub', 'کلاس ' + SD.cls)); stuNav(STU_K); if (!SD.viewAs) qzPrefetch();
@@ -2667,7 +2740,7 @@ function applyRole() {
   } else if (staff) {
     $('#common').hidden = false; $('#teacher').readOnly = !ISMGR; S.slotPick = null; S.subMode = false; S.per = 0; refreshRestrict(); renderPer();
     if (mgr) { setTab('mg'); $('#mgLogin').hidden = true; if ($('#mgBody').hidden) mgLoad(); }
-    else setTab(['gr', 'sch', 'inb', 'cns', 'stf', 'dis'].includes(P.tab) ? P.tab : 'att');
+    else setTab(['gr', 'sch', 'inb', 'cns', 'stf', 'dis', 'home'].includes(P.tab) ? P.tab : 'home');
   }
   inbRiskLoad(); startPolls();
 }
@@ -3055,10 +3128,11 @@ function renderInb() {
   const x = INB[+$('#inbSel').value || 0], sm = el('div', 'card');
   sm.append(el('div', 'now-t', x.c + ' · ' + x.s), el('div', 'now-sub', 'جلسات ثبت‌شده: ' + fa(x.sessions) + ' · میانگین کلاس: ' + f2(x.avg) + ' (از ۲۰)'));
   if (x.top && x.top.length) sm.append(el('div', 'now-sub', x.top.map((t, i) => ['🥇', '🥈', '🥉'][i] + ' ' + t.n + ' (' + f2(t.avg) + ')').join('  ·  '))); box.append(sm); inbRisk(box, x); anaMount(box, x); qzMount(box, x);
+  box.append(attCard(x));
   x.students.forEach(st => {
     const d = el('details', 'dir-it'), h = el('summary'), b = el('div', 'dir-b');
     h.append(el('span', '', st.n), el('small', '', 'غ ' + fa(st.ab) + ' · ت ' + fa(st.lt) + ' · میانگین ' + f2(st.avg)));
-    b.append(el('div', 'lbl', 'حضور و غیاب'), st.att.length ? tbl(['تاریخ', 'ساعت', 'وضعیت'], st.att.map(a => [a.d, a.t, a.s])) : el('div', 'now-sub', 'غیبت یا تأخیری ثبت نشده.'),
+    b.append(
       el('div', 'lbl', 'نمرات'), st.gr.length ? tbl(['تاریخ', 'آزمون', 'نمره', 'از ۲۰', 'میانگین کلاس'], st.gr.map(g => [g.d, g.e, g.a ? 'غایب' : fa(g.s) + ' از ' + fa(g.m), g.a ? '—' : f2(g.n), f2(g.ca)])) : el('div', 'now-sub', 'نمره‌ای ثبت نشده.'));
     b.append(el('div', 'lbl', 'روند نمره'), trendSvg(st.gr.slice().reverse().filter(g => g.n != null)));
     { const bi = el('input'), bk = el('select'), bb = el('button', 'btn', 'ثبت یادداشت'), rw = el('div'); bi.type = 'text'; bi.maxLength = 300; bi.placeholder = 'یادداشت رفتاری'; bb.type = 'button';
@@ -3067,6 +3141,40 @@ function renderInb() {
       b.append(el('div', 'lbl', 'یادداشت رفتاری'), rw); }
     d.append(h, b); box.append(d);
   });
+}
+/* حضور و غیاب کلاس به‌صورت جدول: هر ردیف یک دانش‌آموز، هر ستون یک جلسه */
+const ATT_SYM = { 'غایب':['غ','bad'], 'تأخیر':['ت','late'], 'معاف':['—','ex'] };
+function attCell(s) {
+  if (s === 'معاف') return ATT_SYM['معاف'];
+  if (s === 'غایب') return ATT_SYM['غایب'];
+  if (s === 'تأخیر') return ATT_SYM['تأخیر'];
+  if (String(s).indexOf('موجه') >= 0) return ['م', 'exc'];
+  return ['ح', 'ok'];
+}
+function attCard(x) {
+  const c = el('div', 'card'); c.append(el('div', 'lbl', 'حضور و غیاب کلاس'));
+  const ses = (x.ses || []).slice().sort((a, b) => a.d < b.d ? -1 : a.d > b.d ? 1 : a.t < b.t ? -1 : a.t > b.t ? 1 : 0);
+  if (!ses.length || !x.students.length) { c.append(el('div', 'now-sub', 'هنوز حضور و غیابی برای این کلاس ثبت نشده است.')); return c; }
+  c.append(el('div', 'now-sub', 'ح: حاضر · غ: غایب · ت: تأخیر · م: موجه · —: معاف (مرخصی یا عدم حضور دبیر)'));
+  const wrap = el('div', 'mx-wrap'), tb = el('table', 'mx'), thr = el('tr');
+  thr.append(el('th', 'nm', 'نام'));
+  ses.forEach(s => thr.append(el('th', s.ex ? 'ex' : '', fa(s.d.slice(5)) + '\n' + fa(s.t))));
+  thr.append(el('th', '', 'غ'), el('th', '', 'ت'), el('th', '', 'م'));
+  tb.append(el('thead')); tb.querySelector('thead').append(thr);
+  const tbody = el('tbody');
+  x.students.forEach(st => {
+    const tr = el('tr'); tr.append(el('td', 'nm', st.n));
+    let ab = 0, lt = 0, ex = 0;
+    ses.forEach(s => {
+      const rec = st.att.find(a => a.d === s.d && a.t === s.t);
+      const [sym, cls] = attCell(s.ex ? 'معاف' : rec ? rec.s : 'حاضر');
+      if (cls === 'bad') ab++; if (cls === 'late') lt++; if (cls === 'exc') ex++;
+      tr.append(el('td', cls, sym));
+    });
+    tr.append(el('td', '', fa(ab)), el('td', '', fa(lt)), el('td', '', fa(ex)));
+    tbody.append(tr);
+  });
+  tb.append(tbody); wrap.append(tb); c.append(wrap); return c;
 }
 /* دانش‌آموزان نیازمند توجه (افت نمره، غیبت زیاد، معدل پایین) در کلاس انتخاب‌شده */
 let RKM = [];
@@ -4485,9 +4593,21 @@ function calInfo() {
 async function calLoad() {
   const box = $('#calList'); if (!box) return; calInit(); calPerFill();
   const r = await send({ action:'calList', teacher:S.teacher.trim(), pin:S.pin.trim(), key:ACCESS_KEY }); if (r.status !== 'ok') return; box.textContent = '';
-  r.list.slice(0, 30).forEach(x => { const row = el('div', 'dir-r'), b = el('button', 'btn', 'حذف'); b.type = 'button';
-    row.append(el('span', '', (x.k === 'آزمون' ? '📝 ' : '📚 ') + fa(x.d) + (x.p ? ' · زنگ ' + fa(x.p) + calTm(x.d, x.p) : '') + ' · ' + x.c + ' · ' + x.s + ' — ' + x.t + (x.pend ? ' · ⏳ در انتظار تأیید مدیر' : '')), b);
-    b.addEventListener('click', async () => { const q = await send({ action:'calDel', teacher:S.teacher.trim(), pin:S.pin.trim(), date:x.d, cls:x.c, course:x.s, title:x.t, key:ACCESS_KEY }); if (q.status !== 'ok') toast(q.message || 'حذف نشد'); calLoad(); }); box.append(row); });
+  const list = r.list.slice(0, 60);
+  if (!list.length) return box.append(el('div', 'now-sub', 'هنوز آزمون یا تکلیفی ثبت نشده است.'));
+  uniq(list.map(x => x.c)).forEach(c => {
+    const items = list.filter(x => x.c === c).sort((a, b) => a.d < b.d ? -1 : a.d > b.d ? 1 : (a.p || 0) - (b.p || 0));
+    box.append(el('div', 'lbl', c + ' · ' + fa(items.length) + ' مورد'));
+    const wrap = el('div', 'mx-wrap'), tb = el('table', 'mx cal-mx'), thead = el('thead'), hr = el('tr'), tbody = el('tbody');
+    ['تاریخ', 'زنگ', 'درس', 'نوع', 'عنوان', 'دبیر', 'وضعیت', ''].forEach(t => hr.append(el('th', '', t)));
+    thead.append(hr); tb.append(thead, tbody); wrap.append(tb); box.append(wrap);
+    items.forEach(x => {
+      const tr = el('tr'), b = el('button', 'btn', 'حذف'); b.type = 'button';
+      b.addEventListener('click', async () => { const q = await send({ action:'calDel', teacher:S.teacher.trim(), pin:S.pin.trim(), date:x.d, cls:x.c, course:x.s, title:x.t, key:ACCESS_KEY }); if (q.status !== 'ok') toast(q.message || 'حذف نشد'); calLoad(); });
+      tr.append(el('td', '', fa(x.d)), el('td', '', x.p ? fa(x.p) + calTm(x.d, x.p) : '—'), el('td', '', x.s), el('td', '', (x.k === 'آزمون' ? '📝 ' : '📚 ') + x.k), el('td', '', x.t), el('td', '', x.te || ''), el('td', x.pend ? 'pend' : 'ok', x.pend ? '⏳ در انتظار' : '✓ تأیید'), el('td', '', b));
+      tbody.append(tr);
+    });
+  });
 }
 $('#calAdd').addEventListener('click', async () => {
   const x = INB && INB[+$('#inbSel').value || 0]; if (!x) return toast('ابتدا کلاس و درس را انتخاب کنید');
@@ -4546,6 +4666,52 @@ function ngMgPaint() {
   const hb = $('#ngHist'); hb.textContent = '';
   const hist = NGM.filter(x => x.st !== NG_PEND_).slice(0, 40);
   if (hist.length) hb.append(tbl(['تاریخ', 'دبیر', 'کلاس', 'درس', 'ارزیابی', 'وضعیت'], hist.map(x => [fa(x.d), x.te, x.c, x.cs, x.et, x.st])));
+}
+/* --- مدیر: پرونده انضباطی دبیران (مثبت و منفی) --- */
+const TD = { pk:null };
+const TD_TOPICS = {
+  'منفی': ['اخراج دانش‌آموز از کلاس', 'همراه داشتن گوشی در کلاس', 'حرف زدن و بی‌نظمی در کلاس', 'تأخیر در ورود به کلاس', 'غیبت یا تأخیر بدون اطلاع', 'برخورد نامناسب با دانش‌آموز', 'عدم رعایت مقررات مدرسه', 'سایر موارد منفی'],
+  'مثبت': ['فعالیت و تدریس خلاقانه در کلاس', 'مشارکت فعال در بحث‌های کلاسی', 'پیگیری مشکلات دانش‌آموزان', 'همکاری در برنامه‌های مدرسه', 'ارائه‌ی محتوای تکمیلی', 'سایر موارد مثبت']
+};
+function tdInit() {
+  if (window.__tdInit) return; window.__tdInit = true;
+  TD.pk = jPicker($('#tdD'), $('#tdM'), $('#tdY'), () => {});
+  $('#tdK').addEventListener('change', tdTopics); $('#tdSend').addEventListener('click', tdSubmit);
+  tdTopics(); tdFill(); tdList();
+}
+function tdTopics() {
+  const sel = $('#tdTopic'), k = $('#tdK').value; sel.textContent = '';
+  TD_TOPICS[k].forEach(t => { const o = el('option', '', t); o.value = t; sel.append(o); });
+}
+function tdFill() {
+  const sel = $('#tdT'), keep = sel.value, names = uniq(SCH.map(r => r[4]).filter(Boolean)).sort((a, b) => a.localeCompare(b, 'fa'));
+  sel.textContent = ''; names.forEach(n => { const o = el('option', '', n); o.value = n; sel.append(o); });
+  if (names.includes(keep)) sel.value = keep;
+  if (!names.length && !TA.tried) { TA.tried = true; loadSchedule().then(tdFill); }
+}
+async function tdSubmit() {
+  const q = jParse(TD.pk.get()), t = $('#tdT').value, k = $('#tdK').value, desc = $('#tdDesc').value.trim();
+  if (!t) return toast('دبیر را انتخاب کنید');
+  if (!q) return toast('تاریخ نامعتبر است');
+  if (k === 'مثبت' && !desc) return toast('برای موارد مثبت، توضیحات را بنویسید');
+  const r = await send({ action:'tdisAdd', pin:MG.pin, key:ACCESS_KEY, target:t, type:k, topic:$('#tdTopic').value, date:TD.pk.get(), desc:desc });
+  if (r.net) return toast('اینترنت در دسترس نیست');
+  if (r.status !== 'ok') return toast(r.message || 'ثبت نشد');
+  $('#tdDesc').value = ''; toast('در پرونده ثبت شد ✓'); tdList();
+}
+async function tdList() {
+  const box = $('#tdList'), sum = $('#tdSum'); if (!box || !MG.pin) return;
+  const r = await send({ action:'tdisList', pin:MG.pin, key:ACCESS_KEY }); if (r.status !== 'ok') return;
+  box.textContent = ''; sum.textContent = ''; $('#tdCnt').textContent = r.list.length ? ' (' + fa(r.list.length) + ')' : '';
+  const names = uniq(r.list.map(x => x.n)).sort((a, b) => a.localeCompare(b, 'fa'));
+  if (names.length) sum.append(tbl(['دبیر', 'موارد مثبت', 'موارد منفی'], names.map(n => [n, fa(r.list.filter(x => x.n === n && x.k === 'مثبت').length), fa(r.list.filter(x => x.n === n && x.k === 'منفی').length)])));
+  if (!r.list.length) return box.append(el('div', 'now-sub', 'موردی ثبت نشده است.'));
+  r.list.slice(0, 80).forEach(x => {
+    const row = el('div', 'dir-r'), b = el('button', 'btn', 'حذف'); b.type = 'button';
+    row.append(el('span', '', (x.k === 'مثبت' ? '✅ ' : '⚠️ ') + fa(x.d) + ' · ' + x.n + ' · ' + x.t + (x.desc ? ' — ' + x.desc : '')), b);
+    b.addEventListener('click', async () => { const q = await send({ action:'tdisDel', pin:MG.pin, key:ACCESS_KEY, id:x.id }); toast(q.status === 'ok' ? 'حذف شد' : (q.message || 'حذف نشد')); tdList(); });
+    box.append(row);
+  });
 }
 /* --- عدم حضور و تأخیر دبیر (ثبت مدیر؛ کارتابل دبیر) --- */
 const TA = { pk:null, tried:false };
@@ -4898,7 +5064,7 @@ async function pfBeh() {
   add.addEventListener('click', async () => { if (!inp.value.trim()) return; const r = await send({ action:'behAdd', pin:MG.pin, cls:PF.cls, name:PF.name, kind:kind.value, note:inp.value.trim(), key:ACCESS_KEY }); if (r.status !== 'ok') return toast(r.message || 'ثبت نشد'); inp.value = ''; toast('ثبت شد ✓'); ld(); });
   ld();
 }
-function v3Init() { cmInit(); srInit(); loadRisk(); loadLeaves(); tlMgWire(); tlMgLoad(); taFormInit(); taList(); ngMgLoad(); dgInit(); codeInit(); mcInit(); if (!window.__lvPoll) window.__lvPoll = setInterval(() => { if (MG.pin && !$('#mgBody').hidden) { loadLeaves(); tlMgLoad(); ngMgLoad(); } }, 60000); }   // درخواست‌های مرخصی هر دقیقه بررسی می‌شود
+function v3Init() { cmInit(); srInit(); loadRisk(); loadLeaves(); tlMgWire(); tlMgLoad(); taFormInit(); taList(); ngMgLoad(); dgInit(); tdInit(); codeInit(); mcInit(); if (!window.__lvPoll) window.__lvPoll = setInterval(() => { if (MG.pin && !$('#mgBody').hidden) { loadLeaves(); tlMgLoad(); ngMgLoad(); } }, 60000); }   // درخواست‌های مرخصی هر دقیقه بررسی می‌شود
 
 /* ---------- گزینه پیامک ---------- */
 if (!SMS_ENABLED) $('#smsOpt').hidden = true;
@@ -4937,12 +5103,38 @@ function jPicker(dS, mS, yS, on) {          // انتخاب‌گر تاریخ ش
   fillD(); api.today(); on && on(); return api;
 }
 
+/* ---------- افتخارآفرینان: نفرات برتر هر کلاس (صفحه اول، ورودی و صفحه‌ی دانش‌آموز) ---------- */
+let HONOR = null;
+async function loadHonor() {
+  const r = await send({ action:'topList', key:ACCESS_KEY });
+  if (r.status === 'ok') { HONOR = r.classes || {}; renderHonor(); }
+}
+function honorCard() {
+  const c = el('div', 'card honor-card');
+  c.append(el('div', 'honor-t', '🏆 افتخارآفرینان دبیرستان صلاح‌الدین ایوبی'));
+  const names = Object.keys(HONOR || {}).sort((a, b) => a.localeCompare(b, 'fa'));
+  if (!names.length) { c.append(el('div', 'now-sub', 'هنوز نمره‌ای برای نمایش ثبت نشده است.')); return c; }
+  const grid = el('div', 'honor-grid');
+  names.forEach(cls => {
+    const box = el('div', 'honor-cls'); box.append(el('div', 'honor-c', cls));
+    let last = null, rank = 0;
+    HONOR[cls].forEach(x => {
+      if (x.a !== last) { rank++; last = x.a; }
+      box.append(el('div', 'honor-r', (['🥇', '🥈', '🥉'][rank - 1] || '') + ' ' + x.n + ' — ' + f2(x.a)));
+    });
+    grid.append(box);
+  });
+  c.append(grid); return c;
+}
+function renderHonor() {
+  ['honorGate', 'honorHome', 'honorStu'].forEach(id => { const box = document.getElementById(id); if (box) { box.textContent = ''; box.append(honorCard()); } });
+}
 /* ---------- ساعت و تاریخ امروز + پیام انگیزشی (کلاسیک و مدرن) ---------- */
 function tmwBuild(host) {
   host.textContent = '';
   let ticks = ''; for (let i = 0; i < 12; i++) { const a = i * Math.PI / 6, r1 = i % 3 ? 40 : 37, r2 = 43; ticks += '<line x1="' + (50 + r1 * Math.sin(a)).toFixed(2) + '" y1="' + (50 - r1 * Math.cos(a)).toFixed(2) + '" x2="' + (50 + r2 * Math.sin(a)).toFixed(2) + '" y2="' + (50 - r2 * Math.cos(a)).toFixed(2) + '" stroke="currentColor" stroke-width="' + (i % 3 ? 1.2 : 2.6) + '" stroke-linecap="round"/>'; }
   const w = el('div', 'tmw'), cl = el('div', 'cl');
-  cl.innerHTML = '<h4>ساعت و تقویم کلاسیک</h4><svg class="ck" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="47" fill="none" stroke="currentColor" stroke-width="2.6"/><circle cx="50" cy="50" r="44.5" fill="none" stroke="#B8962E" stroke-width=".8"/>' + ticks +
+  cl.innerHTML = '<svg class="ck" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="47" fill="none" stroke="currentColor" stroke-width="2.6"/><circle cx="50" cy="50" r="44.5" fill="none" stroke="#B8962E" stroke-width=".8"/>' + ticks +
     '<line class="hh" x1="50" y1="50" x2="50" y2="29" stroke="currentColor" stroke-width="3.6" stroke-linecap="round"/><line class="mh" x1="50" y1="50" x2="50" y2="17" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><line class="sh" x1="50" y1="56" x2="50" y2="13" stroke="#C93C42" stroke-width="1.1" stroke-linecap="round"/><circle cx="50" cy="50" r="3" fill="#B8962E"/></svg><div class="dd c-date"></div>';
   w.append(cl);
   const q = el('div', 'tmq'); q.innerHTML = '<b>پیام امروز</b><span class="q-t"></span>';
@@ -4964,7 +5156,7 @@ function tmwQuote(first) {
   if (first) { set(); return; }
   TMQ++; $$('.tmq').forEach(e => e.classList.add('fade')); setTimeout(set, 450);
 }
-tmwBuild($('#tmGate')); tmwBuild($('#tmMain')); tmwTick(); tmwQuote(true);
+tmwBuild($('#tmGate')); tmwBuild($('#tmHome')); tmwTick(); tmwQuote(true); loadHonor(); setInterval(loadHonor, 300000);
 setInterval(tmwTick, 1000); setInterval(() => tmwQuote(), 15000);
 
 /* ---------- مشاوره ---------- */
@@ -5307,7 +5499,7 @@ function init() {
   buildStreams(); buildAssess(); refreshNow(true);
   S.stream = STUDENTS[P.stream] ? P.stream : ''; S.cls = S.stream && STUDENTS[S.stream][P.cls] ? P.cls : '';
   if (S.stream && !S.cls) { const l = Object.keys(STUDENTS[S.stream]); if (l.length === 1) S.cls = l[0]; }
-  paintStreams(); fillClasses(); loadClass(); setTab(location.hash === '#schedule' ? 'sch' : ['gr','mg','sch','inb'].includes(P.tab) ? P.tab : 'att');
+  paintStreams(); fillClasses(); loadClass(); setTab(location.hash === '#schedule' ? 'sch' : ['gr','mg','sch','inb','home'].includes(P.tab) ? P.tab : 'home');
   renderQueue(); flushQ(); loadRoster(); loadSchedule();
   $('#modal').addEventListener('click', e => { if (e.target.id === 'modal') closeModal(); });
 }
