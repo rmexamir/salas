@@ -16,14 +16,14 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxzPr6P54uH4gV_rQrss
 // کلید دسترسی اختیاری (باید با ACCESS_KEY در Code.gs یکی باشد)
 const ACCESS_KEY = "";
 // نسخه‌ی برنامه — با هر به‌روزرسانی این عدد بالا می‌رود و در صفحه‌ی ورود و پایین صفحه نمایش داده می‌شود.
-const APP_VERSION = "1.11";
+const APP_VERSION = "1.12";
 // (اختیاری) لینک Google Sheet برای دکمه «باز کردن Google Sheet» در تب مدیر
 const SHEET_URL = "https://docs.google.com/spreadsheets/d/10i-IGQKyj078M6kJ7YhdAniuJInl6JemwVxAqs7FnrY/edit";
 const DEFAULT_MAX_SCORE = 20;
 // پیامک خودکار به اولیای غایبین و متأخرین (نیازمند راه‌اندازی sms-addon.gs)
 const SMS_ENABLED = false;
 // مدرسه چرخشی: هفته‌ها یک‌درمیان صبح و ظهر. هفته‌ی شروع (شنبه ۱۸ مهر ۱۴۰۵ = ۱۰ اکتبر ۲۰۲۶) شیفت ظهر است.
-const SHIFT_ANCHOR = { y:2026, m:10, d:10, shift:"afternoon" };
+const SHIFT_ANCHOR = { y:2026, m:10, d:10, shift:"afternoon" };   // مدرسه‌ی تک‌نوبتی: fixed:"morning" (یا "afternoon") اضافه کنید تا همیشه همان نوبت باشد
 const SHIFT_TIMES = {
   afternoon: ["۱۳:۰۰–۱۴:۲۰","۱۴:۳۵–۱۵:۵۵","۱۶:۱۰–۱۷:۳۰"],
   morning:   ["۰۸:۰۰–۰۹:۲۰","۰۹:۳۵–۱۰:۵۵","۱۱:۱۰–۱۲:۳۰"]
@@ -1904,6 +1904,10 @@ input[type=tel]:focus,input[type=number]:focus,input[type=email]:focus{border-co
         <div class="su-h">کد ورود دبیر</div>
         <div class="field"><select id="suPwT" aria-label="دبیر"></select></div>
         <div class="su-add"><input id="suPwTc" type="text" maxlength="30" autocomplete="off" dir="ltr" aria-label="کد ورود جدید" placeholder="کد جدید (دست‌کم ۴ نویسه)"><button id="suPwTGo" class="btn" type="button">ذخیره‌ی کد</button></div>
+        <div class="su-h">مشاور</div>
+        <div class="now-sub" id="suCnsTx" style="margin-bottom:8px"></div>
+        <div class="grid2"><div class="field"><input id="suCnsN" type="text" maxlength="60" autocomplete="off" aria-label="نام مشاور" placeholder="نام و نام خانوادگی مشاور"></div><div class="field"><input id="suCnsP" type="text" maxlength="40" autocomplete="off" dir="ltr" aria-label="رمز تازه‌ی مشاور" placeholder="رمز تازه (خالی = بدون تغییر)"></div></div>
+        <button id="suCnsGo" class="btn" type="button" style="width:100%">ذخیره‌ی مشاور</button>
         <div class="su-h">رمز دانش‌آموز</div>
         <label class="sms-opt"><input type="checkbox" id="suStu2fa" style="width:auto;height:auto"> ورود دانش‌آموز با رمز (علاوه بر کد ملی)</label>
         <div class="now-sub" id="suStu2faTx" style="margin:4px 0 10px"></div>
@@ -2548,6 +2552,7 @@ function applyRoster(r) {
   if (!r || !r.classes) return;
   if (r.cur && r.cur.streams) CUR = r.cur;
   if (r.school) setSchoolName(r.school);                       // نام مدرسه از «راه‌اندازی مدرسه»
+  if (typeof r.cns === 'string') COUNSELOR_NAME = r.cns;
   Object.keys(STUDENTS).forEach(k => delete STUDENTS[k]);
   Object.keys(r.classes).forEach(k => { STUDENTS[k] = r.classes[k]; });
   S.authReq = r.authRequired !== false;
@@ -2592,6 +2597,7 @@ async function mgLoad() {
   MG.att = r.att || []; MG.gr = r.gr || []; MG.attHead = r.attHead || []; MG.grHead = r.grHead || [];
   $('#mgLogin').hidden = true; $('#mgBody').hidden = false; edInit(); loadDir(); excInit(); pfInit(); v3Init(); addInit(); gdInit();
   mgRender(); absInit(); pollToday(); abInit(); try { const ds = document.querySelector('.mg-sec[data-sec="dis"]'); if (ds && !ds.hidden) disOpen('m'); dsBadge(); } catch (e) {}
+  mgPinNag();
   try { const cs = document.querySelector('#mgBody .mg-sec:not([hidden])'); if (cs && cs.dataset.sec === 'setup') suOpen(); if (cs && cs.dataset.sec === 'set') setOpen(); } catch (e) {}   // بخشی که پیش از ورود باز مانده بود { const n = new Date(); $('#mgStamp').textContent = 'آخرین بازخوانی: ساعت ' + fa(pad(n.getHours()) + ':' + pad(n.getMinutes())); }
 }
 function mgCsv(name, head, rows) {
@@ -2609,6 +2615,7 @@ if (typeof SHEET_URL !== 'undefined' && SHEET_URL) { const a = $('#mgOpen'); a.h
 const SCH_KEY = 'sia_sched_v1';
 let PERIOD_TIMES = SHIFT_TIMES.morning;
 function shiftOfDate(d) {                       // جمعه جزو هفته‌ی بعد حساب می‌شود
+  if (SHIFT_ANCHOR.fixed) return SHIFT_ANCHOR.fixed === 'afternoon' ? 'afternoon' : 'morning';   // مدرسه‌ی تک‌نوبتی
   if (d.getDay() === 5) d = new Date(d.getTime() + 864e5);
   const w = Math.floor((Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) - Date.UTC(SHIFT_ANCHOR.y, SHIFT_ANCHOR.m - 1, SHIFT_ANCHOR.d)) / (7 * 864e5));
   return (w % 2 === 0) === (SHIFT_ANCHOR.shift === 'afternoon') ? 'afternoon' : 'morning';
@@ -2958,7 +2965,7 @@ function gateFill() {
 function gateMode() {
   const rb = $('#gRole'); rb.textContent = '';
   [['s', 'دانش‌آموز'], ['t', 'دبیر'], ['c', 'مشاور'], ['m', 'مدیر']].forEach(q => { const b = el('button', 'chip' + (GM === q[0] ? ' on' : ''), q[1]); b.type = 'button'; b.addEventListener('click', () => { GM = q[0]; $('#gErr').hidden = true; gateMode(); }); rb.append(b); });
-  $('#gS').hidden = GM !== 's'; $('#gT').hidden = GM === 's'; $('#gTeacher').closest('.field').hidden = GM === 'm' || GM === 'c'; document.querySelector('label[for="gPin"]').textContent = GM === 'm' ? 'رمز مدیر' : GM === 'c' ? 'رمز مشاور (بصیر کریمی)' : 'کد ورود';
+  $('#gS').hidden = GM !== 's'; $('#gT').hidden = GM === 's'; $('#gTeacher').closest('.field').hidden = GM === 'm' || GM === 'c'; document.querySelector('label[for="gPin"]').textContent = GM === 'm' ? 'رمز مدیر' : GM === 'c' ? 'رمز مشاور' + (COUNSELOR_NAME ? ' (' + COUNSELOR_NAME + ')' : '') : 'کد ورود';
 }
 /* --- تکمیل اطلاعات دبیر: تا کامل نشود، بقیه‌ی بخش‌ها بسته است --- */
 const TCH = { locked:false };
@@ -3034,7 +3041,7 @@ $('#gGo').addEventListener('click', async () => {
     const pin = $('#gPin').value.trim(); if (!pin) return fail('رمز مشاور را بنویسید.');
     const r = await send({ action:'cnsLogin', cpin:pin, key:ACCESS_KEY });
     if (r.net) return fail('اینترنت در دسترس نیست.'); if (r.status !== 'ok') return fail(r.message || 'رمز مشاور نادرست است.');
-    CPIN = pin; ROLE = 'counselor'; try { sessionStorage.setItem('sia_cns', pin); } catch (e) {}
+    CPIN = pin; ROLE = 'counselor'; if (r.name) COUNSELOR_NAME = r.name; try { sessionStorage.setItem('sia_cns', pin); } catch (e) {}
   } else if (GM === 'm') {
     const pin = $('#gPin').value.trim(); if (!pin) return fail('رمز مدیر را بنویسید.');
     const r = await send({ action:'mlogin', pin:pin, key:ACCESS_KEY });
@@ -5199,6 +5206,13 @@ async function suRefresh() {          // بعد از هر تغییر: فهرست
   [typeof edInit === 'function' && edInit, typeof excInit === 'function' && excInit, typeof pfInit === 'function' && pfInit, typeof codeInit === 'function' && codeInit].forEach(f => { try { if (f) f(); } catch (e) {} });
   suClsList(); suTeachers(); suPwInit(); suHub();
 }
+async function mgPinNag() {           // نسخه‌ی خام: اگر رمز مدیر هنوز رمز اولیه است، یک بار در هر نشست هشدار بده
+  try { if (sessionStorage.getItem('sia_pinnag')) return; } catch (e) {}
+  const r = await send({ action:'setupInfo', pin:MG.pin, key:ACCESS_KEY }); if (r.status !== 'ok' || !r.mgPinWeak) return;
+  try { sessionStorage.setItem('sia_pinnag', '1'); } catch (e) {}
+  showModal({ icon:'warn', title:'رمز مدیر را تغییر دهید', msg:'رمز مدیر هنوز رمز اولیه‌ی برنامه است و هر کسی که فایل برنامه را دیده آن را می‌داند. همین حالا یک رمز تازه بگذارید.',
+    buttons:[{ text:'تغییر رمز', primary:true, onClick:() => mgShow('set', true) }, { text:'بعداً' }] });
+}
 function suGo(id) {                 // رفتن به مرحله؛ اگر در همین بخش است فقط پیمایش، وگرنه رفتن به بخش دیگر
   const c = document.getElementById(id); if (!c) return; const d = c.querySelector('details'); if (d) d.open = true;
   const sec = c.closest('.mg-sec'); if (sec && !sec.hidden) c.scrollIntoView({ behavior:'smooth', block:'start' }); else mgGo(id);
@@ -5300,6 +5314,8 @@ function suPwInit() {
   $('#suStu2fa').checked = !!(SU && SU.stu2fa);
   $('#suStu2faTx').textContent = !SU ? '' : SU.stu2fa ? 'روشن: دانش‌آموز با کد ملی و رمز شخصی (یا کد ورود یک‌بار مصرف) وارد می‌شود. کدهای هر کلاس را از «دانش‌آموزان ← کد ورود» چاپ کنید.'
     : 'خاموش: دانش‌آموز فقط با کد ملی وارد می‌شود.' + (SU.stuNoCode ? ' با روشن‌کردن، برای ' + fa(SU.stuNoCode) + ' دانش‌آموز بدون کد، کد ورود ساخته می‌شود.' : '');
+  if (SU) { if (document.activeElement !== $('#suCnsN')) $('#suCnsN').value = SU.cnsName || '';
+    $('#suCnsTx').textContent = SU.cnsOn ? '✓ ورود مشاور فعال است' + (SU.cnsName ? ' (' + SU.cnsName + ')' : '') + '.' : 'ورود مشاور خاموش است؛ با تعیین نام و رمز فعال می‌شود.'; }
   $('#suMgTx').textContent = !SU ? '' : SU.mgPinCustom ? '✓ رمز مدیر تغییر داده شده است.' : '⚠️ رمز مدیر هنوز رمز اولیه‌ی فایل Code.gs است؛ آن را تغییر دهید.';
 }
 function suPwStu() {
@@ -5307,6 +5323,11 @@ function suPwStu() {
   suStuOf(c).slice().sort((a, b) => a.localeCompare(b, 'fa')).forEach(n => { const o = el('option', '', n); o.value = n; s.append(o); });
 }
 $('#suPwC').addEventListener('change', suPwStu);
+$('#suCnsGo').addEventListener('click', async () => {
+  const n = $('#suCnsN').value.trim(), p = $('#suCnsP').value.trim(); if (n.length < 3) return toast('نام مشاور را کامل بنویسید.'); if (p && p.length < 6) return toast('رمز مشاور باید دست‌کم ۶ نویسه باشد.');
+  const r = await suSend({ action:'setCounselor', name:n, newPin:p }, $('#suCnsGo')); if (!r) return; $('#suCnsP').value = ''; COUNSELOR_NAME = r.name;
+  toast('مشاور ذخیره شد ✓' + (p ? ' | رمز تازه را به مشاور بدهید' : '')); suSoft();
+});
 $('#suMgPw').addEventListener('click', () => mgShow('set', true));
 $('#suPwTGo').addEventListener('click', async () => {
   const n = $('#suPwT').value, c = en($('#suPwTc').value.trim()); if (!n) return toast('دبیر را انتخاب کنید.'); if (c.length < 4) return toast('کد ورود باید دست‌کم ۴ نویسه باشد.');
@@ -5477,7 +5498,7 @@ if (!SMS_ENABLED) $('#smsOpt').hidden = true;
 else { $('#smsOn').checked = !!P.sms; $('#smsOn').addEventListener('change', e => { P.sms = e.target.checked; savePrefs(); }); }
 
 /* ======================= نسخه ۴: تقویم شمسی، ساعت و پیام، مشاوره، حضور همکاران ======================= */
-const COUNSELOR_NAME = 'بصیر کریمی';
+let COUNSELOR_NAME = 'بصیر کریمی';               // مقدار اولیه؛ نام تنظیم‌شده در «راه‌اندازی مدرسه» از سرور می‌آید
 let CPIN = '', CNSL = [], CNSMG = [], POLL = null;
 
 /* ---------- تاریخ شمسی ---------- */
