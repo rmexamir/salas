@@ -2877,8 +2877,18 @@ async function loadDir() {
   const r = await send({ action:'directory', pin:MG.pin, key:ACCESS_KEY });
   if (r.net) { box.textContent = 'اینترنت در دسترس نیست.'; return; }
   if (r.status !== 'ok') { box.textContent = r.message || 'بارگذاری نشد.'; return; }
-  DIR = r; renderDir();
+  DIR = r; DIR_SIG = JSON.stringify(r); renderDir();
 }
+/* بازخوانی خودکار بانک اطلاعات: تکمیل اطلاعات دبیران بلافاصله در پنل مدیر دیده شود */
+let DIR_SIG = '';
+async function refreshDir() {
+  if (!MG.pin || $('#mgBody').hidden) return;
+  const r = await send({ action:'directory', pin:MG.pin, key:ACCESS_KEY });
+  if (r.status !== 'ok') return;
+  const sig = JSON.stringify(r); if (sig === DIR_SIG) return;
+  DIR = r; DIR_SIG = sig; renderDir();
+}
+setInterval(refreshDir, 60000);
 function telRow(k, name, ph) {          // ردیف با لینک تماس؛ تپ روی شماره صفحه‌ی تماس گوشی را باز می‌کند
   const row = el('div', 'dir-r'); row.append(el('span', 'k', k + (name ? ' (' + name + ')' : '')));
   if (ph) { const a = el('a', 'tel', ph); a.href = 'tel:' + ph; a.setAttribute('aria-label', 'تماس با ' + k + ' ' + (name || '')); row.append(a); } else row.append(el('span', '', '—'));
@@ -5194,7 +5204,7 @@ async function suOpen() {
   fillDatalist('taCourseL', curAll() || uniq(lsGet('sia_rost_c', []).concat(P.courses)));
   suClsPreview(); suClsList(); suTeachers(); suPwInit(); suHub();
   const r = await send({ action:'setupInfo', pin:MG.pin, key:ACCESS_KEY }); if (r.status === 'ok') { SU = r; setSchoolName(r.school); $('#suName').value = SCHOOL_NAME; }
-  if (!DIR.teachers.length && !DIR.students.length) await loadDir();
+  await loadDir();
   suTeachers(); suPwInit(); suHub();
 }
 async function suSoft() {             // فقط وضعیت راه‌اندازی و فهرست‌های همین بخش
