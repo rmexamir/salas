@@ -2065,6 +2065,7 @@ async function grSavedLoad(force) {
   if (key === GRS_KEY && !force) return;
   GRS_KEY = key;
   const r = await send(Object.assign(base(), { action:'grFor' }));
+  if (r.net) { GRS_KEY = ''; return; }
   if (GRS_KEY !== key) return;
   box.textContent = '';
   if (r.status !== 'ok' || !r.list.length) { box.hidden = true; return; }
@@ -2079,6 +2080,7 @@ async function grSavedLoad(force) {
     });
   });
 }
+setInterval(() => grSavedLoad(), 1500);   // با تغییر روز، زنگ، کلاس یا درس، فهرست نمرات ثبت‌شده به‌روز می‌شود
 async function grSingleEdit(ex, x) {
   const v = prompt('نمره‌ی جدید برای ' + x.n + ' (۰ تا ' + fa(ex.max) + ') یا «غایب»:', x.abs ? 'غایب' : x.sc);
   if (v === null) return;
