@@ -16,7 +16,7 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxzPr6P54uH4gV_rQrss
 // کلید دسترسی اختیاری (باید با ACCESS_KEY در Code.gs یکی باشد)
 const ACCESS_KEY = "";
 // نسخه‌ی برنامه — با هر به‌روزرسانی این عدد بالا می‌رود و در صفحه‌ی ورود و پایین صفحه نمایش داده می‌شود.
-const APP_VERSION = "1.12";
+const APP_VERSION = "1.14";
 // (اختیاری) لینک Google Sheet برای دکمه «باز کردن Google Sheet» در تب مدیر
 const SHEET_URL = "https://docs.google.com/spreadsheets/d/10i-IGQKyj078M6kJ7YhdAniuJInl6JemwVxAqs7FnrY/edit";
 const DEFAULT_MAX_SCORE = 20;
@@ -1415,6 +1415,8 @@ input[type=tel]:focus,input[type=number]:focus,input[type=email]:focus{border-co
 .su-h:first-of-type{margin-top:0;padding-top:0;border-top:0}
 .su-out{margin-top:10px;padding:10px 12px;border-radius:12px;background:var(--present-bg);font-weight:800}
 .su-out code{direction:ltr;display:inline-block;font-size:18px;letter-spacing:1px;font-family:ui-monospace,Consolas,monospace}
+/* پنجره‌ها و پیام کوتاه همیشه بالای صفحه‌ی ورود (قبلاً پشت آن پنهان می‌ماندند) */
+.modal{z-index:110}.toast{z-index:120}
 /* شماره‌ی نسخه */
 .app-ver{font-weight:800;letter-spacing:0}
 </style>
@@ -1438,11 +1440,14 @@ input[type=tel]:focus,input[type=number]:focus,input[type=email]:focus{border-co
     <div class="now-sub" id="gSchool" style="margin-bottom:12px">دبیرستان صلاح‌الدین ایوبی</div>
     <div id="gRole" class="chips" style="grid-template-columns:repeat(4,1fr);margin-bottom:12px"></div>
     <div id="gS"><div class="field"><label for="gNid">کد ملی دانش‌آموز</label><input id="gNid" type="text" inputmode="numeric" maxlength="12" autocomplete="off" placeholder="کد ملی ۱۰ رقمی" style="direction:ltr;text-align:center"></div>
-      <div class="field"><label for="gSec">کد ورود یا رمز شخصی (اگر مدرسه به شما داده است)</label><input id="gSec" type="password" autocomplete="off" style="direction:ltr;text-align:center"></div></div>
+      <div class="field"><label for="gSec" id="gSecL">رمز عبور</label><input id="gSec" type="password" autocomplete="current-password" style="direction:ltr;text-align:center"><div class="now-sub" id="gSecH" style="margin-top:4px">در اولین ورود خالی بگذار؛ بعد از ورود باید برای خودت رمز عبور بسازی.</div></div></div>
     <div id="gP" hidden>
-      <div class="now-sub" style="margin-bottom:8px">اولین ورود شماست؛ یک رمز شخصی (دست‌کم ۶ نویسه) بسازید.</div>
-      <div class="field"><label for="gP1">رمز جدید</label><input id="gP1" type="password" autocomplete="new-password"></div>
-      <div class="field"><label for="gP2">تکرار رمز</label><input id="gP2" type="password" autocomplete="new-password"></div>
+      <div class="now-t" id="gPName" style="margin-bottom:4px"></div>
+      <div class="now-sub" style="margin-bottom:10px">برای ادامه باید یک رمز عبور شخصی بسازی؛ بدون آن نمی‌شود وارد شد. از این پس با کد ملی و همین رمز وارد می‌شوی. رمز را به کسی نگو.</div>
+      <div class="field"><label for="gP1">رمز عبور جدید (دست‌کم ۶ نویسه)</label><input id="gP1" type="password" autocomplete="new-password" style="direction:ltr;text-align:center"></div>
+      <div class="field"><label for="gP2">تکرار رمز عبور</label><input id="gP2" type="password" autocomplete="new-password" style="direction:ltr;text-align:center"></div>
+      <div class="now-sub" style="margin-bottom:8px">کد ملی، عدد تکراری (مثل ۱۱۱۱۱۱) یا پشت‌سرهم (مثل ۱۲۳۴۵۶) قبول نمی‌شود.</div>
+      <button id="gPBack" class="btn" type="button" style="width:100%;margin-bottom:10px">این من نیستم / بازگشت</button>
     </div>
     <div id="gT" hidden>
       <div class="field"><label for="gTeacher">نام و نام خانوادگی</label><select id="gTeacher"></select></div>
@@ -1909,10 +1914,10 @@ input[type=tel]:focus,input[type=number]:focus,input[type=email]:focus{border-co
         <div class="grid2"><div class="field"><input id="suCnsN" type="text" maxlength="60" autocomplete="off" aria-label="نام مشاور" placeholder="نام و نام خانوادگی مشاور"></div><div class="field"><input id="suCnsP" type="text" maxlength="40" autocomplete="off" dir="ltr" aria-label="رمز تازه‌ی مشاور" placeholder="رمز تازه (خالی = بدون تغییر)"></div></div>
         <button id="suCnsGo" class="btn" type="button" style="width:100%">ذخیره‌ی مشاور</button>
         <div class="su-h">رمز دانش‌آموز</div>
-        <label class="sms-opt"><input type="checkbox" id="suStu2fa" style="width:auto;height:auto"> ورود دانش‌آموز با رمز (علاوه بر کد ملی)</label>
+        <label class="sms-opt"><input type="checkbox" id="suStu2fa" style="width:auto;height:auto"> کد یک‌بار مصرف برای اولین ورود دانش‌آموز (امن‌تر)</label>
         <div class="now-sub" id="suStu2faTx" style="margin:4px 0 10px"></div>
         <div class="grid2"><div class="field"><select id="suPwC" aria-label="کلاس"></select></div><div class="field"><select id="suPwS" aria-label="دانش‌آموز"></select></div></div>
-        <div class="field"><input id="suPwSp" type="text" maxlength="40" autocomplete="off" dir="ltr" aria-label="رمز جدید دانش‌آموز" placeholder="رمز جدید (خالی = ساخت کد ورود تازه)"></div>
+        <div class="field"><input id="suPwSp" type="text" maxlength="40" autocomplete="off" dir="ltr" aria-label="رمز جدید دانش‌آموز" placeholder="رمز جدید (خالی = بازنشانی؛ دانش‌آموز خودش رمز تازه می‌سازد)"></div>
         <button id="suPwSGo" class="btn" type="button" style="width:100%">تغییر رمز دانش‌آموز</button>
         <div id="suPwOut"></div>
       </div>
@@ -2040,7 +2045,8 @@ const pad = n => String(n).padStart(2, '0');
 const fa = v => String(v).replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);                 // ارقام لاتین ← فارسی
 const en = v => String(v).replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d))       // ارقام فارسی/عربی ← لاتین
   .replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[٫,،]/g, '.').replace(/\s/g, '');
-const norm = s => String(s).replace(/ي/g, 'ی').replace(/ك/g, 'ک').replace(/\u200c/g, ' ').replace(/\s+/g, ' ').trim().toLowerCase();
+const INVIS = /[‎‏؜‍﻿ـ‪-‮⁦-⁩]/g;   // نویسه‌های نامرئی؛ هم‌خوان با Code.gs
+const norm = s => String(s).replace(INVIS, '').replace(/[يى]/g, 'ی').replace(/ك/g, 'ک').replace(/\u200c/g, ' ').replace(/\s+/g, ' ').trim().toLowerCase();
 const fmt = n => fa(String(n)).replace('.', '٫');
 const vib = () => { try { navigator.vibrate && navigator.vibrate(8); } catch (e) {} };
 
@@ -2397,8 +2403,20 @@ async function send(payload) {
     res = await fetch(SCRIPT_URL, { method:'POST', headers:{ 'Content-Type':'text/plain;charset=utf-8' }, body:JSON.stringify(payload), signal:ctrl.signal, redirect:'follow' });
   } catch (e) { clearTimeout(tm); return { net:true }; }
   clearTimeout(tm);
-  try { return await res.json(); }
+  let j; try { j = await res.json(); }
   catch (e) { return { status:'error', message:'پاسخ نامعتبر از سرور. آدرس Web App و دسترسی «Anyone» را بررسی کنید.' }; }
+  authCheck(payload, j); return j;
+}
+/* رمز همین نشست رد شد (مثلاً در دستگاه دیگری عوض شده): خروج فوری، تا درخواست‌های خودکار پنل، حساب را قفل نکنند */
+let KICK_T = 0;
+function authCheck(q, r) {
+  try {
+    if (!r || r.status !== 'error' || r.locked || !ROLE || ROLE === 'student') return;
+    const mine = (q.pin && (q.pin === MG.pin || q.pin === S.pin)) || (q.cpin && q.cpin === CPIN);
+    if (!mine || !/رمز مدیر نادرست|کد ورود نادرست|کد ورود یا نام دبیر نادرست|رمز مشاور نادرست/.test(r.message || '') || Date.now() - KICK_T < 5000) return;
+    KICK_T = Date.now();
+    setTimeout(() => { $('#logoutBtn').click(); showModal({ icon:'warn', title:'دوباره وارد شوید', msg:'رمز یا کد ورود این نشست دیگر معتبر نیست (شاید در دستگاه دیگری عوض شده است). برای اینکه حساب شما قفل نشود، از برنامه خارج شدید.', buttons:[{ text:'متوجه شدم', primary:true }] }); }, 0);
+  } catch (e) {}
 }
 function setSending(b) { S.sending = b; updateAtt(); updateGr(); }
 async function submit(payload, info) {
@@ -2555,6 +2573,7 @@ function applyRoster(r) {
   if (r.cur && r.cur.streams) CUR = r.cur;
   if (r.school) setSchoolName(r.school);                       // نام مدرسه از «راه‌اندازی مدرسه»
   if (typeof r.cns === 'string') COUNSELOR_NAME = r.cns;
+  if (typeof r.s2 === 'boolean') { STU2 = r.s2; gateStuHint(); }
   Object.keys(STUDENTS).forEach(k => delete STUDENTS[k]);
   Object.keys(r.classes).forEach(k => { STUDENTS[k] = r.classes[k]; });
   S.authReq = r.authRequired !== false;
@@ -2563,11 +2582,22 @@ function applyRoster(r) {
   fillDatalist('courseList', curFor(S.cls) || uniq((r.courses || []).concat(P.courses)));
   lsSet('sia_rost_t', r.teachers || []); lsSet('sia_rost_c', r.courses || []); lsSet('sia_assign', r.assign || {}); gateFill(); curRender();
 }
+function rosterCred() {            // اعتبار ورود کادر مدرسه؛ فقط با آن نام دانش‌آموزان برگردانده می‌شود
+  if (ROLE === 'counselor' && CPIN) return { cpin:CPIN };
+  if (ROLE === 'manager' && MG.pin) return { pin:MG.pin };
+  if (ROLE === 'teacher' && S.teacher.trim()) return { teacher:S.teacher.trim(), pin:S.pin.trim() };
+  return null;
+}
+function stripNames() {             // خروج: نام دانش‌آموزان از حافظه‌ی دستگاه پاک شود
+  Object.keys(STUDENTS).forEach(st => Object.keys(STUDENTS[st] || {}).forEach(c => { STUDENTS[st][c] = []; }));
+  const r = lsGet(R_KEY, null); if (r && r.classes) { Object.keys(r.classes).forEach(st => Object.keys(r.classes[st] || {}).forEach(c => { r.classes[st][c] = []; })); lsSet(R_KEY, r); }
+}
 async function loadRoster() {
   if (!SCRIPT_URL || !navigator.onLine) return;
   try {
-    const res = await fetch(SCRIPT_URL + '?action=roster' + (ACCESS_KEY ? '&key=' + encodeURIComponent(ACCESS_KEY) : ''), { redirect:'follow' });
-    const r = await res.json();
+    const cred = rosterCred();
+    const r = cred ? await send(Object.assign({ action:'roster', key:ACCESS_KEY }, cred))
+      : await (await fetch(SCRIPT_URL + '?action=roster' + (ACCESS_KEY ? '&key=' + encodeURIComponent(ACCESS_KEY) : ''), { redirect:'follow' })).json();   // عمومی: فقط کلاس‌ها
     if (r.status !== 'ok') return;
     lsSet(R_KEY, r); applyRoster(r);
     if (!STUDENTS[S.stream]) { S.stream = ''; S.cls = ''; }
@@ -2886,7 +2916,7 @@ async function refreshDir() {
   const r = await send({ action:'directory', pin:MG.pin, key:ACCESS_KEY });
   if (r.status !== 'ok') return;
   const sig = JSON.stringify(r); if (sig === DIR_SIG) return;
-  DIR = r; DIR_SIG = sig; renderDir();
+  DIR = r; DIR_SIG = sig; if (!document.querySelector('#dirList .dir-b input')) renderDir();   // فرم ویرایش باز است: بعد از ذخیره دوباره رسم می‌شود
 }
 setInterval(refreshDir, 60000);
 function telRow(k, name, ph) {          // ردیف با لینک تماس؛ تپ روی شماره صفحه‌ی تماس گوشی را باز می‌کند
@@ -2903,6 +2933,7 @@ function dirEdit(b, x, kind) {
   b.textContent = ''; const I = {};
   F.forEach(q => { const f = el('div', 'field'), lb = el('label', '', q[1]), inp = el('input'); inp.type = 'text'; inp.value = q[2] || ''; inp.autocomplete = 'off';
     if (q[3] === 'num') { inp.inputMode = 'numeric'; inp.style.direction = 'ltr'; inp.style.textAlign = 'right'; } I[q[0]] = inp; f.append(lb, inp); b.append(f); });
+  const P0 = {}; F.forEach(q => { P0[q[0]] = q[3] === 'num' ? digitsOnly(I[q[0]].value) : I[q[0]].value.trim(); });
   const hw = el('label', 'now-sub'), hc = el('input'); hc.type = 'checkbox'; hc.checked = true; hc.style.cssText = 'width:auto;height:auto;margin-inline-end:8px';
   hw.append(hc, document.createTextNode(kind === 's' ? 'اگر نام یا کلاس عوض شد، سابقه‌ی حضور و غیاب، نمرات و انضباطی هم به نام و کلاس جدید منتقل شود' : 'اگر نام عوض شد، سابقه‌ی حضور و غیاب، نمرات و برنامه هم به نام جدید منتقل شود')); b.append(hw);
   const row = el('div'), ok = el('button', 'send', 'ذخیره'), no = el('button', 'btn', 'انصراف'); ok.type = no.type = 'button'; row.style.cssText = 'display:grid;grid-template-columns:2fr 1fr;gap:8px;margin-top:10px'; row.append(ok, no); b.append(row);
@@ -2914,7 +2945,7 @@ function dirEdit(b, x, kind) {
       : { action:'tchUpd', on:x.n, n:v('n'), code:v('code'), pc:d('pc'), id:d('id'), ph:d('ph'), deg:v('deg') };
     if (v('n').length < 3) { toast('نام را کامل بنویسید.'); return; }
     ok.disabled = true; ok.textContent = 'در حال ذخیره…';
-    const r = await send(Object.assign(pay, { pin:MG.pin, key:ACCESS_KEY, moveHist:hc.checked }));
+    const r = await send(Object.assign(pay, { pin:MG.pin, key:ACCESS_KEY, moveHist:hc.checked, prev:P0 }));
     ok.disabled = false; ok.textContent = 'ذخیره';
     if (r.net) { toast('اینترنت در دسترس نیست.'); return; }
     if (r.status !== 'ok') { toast(r.message || 'ذخیره نشد.'); return; }
@@ -2926,11 +2957,12 @@ const DIR_REQ = [['id', 'کد ملی'], ['fn', 'نام پدر'], ['fp', 'تلف�
 const dirMissing = x => DIR_REQ.filter(q => !String(x[q[0]] || '').trim()).map(q => q[1]);
 /* کامل‌بودن اطلاعات دبیر (نسخه‌ی ۱٫۰۹): کد پرسنلی، کد ملی، شماره تماس، مدرک تحصیلی */
 const TDIR_REQ = [['pc', 'کد پرسنلی'], ['id', 'کد ملی'], ['ph', 'شماره تماس'], ['deg', 'مدرک تحصیلی']];
-const tDirMissing = x => TDIR_REQ.filter(q => !String(x[q[0]] || '').trim()).map(q => q[1]);
+const tDirMissing = x => Array.isArray(x.miss) ? x.miss : TDIR_REQ.filter(q => !String(x[q[0]] || '').trim()).map(q => q[1]);   // قاعده‌ی سرور = همان قاعده‌ی فرم تکمیل اطلاعات دبیر
 function renderDir() {
   const tb = $('#dirTabs'); tb.textContent = '';
   [['s', 'دانش‌آموزان (' + fa(DIR.students.length) + ')'], ['t', 'دبیران (' + fa(DIR.teachers.length) + ')']].forEach(q => {
     const b = el('button', 'chip' + (DT === q[0] ? ' on' : ''), q[1]); b.type = 'button'; b.addEventListener('click', () => { DT = q[0]; renderDir(); }); tb.append(b); });
+  const open = new Set(Array.from(document.querySelectorAll('#dirList details[open]')).map(e => e.dataset.k));   // بخش‌های باز، باز بمانند
   const term = dn($('#dirQ').value).trim(), box = $('#dirList'); box.textContent = '';
   dirClsFill(); const cv = $('#dirCls').value, src = DT === 's' ? DIR.students.filter(x => !cv || x.c === cv) : DIR.teachers;
   $('#dirClsF').hidden = DT !== 's'; box.classList.toggle('dir-grid', DT === 's');
@@ -2939,7 +2971,7 @@ function renderDir() {
   if (hit.length) { const mf = DT === 's' ? dirMissing : tDirMissing, nOk = hit.filter(x => !mf(x).length).length, st = el('div', 'dir-sum');
     st.append(el('span', 'ok', '✓ تکمیل‌شده: ' + fa(nOk)), el('span', 'bad', '✗ تکمیل‌نشده: ' + fa(hit.length - nOk))); box.append(st); }
   hit.slice(0, 100).forEach(x => {
-    const d = el('details', 'dir-it'), sm = el('summary'), b = el('div', 'dir-b');
+    const d = el('details', 'dir-it'), sm = el('summary'), b = el('div', 'dir-b'); d.dataset.k = (x.c || '') + '|' + x.n; if (open.has(d.dataset.k)) d.open = true;
     { const ms = DT === 's' ? dirMissing(x) : tDirMissing(x); d.classList.add(ms.length ? 'dir-bad' : 'dir-ok'); d.dataset.missing = ms.join('، '); }
     if (DT === 's') {
       sm.append(el('span', '', (dirMissing(x).length ? '' : '✓ ') + x.n), el('small', '', cv ? '' : x.c));
@@ -2968,6 +3000,13 @@ function dirClsFill() { const sl = $('#dirCls'), cur = sl.value; sl.textContent 
 /* ======================= ورود (دانش‌آموز با کد ملی / دبیر با نام و کد) و پرتال دانش‌آموز ======================= */
 let ROLE = '', SD = null, STU_K = 'dash', GM = 's', ISMGR = false, INB = null;
 const f2 = v => v == null ? '—' : fa(String(Math.round(v * 100) / 100).replace('.', '٫'));
+let STU2 = false;                    // «کد یک‌بار مصرف برای اولین ورود» روشن است؟ (از سرور)
+function gateStuHint() {
+  const l = $('#gSecL'), h = $('#gSecH'); if (!l || !h) return;
+  l.textContent = STU2 ? 'رمز عبور (یا کد ورود، در اولین ورود)' : 'رمز عبور';
+  h.textContent = STU2 ? 'در اولین ورود، کد ورودی را که مدرسه به تو داده بنویس؛ بعد باید برای خودت رمز عبور بسازی.' : 'در اولین ورود خالی بگذار؛ بعد از ورود باید برای خودت رمز عبور بسازی.';
+}
+$('#gPBack').addEventListener('click', () => { $('#gErr').hidden = true; gateMode(); });
 function gateFill() {
   const sel = $('#gTeacher'); if (!sel) return; const cur = sel.value || P.teacher; sel.textContent = '';
   const o0 = el('option', '', '— نام خود را انتخاب کنید —'); o0.value = ''; sel.append(o0);
@@ -2975,6 +3014,8 @@ function gateFill() {
   sel.value = cur || '';
 }
 function gateMode() {
+  if (GFIRST) { GFIRST = null; $('#gP').hidden = true; $('#gP1').value = $('#gP2').value = ''; $('#gGo').textContent = 'ورود'; }   // خروج از مرحله‌ی ساخت رمز
+  gateStuHint();
   const rb = $('#gRole'); rb.textContent = '';
   [['s', 'دانش‌آموز'], ['t', 'دبیر'], ['c', 'مشاور'], ['m', 'مدیر']].forEach(q => { const b = el('button', 'chip' + (GM === q[0] ? ' on' : ''), q[1]); b.type = 'button'; b.addEventListener('click', () => { GM = q[0]; $('#gErr').hidden = true; gateMode(); }); rb.append(b); });
   $('#gS').hidden = GM !== 's'; $('#gT').hidden = GM === 's'; $('#gTeacher').closest('.field').hidden = GM === 'm' || GM === 'c'; document.querySelector('label[for="gPin"]').textContent = GM === 'm' ? 'رمز مدیر' : GM === 'c' ? 'رمز مشاور' + (COUNSELOR_NAME ? ' (' + COUNSELOR_NAME + ')' : '') : 'کد ورود';
@@ -2984,7 +3025,8 @@ const TCH = { locked:false };
 async function tchGate() {
   if (ROLE !== 'teacher' || ISMGR) { if (TCH.locked) tchLockUI(false); return; }
   const r = await send({ action:'tchProf', teacher:S.teacher.trim(), pin:S.pin.trim(), key:ACCESS_KEY });
-  if (r.net || r.status !== 'ok') return;
+  if (r.net) return;
+  if (r.status !== 'ok') { if (/پیدا نشد/.test(r.message || '')) { toast('نام شما در فهرست دبیران تغییر کرده است؛ دوباره وارد شوید.'); $('#logoutBtn').click(); } return; }
   if (r.miss.length) { tchProfRender(r.prof, r.miss); tchLockUI(true); }
   else if (TCH.locked) tchLockUI(false);
 }
@@ -3034,20 +3076,26 @@ function applyRole() {
     else setTab(['gr', 'sch', 'inb', 'cns', 'stf', 'dis', 'home'].includes(P.tab) ? P.tab : 'home');
   }
   inbRiskLoad(); startPolls();
+  if (ROLE && ROLE !== 'student') loadRoster();                  // نام دانش‌آموزان بعد از ورود کادر مدرسه
 }
 $('#gGo').addEventListener('click', async () => {
   const b = $('#gGo'), err = $('#gErr'); err.hidden = true; b.disabled = true;
   const fail = m => { err.textContent = m; err.hidden = false; b.disabled = false; };
-  if (GFIRST) {
-    const a = $('#gP1').value, c2 = $('#gP2').value; if (a.length < 6) return fail('رمز باید دست‌کم ۶ نویسه باشد.'); if (a !== c2) return fail('تکرار رمز با رمز جدید یکی نیست.');
-    const q = await send({ action:'setPass', nid:GFIRST.nid, secret:GFIRST.sec, newPass:a, key:ACCESS_KEY }); if (q.status !== 'ok') return fail(q.message || 'رمز ساخته نشد.');
-    SD = GFIRST.r; SD.nid = GFIRST.nid; SD.sec = a; ROLE = 'student'; STU_K = 'dash'; GFIRST = null; $('#gP').hidden = true; $('#gGo').textContent = 'ورود';
+  if (GFIRST) {                       // ساخت رمز عبور الزامی؛ بعد از آن ورود با همین رمز و سپس تکمیل اطلاعات فردی
+    const a = $('#gP1').value, c2 = $('#gP2').value, e = en(a);
+    if (a.length < 6) return fail('رمز عبور باید دست‌کم ۶ نویسه باشد.'); if (a !== c2) return fail('تکرار رمز با رمز جدید یکی نیست.');
+    if (e === GFIRST.nid || /^(.)\1+$/.test(e) || '01234567890'.indexOf(e) >= 0 || '09876543210'.indexOf(e) >= 0) return fail('این رمز خیلی ساده است (کد ملی، تکراری یا پشت‌سرهم)؛ رمز دیگری انتخاب کن.');
+    const q = await send({ action:'setPass', nid:GFIRST.nid, secret:GFIRST.sec, newPass:a, key:ACCESS_KEY });
+    if (q.net) return fail('اینترنت در دسترس نیست.'); if (q.status !== 'ok') return fail(q.message || 'رمز ساخته نشد.');
+    const r = await send({ action:'student', nid:GFIRST.nid, secret:a, today:dateStr(), ym:dateStr().slice(0, 7), key:ACCESS_KEY });
+    if (r.net) return fail('رمز ساخته شد؛ اینترنت قطع شد. دوباره با کد ملی و رمز تازه وارد شو.'); if (r.status !== 'ok' || r.first) return fail(r.message || 'رمز ساخته شد؛ دوباره با کد ملی و رمز تازه وارد شو.');
+    SD = r; SD.nid = GFIRST.nid; SD.sec = a; ROLE = 'student'; STU_K = 'dash'; GFIRST = null; $('#gP').hidden = true; $('#gGo').textContent = 'ورود'; $('#gP1').value = $('#gP2').value = '';
     try { sessionStorage.setItem('sia_sess', JSON.stringify({ nid:SD.nid, sec:a })); } catch (e) {}
   } else if (GM === 's') {
     const nid = en($('#gNid').value).replace(/\D/g, ''), sec = $('#gSec').value.trim(); if (nid.length !== 10) return fail('کد ملی باید ۱۰ رقم باشد.');
     const r = await send({ action:'student', nid:nid, secret:sec, today:dateStr(), ym:dateStr().slice(0, 7), key:ACCESS_KEY });
     if (r.net) return fail('اینترنت در دسترس نیست.'); if (r.status !== 'ok') return fail(r.message || 'ورود ناموفق بود.');
-    if (r.first) { GFIRST = { r:r, nid:nid, sec:sec }; $('#gS').hidden = true; $('#gP').hidden = false; $('#gGo').textContent = 'ساخت رمز و ورود'; b.disabled = false; return; }
+    if (r.first) { GFIRST = { nid:nid, sec:sec }; $('#gPName').textContent = 'سلام ' + (r.name || '') + (r.cls ? ' (' + r.cls + ')' : '') + ' 👋'; $('#gS').hidden = true; $('#gP').hidden = false; $('#gGo').textContent = 'ساخت رمز عبور و ورود'; b.disabled = false; $('#gP1').focus(); return; }
     SD = r; SD.nid = nid; SD.sec = sec; ROLE = 'student'; STU_K = 'dash'; try { sessionStorage.setItem('sia_sess', JSON.stringify({ nid:nid, sec:sec })); } catch (e) {}
   } else if (GM === 'c') {
     const pin = $('#gPin').value.trim(); if (!pin) return fail('رمز مشاور را بنویسید.');
@@ -3075,6 +3123,7 @@ $('#logoutBtn').addEventListener('click', () => {
   if (ROLE === 'manager') { MG.pin = ''; S.pin = ''; $('#pin').value = ''; $('#mgBody').hidden = true; $('#mgLogin').hidden = false; try { sessionStorage.removeItem('sia_mgr'); } catch (e) {} }
   if (ROLE === 'teacher') { S.pin = P.pin = ''; $('#pin').value = ''; savePrefs(); try { sessionStorage.removeItem('sia_tpin'); } catch (x) {} }
   ROLE = ''; SD = null; ISMGR = false; INB = null; $('#teacher').readOnly = false; try { sessionStorage.removeItem('sia_sess'); } catch (e) {} lsSet('sia_role', {});
+  stripNames(); try { loadClass(); } catch (e) {}                 // نام دانش‌آموزان روی دستگاه نماند
   const w = $('#schWho'); if (w) w.closest('.field').hidden = false; applyRole(); gateFill();
 });
 function tbl(head, rows) {
@@ -3368,7 +3417,7 @@ async function ptAtt(m, cls) {
     if (r2.net) { toast('اینترنت در دسترس نیست.'); return; } if (r2.status !== 'ok') { toast(r2.message || 'ذخیره نشد.'); return; } toast('ثبت شد ✓'); await ptOpen(); });
 }
 /* ======================= دسترسی دبیر فقط به کلاس و درس خودش + کارتابل ======================= */
-const normT = v => String(v == null ? '' : v).replace(/ي/g, 'ی').replace(/ك/g, 'ک').replace(/\u200c/g, ' ').replace(/\s+/g, ' ').trim();
+const normT = v => String(v == null ? '' : v).replace(INVIS, '').replace(/[يى]/g, 'ی').replace(/ك/g, 'ک').replace(/\u200c/g, ' ').replace(/\s+/g, ' ').trim();
 function myPairs() {            // null = بدون محدودیت (مدیر، یا هنوز برنامه‌ای ثبت نشده)
   if (ROLE !== 'teacher' || ISMGR || !SCH.length) return null;
   const m = {}; SCH.filter(r => r[3] && normT(r[4]) === normT(S.teacher)).forEach(r => { m[r[0] + '|' + normT(r[3])] = { c:r[0], s:r[3] }; });
@@ -3887,7 +3936,7 @@ async function qzStuLoad(force) {
   QZ_OFF = r.now - Date.now(); QZS = r.list; QZS_T = Date.now(); return QZS;
 }
 const qzPending = () => (QZS || []).filter(q => q.my !== 'done' && qzState(q) === 'live').length;
-function qzBadge() { const b = document.querySelector('#stuNav [data-k="qz"]'); if (!b) return; const n = qzPending(); b.textContent = '📝 آزمونک‌ها' + (n ? ' (' + fa(n) + ')' : ''); b.classList.toggle('qz-hot', n > 0); }
+function qzBadge() { const b = document.querySelector('#stuNav [data-k="qz"]'); if (!b) return; const n = qzPending(); b.textContent = (b.disabled ? '🔒 ' : '') + '📝 آزمونک‌ها' + (n ? ' (' + fa(n) + ')' : ''); /* تا تکمیل اطلاعات، قفل بماند */ b.classList.toggle('qz-hot', n > 0); }
 async function qzPrefetch() { if (ROLE !== 'student' || !SD) return; await qzStuLoad(true); qzBadge(); }
 async function stuQz(box) {
   const c = el('div', 'card'), ls = el('div', 'empty', 'در حال بارگذاری…'); c.append(el('div', 'lbl', '📝 آزمونک‌های کلاس شما'), ls); box.append(c);
@@ -5236,7 +5285,7 @@ function suHub() {
   if (SU && !SU.mgPinCustom) { pw.push('رمز مدیر هنوز رمز اولیه است'); pwSt.push('warn'); }
   if (SU && T.length && !SU.tchAnyCode) { pw.push('دبیران کد ورود ندارند (ورود دبیران آزاد است)'); pwSt.push('warn'); }
   else if (SU && SU.tchNoCode.length) { pw.push(fa(SU.tchNoCode.length) + ' دبیر بدون کد (نمی‌توانند وارد شوند)'); pwSt.push('warn'); }
-  if (SU) pw.push(SU.stu2fa ? 'ورود دانش‌آموز با رمز' : 'ورود دانش‌آموز فقط با کد ملی');
+  if (SU) pw.push(SU.stuNoPass ? fa(SU.stuNoPass) + ' دانش‌آموز هنوز رمز عبور نساخته‌اند' : 'همه‌ی دانش‌آموزان رمز عبور دارند');
   $('#suSchTx').textContent = cls.length ? fa(schC.length) + ' کلاس از ' + fa(cls.length) + ' کلاس برنامه‌ی هفتگی دارند.' : 'ابتدا کلاس‌ها را بسازید.';
   [['نام مدرسه', SCHOOL_NAME, 'ok', 'suSchool'],
    ['کلاس‌ها', cls.length ? fa(cls.length) + ' کلاس' : 'هنوز کلاسی ساخته نشده است', cls.length ? 'ok' : 'todo', 'suCls'],
@@ -5324,8 +5373,9 @@ function suPwInit() {
   const c = $('#suPwC'), cc = c.value; c.textContent = ''; const o1 = el('option', '', '— کلاس —'); o1.value = ''; c.append(o1);
   allClasses().forEach(x => { const o = el('option', '', x); o.value = x; c.append(o); }); c.value = allClasses().includes(cc) ? cc : ''; suPwStu();
   $('#suStu2fa').checked = !!(SU && SU.stu2fa);
-  $('#suStu2faTx').textContent = !SU ? '' : SU.stu2fa ? 'روشن: دانش‌آموز با کد ملی و رمز شخصی (یا کد ورود یک‌بار مصرف) وارد می‌شود. کدهای هر کلاس را از «دانش‌آموزان ← کد ورود» چاپ کنید.'
-    : 'خاموش: دانش‌آموز فقط با کد ملی وارد می‌شود.' + (SU.stuNoCode ? ' با روشن‌کردن، برای ' + fa(SU.stuNoCode) + ' دانش‌آموز بدون کد، کد ورود ساخته می‌شود.' : '');
+  $('#suStu2faTx').textContent = !SU ? '' : 'رمز عبور برای همه‌ی دانش‌آموزان الزامی است؛ هر دانش‌آموز در اولین ورود رمز خودش را می‌سازد و بعد اطلاعات فردی‌اش را تکمیل می‌کند.'
+    + (SU.stuNoPass ? ' ' + fa(SU.stuNoPass) + ' دانش‌آموز هنوز رمز نساخته‌اند.' : '')
+    + (SU.stu2fa ? ' اولین ورود: کد ملی + کد ورودی که مدرسه می‌دهد (کدهای هر کلاس را از «دانش‌آموزان ← کد ورود» چاپ کنید).' : ' اولین ورود فقط با کد ملی است؛ با روشن‌کردن این گزینه، کسی که فقط کد ملی دانش‌آموز را می‌داند نمی‌تواند پیش از خودش رمز بسازد.');
   if (SU) { if (document.activeElement !== $('#suCnsN')) $('#suCnsN').value = SU.cnsName || '';
     $('#suCnsTx').textContent = SU.cnsOn ? '✓ ورود مشاور فعال است' + (SU.cnsName ? ' (' + SU.cnsName + ')' : '') + '.' : 'ورود مشاور خاموش است؛ با تعیین نام و رمز فعال می‌شود.'; }
   $('#suMgTx').textContent = !SU ? '' : SU.mgPinCustom ? '✓ رمز مدیر تغییر داده شده است.' : '⚠️ رمز مدیر هنوز رمز اولیه‌ی فایل Code.gs است؛ آن را تغییر دهید.';
@@ -5349,16 +5399,17 @@ $('#suPwTGo').addEventListener('click', async () => {
 });
 $('#suStu2fa').addEventListener('change', e => {
   const on = e.target.checked; e.target.checked = !on;
-  showModal({ icon:'warn', title:on ? 'ورود دانش‌آموز با رمز' : 'ورود فقط با کد ملی', msg:on ? 'از این پس دانش‌آموز علاوه بر کد ملی به رمز نیاز دارد. برای دانش‌آموزانی که کد ورود ندارند کد ساخته می‌شود؛ کدها را از «دانش‌آموزان ← کد ورود» چاپ و توزیع کنید.' : 'دانش‌آموزان فقط با کد ملی وارد می‌شوند و رمز بررسی نمی‌شود.',
-    buttons:[{ text:on ? 'روشن کن' : 'خاموش کن', primary:true, onClick:async () => { const r = await suSend({ action:'setStu2fa', on:on }); if (!r) return; toast(on ? 'ورود با رمز روشن شد' + (r.made ? ' | ' + fa(r.made) + ' کد ورود تازه ساخته شد' : '') : 'ورود با رمز خاموش شد'); suRefresh(); } }, { text:'انصراف' }] });
+  showModal({ icon:'warn', title:on ? 'کد یک‌بار مصرف برای اولین ورود' : 'اولین ورود فقط با کد ملی', msg:on ? 'دانش‌آموزی که هنوز رمز نساخته، در اولین ورود علاوه بر کد ملی کدی را که مدرسه می‌دهد می‌نویسد و بعد رمز می‌سازد. برای دانش‌آموزان بدون کد، کد ساخته می‌شود؛ کدها را از «دانش‌آموزان ← کد ورود» چاپ و توزیع کنید. دانش‌آموزانی که رمز دارند تغییری نمی‌بینند.' : 'دانش‌آموزی که هنوز رمز نساخته، فقط با کد ملی وارد می‌شود و بلافاصله باید رمز بسازد. دانش‌آموزانی که رمز دارند تغییری نمی‌بینند.',
+    buttons:[{ text:on ? 'روشن کن' : 'خاموش کن', primary:true, onClick:async () => { const r = await suSend({ action:'setStu2fa', on:on }); if (!r) return; toast(on ? 'کد یک‌بار مصرف روشن شد' + (r.made ? ' | ' + fa(r.made) + ' کد ورود تازه ساخته شد' : '') : 'کد یک‌بار مصرف خاموش شد'); suRefresh(); } }, { text:'انصراف' }] });
 });
 $('#suPwSGo').addEventListener('click', async () => {
   const c = $('#suPwC').value, n = $('#suPwS').value, pw = $('#suPwSp').value.trim(), out = $('#suPwOut'); out.textContent = '';
   if (!c || !n) return toast('کلاس و دانش‌آموز را انتخاب کنید.'); if (pw && pw.length < 6) return toast('رمز باید دست‌کم ۶ نویسه باشد.');
   const r = await suSend({ action:'stuPass', cls:c, n:n, newPass:pw }, $('#suPwSGo')); if (!r) return; $('#suPwSp').value = '';
-  const box = el('div', 'su-out'); if (r.code) { box.append(document.createTextNode('کد ورود تازه‌ی ' + n + ': '), el('code', '', r.code)); box.append(el('div', 'now-sub', 'دانش‌آموز با کد ملی و همین کد وارد می‌شود و سپس رمز شخصی خودش را می‌سازد.')); }
+  const box = el('div', 'su-out');
+  if (r.code && SU && SU.stu2fa) { box.append(document.createTextNode('رمز ' + n + ' پاک شد. کد ورود تازه: '), el('code', '', r.code)); box.append(el('div', 'now-sub', 'دانش‌آموز با کد ملی و همین کد وارد می‌شود و رمز عبور تازه می‌سازد.')); }
+  else if (r.code) { box.append(document.createTextNode('رمز ' + n + ' پاک شد ✓')); box.append(el('div', 'now-sub', 'دانش‌آموز در ورود بعدی با کد ملی وارد می‌شود و باید رمز عبور تازه بسازد.')); }
   else box.append(document.createTextNode('رمز ' + n + ' تعیین شد ✓'));
-  if (SU && !SU.stu2fa) box.append(el('div', 'now-sub', 'توجه: «ورود دانش‌آموز با رمز» خاموش است؛ رمز تا روشن‌شدن آن بررسی نمی‌شود.'));
   out.append(box);
 });
 
