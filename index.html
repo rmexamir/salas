@@ -16,7 +16,7 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxzPr6P54uH4gV_rQrss
 // کلید دسترسی اختیاری (باید با ACCESS_KEY در Code.gs یکی باشد)
 const ACCESS_KEY = "";
 // نسخه‌ی برنامه — با هر به‌روزرسانی این عدد بالا می‌رود و در صفحه‌ی ورود و پایین صفحه نمایش داده می‌شود.
-const APP_VERSION = "1.14";
+const APP_VERSION = "1.15";
 // (اختیاری) لینک Google Sheet برای دکمه «باز کردن Google Sheet» در تب مدیر
 const SHEET_URL = "https://docs.google.com/spreadsheets/d/10i-IGQKyj078M6kJ7YhdAniuJInl6JemwVxAqs7FnrY/edit";
 const DEFAULT_MAX_SCORE = 20;
@@ -1471,7 +1471,6 @@ input[type=tel]:focus,input[type=number]:focus,input[type=email]:focus{border-co
     <span class="q-ic" aria-hidden="true">✨</span>
     <div aria-hidden="true"><div class="q-lbl">پیام امروز</div><p id="qText" class="q-tx"></p></div>
   </div>
-  <section id="p-tprof" hidden></section>
   <nav class="tabs" role="tablist" aria-label="بخش‌ها">
     <button class="tab active" type="button" role="tab" data-tab="home" aria-selected="true">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/></svg>
@@ -2205,7 +2204,7 @@ function loadClass() {
 
 /* ---------- تب‌ها ---------- */
 function setTab(t) {
-  if (ROLE === 'student' || TCH.locked) return;      // دانش‌آموز هیچ‌وقت بخش‌های دبیر (کارتابل، ثبت آزمون و ...) را نمی‌بیند
+  if (ROLE === 'student') return;      // دانش‌آموز هیچ‌وقت بخش‌های دبیر (کارتابل، ثبت آزمون و ...) را نمی‌بیند
   S.tab = t; P.tab = t; savePrefs();
   $$('.tab').forEach(b => { const on = b.dataset.tab === t; b.classList.toggle('active', on); b.setAttribute('aria-selected', on); });
   ['home', 'att', 'gr', 'mg', 'sch', 'inb', 'cns', 'stf', 'dis'].forEach(k => { $('#p-' + k).hidden = t !== k; });
@@ -3020,41 +3019,6 @@ function gateMode() {
   [['s', 'دانش‌آموز'], ['t', 'دبیر'], ['c', 'مشاور'], ['m', 'مدیر']].forEach(q => { const b = el('button', 'chip' + (GM === q[0] ? ' on' : ''), q[1]); b.type = 'button'; b.addEventListener('click', () => { GM = q[0]; $('#gErr').hidden = true; gateMode(); }); rb.append(b); });
   $('#gS').hidden = GM !== 's'; $('#gT').hidden = GM === 's'; $('#gTeacher').closest('.field').hidden = GM === 'm' || GM === 'c'; document.querySelector('label[for="gPin"]').textContent = GM === 'm' ? 'رمز مدیر' : GM === 'c' ? 'رمز مشاور' + (COUNSELOR_NAME ? ' (' + COUNSELOR_NAME + ')' : '') : 'کد ورود';
 }
-/* --- تکمیل اطلاعات دبیر: تا کامل نشود، بقیه‌ی بخش‌ها بسته است --- */
-const TCH = { locked:false };
-async function tchGate() {
-  if (ROLE !== 'teacher' || ISMGR) { if (TCH.locked) tchLockUI(false); return; }
-  const r = await send({ action:'tchProf', teacher:S.teacher.trim(), pin:S.pin.trim(), key:ACCESS_KEY });
-  if (r.net) return;
-  if (r.status !== 'ok') { if (/پیدا نشد/.test(r.message || '')) { toast('نام شما در فهرست دبیران تغییر کرده است؛ دوباره وارد شوید.'); $('#logoutBtn').click(); } return; }
-  if (r.miss.length) { tchProfRender(r.prof, r.miss); tchLockUI(true); }
-  else if (TCH.locked) tchLockUI(false);
-}
-function tchLockUI(on) {
-  TCH.locked = on;
-  $('#p-tprof').hidden = !on; $('.tabs').hidden = on;
-  if (on) { ['home', 'att', 'gr', 'mg', 'sch', 'inb', 'cns', 'stf', 'dis'].forEach(k => { $('#p-' + k).hidden = true; }); $('#common').hidden = true; }
-  else setTab(P.tab && P.tab !== 'mg' ? P.tab : 'home');
-}
-function tchProfRender(prof, miss) {
-  const box = $('#p-tprof'); box.textContent = '';
-  const c = el('div', 'card'); c.append(el('div', 'lbl', 'تکمیل اطلاعات دبیر'));
-  c.append(el('div', 'dir-miss', 'برای ورود به بخش‌های برنامه، ابتدا اطلاعات زیر را کامل کنید. موارد خالی: ' + miss.join('، ')));
-  const F = [['pc', 'کد پرسنلی', 0], ['id', 'کد ملی (۱۰ رقم)', 1], ['ph', 'شماره تماس موبایل (۰۹…)', 1], ['deg', 'مدرک تحصیلی', 0]], I = {};
-  F.forEach(q => { const f = el('div', 'field'), inp = el('input'); inp.type = 'text'; inp.autocomplete = 'off'; inp.value = prof[q[0]] || '';
-    if (q[2]) { inp.inputMode = 'numeric'; inp.style.direction = 'ltr'; inp.style.textAlign = 'right'; }
-    if (!prof[q[0]]) inp.style.borderColor = 'var(--absent)'; I[q[0]] = inp; f.append(el('label', '', q[1]), inp); c.append(f); });
-  const ok = el('button', 'send', 'ذخیره و ادامه'); ok.type = 'button'; c.append(ok); box.append(c);
-  ok.addEventListener('click', async () => {
-    const v = k => toEn(I[k].value.trim());
-    ok.disabled = true; ok.textContent = 'در حال ذخیره…';
-    const r = await send({ action:'tchSave', teacher:S.teacher.trim(), pin:S.pin.trim(), key:ACCESS_KEY, pc:v('pc'), id:v('id'), ph:v('ph'), deg:I.deg.value.trim() });
-    ok.disabled = false; ok.textContent = 'ذخیره و ادامه';
-    if (r.net) return toast('اینترنت در دسترس نیست.');
-    if (r.status !== 'ok') return toast(r.message || 'ذخیره نشد.');
-    toast('ممنون! اطلاعات کامل شد ✓'); tchLockUI(false);
-  });
-}
 function applyRole() {
   const st = ROLE === 'student', mgr = ROLE === 'manager', cn = ROLE === 'counselor', staff = ROLE === 'teacher' || mgr;
   $('#gate').hidden = !!ROLE; document.body.classList.toggle('signed', !!ROLE); $('#whoBar').hidden = !ROLE; $('#p-stu').hidden = !st;
@@ -3064,7 +3028,6 @@ function applyRole() {
   $('#schWho').closest('.field').hidden = st; $('#nowLbl').textContent = st ? 'زنگ فعلی کلاس شما' : 'زنگ فعلی — همه‌ی کلاس‌ها';
   $('#whoName').textContent = st && SD ? SD.name + ' | ' + SD.cls : mgr ? 'مدیر مدرسه' : cn ? 'مشاور: ' + COUNSELOR_NAME : ROLE === 'teacher' ? 'دبیر: ' + S.teacher : '';
   $('#cnsC').hidden = !cn; $('#cnsT').hidden = ROLE !== 'teacher';
-  setTimeout(tchGate, 0);
   if (st && SD) {
     ['home', 'att', 'gr', 'mg', 'inb', 'cns', 'stf', 'dis'].forEach(k => { $('#p-' + k).hidden = true; }); $('#common').hidden = true;
     const h = $('#stuHead'); h.textContent = ''; h.append(el('div', 'now-t', SD.name), el('div', 'now-sub', 'کلاس ' + SD.cls)); stuNav(STU_K); if (!SD.viewAs) qzPrefetch();
