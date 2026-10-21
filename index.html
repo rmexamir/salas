@@ -16,7 +16,7 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxzPr6P54uH4gV_rQrss
 // کلید دسترسی اختیاری (باید با ACCESS_KEY در Code.gs یکی باشد)
 const ACCESS_KEY = "";
 // نسخه‌ی برنامه — با هر به‌روزرسانی این عدد بالا می‌رود و در صفحه‌ی ورود و پایین صفحه نمایش داده می‌شود.
-const APP_VERSION = "1.15";
+const APP_VERSION = "1.18";
 // (اختیاری) لینک Google Sheet برای دکمه «باز کردن Google Sheet» در تب مدیر
 const SHEET_URL = "https://docs.google.com/spreadsheets/d/10i-IGQKyj078M6kJ7YhdAniuJInl6JemwVxAqs7FnrY/edit";
 const DEFAULT_MAX_SCORE = 20;
@@ -329,7 +329,7 @@ a.tel{display:inline-flex;align-items:center;min-height:44px;padding:0 14px;bord
 .bc-name{font-size:11.5px;font-weight:800;display:flex;align-items:center;line-height:1.3}
 .bc{display:flex;flex-direction:column;gap:1px;justify-content:center;text-align:center;border-radius:10px;padding:6px 3px;font-size:11px;line-height:1.35;min-height:62px;background:var(--input);color:var(--muted)}
 .bc b{font-size:11.5px;color:var(--ink)} .bc em{font-style:normal;font-weight:800;font-size:10.5px}
-.bc.ok{background:var(--present-bg);color:var(--present)} .bc.miss{background:var(--absent-bg);color:var(--absent)} .bc.pend{background:var(--late-bg);color:var(--late)} .bc.ex{background:var(--input);color:var(--muted)}
+.bc.ok{background:var(--present-bg);color:var(--present)} .bc.miss{background:var(--absent-bg);color:var(--absent)} .bc.pend{background:var(--late-bg);color:var(--late)} .bc.ex{background:var(--input);color:var(--muted)} .bc.go{cursor:pointer;border:1.5px dashed var(--muted)} .bc.go:hover,.bc.go:focus-visible{border-style:solid;outline:none}
 .mx-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin-top:6px}
 .mx{border-collapse:collapse;font-size:12px;width:100%}
 .mx th,.mx td{border:1px solid var(--line);padding:5px 6px;text-align:center;white-space:nowrap;background:var(--card)}
@@ -342,10 +342,14 @@ a.tel{display:inline-flex;align-items:center;min-height:44px;padding:0 14px;bord
 .mx .pend{color:var(--late);font-weight:700}
 .honor-card{border-color:var(--late)}
 .honor-t{font-weight:900;font-size:16px;margin-bottom:10px;text-align:center}
-.honor-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
-.honor-cls{border:1px solid var(--line);border-radius:12px;padding:8px 10px;background:var(--input)}
-.honor-c{font-weight:800;margin-bottom:6px;font-size:14px}
-.honor-r{font-size:14px;padding:2px 0}
+.honor-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
+.honor-cls{border:1px solid var(--line);border-radius:12px;padding:10px;background:var(--input)}
+.honor-c{font-weight:800;font-size:14px;text-align:center;padding-bottom:8px;margin-bottom:2px;border-bottom:1px dashed var(--line)}
+.honor-s{text-align:center;font-size:12.5px;color:var(--muted);margin:-6px 0 10px}
+.honor-r{display:grid;grid-template-columns:26px minmax(0,1fr) 56px;align-items:center;gap:8px;height:44px;margin-top:8px;padding:0 10px;border:1px solid var(--line);border-inline-start:4px solid var(--line);border-radius:10px;background:var(--card);font-size:14px}
+.honor-r.r1{border-inline-start-color:var(--gold)} .honor-r.r2{border-inline-start-color:#9AA4B2} .honor-r.r3{border-inline-start-color:#B07A4A}
+.honor-r .hm{font-size:18px;text-align:center} .honor-r .hn{font-weight:700;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.honor-r .ha{font-weight:800;text-align:center;border-radius:8px;padding:3px 0;background:var(--input)}
 .dg-h{display:inline-block;cursor:grab;touch-action:none;user-select:none;font-size:12px;color:var(--muted);border:1px dashed var(--line);border-radius:8px;padding:2px 8px;margin-bottom:6px}
 .card.dragging{opacity:.7;outline:2px dashed var(--muted)}
 .dir-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
@@ -1752,7 +1756,7 @@ input[type=tel]:focus,input[type=number]:focus,input[type=email]:focus{border-co
       <div class="card" id="boardCard">
         <div class="lbl" style="margin-bottom:8px">وضعیت حضور و غیاب امروز — کلاس، زنگ و دبیر</div>
         <div id="boardBody"></div>
-        <div class="now-sub" style="margin-top:8px">✓ انجام شد · ✗ انجام نشد (بیش از ۱۵ دقیقه از شروع زنگ) · ⏳ در مهلت یا هنوز شروع نشده</div>
+        <div class="now-sub" style="margin-top:8px">✓ انجام شد · ✗ انجام نشد (بیش از ۱۵ دقیقه از شروع زنگ) · ⏳ در مهلت یا هنوز شروع نشده · 🔒 دبیر مرخصی یا غایب است؛ با زدن روی آن، مدیر حضور و غیاب را ثبت می‌کند</div>
       </div>
       <div class="card" id="leaveCard">
         <div class="lbl" style="margin-bottom:8px">درخواست‌های مرخصی دانش‌آموزان<span id="leaveCnt"></span></div>
@@ -3038,7 +3042,7 @@ function applyRole() {
     if (mgr) { setTab('mg'); $('#mgLogin').hidden = true; if ($('#mgBody').hidden) mgLoad(); }
     else setTab(['gr', 'sch', 'inb', 'cns', 'stf', 'dis', 'home'].includes(P.tab) ? P.tab : 'home');
   }
-  inbRiskLoad(); startPolls();
+  startPolls();
   if (ROLE && ROLE !== 'student') loadRoster();                  // نام دانش‌آموزان بعد از ورود کادر مدرسه
 }
 $('#gGo').addEventListener('click', async () => {
@@ -3224,11 +3228,11 @@ function stuAvg(box) {
   const mk = (title, me, cl) => { const w = el('div'); w.style.marginBottom = '14px'; w.append(el('div', 'now-t', title));
     [['شما', me, 'var(--primary)'], ['کلاس', cl, 'var(--gold)']].forEach(q => { const r = el('div', 'dir-r'), b = el('div', 'pbar'), i = el('i'); i.style.width = Math.min(100, (q[1] || 0) / 20 * 100) + '%'; i.style.background = q[2]; b.append(i);
       const v = el('span', '', f2(q[1])); v.style.minWidth = '46px'; r.append(el('span', 'k', q[0]), b, v); w.append(r); }); return w; };
-  const tc = el('div', 'card'), MD = ['🥇', '🥈', '🥉']; tc.append(el('div', 'lbl', 'سه نفر برتر کلاس (بر اساس معدل)'));
-  if (!SD.top || !SD.top.length) tc.append(el('div', 'now-sub', 'هنوز نمره‌ای ثبت نشده است.'));
+  const tc = el('div', 'card'), MD = ['🥇', '🥈', '🥉']; tc.append(el('div', 'lbl', 'نفرات برتر کلاس (معدل ' + fa(SD.topMin || 17) + ' و بالاتر)'));
+  if (!SD.top || !SD.top.length) tc.append(el('div', 'now-sub', 'هنوز دانش‌آموزی در این کلاس معدل ' + fa(SD.topMin || 17) + ' یا بالاتر ندارد.'));
   else SD.top.forEach((t, i) => { const me = SD.rank && SD.rank.pos === i + 1, r = el('div', 'dir-r'); r.append(el('span', '', MD[i] + ' ' + t.n + (me ? ' (شما)' : '')), el('b', '', f2(t.avg)));
     if (me) r.style.cssText = 'background:var(--present-bg);border-radius:10px;padding:4px 10px;font-weight:800'; tc.append(r); });
-  if (SD.top && SD.top.length) tc.append(el('div', 'now-sub', SD.rank && SD.rank.pos >= 1 && SD.rank.pos <= 3 ? '🎉 تبریک! شما جزو سه نفر برتر کلاس هستید.' : 'معدل شما: ' + f2(SD.overall.me) + ' — با تلاش بیشتر به جمع برترها می‌رسی! 💪'));
+  if (SD.top && SD.top.length) tc.append(el('div', 'now-sub', SD.rank && SD.rank.pos >= 1 && SD.rank.pos <= SD.top.length ? '🎉 تبریک! شما جزو نفرات برتر کلاس هستید.' : 'معدل شما: ' + f2(SD.overall.me) + ' — با تلاش بیشتر به جمع برترها می‌رسی! 💪'));
   box.append(tc);
   const c = el('div', 'card'); c.append(el('div', 'lbl', 'میانگین شما در مقایسه با کلاس (از ۲۰)'));
   if (!SD.courses.length) c.append(el('div', 'empty', 'هنوز نمره‌ای ثبت نشده است.'));
@@ -3409,7 +3413,7 @@ async function loadInbox() {
   if (r.status !== 'ok') { box.textContent = r.message || 'بارگذاری نشد.'; return; }
   INB = r.items; if (ISMGR) INB = INB.filter(x => inbGrCount(x) > 0);
   const sel = $('#inbSel'), cur = +sel.value || 0; sel.textContent = '';
-  INB.forEach((x, i) => { const o = el('option', '', (inbGrCount(x) ? '✅ ' : '') + x.c + ' — ' + x.s); o.value = i; sel.append(o); }); sel.value = INB[cur] ? cur : 0; renderInb(); inbChips(); calLoad(); inbRiskLoad(); taMineLoad();
+  INB.forEach((x, i) => { const o = el('option', '', (inbGrCount(x) ? '✅ ' : '') + x.c + ' — ' + x.s); o.value = i; sel.append(o); }); sel.value = INB[cur] ? cur : 0; renderInb(); inbChips(); calLoad(); taMineLoad();
 }
 /* نشانگر درس‌های دارای نمره: ✓ سبز؛ تا وقتی دبیر آن را باز نکرده (یا نمره‌ی تازه آمده) چشمک می‌زند */
 const inbGrCount = x => (x.students || []).reduce((n, st) => n + (st.gr ? st.gr.length : 0), 0);
@@ -3432,7 +3436,7 @@ function renderInb() {
   if (!INB || !INB.length) { box.append(el('div', 'empty', 'برای شما در برنامه‌ی هفتگی کلاس و درسی ثبت نشده است.')); return; }
   const x = INB[+$('#inbSel').value || 0], sm = el('div', 'card');
   sm.append(el('div', 'now-t', x.c + ' | ' + x.s), el('div', 'now-sub', 'جلسات ثبت‌شده: ' + fa(x.sessions) + ' | میانگین کلاس: ' + f2(x.avg) + ' (از ۲۰)'));
-  if (x.top && x.top.length) sm.append(el('div', 'now-sub', x.top.map((t, i) => ['🥇', '🥈', '🥉'][i] + ' ' + t.n + ' (' + f2(t.avg) + ')').join('  |  '))); box.append(sm); inbRisk(box, x); anaMount(box, x); qzMount(box, x);
+  if (x.top && x.top.length) sm.append(el('div', 'now-sub', x.top.map((t, i) => ['🥇', '🥈', '🥉'][i] + ' ' + t.n + ' (' + f2(t.avg) + ')').join('  |  '))); box.append(sm); anaMount(box, x); qzMount(box, x);
   box.append(attCard(x));
   x.students.forEach(st => {
     const d = el('details', 'dir-it'), h = el('summary'), b = el('div', 'dir-b');
@@ -3480,22 +3484,6 @@ function attCard(x) {
     tbody.append(tr);
   });
   tb.append(tbody); wrap.append(tb); c.append(wrap); return c;
-}
-/* دانش‌آموزان نیازمند توجه (افت نمره، غیبت زیاد، معدل پایین) در کلاس انتخاب‌شده */
-let RKM = [];
-function inbRisk(box, x) {
-  const l = RKM.filter(r => normT(r.c) === normT(x.c)); if (!l.length) return;
-  const c = el('div', 'card'); c.style.borderColor = 'var(--late)'; c.append(el('div', 'lbl', '⚠️ نیازمند توجه در این کلاس (' + fa(l.length) + ' نفر)'));
-  l.forEach(r => { const d = el('div', 'dir-it'), h = el('div'); d.style.padding = '10px 14px';
-    h.style.cssText = 'display:flex;justify-content:space-between;gap:8px;align-items:center'; const b = el('span', 'badge', r.lv); if (r.lv === 'بالا') b.style.cssText = 'background:var(--absent);color:#fff'; else b.style.cssText = 'background:var(--late);color:#fff';
-    h.append(el('b', '', r.n), b); d.append(h, el('div', 'now-sub', r.why.join(' | '))); c.append(d); });
-  c.append(el('div', 'now-sub', 'برای پیگیری می‌توانید از «یادداشت رفتاری» یا درخواست مشاوره استفاده کنید.')); box.append(c);
-}
-async function inbRiskLoad() {
-  if (ROLE !== 'teacher' || ISMGR) return;
-  const r = await send({ action:'riskMine', teacher:S.teacher.trim(), pin:S.pin.trim(), key:ACCESS_KEY }); if (r.status !== 'ok') return;
-  RKM = r.list; const t = document.querySelector('.tab[data-tab="inb"]'); if (t) t.classList.toggle('warn-dot', RKM.length > 0);
-  if (INB && !$('#p-inb').hidden) renderInb();
 }
 $('#inbSel').addEventListener('change', () => { const x = INB && INB[+$('#inbSel').value || 0]; if (x) inbSeen(x); renderInb(); inbChips(); }); $('#inbRef').addEventListener('click', loadInbox);
 /* ======================= دبیر/مدیر: تحلیل خودکار نتایج آزمون + برگه‌ی چاپی =======================
@@ -4417,6 +4405,10 @@ function renderPer() {
   }
 }
 renderPer(); setInterval(() => { autoSlotApply(); renderPer(); }, 60000);
+function mgAttFor(r, p) {   // از تابلوی امروز: همان کلاس، درس و زنگ در بخش حضور و غیاب
+  S.per = p; refreshNow(true); useSlot(r); renderPer();
+  toast('دبیر این زنگ غایب است؛ حضور و غیاب به نام «مدیر (به‌جای ' + r[4] + ')» ثبت می‌شود');
+}
 function renderBoard() {
   const box = $('#boardBody'); if (!box) return; box.textContent = '';
   const now = new Date(), ps = periodsOf(now);
@@ -4432,7 +4424,11 @@ function renderBoard() {
       const rec = TODAY.find(x => normT(x.c) === normT(c) && (r ? (!x.p || +x.p === P.p) && normT(x.s) === normT(r[3]) : x.p && +x.p === P.p));
       if (!r && !rec) { g.append(el('div', 'bc', any ? '—' : 'برنامه ثبت نشده')); return; }
       const ex = !rec && !!r && isEx(c, r[3], P.p), st = rec ? 'ok' : ex ? 'ex' : now < P.a ? 'wait' : now < new Date(P.a.getTime() + ATT_GRACE_MIN * 6e4) ? 'pend' : 'miss', cell = el('div', 'bc ' + st);
-      cell.append(el('b', '', r ? r[4] : (rec.t || 'دبیر')), el('span', '', r ? r[3] : rec.s), el('em', '', { ok:'✓ انجام شد', ex:'🔒 معاف (مرخصی/غیبت دبیر)', miss:'✗ انجام نشده', pend:'⏳ در مهلت', wait:'⏳ هنوز شروع نشده' }[st])); g.append(cell);
+      const go = st === 'ex' && ROLE === 'manager';   // مدیر به‌جای دبیرِ مرخصی یا غایب، حضور و غیاب را ثبت می‌کند
+      cell.append(el('b', '', r ? r[4] : (rec.t || 'دبیر')), el('span', '', r ? r[3] : rec.s), el('em', '', { ok:'✓ انجام شد', ex:go ? '🔒 دبیر غایب | ثبت با مدیر ←' : '🔒 معاف (مرخصی/غیبت دبیر)', miss:'✗ انجام نشده', pend:'⏳ در مهلت', wait:'⏳ هنوز شروع نشده' }[st]));
+      if (go) { cell.classList.add('go'); cell.tabIndex = 0; cell.setAttribute('role', 'button'); cell.title = 'ثبت حضور و غیاب این زنگ توسط مدیر';
+        const f = () => mgAttFor(r, P.p); cell.addEventListener('click', f); cell.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); f(); } }); }
+      g.append(cell);
     });
   });
   box.append(g);
@@ -5556,25 +5552,26 @@ function jPicker(dS, mS, yS, on) {          // انتخاب‌گر تاریخ ش
   fillD(); api.today(); on && on(); return api;
 }
 
-/* ---------- افتخارآفرینان: نفرات برتر هر کلاس (صفحه اول، ورودی و صفحه‌ی دانش‌آموز) ---------- */
-let HONOR = null;
+/* ---------- نفرات برتر هر کلاس (صفحه اول، ورودی و صفحه‌ی دانش‌آموز)؛ دانش‌آموز با معدل زیر ۱۷ را سرور نمی‌فرستد ---------- */
+let HONOR = null, HONOR_MIN = 17;
 async function loadHonor() {
   if (document.hidden && HONOR) return;
   const r = await send({ action:'topList', key:ACCESS_KEY });
-  if (r.status === 'ok') { HONOR = r.classes || {}; renderHonor(); }
+  if (r.status === 'ok') { HONOR = r.classes || {}; HONOR_MIN = r.min || 17; renderHonor(); }
 }
 function honorCard() {
   const c = el('div', 'card honor-card');
-  c.append(el('div', 'honor-t', '🏆 افتخارآفرینان ' + SCHOOL_NAME));
+  c.append(el('div', 'honor-t', '🏆 نفرات برتر هر کلاس ' + SCHOOL_NAME), el('div', 'honor-s', 'سه رتبه‌ی اول هر کلاس | فقط دانش‌آموزان با معدل ' + fa(HONOR_MIN) + ' و بالاتر'));
   const names = Object.keys(HONOR || {}).sort((a, b) => a.localeCompare(b, 'fa'));
-  if (!names.length) { c.append(el('div', 'now-sub', 'هنوز نمره‌ای برای نمایش ثبت نشده است.')); return c; }
+  if (!names.length) { c.append(el('div', 'now-sub', 'هنوز دانش‌آموزی با معدل ' + fa(HONOR_MIN) + ' و بالاتر نیست.')); return c; }
   const grid = el('div', 'honor-grid');
   names.forEach(cls => {
     const box = el('div', 'honor-cls'); box.append(el('div', 'honor-c', cls));
     let last = null, rank = 0;
     HONOR[cls].forEach(x => {
       if (x.a !== last) { rank++; last = x.a; }
-      box.append(el('div', 'honor-r', (['🥇', '🥈', '🥉'][rank - 1] || '') + ' ' + x.n + ' — ' + f2(x.a)));
+      const r = el('div', 'honor-r r' + rank); r.title = x.n;   // هر نفر در یک مستطیل هم‌اندازه: رتبه | نام | معدل
+      r.append(el('span', 'hm', ['🥇', '🥈', '🥉'][rank - 1] || ''), el('span', 'hn', x.n), el('span', 'ha', f2(x.a))); box.append(r);
     });
     grid.append(box);
   });
@@ -6016,12 +6013,13 @@ function abRender() {
   const P0 = p => ps.find(x => x.p === p), today = ds === abToday();
   list.forEach(o => {
     const w = el('div', 'ab-s'), h = el('div', 'ab-h'), P = P0(o.p), a = o.rows.filter(r => isAb(r.st)), l = o.rows.filter(r => isLt(r.st)), e = o.rows.filter(r => isEx(r.st));
-    let tag, cls;
-    if (o.rec) { if (a.length) { tag = fa(a.length) + ' غایب'; cls = 'bad'; } else if (l.length || e.length) { tag = 'بدون غایب'; cls = 'ok'; } else { tag = '✓ همه حاضر'; cls = 'ok'; } }
+    let tag, cls; const exR = o.rows.some(r => r.st === 'معاف');   // دبیر مرخصی یا غایب؛ مدیر می‌تواند ثبت کند
+    if (exR || (!o.rec && today && EXEMPT.some(x => normT(x.c) === normT(o.c) && normT(x.s) === normT(o.s) && x.p === o.p))) { tag = '🔒 دبیر مرخصی یا غایب'; cls = 'wait'; }
+    else if (o.rec) { if (a.length) { tag = fa(a.length) + ' غایب'; cls = 'bad'; } else if (l.length || e.length) { tag = 'بدون غایب'; cls = 'ok'; } else { tag = '✓ همه حاضر'; cls = 'ok'; } }
     else if (today && P && now < new Date(P.a.getTime() + ATT_GRACE_MIN * 6e4)) { tag = '⏳ هنوز وقت دارد'; cls = 'wait'; }
     else { tag = '✗ ثبت نشده'; cls = 'miss'; }
     h.append(el('b', '', (o.p ? 'زنگ ' + fa(o.p) : 'زنگ نامشخص') + ' — ' + o.c), el('span', 'ab-tag ' + cls, tag));
-    if (ds <= abToday()) { const eb = el('button', 'btn ab-ed', o.rec ? '✎ ویرایش' : '✎ ثبت'); eb.type = 'button'; eb.addEventListener('click', () => abEdit(o, ds)); h.append(eb); }
+    if (ds <= abToday()) { const eb = el('button', 'btn ab-ed', o.rec && !exR ? '✎ ویرایش' : '✎ ثبت'); eb.type = 'button'; eb.addEventListener('click', () => abEdit(o, ds)); h.append(eb); }
     w.append(h, el('div', 'now-sub', o.s + (o.t ? ' — ' + o.t : '') + (o.rec && o.at ? '؛ ثبت ساعت ' + fa(o.at) : P ? '؛ ' + fa(P.t) : '')));
     const grp = (rows, label, kind) => {
       if (!rows.length) return; const g = el('div', 'ab-g'); g.append(el('span', 'ab-gl', label));
