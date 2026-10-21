@@ -16,7 +16,7 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxzPr6P54uH4gV_rQrss
 // کلید دسترسی اختیاری (باید با ACCESS_KEY در Code.gs یکی باشد)
 const ACCESS_KEY = "";
 // نسخه‌ی برنامه — با هر به‌روزرسانی این عدد بالا می‌رود و در صفحه‌ی ورود و پایین صفحه نمایش داده می‌شود.
-const APP_VERSION = "1.19";
+const APP_VERSION = "1.20";
 // (اختیاری) لینک Google Sheet برای دکمه «باز کردن Google Sheet» در تب مدیر
 const SHEET_URL = "https://docs.google.com/spreadsheets/d/10i-IGQKyj078M6kJ7YhdAniuJInl6JemwVxAqs7FnrY/edit";
 const DEFAULT_MAX_SCORE = 20;
@@ -4964,9 +4964,14 @@ async function calLoad() {
     ['تاریخ', 'زنگ', 'درس', 'نوع', 'عنوان', 'دبیر', 'وضعیت', ''].forEach(t => hr.append(el('th', '', t)));
     thead.append(hr); tb.append(thead, tbody); wrap.append(tb); box.append(wrap);
     items.forEach(x => {
-      const tr = el('tr'), b = el('button', 'btn', 'حذف'); b.type = 'button';
-      b.addEventListener('click', async () => { const q = await send({ action:'calDel', teacher:S.teacher.trim(), pin:S.pin.trim(), date:x.d, cls:x.c, course:x.s, title:x.t, key:ACCESS_KEY }); if (q.status !== 'ok') toast(q.message || 'حذف نشد'); calLoad(); });
-      tr.append(el('td', '', fa(x.d)), el('td', '', x.p ? fa(x.p) + calTm(x.d, x.p) : '—'), el('td', '', x.s), el('td', '', (x.k === 'آزمون' ? '📝 ' : '📚 ') + x.k), el('td', '', x.t), el('td', '', x.te || ''), el('td', x.pend ? 'pend' : 'ok', x.pend ? '⏳ در انتظار' : '✓ تأیید'), el('td', '', b));
+      const tr = el('tr'), td = el('td');
+      // حذف فقط برای مدیر یا دبیرِ همان کلاس و درس (همان قاعده‌ی سرور)؛ دکمه داخل خانه قرار می‌گیرد، نه به‌صورت متن
+      const can = ISMGR || ROLE === 'manager' || (SCH.length ? (myPairs() || []).some(q => q.c === x.c && normT(q.s) === normT(x.s)) : normT(x.te) === normT(S.teacher));
+      if (can) { const b = el('button', 'btn', 'حذف'); b.type = 'button';
+        b.addEventListener('click', () => showModal({ icon:'warn', title:'حذف از تقویم', msg:'«' + x.t + '» (' + x.k + '، ' + x.s + '، ' + x.c + '، ' + fa(x.d) + ') از تقویم دانش‌آموزان حذف شود؟',
+          buttons:[{ text:'انصراف', primary:true }, { text:'حذف شود', onClick:async () => { const q = await send({ action:'calDel', teacher:S.teacher.trim(), pin:S.pin.trim(), date:x.d, cls:x.c, course:x.s, title:x.t, key:ACCESS_KEY }); toast(q.status === 'ok' ? 'حذف شد' : q.message || 'حذف نشد'); calLoad(); } }] }));
+        td.append(b); } else td.textContent = '—';
+      tr.append(el('td', '', fa(x.d)), el('td', '', x.p ? fa(x.p) + calTm(x.d, x.p) : '—'), el('td', '', x.s), el('td', '', (x.k === 'آزمون' ? '📝 ' : '📚 ') + x.k), el('td', '', x.t), el('td', '', x.te || ''), el('td', x.pend ? 'pend' : 'ok', x.pend ? '⏳ در انتظار' : '✓ تأیید'), td);
       tbody.append(tr);
     });
   });
