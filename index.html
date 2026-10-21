@@ -16,7 +16,7 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxzPr6P54uH4gV_rQrss
 // کلید دسترسی اختیاری (باید با ACCESS_KEY در Code.gs یکی باشد)
 const ACCESS_KEY = "";
 // نسخه‌ی برنامه — با هر به‌روزرسانی این عدد بالا می‌رود و در صفحه‌ی ورود و پایین صفحه نمایش داده می‌شود.
-const APP_VERSION = "1.18";
+const APP_VERSION = "1.19";
 // (اختیاری) لینک Google Sheet برای دکمه «باز کردن Google Sheet» در تب مدیر
 const SHEET_URL = "https://docs.google.com/spreadsheets/d/10i-IGQKyj078M6kJ7YhdAniuJInl6JemwVxAqs7FnrY/edit";
 const DEFAULT_MAX_SCORE = 20;
@@ -329,7 +329,8 @@ a.tel{display:inline-flex;align-items:center;min-height:44px;padding:0 14px;bord
 .bc-name{font-size:11.5px;font-weight:800;display:flex;align-items:center;line-height:1.3}
 .bc{display:flex;flex-direction:column;gap:1px;justify-content:center;text-align:center;border-radius:10px;padding:6px 3px;font-size:11px;line-height:1.35;min-height:62px;background:var(--input);color:var(--muted)}
 .bc b{font-size:11.5px;color:var(--ink)} .bc em{font-style:normal;font-weight:800;font-size:10.5px}
-.bc.ok{background:var(--present-bg);color:var(--present)} .bc.miss{background:var(--absent-bg);color:var(--absent)} .bc.pend{background:var(--late-bg);color:var(--late)} .bc.ex{background:var(--input);color:var(--muted)} .bc.go{cursor:pointer;border:1.5px dashed var(--muted)} .bc.go:hover,.bc.go:focus-visible{border-style:solid;outline:none}
+.bc.ok{background:var(--present-bg);color:var(--present)} .bc.miss{background:var(--absent-bg);color:var(--absent)} .bc.pend{background:var(--late-bg);color:var(--late)} .bc.ex,.bc.off{background:var(--input);color:var(--muted)} .off-chips{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))} .off-chips .chip.off{background:var(--input);color:var(--muted);border-style:dashed}
+.bc.go{cursor:pointer;border:1.5px dashed var(--muted)} .bc.go:hover,.bc.go:focus-visible{border-style:solid;outline:none}
 .mx-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin-top:6px}
 .mx{border-collapse:collapse;font-size:12px;width:100%}
 .mx th,.mx td{border:1px solid var(--line);padding:5px 6px;text-align:center;white-space:nowrap;background:var(--card)}
@@ -1223,6 +1224,7 @@ input:focus,select:focus{border-color:var(--teal);box-shadow:var(--ring);backgro
 .dir-it.dir-ok{background:var(--present-bg);border-color:var(--present);border-inline-start:5px solid var(--present)}
 .dir-it.dir-bad{background:var(--absent-bg);border-color:rgba(198,47,58,.35);border-inline-start:5px solid var(--absent)}
 .dir-it.dir-bad summary,.dir-it.dir-ok summary{background:transparent}
+.dir-it.dir-off{background:var(--input);border-color:var(--line);border-inline-start:5px solid var(--muted);opacity:.85} .dir-it.dir-off summary span:first-child{color:var(--muted);text-decoration:line-through}
 .dir-miss{margin:0 0 8px;padding:8px 12px;border-radius:10px;background:rgba(198,47,58,.12);color:var(--absent);font-weight:800;font-size:13px}
 .dir-sum{grid-column:1/-1;display:flex;gap:10px;flex-wrap:wrap;margin-bottom:4px}
 .dir-sum span{padding:6px 14px;border-radius:999px;font-weight:800;font-size:13px}
@@ -1863,6 +1865,7 @@ input[type=tel]:focus,input[type=number]:focus,input[type=email]:focus{border-co
               <div class="field"><label for="saMn">نام مادر</label><input id="saMn" type="text" maxlength="60" autocomplete="off"></div>
               <div class="field"><label for="saMp">تلفن مادر</label><input id="saMp" type="tel" inputmode="numeric" maxlength="14" autocomplete="off" dir="ltr"></div>
             </div>
+            <div class="field"><label for="saSt">وضعیت</label><select id="saSt"><option value="">در حال تحصیل</option><option value="انتقال آمده">انتقال آمده</option></select></div>
             <button id="saGo" class="send" type="button">ثبت دانش‌آموز</button>
             <details style="margin-top:12px"><summary class="lbl" style="cursor:pointer">افزودن گروهی (چسباندن از Excel)</summary>
               <div class="now-sub" style="margin:8px 0">رشته و کلاس را بالا پر کنید. هر خط یک دانش‌آموز، با این ترتیب ستون‌ها (جداکننده: Tab یا | یا ویرگول): نام، کد ملی، نام پدر، تلفن پدر، نام مادر، تلفن مادر، تلفن دانش‌آموز. فقط نام الزامی است. حداکثر ۸۰ نفر در هر بار.</div>
@@ -1997,6 +2000,13 @@ input[type=tel]:focus,input[type=number]:focus,input[type=email]:focus{border-co
         <div id="edDays" class="days"></div>
         <div id="edRows"></div><datalist id="edCourseL"></datalist>
         <button id="edSave" class="send" type="button">ذخیره برنامه این کلاس</button>
+      </div>
+      <div class="card" id="offCard">
+        <div class="lbl" style="margin-bottom:8px">دروس غیرفعال برنامه‌ی هفتگی</div>
+        <div class="now-sub" style="margin-bottom:8px">درسِ غیرفعال در داشبورد امروز «انجام نشده» و هشدار حضور و غیاب نمی‌دهد. برنامه‌ی هفتگی پاک نمی‌شود و ثبت حضور و غیاب آن هم ممکن است. روی هر درس بزنید تا فعال یا غیرفعال شود.</div>
+        <div class="field"><select id="offCls" aria-label="کلاس"></select></div>
+        <div id="offList" class="chips off-chips"></div>
+        <div id="offAll" class="now-sub" style="margin-top:8px"></div>
       </div>
       <div class="card" id="curCard">
         <div class="lbl" style="margin-bottom:8px">فهرست رسمی دروس و تعداد واحد</div>
@@ -2657,6 +2667,9 @@ function shiftOfDate(d) {                       // جمعه جزو هفته‌ی
 }
 const DAYS = ['شنبه','یکشنبه','دوشنبه','سه‌شنبه','چهارشنبه','پنجشنبه'];
 let SCH = lsGet(SCH_KEY, []), TINFO = lsGet('sia_tinfo_v1', {});
+/* دروس غیرفعال برنامه‌ی هفتگی (کلاس|درس): هشدار «حضور و غیاب انجام نشده» نمی‌دهند */
+let SCH_OFF = lsGet('sia_schoff_v1', []);
+const offKey = (c, s) => normT(c) + '|' + normT(s), isOff = (c, s) => SCH_OFF.indexOf(offKey(c, s)) >= 0;
 let ABS = lsGet('sia_abs_v1', []);      // مرخصی‌های تأییدشدهٔ دبیران: [تاریخ شمسی، دبیر، زنگ‌ها ('' = همه)]
 const absOn = (teacher, dateJ, p) => !!dateJ && ABS.some(a => a[0] === dateJ && normT(a[1]) === normT(teacher) && (!a[2] || String(a[2]).split(',').indexOf(String(p)) >= 0));
 const weekJ = d => { const t = new Date(); t.setHours(12, 0, 0, 0); t.setDate(t.getDate() - ((t.getDay() + 1) % 7) + d); const j = jOf(t); return jStr(j[0], j[1], j[2]); };   // تاریخ شمسی روز d (۰ = شنبه) در هفته‌ی جاری
@@ -2691,7 +2704,7 @@ function renderSch() {
   const isC = Z.who[0] === 'c', ul = $('#schList'); ul.textContent = '';
   PERIOD_TIMES.forEach((tm, i) => {
     const r = slotOf(Z.day, i + 1)[0], li = el('li'), ab = !!r && absOn(r[4], weekJ(Z.day), i + 1), b = el('button', 'slot' + (r ? '' : ' free') + (ab ? ' absent' : '')); b.type = 'button';
-    b.append(el('span', 'pn', fa(i + 1)), el('span', 'nm', r ? r[3] + (r[5] ? ' (تک‌زنگ)' : '') + (ab ? ' — دبیر غایب' : '') : '—'), el('span', 'tm', (r ? (isC ? r[4] : r[0]) + ' | ' : '') + tm));
+    b.append(el('span', 'pn', fa(i + 1)), el('span', 'nm', r ? r[3] + (r[5] ? ' (تک‌زنگ)' : '') + (ab ? ' — دبیر غایب' : '') + (isOff(r[0], r[3]) ? ' — غیرفعال' : '') : '—'), el('span', 'tm', (r ? (isC ? r[4] : r[0]) + ' | ' : '') + tm));
     if (r && ROLE !== 'student' && ROLE !== 'counselor') b.addEventListener('click', () => useSlot(r)); li.append(b); ul.append(li);
   });
   $('#schEmpty').hidden = SCH.length > 0;
@@ -2720,6 +2733,7 @@ async function loadSchedule() {
     SCH = (r.rows || []).map(x => [String(x[0]), +x[1], +x[2], String(x[3]), String(x[4]), String(x[5] || '')]); lsSet(SCH_KEY, SCH);
     TINFO = r.info || {}; lsSet('sia_tinfo_v1', TINFO);
     ABS = r.abs || []; lsSet('sia_abs_v1', ABS);
+    SCH_OFF = (r.off || []).map(x => offKey(x.c, x.s)); lsSet('sia_schoff_v1', SCH_OFF); offRender();
     renderSch(); if (!$('#mgBody').hidden) edLoadCls();
     if (ROLE === 'teacher') { refreshRestrict(); autoSlotApply(); renderPer(); }
   } catch (e) { /* از نسخه ذخیره‌شده استفاده می‌شود */ }
@@ -2801,7 +2815,27 @@ $('#edSave').addEventListener('click', () => {
   if (warns.length) showModal({ icon:'warn', title:'هشدار در برنامه', msg:warns.join('؛ ') + '.', buttons:[{ text:'با این حال ذخیره کن', primary:true, onClick:go }, { text:'انصراف' }] });
   else go();
 });
-$('#edCls').addEventListener('change', e => { ED.cls = e.target.value; edLoadCls(); });
+$('#edCls').addEventListener('change', e => { ED.cls = e.target.value; edLoadCls(); if ($('#offCls')) { $('#offCls').value = ED.cls; offRender(); } });
+function offRender() {          // مدیر: فعال/غیرفعال کردن درس‌های هر کلاس در برنامه‌ی هفتگی
+  const sel = $('#offCls'), box = $('#offList'); if (!sel || !box) return;
+  const cls = uniq(SCH.map(r => r[0])).sort((a, b) => a.localeCompare(b, 'fa')), cur = sel.value || ED.cls || cls[0] || '';
+  sel.textContent = ''; cls.forEach(c => { const o = el('option', '', c); o.value = c; sel.append(o); }); sel.value = cls.includes(cur) ? cur : (cls[0] || '');
+  box.textContent = ''; const c = sel.value;
+  if (!c) { box.append(el('div', 'empty', 'هنوز برنامه‌ی هفتگی ثبت نشده است.')); }
+  uniq(SCH.filter(r => r[0] === c && r[3]).map(r => r[3])).sort((a, b) => a.localeCompare(b, 'fa')).forEach(s => {
+    const off = isOff(c, s), b = el('button', 'chip' + (off ? ' off' : ' on'), (off ? '' : '✓ ') + s + (off ? ' | غیرفعال' : '')); b.type = 'button'; b.setAttribute('aria-pressed', String(!off));
+    b.title = off ? 'غیرفعال؛ برای فعال کردن بزنید' : 'فعال؛ برای غیرفعال کردن بزنید';
+    b.addEventListener('click', async () => {
+      b.disabled = true; const r = await send({ action:'schOff', pin:MG.pin, key:ACCESS_KEY, cls:c, course:s, off:!off }); b.disabled = false;
+      if (r.net) return toast('اینترنت در دسترس نیست.'); if (r.status !== 'ok') return toast(r.message || 'ذخیره نشد.');
+      SCH_OFF = (r.off || []).map(x => offKey(x.c, x.s)); lsSet('sia_schoff_v1', SCH_OFF);
+      toast(s + ' (' + c + ') ' + (off ? 'فعال شد ✓' : 'غیرفعال شد؛ هشدار حضور و غیاب نمی‌دهد')); offRender(); renderSch(); renderAlerts(); abRender();
+    }); box.append(b);
+  });
+  const all = SCH_OFF.map(k => { const r = SCH.find(q => offKey(q[0], q[3]) === k); return r ? r[3] + ' (' + r[0] + ')' : ''; }).filter(Boolean);
+  $('#offAll').textContent = all.length ? 'غیرفعال‌ها در کل مدرسه: ' + all.join('، ') : 'همه‌ی دروس فعال‌اند.';
+}
+$('#offCls').addEventListener('change', offRender);
 $('#schWho').addEventListener('change', e => { Z.who = e.target.value; renderSch(); });
 $('#schWeekBtn').addEventListener('click', () => { const w = $('#schWeek'); w.hidden = !w.hidden; $('#schWeekBtn').textContent = w.hidden ? 'نمایش جدول کل هفته' : 'پنهان کردن جدول هفته'; });
 
@@ -2931,10 +2965,13 @@ const infoRow = (k, v) => { const r = el('div', 'dir-r'); r.append(el('span', 'k
 /* ویرایش مشخصات دانش‌آموز یا دبیر در بانک اطلاعات (نسخه‌ی ۱٫۰۷) */
 function dirEdit(b, x, kind) {
   const F = kind === 's'
-    ? [['stream', 'رشته', x.st], ['cls', 'کلاس', x.c], ['n', 'نام و نام خانوادگی', x.n], ['id', 'کد ملی', x.id, 'num'], ['fn', 'نام پدر', x.fn], ['fp', 'تلفن پدر', x.fp, 'num'], ['mn', 'نام مادر', x.mn], ['mp', 'تلفن مادر', x.mp, 'num'], ['sp', 'تلفن دانش‌آموز', x.sp, 'num']]
+    ? [['stream', 'رشته', x.st], ['cls', 'کلاس', x.c], ['n', 'نام و نام خانوادگی', x.n], ['id', 'کد ملی', x.id, 'num'], ['fn', 'نام پدر', x.fn], ['fp', 'تلفن پدر', x.fp, 'num'], ['mn', 'نام مادر', x.mn], ['mp', 'تلفن مادر', x.mp, 'num'], ['sp', 'تلفن دانش‌آموز', x.sp, 'num'], ['status', 'وضعیت تحصیلی', x.x || '', 'sel']]
     : [['n', 'نام و نام خانوادگی', x.n], ['code', 'کد ورود جدید (خالی = بدون تغییر)', '', 'num'], ['pc', 'کد پرسنلی', x.pc, 'num'], ['id', 'کد ملی', x.id, 'num'], ['ph', 'شماره تماس', x.ph, 'num'], ['deg', 'مدرک تحصیلی', x.deg]];
   b.textContent = ''; const I = {};
-  F.forEach(q => { const f = el('div', 'field'), lb = el('label', '', q[1]), inp = el('input'); inp.type = 'text'; inp.value = q[2] || ''; inp.autocomplete = 'off';
+  F.forEach(q => { const f = el('div', 'field'), lb = el('label', '', q[1]);
+    if (q[3] === 'sel') { const sl = el('select'); STU_ST.forEach(o => { const op = el('option', '', o[1]); op.value = o[0]; sl.append(op); }); sl.value = q[2]; I[q[0]] = sl; f.append(lb, sl);
+      f.append(el('div', 'now-sub', 'انتقال رفته، ترک تحصیل و وقفه‌ی تحصیلی: از فهرست حضور و غیاب و نمره‌ی دبیر و مدیر حذف می‌شود. انتقال آمده فعال است.')); b.append(f); return; }
+    const inp = el('input'); inp.type = 'text'; inp.value = q[2] || ''; inp.autocomplete = 'off';
     if (q[3] === 'num') { inp.inputMode = 'numeric'; inp.style.direction = 'ltr'; inp.style.textAlign = 'right'; } I[q[0]] = inp; f.append(lb, inp); b.append(f); });
   const P0 = {}; F.forEach(q => { P0[q[0]] = q[3] === 'num' ? digitsOnly(I[q[0]].value) : I[q[0]].value.trim(); });
   const hw = el('label', 'now-sub'), hc = el('input'); hc.type = 'checkbox'; hc.checked = true; hc.style.cssText = 'width:auto;height:auto;margin-inline-end:8px';
@@ -2944,7 +2981,7 @@ function dirEdit(b, x, kind) {
   ok.addEventListener('click', async () => {
     const v = k => (I[k] ? I[k].value.trim() : ''), d = k => digitsOnly(v(k));
     const pay = kind === 's'
-      ? { action:'stuUpd', oc:x.c, on:x.n, stream:v('stream'), cls:v('cls'), n:v('n'), id:d('id'), fn:v('fn'), fp:d('fp'), mn:v('mn'), mp:d('mp'), sp:d('sp') }
+      ? { action:'stuUpd', oc:x.c, on:x.n, stream:v('stream'), cls:v('cls'), n:v('n'), id:d('id'), fn:v('fn'), fp:d('fp'), mn:v('mn'), mp:d('mp'), sp:d('sp'), status:v('status') }
       : { action:'tchUpd', on:x.n, n:v('n'), code:v('code'), pc:d('pc'), id:d('id'), ph:d('ph'), deg:v('deg') };
     if (v('n').length < 3) { toast('نام را کامل بنویسید.'); return; }
     ok.disabled = true; ok.textContent = 'در حال ذخیره…';
@@ -2953,7 +2990,18 @@ function dirEdit(b, x, kind) {
     if (r.net) { toast('اینترنت در دسترس نیست.'); return; }
     if (r.status !== 'ok') { toast(r.message || 'ذخیره نشد.'); return; }
     toast('ذخیره شد' + (r.moved ? ' | سابقه‌ی ' + fa(r.moved) + ' ردیف منتقل شد' : '')); await loadDir(); if (r.moved && typeof mgLoad === 'function') mgLoad();
+    if (kind === 's' && v('status') !== (x.x || '')) loadRoster();   // فهرست حضور و غیاب و نمره به‌روز شود
   });
+}
+/* وضعیت تحصیلی دانش‌آموز؛ سه وضعیت آخر حضور و غیاب و نمره نمی‌گیرند */
+const STU_ST = [['', 'در حال تحصیل'], ['انتقال آمده', 'انتقال آمده'], ['انتقال رفته', 'انتقال رفته'], ['ترک تحصیل', 'ترک تحصیل'], ['وقفه تحصیلی', 'وقفه تحصیلی']];
+const stuOff = x => ['انتقال رفته', 'ترک تحصیل', 'وقفه تحصیلی'].includes(x.x || '');
+function stuDelAsk(x) {
+  showModal({ icon:'warn', title:'حذف دانش‌آموز', msg:'«' + x.n + '» (' + x.c + ') از فهرست دانش‌آموزان حذف شود؟ سابقه‌ی حضور و غیاب و نمرات در برگه‌ها می‌ماند، ولی این کار برگشت ندارد. اگر دانش‌آموز منتقل شده یا ترک تحصیل کرده، بهتر است به‌جای حذف، «وضعیت تحصیلی» را تغییر دهید.',
+    buttons:[{ text:'انصراف', primary:true }, { text:'🗑 حذف شود', onClick:async () => {          // «انصراف» اول است تا فوکوس پیش‌فرض روی آن باشد
+      const r = await send({ action:'stuDel', pin:MG.pin, key:ACCESS_KEY, oc:x.c, on:x.n });
+      if (r.net) return toast('اینترنت در دسترس نیست.'); if (r.status !== 'ok') return toast(r.message || 'حذف نشد.');
+      toast('«' + x.n + '» حذف شد'); await loadDir(); loadRoster(); } }] });
 }
 /* کامل‌بودن اطلاعات دانش‌آموز: کد ملی، نام و تلفن پدر و مادر و تلفن دانش‌آموز */
 const DIR_REQ = [['id', 'کد ملی'], ['fn', 'نام پدر'], ['fp', 'تلفن پدر'], ['mn', 'نام مادر'], ['mp', 'تلفن مادر'], ['sp', 'تلفن دانش‌آموز']];
@@ -2977,11 +3025,13 @@ function renderDir() {
     const d = el('details', 'dir-it'), sm = el('summary'), b = el('div', 'dir-b'); d.dataset.k = (x.c || '') + '|' + x.n; if (open.has(d.dataset.k)) d.open = true;
     { const ms = DT === 's' ? dirMissing(x) : tDirMissing(x); d.classList.add(ms.length ? 'dir-bad' : 'dir-ok'); d.dataset.missing = ms.join('، '); }
     if (DT === 's') {
-      sm.append(el('span', '', (dirMissing(x).length ? '' : '✓ ') + x.n), el('small', '', cv ? '' : x.c));
+      sm.append(el('span', '', (dirMissing(x).length ? '' : '✓ ') + x.n), el('small', '', [cv ? '' : x.c, x.x ? (stuOff(x) ? '⛔ ' : '↩ ') + x.x : ''].filter(Boolean).join(' | ')));
+      if (stuOff(x)) { d.classList.add('dir-off'); b.append(el('div', 'dir-miss', '⛔ ' + x.x + ': حضور و غیاب و نمره برای این دانش‌آموز ثبت نمی‌شود.')); }
       if (dirMissing(x).length) b.append(el('div', 'dir-miss', 'اطلاعات ناقص: ' + dirMissing(x).join('، ')));
       b.append(infoRow('کد ملی', x.id), telRow('پدر', x.fn, x.fp), telRow('مادر', x.mn, x.mp), telRow('دانش‌آموز', '', x.sp));
       { const eb = el('button', 'btn', '✏️ ویرایش مشخصات'); eb.type = 'button'; eb.addEventListener('click', () => dirEdit(b, x, 's')); b.append(eb); }
       { const vb = el('button', 'btn', '👁 ورود به پنل این دانش‌آموز'); vb.type = 'button'; vb.addEventListener('click', () => viewStudent(x)); b.append(vb); }
+      { const db = el('button', 'btn', '🗑 حذف دانش‌آموز'); db.type = 'button'; db.style.color = 'var(--absent)'; db.addEventListener('click', () => stuDelAsk(x)); b.append(db); }
       if (x.id) { const pb = el('button', 'btn', 'کارنامه (چاپ / PDF)'); pb.type = 'button';
         pb.addEventListener('click', async () => { pb.disabled = true; const r = await send({ action:'studentCard', pin:MG.pin, nid:x.id, ym:dateStr().slice(0, 7), key:ACCESS_KEY }); pb.disabled = false;
           if (r.status === 'ok') printCard(r); else toast(r.message || 'کارنامه دریافت نشد.'); }); b.append(pb); }
@@ -4178,7 +4228,7 @@ function missing(now) {
   periodsOf(now).forEach(P => {
     if (now < new Date(P.a.getTime() + ATT_GRACE_MIN * 6e4)) return;
     SCH.filter(r => r[1] === day && r[2] === P.p && (!r[5] || r[5] === SH_FA[P.sh])).forEach(r => {
-      if (!TODAY.some(x => normT(x.c) === normT(r[0]) && normT(x.s) === normT(r[3]) && (!x.p || +x.p === P.p)) && !isEx(r[0], r[3], P.p)) out.push({ p:P.p, t:P.t, c:r[0], s:r[3], n:r[4] }); }); });
+      if (!TODAY.some(x => normT(x.c) === normT(r[0]) && normT(x.s) === normT(r[3]) && (!x.p || +x.p === P.p)) && !isEx(r[0], r[3], P.p) && !isOff(r[0], r[3])) out.push({ p:P.p, t:P.t, c:r[0], s:r[3], n:r[4] }); }); });
   return out;
 }
 async function pollToday() {
@@ -4423,9 +4473,9 @@ function renderBoard() {
       const r = SCH.find(x => x[0] === c && x[1] === day && x[2] === P.p && (!x[5] || x[5] === SH_FA[sh]));
       const rec = TODAY.find(x => normT(x.c) === normT(c) && (r ? (!x.p || +x.p === P.p) && normT(x.s) === normT(r[3]) : x.p && +x.p === P.p));
       if (!r && !rec) { g.append(el('div', 'bc', any ? '—' : 'برنامه ثبت نشده')); return; }
-      const ex = !rec && !!r && isEx(c, r[3], P.p), st = rec ? 'ok' : ex ? 'ex' : now < P.a ? 'wait' : now < new Date(P.a.getTime() + ATT_GRACE_MIN * 6e4) ? 'pend' : 'miss', cell = el('div', 'bc ' + st);
+      const ex = !rec && !!r && isEx(c, r[3], P.p), st = rec ? 'ok' : ex ? 'ex' : r && isOff(c, r[3]) ? 'off' : now < P.a ? 'wait' : now < new Date(P.a.getTime() + ATT_GRACE_MIN * 6e4) ? 'pend' : 'miss', cell = el('div', 'bc ' + st);
       const go = st === 'ex' && ROLE === 'manager';   // مدیر به‌جای دبیرِ مرخصی یا غایب، حضور و غیاب را ثبت می‌کند
-      cell.append(el('b', '', r ? r[4] : (rec.t || 'دبیر')), el('span', '', r ? r[3] : rec.s), el('em', '', { ok:'✓ انجام شد', ex:go ? '🔒 دبیر غایب | ثبت با مدیر ←' : '🔒 معاف (مرخصی/غیبت دبیر)', miss:'✗ انجام نشده', pend:'⏳ در مهلت', wait:'⏳ هنوز شروع نشده' }[st]));
+      cell.append(el('b', '', r ? r[4] : (rec.t || 'دبیر')), el('span', '', r ? r[3] : rec.s), el('em', '', { ok:'✓ انجام شد', ex:go ? '🔒 دبیر غایب | ثبت با مدیر ←' : '🔒 معاف (مرخصی/غیبت دبیر)', miss:'✗ انجام نشده', pend:'⏳ در مهلت', wait:'⏳ هنوز شروع نشده', off:'⏸ درس غیرفعال' }[st]));
       if (go) { cell.classList.add('go'); cell.tabIndex = 0; cell.setAttribute('role', 'button'); cell.title = 'ثبت حضور و غیاب این زنگ توسط مدیر';
         const f = () => mgAttFor(r, P.p); cell.addEventListener('click', f); cell.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); f(); } }); }
       g.append(cell);
@@ -5387,7 +5437,7 @@ const digitsOnly = v => en(String(v || '')).replace(/\D/g, '');
 function stuRow(o) {
   return { n:String(o.n || '').trim(), id:digitsOnly(o.id), fn:String(o.fn || '').trim(), fp:digitsOnly(o.fp), mn:String(o.mn || '').trim(), mp:digitsOnly(o.mp), sp:digitsOnly(o.sp) };
 }
-async function stuSend(rows, btn) {
+async function stuSend(rows, btn, status) {
   const stream = $('#saStream').value.trim(), cls = $('#saCls').value.trim();
   if (!stream || !cls) { toast('رشته و کلاس را وارد کنید.'); return null; }
   for (const x of rows) {
@@ -5397,7 +5447,7 @@ async function stuSend(rows, btn) {
   }
   const isNew = !allClasses().includes(cls);
   btn.disabled = true;
-  const r = await send({ action:'stuAdd', pin:MG.pin, key:ACCESS_KEY, stream:stream, cls:cls, rows:rows });
+  const r = await send({ action:'stuAdd', pin:MG.pin, key:ACCESS_KEY, stream:stream, cls:cls, rows:rows, status:status || '' });
   btn.disabled = false;
   if (r.net) { toast('اینترنت در دسترس نیست.'); return null; }
   if (r.status !== 'ok') { toast(r.message || 'ثبت نشد.'); return null; }
@@ -5408,7 +5458,7 @@ async function stuSend(rows, btn) {
 $('#saGo').addEventListener('click', async () => {
   const f = k => $('#' + k).value, row = stuRow({ n:f('saName'), id:f('saId'), fn:f('saFn'), fp:f('saFp'), mn:f('saMn'), mp:f('saMp'), sp:f('saSp') });
   if (!row.n) return toast('نام دانش‌آموز را وارد کنید.');
-  const r = await stuSend([row], $('#saGo'));
+  const r = await stuSend([row], $('#saGo'), $('#saSt').value);
   if (r && r.added) ['saName', 'saId', 'saFn', 'saFp', 'saMn', 'saMp', 'saSp'].forEach(k => { $('#' + k).value = ''; });
 });
 $('#saBulkGo').addEventListener('click', async () => {
@@ -6007,7 +6057,7 @@ function abRender() {
   });
   const list = Object.keys(S).map(k => S[k]).filter(o => (!cl || normT(o.c) === normT(cl)) && (!AB.p || o.p === AB.p)).sort((a, b) => a.p - b.p || a.c.localeCompare(b.c, 'fa'));
   const isAb = s => s === 'غایب', isLt = s => s === 'تأخیر', isEx = s => s.indexOf('موجه') >= 0;
-  let nA = 0, nL = 0, nE = 0, nM = 0; list.forEach(o => { o.rows.forEach(r => { if (isAb(r.st)) nA++; else if (isLt(r.st)) nL++; else if (isEx(r.st)) nE++; }); if (!o.rec) nM++; });
+  let nA = 0, nL = 0, nE = 0, nM = 0; list.forEach(o => { o.rows.forEach(r => { if (isAb(r.st)) nA++; else if (isLt(r.st)) nL++; else if (isEx(r.st)) nE++; }); if (!o.rec && !isOff(o.c, o.s)) nM++; });
   sum.textContent = plDayName(ds) + '، شیفت ' + SH_FA[sh] + ' — ' + (list.length ? fa(list.length) + ' جلسه؛ ' + fa(nA) + ' غایب، ' + fa(nL) + ' تأخیر، ' + fa(nE) + ' موجه' + (nM ? '؛ ' + fa(nM) + ' جلسه بدون ثبت' : '') : 'جلسه‌ای پیدا نشد.');
   if (!list.length) { box.append(el('div', 'empty', cl || AB.p ? 'برای این انتخاب، کلاسی در برنامه یا حضور و غیابی ثبت نشده است.' : 'برای این روز برنامه یا حضور و غیابی ثبت نشده است.')); return; }
   const P0 = p => ps.find(x => x.p === p), today = ds === abToday();
@@ -6016,6 +6066,7 @@ function abRender() {
     let tag, cls; const exR = o.rows.some(r => r.st === 'معاف');   // دبیر مرخصی یا غایب؛ مدیر می‌تواند ثبت کند
     if (exR || (!o.rec && today && EXEMPT.some(x => normT(x.c) === normT(o.c) && normT(x.s) === normT(o.s) && x.p === o.p))) { tag = '🔒 دبیر مرخصی یا غایب'; cls = 'wait'; }
     else if (o.rec) { if (a.length) { tag = fa(a.length) + ' غایب'; cls = 'bad'; } else if (l.length || e.length) { tag = 'بدون غایب'; cls = 'ok'; } else { tag = '✓ همه حاضر'; cls = 'ok'; } }
+    else if (isOff(o.c, o.s)) { tag = '⏸ درس غیرفعال'; cls = 'wait'; }
     else if (today && P && now < new Date(P.a.getTime() + ATT_GRACE_MIN * 6e4)) { tag = '⏳ هنوز وقت دارد'; cls = 'wait'; }
     else { tag = '✗ ثبت نشده'; cls = 'miss'; }
     h.append(el('b', '', (o.p ? 'زنگ ' + fa(o.p) : 'زنگ نامشخص') + ' — ' + o.c), el('span', 'ab-tag ' + cls, tag));
