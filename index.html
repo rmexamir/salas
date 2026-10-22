@@ -18,7 +18,7 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxzPr6P54uH4gV_rQrss
 // کلید دسترسی اختیاری (باید با ACCESS_KEY در Code.gs یکی باشد)
 const ACCESS_KEY = "";
 // نسخه‌ی برنامه — با هر به‌روزرسانی این عدد بالا می‌رود و در صفحه‌ی ورود و پایین صفحه نمایش داده می‌شود.
-const APP_VERSION = "1.22";
+const APP_VERSION = "1.23";
 // (اختیاری) لینک Google Sheet برای دکمه «باز کردن Google Sheet» در تب مدیر
 const SHEET_URL = "https://docs.google.com/spreadsheets/d/10i-IGQKyj078M6kJ7YhdAniuJInl6JemwVxAqs7FnrY/edit";
 const DEFAULT_MAX_SCORE = 20;
@@ -1527,6 +1527,69 @@ body.mods .send:active:not(:disabled){transform:translateY(2px);box-shadow:inset
 [data-theme="dark"] .launch-hd,[data-theme="dark"] .mod-bar,[data-theme="dark"] body.mods .card{box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 16px 30px -20px rgba(0,0,0,.8)}
 [data-theme="dark"] body.mods .btn{box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 2px 0 rgba(0,0,0,.35)}
 @media (prefers-reduced-motion:reduce){.tile,.tile:hover,.tile:active{transition:none;transform:none}}
+
+/* ===== نسخه‌ی ۱٫۲۳: داخل ماژول‌ها هم ماژول‌گونه ===== */
+body.in-mod #quote{display:none!important}
+body.mods:not([data-mod="m:today"]) .mg-desk{display:none!important}
+body.mods{--mt1:var(--e5);--mt2:var(--e8)}
+body.mods[data-tone="b"]{--mt1:color-mix(in srgb,var(--e5) 55%,#fff);--mt2:var(--e6)}
+body.mods[data-tone="g"]{--mt1:var(--g4);--mt2:var(--g6)}
+body.mods[data-tone="p"]{--mt1:color-mix(in srgb,var(--present) 65%,#fff);--mt2:var(--present)}
+body.in-mod .card{position:relative;border-radius:22px;border:1px solid var(--line);
+  background:radial-gradient(120% 70% at 100% 0%,rgba(255,255,255,.85),transparent 55%),linear-gradient(170deg,var(--card),var(--input));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.85),inset 0 -4px 0 rgba(12,24,48,.04),0 2px 4px rgba(12,24,48,.06),0 18px 32px -20px rgba(12,24,48,.5);scroll-margin-top:88px}
+body.in-mod .card>.lbl:first-child,body.in-mod .card>.dg-h:first-child+.lbl{display:flex;align-items:center;gap:10px;margin:0 0 14px!important;padding:0 0 12px;
+  border-bottom:1px dashed var(--line);font-size:15.5px;font-weight:900;line-height:1.5;color:var(--ink)}
+body.in-mod .card>.lbl:first-child::before,body.in-mod .card>.dg-h:first-child+.lbl::before{content:"";width:36px;height:36px;flex:none;border-radius:12px;
+  background:var(--mod-ic,url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2.2' stroke-linejoin='round'%3E%3Crect x='4' y='4' width='7' height='7' rx='2'/%3E%3Crect x='13' y='4' width='7' height='7' rx='2'/%3E%3Crect x='4' y='13' width='7' height='7' rx='2'/%3E%3Crect x='13' y='13' width='7' height='7' rx='2'/%3E%3C/svg%3E")) center/18px no-repeat,linear-gradient(145deg,var(--mt1),var(--mt2));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.45),inset 0 -3px 6px rgba(0,0,0,.18),0 6px 12px -6px rgba(8,20,40,.55)}
+body.in-mod .card>.dg-h:first-child+.lbl{padding-inline-end:46px}
+body.in-mod .card .card{box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 10px 18px -14px rgba(12,24,48,.45);border-radius:18px}
+body.in-mod .dg-h{position:absolute;top:14px;inset-inline-end:14px;z-index:1;width:34px;height:34px;padding:0;margin:0;display:grid;place-items:center;
+  border-radius:11px;border:1px solid var(--line);background:var(--card);color:var(--muted);font-size:0;cursor:grab;box-shadow:0 2px 0 rgba(12,24,48,.08)}
+body.in-mod .dg-h::before{content:"⠿";font-size:17px;line-height:1}
+body.in-mod .mg-sec-d{margin:0 0 14px;padding:12px 14px;border-radius:16px;border:1px solid var(--line);border-inline-start:4px solid var(--g5);
+  background:linear-gradient(170deg,var(--card),var(--input));color:var(--muted);font-size:13px;line-height:1.9;box-shadow:0 10px 20px -16px rgba(12,24,48,.4)}
+.sub-tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:0 0 16px}
+@media (min-width:700px){.sub-tiles{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (min-width:1000px){.sub-tiles{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.sub-tile{display:flex;align-items:center;gap:10px;min-height:58px;padding:10px 12px;border-radius:16px;border:1px solid var(--line);font:inherit;font-size:13px;font-weight:800;
+  color:var(--ink);text-align:start;cursor:pointer;background:linear-gradient(165deg,var(--card),var(--input));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 10px 18px -12px rgba(12,24,48,.45);transition:transform .15s,box-shadow .15s}
+.sub-tile:hover{transform:translateY(-2px);box-shadow:inset 0 1px 0 rgba(255,255,255,.85),0 16px 24px -14px rgba(12,24,48,.55)}
+.sub-tile:active{transform:translateY(1px)}
+.sub-tile i{width:30px;height:30px;flex:none;display:grid;place-items:center;border-radius:10px;font-style:normal;font-size:13px;font-weight:900;color:#fff;
+  background:linear-gradient(145deg,var(--mt1),var(--mt2));box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 4px 8px -4px rgba(8,20,40,.5)}
+.sub-tile span{min-width:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.5}
+body.in-mod .card.flash{animation:cardFlash 1.3s ease}
+@keyframes cardFlash{30%{box-shadow:0 0 0 4px var(--g4),0 18px 32px -20px rgba(12,24,48,.5)}}
+body.in-mod .chip{border-radius:14px;border:1px solid var(--line);font-weight:800;background:linear-gradient(165deg,var(--card),var(--input));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 6px 12px -10px rgba(12,24,48,.45)}
+body.in-mod .chip.on{color:#fff;border-color:transparent;background:linear-gradient(150deg,var(--e6),var(--e8));box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 8px 16px -8px rgba(8,20,40,.6)}
+body.in-mod .dir-it,body.in-mod .ab-s,body.in-mod .su-step,body.in-mod .mg-at{border-radius:16px;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 8px 16px -12px rgba(12,24,48,.4)}
+body.in-mod .row{box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 8px 16px -12px rgba(12,24,48,.4)}
+body.in-mod .mg-wrap,body.in-mod .mx-wrap{border-radius:16px;border:1px solid var(--line);box-shadow:0 10px 20px -16px rgba(12,24,48,.45)}
+body.in-mod .mg-tbl th{background:linear-gradient(160deg,var(--e6),var(--e8));color:#fff}
+body.in-mod .empty{border:1.5px dashed var(--line);border-radius:16px;background:var(--input);padding:18px 14px}
+body.in-mod input:not([type=checkbox]):not([type=radio]):not([type=file]),body.in-mod select,body.in-mod textarea{border-radius:14px;box-shadow:inset 0 2px 4px rgba(12,24,48,.06)}
+.pw-sum{margin:4px 0 6px;padding:10px 12px;border-radius:14px;background:var(--input);font-size:13px;font-weight:800}
+.pw-row{display:flex;align-items:center;gap:8px;margin-top:8px;padding:10px 12px;border-radius:14px;border:1px solid var(--line);background:linear-gradient(165deg,var(--card),var(--input));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 8px 16px -12px rgba(12,24,48,.4)}
+.pw-row b{flex:1;min-width:0;font-size:14px}
+.pw-st{flex:none;padding:3px 10px;border-radius:99px;font-size:12px;font-weight:800}
+.pw-st.ok{background:var(--present-bg);color:var(--present)} .pw-st.wait{background:var(--late-bg);color:var(--late)} .pw-st.bad{background:var(--absent-bg);color:var(--absent)}
+.pw-row .btn{flex:none;padding:6px 10px;font-size:12.5px}
+[data-theme="dark"] body.in-mod .card{background:linear-gradient(170deg,var(--card),var(--input));box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 18px 32px -20px rgba(0,0,0,.85)}
+[data-theme="dark"] .sub-tile,[data-theme="dark"] body.in-mod .chip,[data-theme="dark"] .pw-row{box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 10px 18px -12px rgba(0,0,0,.8)}
+[data-theme="dark"] body.in-mod .chip.on{background:linear-gradient(150deg,var(--g5),var(--g6));color:#1A1300}
+body.in-mod .card>.lbl:has(>.lbl-ic)::before{display:none}
+.lbl-ic{width:36px;height:36px;flex:none;display:grid;place-items:center;border-radius:12px;font-style:normal;font-size:18px;line-height:1;
+  background:linear-gradient(145deg,color-mix(in srgb,var(--mt1) 26%,var(--card)),color-mix(in srgb,var(--mt2) 38%,var(--card)));border:1px solid color-mix(in srgb,var(--mt2) 30%,transparent);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.6),inset 0 -3px 6px rgba(0,0,0,.08),0 6px 12px -6px rgba(8,20,40,.45)}
+body:not(.in-mod) .lbl-ic{width:auto;height:auto;background:none;border:0;box-shadow:none;font-size:inherit}
+.sub-tile i.emo{font-size:16px;background:linear-gradient(145deg,color-mix(in srgb,var(--mt1) 26%,var(--card)),color-mix(in srgb,var(--mt2) 38%,var(--card)));border:1px solid color-mix(in srgb,var(--mt2) 30%,transparent)}
+@media (max-width:699px){.sub-tile:last-child:nth-child(odd){grid-column:1/-1}}
+@media (prefers-reduced-motion:reduce){.sub-tile,.sub-tile:hover{transition:none;transform:none}body.in-mod .card.flash{animation:none}}
 </style>
 </head>
 <body>
@@ -1549,11 +1612,11 @@ body.mods .send:active:not(:disabled){transform:translateY(2px);box-shadow:inset
     <div class="now-sub" id="gSchool" style="margin-bottom:12px">دبیرستان صلاح‌الدین ایوبی</div>
     <div class="now-sub" id="gSchoolSub" hidden style="margin:-8px 0 12px;font-weight:700"></div>
     <div id="gRole" class="chips" style="grid-template-columns:repeat(4,1fr);margin-bottom:12px"></div>
-    <div id="gS"><div class="field"><label for="gNid">کد ملی دانش‌آموز</label><input id="gNid" type="text" inputmode="numeric" maxlength="12" autocomplete="off" placeholder="کد ملی ۱۰ رقمی" style="direction:ltr;text-align:center"></div>
-      <div class="field"><label for="gSec" id="gSecL">رمز عبور</label><input id="gSec" type="password" autocomplete="current-password" style="direction:ltr;text-align:center"><div class="now-sub" id="gSecH" style="margin-top:4px">در اولین ورود خالی بگذار؛ بعد از ورود باید برای خودت رمز عبور بسازی.</div></div></div>
+    <div id="gS"><div class="field"><label for="gNid">نام کاربری (کد ملی)</label><input id="gNid" type="text" inputmode="numeric" maxlength="12" autocomplete="off" placeholder="کد ملی ۱۰ رقمی" style="direction:ltr;text-align:center"></div>
+      <div class="field"><label for="gSec" id="gSecL">رمز عبور</label><input id="gSec" type="password" autocomplete="current-password" style="direction:ltr;text-align:center"><div class="now-sub" id="gSecH" style="margin-top:4px">نام کاربری و رمز اولیه: کد ملی. بعد از اولین ورود باید برای خودت رمز تازه بسازی.</div></div></div>
     <div id="gP" hidden>
       <div class="now-t" id="gPName" style="margin-bottom:4px"></div>
-      <div class="now-sub" style="margin-bottom:10px">برای ادامه باید یک رمز عبور شخصی بسازی؛ بدون آن نمی‌شود وارد شد. از این پس با کد ملی و همین رمز وارد می‌شوی. رمز را به کسی نگو.</div>
+      <div class="now-sub" style="margin-bottom:10px">رمز اولیه‌ی تو کد ملی است و برای ادامه باید آن را با یک رمز شخصی عوض کنی؛ بدون آن نمی‌شود وارد شد. از این پس با کد ملی و همین رمز وارد می‌شوی. رمز را به کسی نگو.</div>
       <div class="field"><label for="gP1">رمز عبور جدید (دست‌کم ۶ نویسه)</label><input id="gP1" type="password" autocomplete="new-password" style="direction:ltr;text-align:center"></div>
       <div class="field"><label for="gP2">تکرار رمز عبور</label><input id="gP2" type="password" autocomplete="new-password" style="direction:ltr;text-align:center"></div>
       <div class="now-sub" style="margin-bottom:8px">کد ملی، عدد تکراری (مثل ۱۱۱۱۱۱) یا پشت‌سرهم (مثل ۱۲۳۴۵۶) قبول نمی‌شود.</div>
@@ -1909,12 +1972,7 @@ body.mods .send:active:not(:disabled){transform:translateY(2px);box-shadow:inset
       </div>
       </div>
       <div class="mg-sec" data-sec="stu" data-t="دانش‌آموزان" hidden>
-      <div class="mg-sec-d">در معرض خطر، پرونده، مشاوره، آزمون‌های آزمایشی و کد ورود.</div>
-      <div class="card" id="riskCard">
-        <div class="lbl" style="margin-bottom:8px">دانش‌آموزان در معرض خطر (غیبت، افت نمره، افت آزمون آزمایشی)</div>
-        <div class="field"><select id="riskCls" aria-label="کلاس"></select></div>
-        <div id="riskList"></div>
-      </div>
+      <div class="mg-sec-d">پرونده، مشاوره و آزمون‌های آزمایشی دانش‌آموزان.</div>
       <div class="card" id="pfCard">
         <div class="lbl" style="margin-bottom:8px">پرونده‌ی دانش‌آموز — حضور و غیاب، نمرات و مقایسه با کلاس و پایه/رشته</div>
         <div class="mg-bar"><select id="pfCls" aria-label="کلاس"></select><select id="pfStu" aria-label="دانش‌آموز"></select></div>
@@ -1931,12 +1989,6 @@ body.mods .send:active:not(:disabled){transform:translateY(2px);box-shadow:inset
         <div class="lbl" style="margin-bottom:8px">آزمون‌های آزمایشی دانش‌آموزان</div>
         <div class="mg-bar"><select id="mkInst" aria-label="مؤسسه"></select><select id="mkCls" aria-label="کلاس"></select><button id="mkRef" class="btn" type="button">بازخوانی</button></div>
         <div id="mkList"></div>
-      </div>
-      <div class="card" id="codeCard">
-        <div class="lbl" style="margin-bottom:8px">کد ورود دانش‌آموزان</div>
-        <div class="field"><select id="cdCls" aria-label="کلاس"></select></div>
-        <div class="mg-bar"><button id="cdGen" class="btn" type="button">ساخت کد برای بدون‌کدها</button><button id="cdPrint" class="btn" type="button">چاپ فهرست</button></div>
-        <div id="cdList"></div>
       </div>
       </div>
       <div class="mg-sec" data-sec="setup" data-t="راه‌اندازی مدرسه" hidden>
@@ -2034,29 +2086,9 @@ body.mods .send:active:not(:disabled){transform:translateY(2px);box-shadow:inset
         <div class="now-sub" id="suSchTx" style="margin-bottom:8px"></div>
         <button id="suSchGo" class="btn" type="button" style="width:100%">باز کردن ویرایش برنامه‌ی هفتگی</button>
       </div>
-      <div class="card" id="suPw">
-        <div class="lbl" style="margin-bottom:8px">۸. رمزهای ورود</div>
-        <div class="su-h">مدیر</div>
-        <div class="now-sub" id="suMgTx" style="margin-bottom:8px"></div>
-        <button id="suMgPw" class="btn" type="button" style="width:100%">تغییر رمز مدیر</button>
-        <div class="su-h">کد ورود دبیر</div>
-        <div class="field"><select id="suPwT" aria-label="دبیر"></select></div>
-        <div class="su-add"><input id="suPwTc" type="text" maxlength="30" autocomplete="off" dir="ltr" aria-label="کد ورود جدید" placeholder="کد جدید (دست‌کم ۴ نویسه)"><button id="suPwTGo" class="btn" type="button">ذخیره‌ی کد</button></div>
-        <div class="su-h">مشاور</div>
-        <div class="now-sub" id="suCnsTx" style="margin-bottom:8px"></div>
-        <div class="grid2"><div class="field"><input id="suCnsN" type="text" maxlength="60" autocomplete="off" aria-label="نام مشاور" placeholder="نام و نام خانوادگی مشاور"></div><div class="field"><input id="suCnsP" type="text" maxlength="40" autocomplete="off" dir="ltr" aria-label="رمز تازه‌ی مشاور" placeholder="رمز تازه (خالی = بدون تغییر)"></div></div>
-        <button id="suCnsGo" class="btn" type="button" style="width:100%">ذخیره‌ی مشاور</button>
-        <div class="su-h">رمز دانش‌آموز</div>
-        <label class="sms-opt"><input type="checkbox" id="suStu2fa" style="width:auto;height:auto"> کد یک‌بار مصرف برای اولین ورود دانش‌آموز (امن‌تر)</label>
-        <div class="now-sub" id="suStu2faTx" style="margin:4px 0 10px"></div>
-        <div class="grid2"><div class="field"><select id="suPwC" aria-label="کلاس"></select></div><div class="field"><select id="suPwS" aria-label="دانش‌آموز"></select></div></div>
-        <div class="field"><input id="suPwSp" type="text" maxlength="40" autocomplete="off" dir="ltr" aria-label="رمز جدید دانش‌آموز" placeholder="رمز جدید (خالی = بازنشانی؛ دانش‌آموز خودش رمز تازه می‌سازد)"></div>
-        <button id="suPwSGo" class="btn" type="button" style="width:100%">تغییر رمز دانش‌آموز</button>
-        <div id="suPwOut"></div>
-      </div>
       </div>
       <div class="mg-sec" data-sec="set" data-t="تنظیمات عمومی" hidden>
-      <div class="mg-sec-d">لوگو و سربرگ مدرسه، و رمز مدیر.</div>
+      <div class="mg-sec-d">لوگو و سربرگ مدرسه. رمزها در ماژول «عملیات رمز» است.</div>
       <div class="card" id="imgCard">
         <div class="lbl" style="margin-bottom:8px">🖼 لوگو و سربرگ مدرسه</div>
         <div class="now-sub" style="margin-bottom:10px">تصویری که اینجا بارگذاری کنید برای همه‌ی کاربران (مدیر، دبیران، مشاور و دانش‌آموزان) در صفحه‌ی ورود، بالای برنامه و برگه‌های چاپی نمایش داده می‌شود. تصویر پیش از ارسال در همین گوشی کوچک و فشرده می‌شود.</div>
@@ -2070,7 +2102,27 @@ body.mods .send:active:not(:disabled){transform:translateY(2px);box-shadow:inset
         </div>
         <div class="now-sub" style="margin-top:8px">پیشنهاد: لوگو مربع (مثلاً ۵۱۲×۵۱۲ با پس‌زمینه‌ی شفاف)، سربرگ افقی (مثلاً ۱۶۰۰×۷۰۰).</div>
       </div>
+      </div>
+      <div class="mg-sec" data-sec="pw" data-t="عملیات رمز" hidden>
+      <div class="mg-sec-d">رمز مدیر، کد ورود دبیران و مشاور، و رمز ورود دانش‌آموزان. نام کاربری و رمز اولیه‌ی هر دانش‌آموز کد ملی اوست و بعد از اولین ورود باید رمز تازه بسازد.</div>
       <div id="setHost"></div>
+      <div class="card" id="stuPwCard">
+        <div class="lbl" style="margin-bottom:8px">🎓 رمز ورود دانش‌آموزان</div>
+        <div class="now-sub" id="pwSum" style="margin-bottom:10px"></div>
+        <div class="field"><select id="pwCls" aria-label="کلاس"></select></div>
+        <div id="pwList"></div>
+        <div class="mg-bar" id="pwBar" hidden><button id="pwAll" class="btn" type="button">↺ بازنشانی رمز همه‌ی کلاس به کد ملی</button><button id="pwPrint" class="btn" type="button">🖨 چاپ وضعیت رمز کلاس</button></div>
+      </div>
+      <div class="card" id="suPw">
+        <div class="lbl" style="margin-bottom:8px">👨‍🏫 کد ورود دبیران و مشاور</div>
+        <div class="su-h">کد ورود دبیر</div>
+        <div class="field"><select id="suPwT" aria-label="دبیر"></select></div>
+        <div class="su-add"><input id="suPwTc" type="text" maxlength="30" autocomplete="off" dir="ltr" aria-label="کد ورود جدید" placeholder="کد جدید (دست‌کم ۴ نویسه)"><button id="suPwTGo" class="btn" type="button">ذخیره‌ی کد</button></div>
+        <div class="su-h">مشاور</div>
+        <div class="now-sub" id="suCnsTx" style="margin-bottom:8px"></div>
+        <div class="grid2"><div class="field"><input id="suCnsN" type="text" maxlength="60" autocomplete="off" aria-label="نام مشاور" placeholder="نام و نام خانوادگی مشاور"></div><div class="field"><input id="suCnsP" type="text" maxlength="40" autocomplete="off" dir="ltr" aria-label="رمز تازه‌ی مشاور" placeholder="رمز تازه (خالی = بدون تغییر)"></div></div>
+        <button id="suCnsGo" class="btn" type="button" style="width:100%">ذخیره‌ی مشاور</button>
+      </div>
       </div>
       <div class="mg-sec" data-sec="pta" data-t="جلسات اولیا" hidden>
       <div class="mg-sec-d">ثبت جلسه‌ی اولیا و مربیان و حضور و غیاب اولیا به‌تفکیک کلاس؛ برای هر کلاس مشخص می‌شود کدام والد حضور داشته است.</div>
@@ -3301,10 +3353,9 @@ function dirClsFill() { const sl = $('#dirCls'), cur = sl.value; sl.textContent 
 let ROLE = '', SD = null, STU_K = 'dash', GM = 's', ISMGR = false, INB = null;
 const f2 = v => v == null ? '—' : fa(String(Math.round(v * 100) / 100).replace('.', '٫'));
 let STU2 = false;                    // «کد یک‌بار مصرف برای اولین ورود» روشن است؟ (از سرور)
-function gateStuHint() {
+function gateStuHint() {             // نسخه‌ی ۱٫۲۳: نام کاربری و رمز اولیه‌ی همه‌ی دانش‌آموزان کد ملی است
   const l = $('#gSecL'), h = $('#gSecH'); if (!l || !h) return;
-  l.textContent = STU2 ? 'رمز عبور (یا کد ورود، در اولین ورود)' : 'رمز عبور';
-  h.textContent = STU2 ? 'در اولین ورود، کد ورودی را که مدرسه به تو داده بنویس؛ بعد باید برای خودت رمز عبور بسازی.' : 'در اولین ورود خالی بگذار؛ بعد از ورود باید برای خودت رمز عبور بسازی.';
+  l.textContent = 'رمز عبور'; h.textContent = 'نام کاربری و رمز اولیه: کد ملی. بعد از اولین ورود باید برای خودت رمز تازه بسازی.';
 }
 $('#gPBack').addEventListener('click', () => { $('#gErr').hidden = true; gateMode(); });
 function gateFill() {
@@ -3557,6 +3608,53 @@ setTimeout(() => {          // بازگرداندن نشست قبلی بعد ا�
 $('#imgLogoF').addEventListener('change', e => { imgUp('logo', e.target.files[0]); e.target.value = ''; });
 $('#imgHeadF').addEventListener('change', e => { imgUp('head', e.target.files[0]); e.target.value = ''; });
 $('#imgLogoDel').addEventListener('click', () => imgDel('logo')); $('#imgHeadDel').addEventListener('click', () => imgDel('head'));
+/* --- عملیات رمز: رمز ورود دانش‌آموزان (نام کاربری و رمز اولیه = کد ملی) --- */
+let PWL = [];
+function stuPwInit() {
+  const c = $('#pwCls'); if (!c) return; const cur = c.value; c.textContent = '';
+  [''].concat(allClasses()).forEach(x => { const o = el('option', '', x || '— انتخاب کلاس —'); o.value = x; c.append(o); }); c.value = allClasses().includes(cur) ? cur : '';
+  stuPwSum(); if (c.value) stuPwLoad();
+}
+function stuPwSum() {
+  $('#pwSum').textContent = 'نام کاربری و رمز اولیه‌ی هر دانش‌آموز کد ملی اوست؛ بعد از اولین ورود باید رمز تازه بسازد. اگر رمزش را فراموش کرد، رمز او را اینجا به کد ملی برگردانید.'
+    + (SU ? (SU.stuNoPass ? ' | ' + fa(SU.stuNoPass) + ' دانش‌آموز هنوز با کد ملی وارد می‌شوند.' : ' | همه‌ی دانش‌آموزان رمز تازه ساخته‌اند.') : '');
+}
+async function stuPwLoad(o) {
+  const cls = $('#pwCls').value, box = $('#pwList'); $('#pwBar').hidden = !cls; if (!cls) { box.textContent = ''; PWL = []; return; }
+  const r = await send(Object.assign({ action:'codes', pin:MG.pin, cls:cls, key:ACCESS_KEY }, o || {}));
+  if (r.net) return toast('اینترنت در دسترس نیست.'); if (r.status !== 'ok') return toast(r.message || 'دریافت نشد');
+  PWL = r.list; box.textContent = '';
+  if (o && (o.reset || o.all)) toast(r.reset ? fa(r.reset) + ' رمز به کد ملی برگشت ✓' : 'رمزی برای بازنشانی نبود');
+  if (!PWL.length) { box.append(el('div', 'empty', 'در این کلاس دانش‌آموزی نیست.')); return; }
+  const cnt = f => fa(PWL.filter(f).length);
+  box.append(el('div', 'pw-sum', '✓ رمز تازه: ' + cnt(x => x.set) + ' | ⏳ هنوز کد ملی: ' + cnt(x => !x.set && x.id) + (PWL.some(x => !x.id) ? ' | ⚠ بدون کد ملی: ' + cnt(x => !x.id) : '')));
+  PWL.forEach(x => {
+    const row = el('div', 'pw-row'), st = !x.id ? ['bad', '⚠ کد ملی ثبت نشده'] : x.set ? ['ok', '✓ رمز شخصی ساخته'] : ['wait', '⏳ هنوز کد ملی'];
+    row.append(el('b', '', x.n + (x.x ? ' (' + x.x + ')' : '')), el('span', 'pw-st ' + st[0], st[1]));
+    if (x.set) { const b = el('button', 'btn', '↺ کد ملی'); b.type = 'button'; b.title = 'بازنشانی رمز ' + x.n + ' به کد ملی';
+      b.addEventListener('click', () => showModal({ icon:'warn', title:'بازنشانی رمز ' + x.n, msg:'رمز شخصی ' + x.n + ' پاک می‌شود و دوباره با کد ملی وارد می‌شود؛ بعد از ورود باید رمز تازه بسازد.',
+        buttons:[{ text:'انصراف', primary:true }, { text:'بازنشانی به کد ملی', onClick:() => stuPwLoad({ reset:x.n }) }] }));
+      row.append(b); }
+    box.append(row);
+  });
+}
+$('#pwCls').addEventListener('change', () => stuPwLoad());
+$('#pwAll').addEventListener('click', () => { const c = $('#pwCls').value; if (!c) return;
+  showModal({ icon:'warn', title:'بازنشانی رمز همه‌ی کلاس ' + c, msg:'رمز شخصی همه‌ی دانش‌آموزان این کلاس پاک می‌شود؛ همه دوباره با کد ملی وارد می‌شوند و باید رمز تازه بسازند.',
+    buttons:[{ text:'انصراف', primary:true }, { text:'بازنشانی همه', onClick:() => stuPwLoad({ all:true }) }] }); });
+$('#pwPrint').addEventListener('click', () => {
+  if (!PWL.length) return toast('ابتدا کلاس را انتخاب کنید'); const pa = $('#printArea'); pa.textContent = '';
+  pa.append(el('h1', '', 'رمز ورود دانش‌آموزان — ' + $('#pwCls').value), el('div', '', SCHOOL_NAME + ' | ' + fa(dateStr())),
+    tbl(['نام و نام خانوادگی', 'وضعیت رمز'], PWL.map(x => [x.n, !x.id ? 'کد ملی ثبت نشده' : x.set ? 'رمز شخصی ساخته' : 'هنوز کد ملی'])),
+    el('p', '', 'دانش‌آموز عزیز: نام کاربری و رمز اولیه‌ی تو کد ملی‌ات است. بعد از اولین ورود باید رمز تازه بسازی و آن را به کسی نگویی.'));
+  document.body.classList.add('printing'); window.print();
+});
+async function pwOpen() {             // ماژول «عملیات رمز»
+  setOpen(); stuPwInit();
+  const r = await send({ action:'setupInfo', pin:MG.pin, key:ACCESS_KEY }); if (r.status === 'ok') SU = r;
+  if (!DIR.teachers || !DIR.teachers.length) await loadDir();
+  suPwInit(); stuPwSum();
+}
 function setOpen() {
   imgApply();
   const h = $('#setHost'); h.textContent = ''; const c = el('div', 'card'); c.append(el('div', 'lbl', '🔑 تغییر رمز مدیر'));
@@ -4803,7 +4901,7 @@ window.addEventListener('appinstalled', () => { DP = null; inst(false); toast('�
 if (/iphone|ipad|ipod/i.test(navigator.userAgent) && !navigator.standalone) $('#iosHint').hidden = false;
 
 /* ======================= نسخه ۳: ورود امن، مرخصی، تقویم، خطر، کدها، گزارش ماهانه ======================= */
-let GFIRST = null, RK = [], LV = [];
+let GFIRST = null, LV = [];
 const fldOf = (l, n) => { const x = el('div', 'field'); x.append(el('label', '', l), n); return x; };
 const card1 = (t) => { const c = el('div', 'dir-it'); c.style.padding = '10px 14px'; return c; };
 /* پیامک عادی (برنامه‌ی پیش‌فرض پیامک گوشی مدیر، با شماره‌ی خود مدیر) به پدر و مادر؛ فقط در حضور و غیاب پنل مدیر */
@@ -5241,22 +5339,6 @@ $('#calAdd').addEventListener('click', async () => {
   if (r.status !== 'ok') return toast(r.message || 'ثبت نشد'); $('#calTitle').value = ''; toast('ثبت شد ✓'); calLoad();
 });
 $('#inbSel').addEventListener('change', () => { CALP_USER = false; if (CALP) calPerFill(); });
-/* --- مدیر: دانش‌آموزان در معرض خطر --- */
-async function loadRisk() { const r = await send({ action:'riskList', pin:MG.pin, key:ACCESS_KEY }); if (r.status === 'ok') { RK = r.list; renderRisk(); } }
-function renderRisk() {
-  const sl = $('#riskCls'), cur = sl.value; sl.textContent = '';
-  [''].concat(uniq(RK.map(x => x.c)).sort((a, b) => a.localeCompare(b, 'fa'))).forEach(c => { const o = el('option', '', c || 'همه کلاس‌ها'); o.value = c; sl.append(o); }); sl.value = cur;
-  const box = $('#riskList'); box.textContent = ''; const l = RK.filter(x => !sl.value || x.c === sl.value);
-  if (!l.length) { box.append(el('div', 'empty', RK.length ? 'در این کلاس موردی نیست.' : 'فعلاً دانش‌آموزی در معرض خطر شناسایی نشده است. 👏')); return; }
-  l.forEach(x => {
-    const d = card1(), h = el('div', 'dir-r'), pf = el('button', 'btn', 'پرونده'); pf.type = 'button';
-    h.append(el('span', 'now-t', x.n + ' | ' + x.c), el('span', 'badge ' + (x.lv === 'بالا' ? 'bad' : 'next'), 'خطر ' + x.lv));
-    pf.addEventListener('click', () => { $('#pfCls').value = x.c; pfStus(); $('#pfStu').value = x.n; pfLoad(); mgGo('pfCard'); });
-    const row = msgBtns(x.fp, 'اولیای گرامی، ' + x.n + ' در ' + SCHOOL_NAME + ': ' + x.why.join('، ') + '. لطفاً برای هماهنگی با مدرسه تماس بگیرید.'); row.append(pf);
-    d.append(h, el('div', 'now-sub', x.why.join(' | ')), row); box.append(d);
-  });
-}
-$('#riskCls').addEventListener('change', renderRisk);
 /* --- مدیر: مرخصی --- */
 /* --- مدیر: تأیید یا رد ویرایش نمره‌های دبیران --- */
 let NGM = [];
@@ -5483,22 +5565,6 @@ function renderLeaves() {
 }
 $('#leaveMore').addEventListener('click', () => { LV_SHOW = !LV_SHOW; renderLeaves(); });
 /* --- مدیر: کد ورود دانش‌آموزان --- */
-function codeInit() { const c = $('#cdCls'), cur = c.value; c.textContent = ''; [''].concat(allClasses()).forEach(x => { const o = el('option', '', x || '— کلاس —'); o.value = x; c.append(o); }); c.value = cur; }
-let CDL = [];
-async function codeLoad(gen, reset) {
-  const cls = $('#cdCls').value, box = $('#cdList'); if (!cls) { box.textContent = ''; return; }
-  const r = await send({ action:'codes', pin:MG.pin, cls:cls, gen:!!gen, reset:reset || '', key:ACCESS_KEY }); if (r.status !== 'ok') return toast(r.message || 'ناموفق');
-  CDL = r.list; box.textContent = '';
-  r.list.forEach(x => { const row = el('div', 'dir-r'), c = el('b', 'mono', x.code || '—'), b = el('button', 'btn', '↺'); b.type = 'button'; b.title = 'کد جدید و بازنشانی رمز';
-    b.addEventListener('click', () => showModal({ icon:'warn', title:'کد جدید برای ' + x.n, msg:'رمز شخصی او پاک می‌شود و باید با کد جدید دوباره رمز بسازد.', buttons:[{ text:'ساخت کد جدید', primary:true, onClick:() => codeLoad(false, x.n) }, { text:'انصراف' }] }));
-    row.append(el('span', '', x.n + (x.set ? ' ✓' : '')), c, b); box.append(row); });
-}
-$('#cdCls').addEventListener('change', () => codeLoad(false)); $('#cdGen').addEventListener('click', () => codeLoad(true));
-$('#cdPrint').addEventListener('click', () => {
-  if (!CDL.length) return toast('ابتدا کلاس را انتخاب کنید'); const pa = $('#printArea'); pa.textContent = '';
-  pa.append(el('h1', '', 'کد ورود دانش‌آموزان — ' + $('#cdCls').value), el('div', '', SCHOOL_NAME + ' | ' + fa(dateStr())), tbl(['نام و نام خانوادگی', 'کد ورود'], CDL.map(x => [x.n, x.code])), el('p', '', 'دانش‌آموز عزیز: بار اول با کد ملی و این کد وارد شوید و یک رمز شخصی بسازید.'));
-  document.body.classList.add('printing'); window.print();
-});
 /* --- مدیر: گزارش ماهانه، سابقه‌ی تغییرات، یادداشت رفتاری --- */
 /* ======================= راه‌اندازی مدرسه از داخل برنامه (نسخه‌ی ۱٫۱۱) =======================
    نام مدرسه، کلاس‌ها، دانش‌آموزان، دبیران، تخصیص درس، برنامه‌ی هفتگی و رمزهای ورود؛ بدون ویرایش مستقیم Google Sheet. */
@@ -5600,7 +5666,7 @@ async function suRefresh() {          // بعد از هر تغییر: فهرست
   await loadRoster(); await loadDir();
   const r = await send({ action:'setupInfo', pin:MG.pin, key:ACCESS_KEY }); if (r.status === 'ok') SU = r;
   fillDatalist('saStreamL', Object.keys(STUDENTS)); fillDatalist('saClsL', allClasses()); fillDatalist('suStL', uniq(Object.keys(STUDENTS).concat(['تجربی', 'انسانی'])));
-  [typeof edInit === 'function' && edInit, typeof excInit === 'function' && excInit, typeof pfInit === 'function' && pfInit, typeof codeInit === 'function' && codeInit].forEach(f => { try { if (f) f(); } catch (e) {} });
+  [typeof edInit === 'function' && edInit, typeof excInit === 'function' && excInit, typeof pfInit === 'function' && pfInit, typeof stuPwInit === 'function' && stuPwInit].forEach(f => { try { if (f) f(); } catch (e) {} });
   suClsList(); suTeachers(); suPwInit(); suHub();
 }
 async function mgPinNag() {           // نسخه‌ی خام: اگر رمز مدیر هنوز رمز اولیه است، یک بار در هر نشست هشدار بده
@@ -5608,7 +5674,7 @@ async function mgPinNag() {           // نسخه‌ی خام: اگر رمز م�
   const r = await send({ action:'setupInfo', pin:MG.pin, key:ACCESS_KEY }); if (r.status !== 'ok' || !r.mgPinWeak) return;
   try { sessionStorage.setItem('sia_pinnag', '1'); } catch (e) {}
   showModal({ icon:'warn', title:'رمز مدیر را تغییر دهید', msg:'رمز مدیر هنوز رمز اولیه‌ی برنامه است و هر کسی که فایل برنامه را دیده آن را می‌داند. همین حالا یک رمز تازه بگذارید.',
-    buttons:[{ text:'تغییر رمز', primary:true, onClick:() => mgShow('set', true) }, { text:'بعداً' }] });
+    buttons:[{ text:'تغییر رمز', primary:true, onClick:() => (MODS_OK ? openMod('m:pw') : mgShow('pw', true)) }, { text:'بعداً' }] });
 }
 function suGo(id) {                 // رفتن به مرحله؛ اگر در همین بخش است فقط پیمایش، وگرنه رفتن به بخش دیگر
   const c = document.getElementById(id); if (!c) return; const d = c.querySelector('details'); if (d) d.open = true;
@@ -5630,7 +5696,7 @@ function suHub() {
    ['دبیران', T.length ? fa(T.length) + ' دبیر' : 'هنوز دبیری ثبت نشده است', T.length ? 'ok' : 'todo', 'taCard'],
    ['تخصیص درس به دبیر', !T.length ? 'ابتدا دبیران را ثبت کنید' : noC.length ? fa(noC.length) + ' دبیر بدون درس: ' + noC.map(t => t.n).join('، ') : 'همه‌ی دبیران درس دارند', !T.length ? 'todo' : noC.length ? 'warn' : 'ok', 'suTc'],
    ['برنامه‌ی هفتگی', $('#suSchTx').textContent, !cls.length || !schC.length ? 'todo' : schC.length < cls.length ? 'warn' : 'ok', 'suSch'],
-   ['رمزهای ورود', SU ? pw.join(' | ') : 'در حال بررسی…', !SU ? 'todo' : pwSt.length ? 'warn' : 'ok', 'suPw']
+   ['عملیات رمز', SU ? pw.join(' | ') : 'در حال بررسی…', !SU ? 'todo' : pwSt.length ? 'warn' : 'ok', 'suPw']
   ].forEach((s, i) => {
     const b = el('button', 'su-step ' + s[2]), tx = el('span'); b.type = 'button';
     tx.append(el('b', '', s[0]), el('small', '', s[1]));
@@ -5707,47 +5773,19 @@ $('#suSchGo').addEventListener('click', () => mgGo('edCard'));
 function suPwInit() {
   const t = $('#suPwT'), tc = t.value; t.textContent = ''; const o0 = el('option', '', '— انتخاب دبیر —'); o0.value = ''; t.append(o0);
   (DIR.teachers || []).map(x => x.n).sort((a, b) => a.localeCompare(b, 'fa')).forEach(n => { const o = el('option', '', n + (SU && SU.tchNoCode.indexOf(n) >= 0 ? ' (بدون کد)' : '')); o.value = n; t.append(o); }); t.value = tc;
-  const c = $('#suPwC'), cc = c.value; c.textContent = ''; const o1 = el('option', '', '— کلاس —'); o1.value = ''; c.append(o1);
-  allClasses().forEach(x => { const o = el('option', '', x); o.value = x; c.append(o); }); c.value = allClasses().includes(cc) ? cc : ''; suPwStu();
-  $('#suStu2fa').checked = !!(SU && SU.stu2fa);
-  $('#suStu2faTx').textContent = !SU ? '' : 'رمز عبور برای همه‌ی دانش‌آموزان الزامی است؛ هر دانش‌آموز در اولین ورود رمز خودش را می‌سازد و بعد اطلاعات فردی‌اش را تکمیل می‌کند.'
-    + (SU.stuNoPass ? ' ' + fa(SU.stuNoPass) + ' دانش‌آموز هنوز رمز نساخته‌اند.' : '')
-    + (SU.stu2fa ? ' اولین ورود: کد ملی + کد ورودی که مدرسه می‌دهد (کدهای هر کلاس را از «دانش‌آموزان ← کد ورود» چاپ کنید).' : ' اولین ورود فقط با کد ملی است؛ با روشن‌کردن این گزینه، کسی که فقط کد ملی دانش‌آموز را می‌داند نمی‌تواند پیش از خودش رمز بسازد.');
   if (SU) { if (document.activeElement !== $('#suCnsN')) $('#suCnsN').value = SU.cnsName || '';
     $('#suCnsTx').textContent = SU.cnsOn ? '✓ ورود مشاور فعال است' + (SU.cnsName ? ' (' + SU.cnsName + ')' : '') + '.' : 'ورود مشاور خاموش است؛ با تعیین نام و رمز فعال می‌شود.'; }
-  $('#suMgTx').textContent = !SU ? '' : SU.mgPinCustom ? '✓ رمز مدیر تغییر داده شده است.' : '⚠️ رمز مدیر هنوز رمز اولیه‌ی فایل Code.gs است؛ آن را تغییر دهید.';
 }
-function suPwStu() {
-  const s = $('#suPwS'), c = $('#suPwC').value; s.textContent = ''; const o0 = el('option', '', c ? '— دانش‌آموز —' : 'ابتدا کلاس'); o0.value = ''; s.append(o0);
-  suStuOf(c).slice().sort((a, b) => a.localeCompare(b, 'fa')).forEach(n => { const o = el('option', '', n); o.value = n; s.append(o); });
-}
-$('#suPwC').addEventListener('change', suPwStu);
 $('#suCnsGo').addEventListener('click', async () => {
   const n = $('#suCnsN').value.trim(), p = $('#suCnsP').value.trim(); if (n.length < 3) return toast('نام مشاور را کامل بنویسید.'); if (p && p.length < 6) return toast('رمز مشاور باید دست‌کم ۶ نویسه باشد.');
   const r = await suSend({ action:'setCounselor', name:n, newPin:p }, $('#suCnsGo')); if (!r) return; $('#suCnsP').value = ''; COUNSELOR_NAME = r.name;
   toast('مشاور ذخیره شد ✓' + (p ? ' | رمز تازه را به مشاور بدهید' : '')); suSoft();
 });
-$('#suMgPw').addEventListener('click', () => mgShow('set', true));
 $('#suPwTGo').addEventListener('click', async () => {
   const n = $('#suPwT').value, c = en($('#suPwTc').value.trim()); if (!n) return toast('دبیر را انتخاب کنید.'); if (c.length < 4) return toast('کد ورود باید دست‌کم ۴ نویسه باشد.');
   const r = await suSend({ action:'tchCode', n:n, code:c }, $('#suPwTGo')); if (!r) return; $('#suPwTc').value = '';
   if (r.noCode && r.noCode.length) showModal({ icon:'warn', title:'کد ورود ذخیره شد', msg:'این دبیران هنوز کد ورود ندارند و تا کد نگیرند نمی‌توانند وارد شوند: ' + r.noCode.join('، '), buttons:[{ text:'متوجه شدم', primary:true }] });
   else toast('کد ورود ' + n + ' ذخیره شد ✓'); suRefresh();
-});
-$('#suStu2fa').addEventListener('change', e => {
-  const on = e.target.checked; e.target.checked = !on;
-  showModal({ icon:'warn', title:on ? 'کد یک‌بار مصرف برای اولین ورود' : 'اولین ورود فقط با کد ملی', msg:on ? 'دانش‌آموزی که هنوز رمز نساخته، در اولین ورود علاوه بر کد ملی کدی را که مدرسه می‌دهد می‌نویسد و بعد رمز می‌سازد. برای دانش‌آموزان بدون کد، کد ساخته می‌شود؛ کدها را از «دانش‌آموزان ← کد ورود» چاپ و توزیع کنید. دانش‌آموزانی که رمز دارند تغییری نمی‌بینند.' : 'دانش‌آموزی که هنوز رمز نساخته، فقط با کد ملی وارد می‌شود و بلافاصله باید رمز بسازد. دانش‌آموزانی که رمز دارند تغییری نمی‌بینند.',
-    buttons:[{ text:on ? 'روشن کن' : 'خاموش کن', primary:true, onClick:async () => { const r = await suSend({ action:'setStu2fa', on:on }); if (!r) return; toast(on ? 'کد یک‌بار مصرف روشن شد' + (r.made ? ' | ' + fa(r.made) + ' کد ورود تازه ساخته شد' : '') : 'کد یک‌بار مصرف خاموش شد'); suRefresh(); } }, { text:'انصراف' }] });
-});
-$('#suPwSGo').addEventListener('click', async () => {
-  const c = $('#suPwC').value, n = $('#suPwS').value, pw = $('#suPwSp').value.trim(), out = $('#suPwOut'); out.textContent = '';
-  if (!c || !n) return toast('کلاس و دانش‌آموز را انتخاب کنید.'); if (pw && pw.length < 6) return toast('رمز باید دست‌کم ۶ نویسه باشد.');
-  const r = await suSend({ action:'stuPass', cls:c, n:n, newPass:pw }, $('#suPwSGo')); if (!r) return; $('#suPwSp').value = '';
-  const box = el('div', 'su-out');
-  if (r.code && SU && SU.stu2fa) { box.append(document.createTextNode('رمز ' + n + ' پاک شد. کد ورود تازه: '), el('code', '', r.code)); box.append(el('div', 'now-sub', 'دانش‌آموز با کد ملی و همین کد وارد می‌شود و رمز عبور تازه می‌سازد.')); }
-  else if (r.code) { box.append(document.createTextNode('رمز ' + n + ' پاک شد ✓')); box.append(el('div', 'now-sub', 'دانش‌آموز در ورود بعدی با کد ملی وارد می‌شود و باید رمز عبور تازه بسازد.')); }
-  else box.append(document.createTextNode('رمز ' + n + ' تعیین شد ✓'));
-  out.append(box);
 });
 
 /* --- مدیر: درج دانش‌آموز و دبیر، و حذف نمره‌ی ثبت‌شده --- */
@@ -5860,7 +5898,7 @@ function gdAsk(r, name) {
       if (q.net) return toast('اینترنت در دسترس نیست.');
       if (q.status !== 'ok') return toast(q.message || 'حذف نشد.');
       MG.gr = MG.gr.filter(x => !(String(x[0]) === String(r[0]) && String(x[3]) === String(r[3]) && String(x[4]) === String(r[4]) && String(x[7]) === String(r[7]) && (!name || norm(String(x[6])) === norm(name))));
-      toast('حذف شد ✓'); gdInit(); mgRender(); renderTop(); loadRisk();
+      toast('حذف شد ✓'); gdInit(); mgRender(); renderTop();
     } }, { text:'انصراف' }] });
 }
 $('#gdCls').addEventListener('change', gdRender);
@@ -5891,7 +5929,7 @@ async function pfBeh() {
   add.addEventListener('click', async () => { if (!inp.value.trim()) return; const r = await send({ action:'behAdd', pin:MG.pin, cls:PF.cls, name:PF.name, kind:kind.value, note:inp.value.trim(), key:ACCESS_KEY }); if (r.status !== 'ok') return toast(r.message || 'ثبت نشد'); inp.value = ''; toast('ثبت شد ✓'); ld(); });
   ld();
 }
-function v3Init() { cmInit(); srInit(); loadRisk(); loadLeaves(); tlMgWire(); tlMgLoad(); taFormInit(); taList(); ngMgLoad(); dgInit(); codeInit(); mcInit(); if (!window.__lvPoll) window.__lvPoll = setInterval(() => { if (MG.pin && !$('#mgBody').hidden) { loadLeaves(); tlMgLoad(); ngMgLoad(); } }, 60000); }   // درخواست‌های مرخصی هر دقیقه بررسی می‌شود
+function v3Init() { cmInit(); srInit(); loadLeaves(); tlMgWire(); tlMgLoad(); taFormInit(); taList(); ngMgLoad(); dgInit(); stuPwInit(); mcInit(); if (!window.__lvPoll) window.__lvPoll = setInterval(() => { if (MG.pin && !$('#mgBody').hidden) { loadLeaves(); tlMgLoad(); ngMgLoad(); } }, 60000); }   // درخواست‌های مرخصی هر دقیقه بررسی می‌شود
 
 /* ---------- گزینه پیامک ---------- */
 if (!SMS_ENABLED) $('#smsOpt').hidden = true;
@@ -6113,7 +6151,6 @@ async function cnsProfile(box, name, cls) {
   if (r.overall) box.append(infoRow('معدل وزنی (از ۲۰)', f2(r.overall.me) + (r.overall.cls != null ? ' | میانگین کلاس ' + f2(r.overall.cls) : '')));
   if (r.rank && r.rank.pos) box.append(infoRow('رتبه در کلاس', fa(r.rank.pos) + ' از ' + fa(r.rank.of)));
   if (r.att) box.append(infoRow('حضور و غیاب', 'غیبت ' + fa(r.att.absent) + ' | تأخیر ' + fa(r.att.late) + ' | موجه ' + fa(r.att.excused)));
-  if (r.risk) box.append(infoRow('هشدار', 'سطح ' + r.risk.lv + ': ' + r.risk.why.join('، ')));
   box.append(telRow('پدر', r.fn, r.fp), telRow('مادر', r.mn, r.mp), telRow('دانش‌آموز', '', r.sp));
   if (r.courses && r.courses.length) box.append(el('div', 'lbl', 'میانگین درس‌ها'), tbl(['درس', 'واحد', 'دانش‌آموز', 'کلاس'], r.courses.map(x => [x.c, uTx(x.u), f2(x.me), f2(x.cls)])));
   if (r.beh && r.beh.length) box.append(el('div', 'lbl', 'یادداشت‌های رفتاری'), tbl(['زمان', 'نوع', 'یادداشت', 'ثبت‌کننده'], r.beh.map(x => [fa(x.t), x.k, x.n, x.w])));
@@ -6954,6 +6991,7 @@ const TIC = {
   'm:rep':'<path d="M4 20h16"/><rect x="6" y="11" width="3" height="7" rx="1"/><rect x="11" y="6" width="3" height="12" rx="1"/><rect x="16" y="13" width="3" height="5" rx="1"/>',
   'm:dis':'<path d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6z"/><path d="M12 8v5M12 16h.01"/>',
   'm:tch':'<rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20l4-4 4 4"/><path d="M7 9h7"/>',
+  'm:pw':'<circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M17 6l3 3M15 8l2 2"/>',
   'm:sys':'<ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v12c0 1.7 3.1 3 7 3s7-1.3 7-3V6"/><path d="M5 12c0 1.7 3.1 3 7 3s7-1.3 7-3"/>',
   's:prof':'<circle cx="10" cy="8" r="4"/><path d="M3 21c0-3.9 3.1-7 7-7"/><path d="M14 20l6-6 2 2-6 6h-2z"/>',
   's:dash':'<path d="M4 16a8 8 0 1116 0"/><path d="M12 16l4-5"/><path d="M3 20h18"/>',
@@ -6966,14 +7004,14 @@ const TIC = {
   's:vis':'<circle cx="8" cy="7" r="3"/><circle cx="16" cy="7" r="3"/><path d="M2 20c0-3 2.7-5.5 6-5.5s6 2.5 6 5.5M10 20c0-3 2.7-5.5 6-5.5s6 2.5 6 5.5"/>'
 };
 TIC['s:sch'] = TIC.sch; TIC['s:cal'] = TIC['m:cal']; TIC['s:att'] = TIC.att;
-const TTONE = { att:'p', gr:'g', sch:'b', inb:'n', cns:'b', dis:'n', stf:'g', 'm:today':'n', 'm:cal':'b', 'm:stu':'p', 'm:setup':'g', 'm:set':'n', 'm:pta':'b', 'm:rep':'g', 'm:dis':'n', 'm:tch':'b', 'm:sys':'n',
+const TTONE = { att:'p', gr:'g', sch:'b', inb:'n', cns:'b', dis:'n', stf:'g', 'm:today':'n', 'm:cal':'b', 'm:stu':'p', 'm:setup':'g', 'm:set':'n', 'm:pta':'b', 'm:rep':'g', 'm:dis':'n', 'm:tch':'b', 'm:sys':'n', 'm:pw':'g',
   's:prof':'g', 's:dash':'n', 's:sch':'b', 's:plan':'p', 's:qz':'g', 's:kar':'n', 's:att':'p', 's:avg':'b', 's:mock':'g', 's:cal':'b', 's:leave':'n', 's:vis':'p' };
 const TTITLE = { att:'حضور و غیاب', gr:'ثبت نمرات', sch:'برنامه هفتگی', inb:'کارتابل', cns:'مشاوره', dis:'انضباطی', stf:'ورود و خروج',
   's:prof':'تکمیل اطلاعات', 's:dash':'وضعیت من', 's:sch':'برنامه هفتگی', 's:plan':'برنامه مطالعه', 's:qz':'آزمونک‌ها', 's:kar':'کارنامه', 's:att':'حضور و غیاب', 's:avg':'میانگین کلاس',
   's:mock':'آزمون‌های آزمایشی', 's:cal':'تقویم آزمون و تکلیف', 's:leave':'درخواست مرخصی', 's:vis':'مراجعه‌ی اولیا' };
 const TDESC = { att:'غایبین و تأخیر هر زنگ', gr:'نمره‌ی آزمون‌ها و فعالیت‌ها', sch:'برنامه‌ی هفتگی و زنگ جاری', inb:'کلاس‌ها، تحلیل آزمون و تقویم', cns:'درخواست و پیگیری مشاوره', dis:'موارد انضباطی و تشویقی',
-  stf:'ورود، خروج و مرخصی', 'm:today':'غایبین، هشدارها و میز کار', 'm:cal':'آزمون‌ها و تکالیف همه‌ی کلاس‌ها', 'm:stu':'غیبت موجه، در معرض خطر، مشاوره', 'm:setup':'کلاس‌ها، دانش‌آموزان، دبیران، زنگ‌ها',
-  'm:set':'لوگو، سربرگ و رمز مدیر', 'm:pta':'جلسات و حضور اولیا', 'm:rep':'گزارش‌ها، نمودارها و آمار', 'm:dis':'پرونده‌ی انضباطی و پرورشی', 'm:tch':'مرخصی، عدم حضور و برنامه‌ی دبیران', 'm:sys':'بانک اطلاعات و سامانه',
+  stf:'ورود، خروج و مرخصی', 'm:today':'غایبین، هشدارها و میز کار', 'm:cal':'آزمون‌ها و تکالیف همه‌ی کلاس‌ها', 'm:stu':'پرونده، مشاوره، آزمون آزمایشی', 'm:setup':'کلاس‌ها، دانش‌آموزان، دبیران، زنگ‌ها',
+  'm:set':'لوگو و سربرگ مدرسه', 'm:pw':'رمز مدیر، کد دبیران، رمز دانش‌آموزان', 'm:pta':'جلسات و حضور اولیا', 'm:rep':'گزارش‌ها، نمودارها و آمار', 'm:dis':'پرونده‌ی انضباطی و پرورشی', 'm:tch':'مرخصی، عدم حضور و برنامه‌ی دبیران', 'm:sys':'بانک اطلاعات و سامانه',
   's:prof':'پیش از همه، این بخش را کامل کن', 's:dash':'معدل، رتبه و نشان‌ها', 's:sch':'کلاس‌های هر روز', 's:plan':'برنامه‌ی روزانه‌ی درس خواندن', 's:qz':'آزمون‌های آنلاین کلاس', 's:kar':'میانگین هر درس و کارنامه',
   's:att':'غیبت‌ها و تأخیرهای من', 's:avg':'مقایسه با میانگین کلاس', 's:mock':'تراز و رتبه‌ی آزمون‌ها', 's:cal':'آزمون‌ها و تکالیف پیش رو', 's:leave':'درخواست مرخصی از مدرسه', 's:vis':'نوبت مراجعه‌ی اولیا' };
 document.body.classList.add('mods');   // نشانه‌ی حالت ماژول‌ها روی body
@@ -6983,7 +7021,7 @@ function modKeys() {
   if (ROLE === 'student') return ['s:dash', 's:sch', 's:plan', 's:qz', 's:kar', 's:att', 's:avg', 's:mock', 's:cal', 's:leave', 's:vis'];
   if (ROLE === 'counselor') return ['cns', 'sch'];
   if (ROLE === 'manager') {
-    const def = ['m:today', 'att', 'gr', 'm:stu', 'm:cal', 'sch', 'inb', 'm:tch', 'm:dis', 'm:pta', 'm:rep', 'm:setup', 'm:sys', 'm:set'];
+    const def = ['m:today', 'att', 'gr', 'm:stu', 'm:cal', 'sch', 'inb', 'm:tch', 'm:dis', 'm:pta', 'm:rep', 'm:setup', 'm:sys', 'm:pw', 'm:set'];
     const all = def.concat($$('#mgBody .mg-sec').map(x => 'm:' + x.dataset.sec).filter(k => !def.includes(k))), o = TILES_ORD.filter(k => all.includes(k));
     return o.concat(all.filter(k => !o.includes(k)));
   }
@@ -7049,6 +7087,8 @@ function paintDots() {                 // نشانگرهای زبانه‌ها �
 { let tm; const later = () => { clearTimeout(tm); tm = setTimeout(paintDots, 60); }, mo = new MutationObserver(later);
   ['.tabs', '#mgNav', '#stuNav'].forEach(q => { const x = document.querySelector(q); if (x) mo.observe(x, { subtree:true, childList:true, characterData:true, attributes:true, attributeFilter:['class'] }); }); }
 function modHead(k) {
+  document.body.dataset.mod = k; document.body.dataset.tone = TTONE[k] || 'n';     // رنگ و سربرگ پنل‌های داخل ماژول
+  document.body.style.setProperty('--mod-ic', 'url("data:image/svg+xml,' + encodeURIComponent(tSvg(k).replace('stroke="currentColor"', 'stroke="white" xmlns="http://www.w3.org/2000/svg"').replace('stroke-width="2"', 'stroke-width="2.2"')) + '")');
   $('#modTitle').textContent = modTitle(k); const ic = $('#modIc'); ic.className = 'ti-ic tone-' + (TTONE[k] || 'n'); ic.innerHTML = tSvg(k);
   $('#modRef').hidden = !(ROLE === 'manager' && k.indexOf('m:') === 0);
 }
@@ -7061,7 +7101,7 @@ function showLauncher() {
   LAUNCH_ON = true; MOD = null;
   ['home', 'att', 'gr', 'mg', 'sch', 'inb', 'cns', 'stf', 'dis'].forEach(k => { const x = $('#p-' + k); if (x) x.hidden = true; });
   $('#common').hidden = true; $('#p-stu').hidden = true; $('#modBar').hidden = true; $('#launch').hidden = false;
-  document.body.classList.remove('in-mod'); launchHead(); renderTiles(); window.scrollTo({ top:0 });
+  document.body.classList.remove('in-mod'); delete document.body.dataset.mod; launchHead(); renderTiles(); window.scrollTo({ top:0 });
 }
 function openMod(k) {
   if (TEDIT) return;
@@ -7069,7 +7109,30 @@ function openMod(k) {
   modShow(k);
   if (k.indexOf('m:') === 0) { setTab('mg'); mgShow(k.slice(2)); } else setTab(k);
 }
-function modAfter(k) {                 // setTab / mgShow / stuNav: نوار ماژول هم‌گام شود؛ اگر از صفحه‌ی ماژول‌ها صدا زده شد، همان ماژول باز شود
+const LBL_EMO = /^\s*((?:\p{Extended_Pictographic}|\p{Regional_Indicator})(?:\uFE0F|\u20E3|\p{Emoji_Modifier}|\u200D\p{Extended_Pictographic})*)\s*/u;
+function cardDeco() {                 // نشانِ آغاز عنوان هر پنل ← کاشی کوچک رنگی کنار عنوان
+  $$('.card > .lbl:first-child, .card > .dg-h:first-child + .lbl').forEach(l => {
+    if (l.querySelector(':scope > .lbl-ic')) return; const t = l.firstChild; if (!t || t.nodeType !== 3) return;
+    const m = t.nodeValue.match(LBL_EMO); if (!m) return;
+    t.nodeValue = t.nodeValue.slice(m[0].length); const i = el('i', 'lbl-ic', m[1]); i.setAttribute('aria-hidden', 'true'); l.prepend(i);
+  });
+}
+function secIndex(k) {                // کاشی‌های کوچکِ پنل‌های یک ماژول مدیر؛ با زدن، همان پنل نمایش داده می‌شود
+  const sec = document.querySelector('#mgBody .mg-sec[data-sec="' + k + '"]'); if (!sec) return;
+  const old = sec.querySelector(':scope > .sub-tiles'); if (old) old.remove();
+  const cards = Array.from(sec.querySelectorAll(':scope > .card, :scope > div:not(.card):not(.mg-sec-d) > .card')).filter(c => !c.hidden && getComputedStyle(c).display !== 'none').map(c => [c, c.querySelector(':scope > .lbl')]).filter(x => x[1] && x[1].textContent.trim());
+  if (cards.length < 3) return;
+  const nav = el('nav', 'sub-tiles'); nav.setAttribute('aria-label', 'پنل‌های این ماژول');
+  cards.forEach((x, i) => {
+    const ic = x[1].querySelector(':scope > .lbl-ic'), b = el('button', 'sub-tile'); b.type = 'button';
+    b.append(el('i', ic ? 'emo' : '', ic ? ic.textContent : fa(i + 1)), el('span', '', x[1].textContent.slice(ic ? ic.textContent.length : 0).replace(/^[^\p{L}\p{N}]+/u, '').replace(/^[\d۰-۹]+\s*[.)\-–]\s*/, '').trim()));
+    b.addEventListener('click', () => { x[0].scrollIntoView({ behavior:'smooth', block:'start' }); x[0].classList.remove('flash'); void x[0].offsetWidth; x[0].classList.add('flash'); });
+    nav.append(b);
+  });
+  const d = sec.querySelector(':scope > .mg-sec-d'); if (d) d.after(nav); else sec.prepend(nav);
+}
+function modAfter(k) {
+  if (MODS_OK) cardDeco();                 // setTab / mgShow / stuNav: نوار ماژول هم‌گام شود؛ اگر از صفحه‌ی ماژول‌ها صدا زده شد، همان ماژول باز شود
   if (!MODS_OK || !ROLE || !k) return;
   if (LAUNCH_ON) { if (k.indexOf('s:') === 0) $('#p-stu').hidden = false; modShow(k); if (k.indexOf('m:') === 0) setTab('mg'); return; }
   if (MOD !== k) { MOD = k; modHead(k); }
@@ -7089,9 +7152,10 @@ function mgShow(k, scroll) {
   if (window.innerWidth < 900) { const ab = $('#mgNav .mg-nb.on'); if (ab && ab.scrollIntoView) ab.scrollIntoView({ block:'nearest', inline:'center' }); }   // منوی افقی موبایل: بخش فعال دیده شود
   if (k === 'dis' && MG.pin && !$('#mgBody').hidden) disOpen('m');
   if (k === 'pta' && MG.pin && !$('#mgBody').hidden) ptOpen();
-  if (k === 'set' && MG.pin && !$('#mgBody').hidden) setOpen();
+  if (k === 'set' && MG.pin && !$('#mgBody').hidden) imgApply();
+  if (k === 'pw' && MG.pin && !$('#mgBody').hidden) pwOpen();
   if (k === 'setup' && MG.pin && !$('#mgBody').hidden) suOpen();
-  modAfter('m:' + k);
+  modAfter('m:' + k); if (MODS_OK) secIndex(k);
   if (scroll) { const r = $('#mgNav').getBoundingClientRect(); if (r.top < 0) $('#mgNav').scrollIntoView({ behavior:'smooth', block:'start' }); }
 }
 function mgGo(id) {               // رفتن به یک کارت، حتی اگر در بخش دیگری باشد
@@ -7106,24 +7170,22 @@ function mgGo(id) {               // رفتن به یک کارت، حتی اگر
   const num = s => { const m = /\d+/.exec(en(s || '')); return m ? +m[0] : 0; };
   const paint = () => {
     const al = $('#alertCard').hidden ? 0 : $('#alertList').children.length, lv = num($('#leaveCnt').textContent), cn = num($('#cmCnt').textContent), df = num($('#disOpenCnt').textContent);
-    const hi = RK.filter(x => x.lv === 'بالا').length;
     const abs = {}; (MG.att || []).forEach(r => { if (en(String(r[0])) === abToday() && String(r[7]) === 'غایب') abs[normT(r[3]) + '|' + normT(r[6])] = 1; }); const ab = Object.keys(abs).length;
     const T = [['abFindCard', ab, 'دانش‌آموز غایب امروز', 'امروز غایبی ثبت نشده', 'warn'],
       ['alertCard', al, 'زنگ بدون حضور و غیاب', 'حضور و غیاب امروز کامل است', 'bad'],
       ['leaveCard', lv, 'مرخصی در انتظار تصمیم', 'مرخصی در انتظار نیست', 'warn'],
-      ['riskCard', RK.length, 'در معرض خطر' + (hi ? ' (' + fa(hi) + ' خطر بالا)' : ''), 'کسی در معرض خطر نیست', hi ? 'bad' : 'warn'],
       ['cnsMgCard', cn, 'مشاوره‌ی منتظر تأیید', 'تأیید مشاوره لازم نیست', 'warn'],
       ['disMgCard', df, 'تماس با خانواده‌ی سررسیدشده', 'پیگیری معوقی نیست', 'warn']];
     const box = $('#mgAttn'); box.textContent = '';
     T.forEach(t => { const b = el('button', 'mg-at ' + (t[1] ? t[4] : 'ok')); b.type = 'button'; b.append(el('b', '', t[1] ? fa(t[1]) : '✓'), el('span', '', t[1] ? t[2] : t[3]));
       b.addEventListener('click', () => mgGo(t[0])); box.append(b); });
     $('#mgDeskStamp').textContent = $('#mgStamp').textContent;
-    const dot = { today:al + lv > 0, stu:RK.length + cn > 0, dis:df > 0 };
+    const dot = { today:al + lv > 0, stu:cn > 0, dis:df > 0 };
     $$('#mgNav button').forEach(b => b.classList.toggle('dot', !!dot[b.dataset.sec]));
   };
   let tm; const later = () => { clearTimeout(tm); tm = setTimeout(paint, 80); };
   const mo = new MutationObserver(later);
-  ['#alertList', '#leaveCnt', '#cmCnt', '#riskList', '#mgStamp', '#disOpenCnt'].forEach(s => { const e = $(s); if (e) mo.observe(e, { childList:true, subtree:true, characterData:true }); });
+  ['#alertList', '#leaveCnt', '#cmCnt', '#mgStamp', '#disOpenCnt'].forEach(s => { const e = $(s); if (e) mo.observe(e, { childList:true, subtree:true, characterData:true }); });
   mo.observe($('#alertCard'), { attributes:true, attributeFilter:['hidden'] });
   paint();
 })();
