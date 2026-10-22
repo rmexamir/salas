@@ -16,12 +16,13 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxzPr6P54uH4gV_rQrss
 // کلید دسترسی اختیاری (باید با ACCESS_KEY در Code.gs یکی باشد)
 const ACCESS_KEY = "";
 // نسخه‌ی برنامه — با هر به‌روزرسانی این عدد بالا می‌رود و در صفحه‌ی ورود و پایین صفحه نمایش داده می‌شود.
-const APP_VERSION = "1.20";
+const APP_VERSION = "1.21";
 // (اختیاری) لینک Google Sheet برای دکمه «باز کردن Google Sheet» در تب مدیر
 const SHEET_URL = "https://docs.google.com/spreadsheets/d/10i-IGQKyj078M6kJ7YhdAniuJInl6JemwVxAqs7FnrY/edit";
 const DEFAULT_MAX_SCORE = 20;
 // پیامک خودکار به اولیای غایبین و متأخرین (نیازمند راه‌اندازی sms-addon.gs)
 const SMS_ENABLED = false;
+// مقدار اولیه‌ی شیفت و ساعت زنگ‌ها؛ از «راه‌اندازی مدرسه ← نوع مدرسه، شیفت و زنگ‌ها» در پنل مدیر قابل تغییر است و آن تنظیم جای این‌ها را می‌گیرد.
 // مدرسه چرخشی: هفته‌ها یک‌درمیان صبح و ظهر. هفته‌ی شروع (شنبه ۱۸ مهر ۱۴۰۵ = ۱۰ اکتبر ۲۰۲۶) شیفت ظهر است.
 const SHIFT_ANCHOR = { y:2026, m:10, d:10, shift:"afternoon" };   // مدرسه‌ی تک‌نوبتی: fixed:"morning" (یا "afternoon") اضافه کنید تا همیشه همان نوبت باشد
 const SHIFT_TIMES = {
@@ -324,7 +325,18 @@ a.tel{display:inline-flex;align-items:center;min-height:44px;padding:0 14px;bord
 .gate-logo{display:block;width:116px;height:116px;margin:-58px auto 10px;padding:7px;border-radius:50%;background:#FDFDFB;border:3px solid #D4AF4F;box-shadow:0 10px 24px rgba(0,0,0,.3);object-fit:contain}
 @keyframes rise{from{opacity:0;transform:translateY(8px)}}
 @media(prefers-reduced-motion:reduce){.card{animation:none}}
-.brd{display:grid;grid-template-columns:78px repeat(3,minmax(0,1fr));gap:4px;align-items:stretch}
+.hero-sub{margin:4px 0 0;font-size:13.5px;font-weight:700;color:#fff;opacity:.9} body.signed .hero-sub{display:none}
+.zc-sh{margin:10px 0;padding:10px;border:1.5px dashed var(--line);border-radius:12px}
+.zc-sh>b{display:block;margin-bottom:6px}
+.zc-row{display:grid;grid-template-columns:auto minmax(0,1fr) minmax(0,1fr) 36px;gap:6px;align-items:center;margin-top:6px}
+.zc-row .num{white-space:nowrap;font-size:13px;font-weight:800} .zc-row input{direction:ltr;text-align:center;min-width:0;padding-inline:4px}
+.zc-br{font-size:12.5px;color:var(--muted);text-align:center;margin:4px 0}
+.zc-br.bad{color:var(--absent);font-weight:800}
+.zc-gen{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;align-items:end;margin-top:8px}
+.zc-gen label{font-size:12px;color:var(--muted)} .zc-gen input{direction:ltr;text-align:center;min-width:0}
+.zc-days{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.zc-days label{font-size:12.5px;color:var(--muted);display:flex;flex-direction:column;gap:4px}
+.brd{display:grid;grid-template-columns:78px repeat(3,minmax(0,1fr));gap:4px;align-items:stretch} #boardBody{overflow-x:auto}
 .brd .bh{font-size:11px;text-align:center;color:var(--muted);font-weight:700}
 .bc-name{font-size:11.5px;font-weight:800;display:flex;align-items:center;line-height:1.3}
 .bc{display:flex;flex-direction:column;gap:1px;justify-content:center;text-align:center;border-radius:10px;padding:6px 3px;font-size:11px;line-height:1.35;min-height:62px;background:var(--input);color:var(--muted)}
@@ -1434,6 +1446,7 @@ input[type=tel]:focus,input[type=number]:focus,input[type=email]:focus{border-co
   <div class="hero-inner">
     <img id="logo" class="logo" alt="" hidden>
     <h1 id="schoolName"></h1>
+    <p id="schoolSub" class="hero-sub" hidden></p>
     <p id="motto"></p>
   </div>
 </header>
@@ -1444,6 +1457,7 @@ input[type=tel]:focus,input[type=number]:focus,input[type=email]:focus{border-co
     <img id="gateLogo" class="gate-logo" alt="لوگوی دبیرستان صلاح‌الدین ایوبی" hidden>
     <h2 style="margin:0 0 2px;font-size:20px">ورود به سامانه</h2>
     <div class="now-sub" id="gSchool" style="margin-bottom:12px">دبیرستان صلاح‌الدین ایوبی</div>
+    <div class="now-sub" id="gSchoolSub" hidden style="margin:-8px 0 12px;font-weight:700"></div>
     <div id="gRole" class="chips" style="grid-template-columns:repeat(4,1fr);margin-bottom:12px"></div>
     <div id="gS"><div class="field"><label for="gNid">کد ملی دانش‌آموز</label><input id="gNid" type="text" inputmode="numeric" maxlength="12" autocomplete="off" placeholder="کد ملی ۱۰ رقمی" style="direction:ltr;text-align:center"></div>
       <div class="field"><label for="gSec" id="gSecL">رمز عبور</label><input id="gSec" type="password" autocomplete="current-password" style="direction:ltr;text-align:center"><div class="now-sub" id="gSecH" style="margin-top:4px">در اولین ورود خالی بگذار؛ بعد از ورود باید برای خودت رمز عبور بسازی.</div></div></div>
@@ -1767,11 +1781,11 @@ input[type=tel]:focus,input[type=number]:focus,input[type=email]:focus{border-co
       </div>
       <div class="card" id="excCard">
         <div class="lbl" style="margin-bottom:8px">ثبت غیبت موجه (فقط مدیر)</div>
-        <div class="now-sub" style="margin-bottom:8px">غیبت موجه برای زنگ‌های انتخاب‌شده (پیش‌فرض هر سه زنگ) ثابت می‌شود و دبیر نمی‌تواند آن را تغییر دهد.</div>
+        <div class="now-sub" style="margin-bottom:8px">غیبت موجه برای زنگ‌های انتخاب‌شده (پیش‌فرض همه‌ی زنگ‌ها) ثابت می‌شود و دبیر نمی‌تواند آن را تغییر دهد.</div>
         <div class="mg-bar"><input id="excDate" type="text" inputmode="numeric" placeholder="تاریخ (مثلاً ۱۴۰۵/۰۷/۱۷)" aria-label="تاریخ"><select id="excCls" aria-label="کلاس"></select></div>
         <div id="excStu"></div>
         <div class="field"><input id="excWhy" type="text" maxlength="80" placeholder="علت (اختیاری)" aria-label="علت"></div>
-        <div class="field"><span class="lbl">زنگ‌ها</span><div class="lv-per-r"><label class="sms-opt"><input type="checkbox" id="excP1" checked> زنگ ۱</label><label class="sms-opt"><input type="checkbox" id="excP2" checked> زنگ ۲</label><label class="sms-opt"><input type="checkbox" id="excP3" checked> زنگ ۳</label></div></div>
+        <div class="field"><span class="lbl">زنگ‌ها</span><div class="lv-per-r" id="excPers"></div></div>
         <button id="excSave" class="send" type="button">ثبت غیبت موجه</button>
         <div class="lbl" style="margin:14px 0 6px">ثبت‌شده‌ها در تاریخ بالا</div>
         <div id="excList"></div>
@@ -1837,8 +1851,22 @@ input[type=tel]:focus,input[type=number]:focus,input[type=email]:focus{border-co
         <div class="field"><label for="suName">نام مدرسه (در سربرگ، کارنامه‌ها، گواهی‌ها و پیامک‌ها)</label><input id="suName" type="text" maxlength="80" autocomplete="off"></div>
         <button id="suNameGo" class="btn" type="button" style="width:100%">ذخیره‌ی نام مدرسه</button>
       </div>
+      <div class="card" id="suCfg">
+        <div class="lbl" style="margin-bottom:8px">۲. نوع مدرسه، شیفت و زنگ‌ها</div>
+        <div class="grid2">
+          <div class="field"><label for="zcLvl">دوره</label><select id="zcLvl"><option value="دوم">متوسطه دوم</option><option value="اول">متوسطه اول</option></select></div>
+          <div class="field"><label for="zcGen">جنسیت</label><select id="zcGen"><option value="پسرانه">پسرانه</option><option value="دخترانه">دخترانه</option></select></div>
+        </div>
+        <div class="field"><label for="zcTyp">نوع مدرسه</label><select id="zcTyp"></select></div>
+        <div class="field"><span class="lbl">شیفت</span><div id="zcSh" class="chips" style="grid-template-columns:repeat(3,1fr)"></div></div>
+        <div class="field" id="zcWkF"><label for="zcWk">همین هفته کدام شیفت است؟</label><select id="zcWk"><option value="morning">صبح</option><option value="afternoon">ظهر</option></select></div>
+        <div id="zcTimes"></div>
+        <div class="field"><span class="lbl">تعداد زنگ هر روز</span><div id="zcDays" class="zc-days"></div></div>
+        <div class="now-sub" style="margin-bottom:8px">زنگ استراحت، فاصله‌ی پایان هر زنگ تا شروع زنگ بعد است و زیر هر زنگ نمایش داده می‌شود. این ساعت‌ها در داشبورد امروز، هشدار حضور و غیاب، انتخاب زنگ و برنامه‌ی هفتگی به کار می‌رود.</div>
+        <button id="zcGo" class="send" type="button">ذخیره‌ی نوع مدرسه، شیفت و زنگ‌ها</button>
+      </div>
       <div class="card" id="suCls">
-        <div class="lbl" style="margin-bottom:8px">۲. کلاس‌ها</div>
+        <div class="lbl" style="margin-bottom:8px">۳. کلاس‌ها</div>
         <div class="grid2">
           <div class="field"><label for="suClsSt">رشته</label><input id="suClsSt" type="text" list="suStL" maxlength="40" autocomplete="off" placeholder="مثلاً تجربی"><datalist id="suStL"></datalist></div>
           <div class="field"><label for="suClsG">پایه</label><select id="suClsG"><option value="دهم">دهم</option><option value="یازدهم">یازدهم</option><option value="دوازدهم">دوازدهم</option></select></div>
@@ -1850,7 +1878,7 @@ input[type=tel]:focus,input[type=number]:focus,input[type=email]:focus{border-co
       </div>
       <div class="card" id="saCard">
         <details>
-          <summary class="lbl" style="cursor:pointer">۳. درج دانش‌آموزان (تکی، یا گروهی از Excel)</summary>
+          <summary class="lbl" style="cursor:pointer">۴. درج دانش‌آموزان (تکی، یا گروهی از Excel)</summary>
           <div style="margin-top:10px">
             <div class="grid2">
               <div class="field"><label for="saStream">رشته</label><input id="saStream" type="text" list="saStreamL" autocomplete="off" placeholder="مثلاً تجربی"><datalist id="saStreamL"></datalist></div>
@@ -1877,7 +1905,7 @@ input[type=tel]:focus,input[type=number]:focus,input[type=email]:focus{border-co
       </div>
       <div class="card" id="taCard">
         <details>
-          <summary class="lbl" style="cursor:pointer">۴. درج دبیر جدید</summary>
+          <summary class="lbl" style="cursor:pointer">۵. درج دبیر جدید</summary>
           <div style="margin-top:10px">
             <div class="field"><label for="taName">نام و نام خانوادگی دبیر</label><input id="taName" type="text" maxlength="60" autocomplete="off"></div>
             <div class="grid2">
@@ -1896,19 +1924,19 @@ input[type=tel]:focus,input[type=number]:focus,input[type=email]:focus{border-co
         </details>
       </div>
       <div class="card" id="suTc">
-        <div class="lbl" style="margin-bottom:8px">۵. تخصیص درس به دبیر</div>
+        <div class="lbl" style="margin-bottom:8px">۶. تخصیص درس به دبیر</div>
         <div class="field"><select id="suTcT" aria-label="دبیر"></select></div>
         <div id="suTcList" class="su-chips"></div>
         <div class="su-add"><input id="suTcC" type="text" list="taCourseL" maxlength="60" autocomplete="off" aria-label="درس" placeholder="درس (از فهرست رسمی دروس)"><button id="suTcGo" class="btn" type="button">افزودن درس</button></div>
         <div class="now-sub" style="margin-top:8px">کلاس و زنگ هر درس را در مرحله‌ی بعد (برنامه‌ی هفتگی) بچینید؛ دسترسی هر دبیر به کلاس و درس از روی همان برنامه است.</div>
       </div>
       <div class="card" id="suSch">
-        <div class="lbl" style="margin-bottom:8px">۶. برنامه‌ی هفتگی</div>
+        <div class="lbl" style="margin-bottom:8px">۷. برنامه‌ی هفتگی</div>
         <div class="now-sub" id="suSchTx" style="margin-bottom:8px"></div>
         <button id="suSchGo" class="btn" type="button" style="width:100%">باز کردن ویرایش برنامه‌ی هفتگی</button>
       </div>
       <div class="card" id="suPw">
-        <div class="lbl" style="margin-bottom:8px">۷. رمزهای ورود</div>
+        <div class="lbl" style="margin-bottom:8px">۸. رمزهای ورود</div>
         <div class="su-h">مدیر</div>
         <div class="now-sub" id="suMgTx" style="margin-bottom:8px"></div>
         <button id="suMgPw" class="btn" type="button" style="width:100%">تغییر رمز مدیر</button>
@@ -1976,7 +2004,7 @@ input[type=tel]:focus,input[type=number]:focus,input[type=email]:focus{border-co
         <div class="lbl" style="margin-bottom:8px">ثبت عدم حضور یا تأخیر دبیر</div>
         <div class="field"><select id="taT" aria-label="دبیر"></select></div>
         <div class="mg-bar jp"><select id="taD" aria-label="روز"></select><select id="taM" aria-label="ماه"></select><select id="taY" aria-label="سال"></select></div>
-        <div class="mg-bar"><select id="taP" aria-label="زنگ"><option value="">همه‌ی زنگ‌ها</option><option value="1">زنگ ۱</option><option value="2">زنگ ۲</option><option value="3">زنگ ۳</option></select><select id="taK" aria-label="نوع"><option>عدم حضور</option><option>تأخیر</option></select></div>
+        <div class="mg-bar"><select id="taP" aria-label="زنگ"><option value="">همه‌ی زنگ‌ها</option></select><select id="taK" aria-label="نوع"><option>عدم حضور</option><option>تأخیر</option></select></div>
         <div class="mg-bar"><input id="taMin" type="number" min="1" max="180" placeholder="دقیقه‌ی تأخیر" aria-label="دقیقه تأخیر"><input id="taNote" type="text" maxlength="150" placeholder="توضیح (اختیاری)" aria-label="توضیح"></div>
         <button id="taSend" class="send" type="button">ثبت</button>
         <div class="now-sub" style="margin-top:8px">«عدم حضور» برای آن زنگ، حضور و غیاب کلاس را معاف می‌کند. «تأخیر» فقط ثبت و در کارتابل دبیر دیده می‌شود.</div>
@@ -2522,7 +2550,7 @@ function nextMySlot() {            // زنگ بعدیِ امروزِ همین د
   const me = normT(S.teacher), now = new Date(), d = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   if (d.getDay() === 5) return null;
   const sh = shiftOfDate(d), day = (d.getDay() + 1) % 7;
-  for (let i = 0; i < SHIFT_TIMES[sh].length; i++) {
+  for (let i = 0; i < Math.min(SHIFT_TIMES[sh].length, dayN(d)); i++) {
     const h = toEn(SHIFT_TIMES[sh][i].split('–')[0]).split(':').map(Number), st = new Date(d.getFullYear(), d.getMonth(), d.getDate(), h[0], h[1]);
     if (st <= now) continue;
     const r = SCH.find(x => normT(x[4]) === me && x[1] === day && x[2] === i + 1 && (!x[5] || x[5] === SH_FA[sh])); if (r) return r;
@@ -2544,7 +2572,8 @@ const R_KEY = 'sia_roster_v1';
 const uniq = a => a.filter((x, i) => x && a.indexOf(x) === i);
 /* ---------- فهرست رسمی دروس و تعداد واحد به تفکیک رشته و پایه (از Code.gs، نسخه‌ی ۱٫۱۰) ---------- */
 let CUR = null;                                  // { streams:{ رشته:{ پایه:[[درس، واحد]] } }, elective:[[درس، واحد]] }
-const GRADES = ['دهم', 'یازدهم', 'دوازدهم'];
+const GRADES = ['دهم', 'یازدهم', 'دوازدهم'], GRADES1 = ['هفتم', 'هشتم', 'نهم'];
+const gradesNow = () => CFG && CFG.lvl === 'اول' ? GRADES1 : GRADES;
 const cKey = s => norm(s).replace(/[0-9۰-۹٠-٩]/g, '').replace(/آ/g, 'ا').replace(/[\s،,.()\-_:؛]/g, '');
 const C_ALIAS = { 'دینوزندگی':'تعلیماتدینی', 'دینی':'تعلیماتدینی', 'معارف':'تعلیماتدینی', 'قران':'تعلیماتدینی', 'عربیوقران':'عربی', 'انگلیسی':'زبانخارجی',
   'زبانانگلیسی':'زبانخارجی', 'زبان':'زبانخارجی', 'ادبیات':'فارسی', 'ادبیاتفارسی':'فارسی', 'ورزش':'تربیتبدنی', 'دفاعی':'امادگیدفاعی' };
@@ -2557,7 +2586,7 @@ function streamOfCls(c) {
   return /تجرب/.test(s) ? 'تجربی' : /انسان|ادبیات/.test(s) ? 'انسانی' : '';
 }
 function curRows(cls) {           // [[درس، واحد]] برای رشته و پایه‌ی کلاس؛ اگر معلوم نباشد همه‌ی فهرست
-  if (!CUR || !CUR.streams) return null;
+  if (!CUR || !CUR.streams || (CFG && CFG.lvl === 'اول')) return null;   // متوسطه اول: فهرست رسمی واحدها نیست؛ همه هم‌وزن (مثل Code.gs)
   const st = streamOfCls(cls), g = gradeOfCls(cls); let out = [];
   Object.keys(CUR.streams).forEach(a => { if (!st || a === st) Object.keys(CUR.streams[a]).forEach(b => { if (!g || b === g) out = out.concat(CUR.streams[a][b]); }); });
   return out.concat(CUR.elective || []);
@@ -2574,6 +2603,7 @@ const uTx = u => u ? fa(u) : '—';
 const uSum = l => { const t = l.filter(x => x.me != null).reduce((a, x) => a + (x.u || 0), 0); return t ? fa(t) : '—'; };
 function curRender() {            // کارت مدیر: فهرست دروس و واحدهای هر رشته و پایه
   const box = $('#curBox'), ss = $('#curSt'), gs = $('#curG'); if (!box) return; box.textContent = '';
+  if (CFG && CFG.lvl === 'اول') { box.append(el('div', 'empty', 'دوره‌ی مدرسه «متوسطه اول» است. فهرست رسمی دروس و واحدهای متوسطه اول هنوز در برنامه نیست؛ تا اضافه شود، همه‌ی دروس در معدل هم‌وزن حساب می‌شوند.')); return; }
   if (!CUR || !CUR.streams) { box.append(el('div', 'empty', 'فهرست دروس هنوز از سرور دریافت نشده است. فایل Code.gs همین نسخه را در Apps Script جایگزین و دوباره منتشر (Deploy) کنید.')); return; }
   if (!ss.options.length) { Object.keys(CUR.streams).forEach(k => { const o = el('option', '', 'رشته‌ی ' + k); o.value = k; ss.append(o); }); GRADES.forEach(g => { const o = el('option', '', 'پایه‌ی ' + g); o.value = g; gs.append(o); }); }
   const rows = (CUR.streams[ss.value] || {})[gs.value] || [], tot = rows.reduce((a, x) => a + x[1], 0);
@@ -2585,6 +2615,7 @@ function applyRoster(r) {
   if (!r || !r.classes) return;
   if (r.cur && r.cur.streams) CUR = r.cur;
   if (r.school) setSchoolName(r.school);                       // نام مدرسه از «راه‌اندازی مدرسه»
+  if (r.cfg !== undefined && JSON.stringify(r.cfg || null) !== JSON.stringify(CFG)) { applyCfg(r.cfg); lsSet('sia_cfg_v1', r.cfg || null); cfgRerender(); }
   if (typeof r.cns === 'string') COUNSELOR_NAME = r.cns;
   if (typeof r.s2 === 'boolean') { STU2 = r.s2; gateStuHint(); }
   Object.keys(STUDENTS).forEach(k => delete STUDENTS[k]);
@@ -2659,6 +2690,55 @@ if (typeof SHEET_URL !== 'undefined' && SHEET_URL) { const a = $('#mgOpen'); a.h
 /* ======================= برنامه هفتگی ======================= */
 const SCH_KEY = 'sia_sched_v1';
 let PERIOD_TIMES = SHIFT_TIMES.morning;
+/* مشخصات مدرسه، شیفت و زنگ‌ها از «راه‌اندازی مدرسه» (نسخه‌ی ۱٫۲۱)؛ تا تنظیم نشود، مقدارهای بالای فایل به کار می‌رود */
+let CFG = null, DAY_N = null;
+const SH_DEF = { morning:SHIFT_TIMES.morning.slice(), afternoon:SHIFT_TIMES.afternoon.slice(), anchor:Object.assign({}, SHIFT_ANCHOR) };
+function applyCfg(c) {
+  CFG = c && c.t ? c : null; const tx = l => l.map(x => fa(x[0]) + '–' + fa(x[1]));
+  Object.keys(SHIFT_ANCHOR).forEach(k => delete SHIFT_ANCHOR[k]);
+  if (CFG) {
+    const m = CFG.t.morning || CFG.t.afternoon, a = CFG.t.afternoon || CFG.t.morning;   // شیفت ثابت: نوبت دیگر همان ساعت‌ها
+    SHIFT_TIMES.morning = tx(m); SHIFT_TIMES.afternoon = tx(a);
+    if (CFG.sh === 'rot') { const q = String(CFG.an).split('-').map(Number); Object.assign(SHIFT_ANCHOR, { y:q[0], m:q[1], d:q[2], shift:CFG.wk }); }
+    else Object.assign(SHIFT_ANCHOR, SH_DEF.anchor, { fixed:CFG.sh });
+    DAY_N = Array.isArray(CFG.d) && CFG.d.length === 6 ? CFG.d : null;
+  } else { SHIFT_TIMES.morning = SH_DEF.morning.slice(); SHIFT_TIMES.afternoon = SH_DEF.afternoon.slice(); Object.assign(SHIFT_ANCHOR, SH_DEF.anchor); DAY_N = null; }
+  PERIOD_TIMES = SHIFT_TIMES.morning; schoolSub();
+}
+const NP = () => Math.max(SHIFT_TIMES.morning.length, SHIFT_TIMES.afternoon.length);   // بیشترین تعداد زنگ در روز
+const perList = () => Array.from({ length:NP() }, (_, i) => i + 1);
+const dayNi = i => DAY_N ? DAY_N[i] : NP();                                          // تعداد زنگ روز i (۰ = شنبه)
+const dayN = d => { const i = (d.getDay() + 1) % 7; return i > 5 ? 0 : dayNi(i); };
+const CFG_TYP = { rot:'صبح و ظهر (یک هفته در میان)', morning:'ثابت صبح', afternoon:'ثابت ظهر' };
+function schoolSub() {               // «متوسطه دوم · پسرانه · نمونه دولتی» زیر نام مدرسه
+  const t = CFG ? ['متوسطه ' + CFG.lvl, CFG.gen, CFG.typ].join(' · ') : '';
+  ['#schoolSub', '#gSchoolSub'].forEach(q => { const e = document.querySelector(q); if (e) { e.textContent = t; e.hidden = !t; } });
+}
+function perOpts(sel, d) {           // گزینه‌های زنگ برای یک تاریخ، با ساعت هر زنگ
+  const sh = d.getDay() === 5 ? null : shiftOfDate(d), n = sh ? Math.min(SHIFT_TIMES[sh].length, dayN(d)) || SHIFT_TIMES[sh].length : NP();
+  for (let p = 1; p <= n; p++) { const o = el('option', '', 'زنگ ' + fa(p) + (sh && SHIFT_TIMES[sh][p - 1] ? ' (' + SHIFT_TIMES[sh][p - 1] + ')' : '')); o.value = p; sel.append(o); }
+}
+const perMin = p => { const t = (SHIFT_ANCHOR.fixed === 'afternoon' ? SHIFT_TIMES.afternoon : SHIFT_TIMES.morning)[p - 1]; if (!t) return 80;
+  const q = toEn(t).split('–').map(x => { const h = x.split(':').map(Number); return h[0] * 60 + h[1]; }); return q[1] - q[0]; };
+const perHrs = p => Math.max(1, Math.round(perMin(p) / 45));                        // ۸۰ تا ۹۰ دقیقه = ۲ ساعت، ۴۵ تا ۶۰ دقیقه = ۱ ساعت
+applyCfg(lsGet('sia_cfg_v1', null));
+function cfgRerender() {             // بعد از تغییر ساعت‌ها و تعداد زنگ‌ها، بخش‌های وابسته دوباره رسم می‌شوند
+  [excPerDraw, taPFill, suGradeFill, renderPer, renderSch, curRender, () => { if (MG.pin) renderAlerts(); }, () => { if (typeof TL !== 'undefined') tlPerDraw(); }].forEach(f => { try { f(); } catch (e) {} });
+}
+function excPerDraw() {              // چک‌باکس زنگ‌های غیبت موجه، به تعداد زنگ‌های مدرسه
+  const box = $('#excPers'); if (!box) return; const on = perList().filter(q => !$('#excP' + q) || $('#excP' + q).checked); box.textContent = '';
+  perList().forEach(q => { const l = el('label', 'sms-opt'), cb = el('input'); cb.type = 'checkbox'; cb.id = 'excP' + q; cb.checked = on.includes(q); l.append(cb, document.createTextNode(' زنگ ' + fa(q))); box.append(l); });
+}
+function taPFill() {
+  const s = $('#taP'); if (!s) return; const v = s.value; s.textContent = '';
+  [['', 'همه‌ی زنگ‌ها']].concat(perList().map(p => [String(p), 'زنگ ' + fa(p)])).forEach(q => { const o = el('option', '', q[1]); o.value = q[0]; s.append(o); }); s.value = v;
+}
+function suGradeFill() {             // پایه‌های فرم «ایجاد کلاس» بر اساس دوره‌ی مدرسه
+  const g = $('#suClsG'), st = $('#suClsSt'); if (!g) return; const v = g.value, l = gradesNow(); g.textContent = '';
+  l.forEach(x => { const o = el('option', '', x); o.value = x; g.append(o); }); if (l.includes(v)) g.value = v;
+  if (st) { st.placeholder = CFG && CFG.lvl === 'اول' ? 'مثلاً عمومی' : 'مثلاً تجربی'; if (CFG && CFG.lvl === 'اول' && !st.value) st.value = 'عمومی'; }
+}
+excPerDraw(); taPFill(); suGradeFill();
 function shiftOfDate(d) {                       // جمعه جزو هفته‌ی بعد حساب می‌شود
   if (SHIFT_ANCHOR.fixed) return SHIFT_ANCHOR.fixed === 'afternoon' ? 'afternoon' : 'morning';   // مدرسه‌ی تک‌نوبتی
   if (d.getDay() === 5) d = new Date(d.getTime() + 864e5);
@@ -2696,13 +2776,15 @@ function schOpts() {
 }
 function renderSch() {
   renderNow();
-  const auto = shiftOfDate(new Date()); if (!Z.shift) Z.shift = auto;
+  const auto = shiftOfDate(new Date()); if (!Z.shift || SHIFT_ANCHOR.fixed) Z.shift = auto;
   const sb = $('#schShift'); sb.textContent = '';
-  [['morning', 'صبح'], ['afternoon', 'ظهر']].forEach(q => { const b = el('button', 'chip' + (Z.shift === q[0] ? ' on' : ''), q[1] + (q[0] === auto ? ' | این هفته' : '')); b.type = 'button'; b.addEventListener('click', () => { Z.shift = q[0]; renderSch(); }); sb.append(b); });
+  [['morning', 'صبح'], ['afternoon', 'ظهر']].filter(q => !SHIFT_ANCHOR.fixed || q[0] === SHIFT_ANCHOR.fixed).forEach(q => { const b = el('button', 'chip' + (Z.shift === q[0] ? ' on' : ''), q[1] + (SHIFT_ANCHOR.fixed ? ' | ثابت' : q[0] === auto ? ' | این هفته' : '')); b.type = 'button'; b.addEventListener('click', () => { Z.shift = q[0]; renderSch(); }); sb.append(b); });
   PERIOD_TIMES = SHIFT_TIMES[Z.shift];
   schOpts(); dayBar($('#schDays'), Z.day, i => { Z.day = i; renderSch(); });
   const isC = Z.who[0] === 'c', ul = $('#schList'); ul.textContent = '';
-  PERIOD_TIMES.forEach((tm, i) => {
+  const nd = Math.max(dayNi(Z.day), ...SCH.filter(r => r[1] === Z.day && r[2] <= PERIOD_TIMES.length).map(r => r[2]));
+  if (!nd) ul.append(el('li', 'empty', 'طبق تنظیمات مدرسه، این روز کلاس ندارد.'));
+  PERIOD_TIMES.slice(0, nd).forEach((tm, i) => {
     const r = slotOf(Z.day, i + 1)[0], li = el('li'), ab = !!r && absOn(r[4], weekJ(Z.day), i + 1), b = el('button', 'slot' + (r ? '' : ' free') + (ab ? ' absent' : '')); b.type = 'button';
     b.append(el('span', 'pn', fa(i + 1)), el('span', 'nm', r ? r[3] + (r[5] ? ' (تک‌زنگ)' : '') + (ab ? ' — دبیر غایب' : '') + (isOff(r[0], r[3]) ? ' — غیرفعال' : '') : '—'), el('span', 'tm', (r ? (isC ? r[4] : r[0]) + ' | ' : '') + tm));
     if (r && ROLE !== 'student' && ROLE !== 'counselor') b.addEventListener('click', () => useSlot(r)); li.append(b); ul.append(li);
@@ -2757,7 +2839,10 @@ function edRender() {
   dayBar($('#edDays'), ED.day, i => { ED.day = i; edRender(); });
   fillDatalist('edCourseL', curFor(ED.cls) || uniq(lsGet('sia_rost_c', []).concat(P.courses)));   // دروس رسمی رشته و پایه‌ی کلاس در حال ویرایش
   const box = $('#edRows'); box.textContent = '';
-  PERIOD_TIMES.forEach((tm, i) => {
+  const used = Object.keys(ED.cells).filter(k => k.split('-')[0] === String(ED.day) && ['all', 'm', 'a'].some(f => ED.cells[k][f].s || ED.cells[k][f].t)).map(k => +k.split('-')[1]);
+  const ne = Math.min(NP(), Math.max(dayNi(ED.day), ...used));
+  if (!ne) box.append(el('div', 'empty', 'طبق تنظیمات مدرسه («راه‌اندازی مدرسه ← زنگ‌ها»)، ' + DAYS[ED.day] + ' کلاس ندارد.'));
+  Array.from({ length:ne }).forEach((tm, i) => {
     const c = edCell(ED.day + '-' + (i + 1)), wrap = el('div', 'ed-slot');
     (c.alt ? [['صبح', c.m], ['ظهر', c.a]] : [['زنگ ' + fa(i + 1), c.all]]).forEach(pt => {
       const row = el('div', 'ed-row');
@@ -2769,7 +2854,7 @@ function edRender() {
     lb.append(cb, document.createTextNode('تک‌زنگ (هفته‌ی صبح و ظهر درس متفاوت، ۱ ساعت)')); wrap.append(lb); box.append(wrap);
   });
 }
-const hoursOf = t => SCH.filter(r => r[4] === t).reduce((a, r) => a + (r[5] ? 1 : 2), 0);   // زنگ عادی ۲ ساعت، تک‌زنگ ۱ ساعت
+const hoursOf = t => SCH.filter(r => r[4] === t).reduce((a, r) => a + (r[5] ? Math.max(1, Math.round(perHrs(r[2]) / 2)) : perHrs(r[2])), 0);   // ساعت هر زنگ از طول آن؛ تک‌زنگ نصف
 const daysOf = t => Array.from(new Set(SCH.filter(r => r[4] === t).map(r => r[1]))).sort();
 function infoLine(t) {
   const i = TINFO[t] || {}, ds = daysOf(t).map(d => DAYS[d]).join('، ');
@@ -2840,14 +2925,14 @@ $('#schWho').addEventListener('change', e => { Z.who = e.target.value; renderSch
 $('#schWeekBtn').addEventListener('click', () => { const w = $('#schWeek'); w.hidden = !w.hidden; $('#schWeekBtn').textContent = w.hidden ? 'نمایش جدول کل هفته' : 'پنهان کردن جدول هفته'; });
 
 /* ======================= زنگ فعلی و پیام روز ======================= */
-const ORD = ['اول','دوم','سوم'];
+const ORD = ['اول','دوم','سوم','چهارم','پنجم','ششم','هفتم','هشتم'];
 const toEn = s => s.replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
 function slotNow(now = new Date(), skip = 0) {      // زنگ در حال برگزاری، یا نزدیک‌ترین زنگ بعدی؛ skip برای زنگ‌های بعدتر
   let left = skip;
   for (let k = 0; k < 8; k++) {
     const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() + k);
     if (d.getDay() === 5) continue;       // جمعه تعطیل
-    const sh = shiftOfDate(d), t = SHIFT_TIMES[sh];
+    const sh = shiftOfDate(d), t = SHIFT_TIMES[sh].slice(0, dayN(d));
     for (let i = 0; i < t.length; i++) {
       const q = t[i].split('–').map(x => { const h = toEn(x).split(':').map(Number); return new Date(d.getFullYear(), d.getMonth(), d.getDate(), h[0], h[1]); });
       if (q[1] > now) { if (left-- > 0) continue; return { day:(d.getDay() + 1) % 7, p:i + 1, shift:sh, time:t[i], live:q[0] <= now, k:k, start:q[0], end:q[1] }; }
@@ -4221,7 +4306,7 @@ const isEx = (c, s, p) => EXEMPT.some(x => normT(x.c) === normT(c) && normT(x.s)
 function periodsOf(d) {              // زنگ‌های امروز با توجه به شیفت هفته
   if (d.getDay() === 5) return [];
   const sh = shiftOfDate(d);
-  return SHIFT_TIMES[sh].map((t, i) => { const q = t.split('–').map(x => { const h = toEn(x).split(':').map(Number); return new Date(d.getFullYear(), d.getMonth(), d.getDate(), h[0], h[1]); }); return { p:i + 1, a:q[0], b:q[1], sh:sh, t:t }; });
+  return SHIFT_TIMES[sh].slice(0, dayN(d)).map((t, i) => { const q = t.split('–').map(x => { const h = toEn(x).split(':').map(Number); return new Date(d.getFullYear(), d.getMonth(), d.getDate(), h[0], h[1]); }); return { p:i + 1, a:q[0], b:q[1], sh:sh, t:t }; });
 }
 function missing(now) {
   now = now || new Date(); const day = (now.getDay() + 1) % 7, out = [];
@@ -4285,7 +4370,7 @@ async function excLoad() {
   if (r.status !== 'ok') { box.append(el('div', 'empty', r.message || 'بارگذاری نشد.')); return; }
   if (!r.list.length) { box.append(el('div', 'now-sub', 'برای این تاریخ غیبت موجهی ثبت نشده است.')); return; }
   r.list.forEach(x => {
-    const row = el('div', 'dir-r'), b = el('button', 'btn', 'حذف'); b.type = 'button'; row.append(el('span', '', x.n + ' | ' + x.c + (x.p && x.p.length && x.p.length < 3 ? ' | زنگ ' + x.p.map(fa).join(' و ') : ' | هر سه زنگ') + (x.r ? ' | ' + x.r : '')), b);
+    const row = el('div', 'dir-r'), b = el('button', 'btn', 'حذف'); b.type = 'button'; row.append(el('span', '', x.n + ' | ' + x.c + (x.p && x.p.length && x.p.length < NP() ? ' | زنگ ' + x.p.map(fa).join(' و ') : ' | همه‌ی زنگ‌ها') + (x.r ? ' | ' + x.r : '')), b);
     b.addEventListener('click', () => showModal({ icon:'warn', title:'حذف غیبت موجه', msg:x.n + ' دوباره «غایب» ثبت می‌شود. ادامه می‌دهید؟',
       buttons:[{ text:'حذف', primary:true, onClick:async () => { const q = await send({ action:'excDel', pin:MG.pin, date:x.d, cls:x.c, name:x.n, key:ACCESS_KEY }); toast(q.status === 'ok' ? 'حذف شد' : (q.message || 'ناموفق')); excLoad(); $('#mgReload').click(); } }, { text:'انصراف' }] }));
     box.append(row);
@@ -4297,9 +4382,9 @@ $('#excSave').addEventListener('click', async () => {
   if (!/^\d{4}\/\d{2}\/\d{2}$/.test(date)) return toast('تاریخ را به شکل ۱۴۰۵/۰۷/۱۷ بنویسید');
   if (!$('#excCls').value) return toast('ابتدا کلاس را انتخاب کنید');
   if (!names.length) return toast('دست‌کم یک دانش‌آموز را انتخاب کنید');
-  const pr = [1, 2, 3].filter(q => $('#excP' + q).checked); if (!pr.length) return toast('دست‌کم یک زنگ را انتخاب کنید');
+  const pr = perList().filter(q => $('#excP' + q) && $('#excP' + q).checked); if (!pr.length) return toast('دست‌کم یک زنگ را انتخاب کنید');
   const b = $('#excSave'); b.disabled = true;
-  const r = await send({ action:'excAdd', pin:MG.pin, date:date, cls:$('#excCls').value, names:names, reason:$('#excWhy').value.trim(), periods:pr.length === 3 ? [] : pr, key:ACCESS_KEY }); b.disabled = false;
+  const r = await send({ action:'excAdd', pin:MG.pin, date:date, cls:$('#excCls').value, names:names, reason:$('#excWhy').value.trim(), periods:pr.length >= NP() ? [] : pr, key:ACCESS_KEY }); b.disabled = false;
   if (r.status !== 'ok') return toast(r.message || 'ثبت نشد');
   toast('غیبت موجه ثبت شد ✓'); document.querySelectorAll('#excStu input').forEach(x => { x.checked = false; }); excLoad(); $('#mgReload').click();
 });
@@ -4447,8 +4532,8 @@ function renderPer() {
     b.append(m); return;
   }
   lb.textContent = 'زنگ (خودکار با ساعت؛ در صورت نیاز دستی انتخاب کنید)';
-  b.classList.remove('ab-per'); b.style.gridTemplateColumns = 'repeat(4,1fr)';
-  [[0, 'خودکار | ' + fa(autoPeriod())], [1, 'زنگ ۱'], [2, 'زنگ ۲'], [3, 'زنگ ۳']].forEach(q => { const c = el('button', 'chip' + ((S.per || 0) === q[0] ? ' on' : '')); c.textContent = q[1]; c.type = 'button'; c.addEventListener('click', () => { S.per = q[0]; renderPer(); loadExc(); }); b.append(c); });
+  b.classList.remove('ab-per'); b.style.gridTemplateColumns = 'repeat(' + Math.min(NP() + 1, 5) + ',1fr)';
+  [[0, 'خودکار | ' + fa(autoPeriod())]].concat(perList().map(p => [p, 'زنگ ' + fa(p)])).forEach(q => { const c = el('button', 'chip' + ((S.per || 0) === q[0] ? ' on' : '')); c.textContent = q[1]; c.type = 'button'; c.addEventListener('click', () => { S.per = q[0]; renderPer(); loadExc(); }); b.append(c); });
   if (S.subMode && mySlotsToday().length) {
     const back = el('button', 'btn', '↩ بازگشت به زنگ‌های برنامه‌ی من'); back.type = 'button'; back.style.gridColumn = '1 / -1';
     back.addEventListener('click', () => { S.subMode = false; S.slotPick = null; autoSlotApply(); renderPer(); }); b.append(back);
@@ -4462,10 +4547,10 @@ function mgAttFor(r, p) {   // از تابلوی امروز: همان کلاس،
 function renderBoard() {
   const box = $('#boardBody'); if (!box) return; box.textContent = '';
   const now = new Date(), ps = periodsOf(now);
-  if (!ps.length) { box.append(el('div', 'empty', 'امروز جمعه است؛ کلاسی برگزار نمی‌شود.')); return; }
+  if (!ps.length) { box.append(el('div', 'empty', now.getDay() === 5 ? 'امروز جمعه است؛ کلاسی برگزار نمی‌شود.' : 'امروز طبق تنظیمات مدرسه کلاسی ندارد.')); return; }
   const day = (now.getDay() + 1) % 7, sh = ps[0].sh, cls = uniq(allClasses().concat(SCH.map(r => r[0])).concat(TODAY.map(x => x.c))).sort((a, b) => a.localeCompare(b, 'fa'));
   if (!cls.length) { box.append(el('div', 'empty', 'کلاسی ثبت نشده است.')); return; }
-  const g = el('div', 'brd'); g.append(el('span'));
+  const g = el('div', 'brd'); g.style.gridTemplateColumns = '78px repeat(' + ps.length + ',minmax(64px,1fr))'; g.append(el('span'));
   ps.forEach(P => g.append(el('div', 'bh', 'زنگ ' + fa(P.p) + ' | ' + P.t.split('–')[0])));
   cls.forEach(c => {
     const any = SCH.some(x => x[0] === c && x[1] === day && (!x[5] || x[5] === SH_FA[sh])); g.append(el('div', 'bc-name', c));
@@ -4933,7 +5018,7 @@ function calInit() {
 }
 function calPerFill() {
   const q = jParse(CALP.get()), d = jGreg(q[0], q[1], q[2]), sel = $('#calPer'), cur = sel.value, fri = d.getDay() === 5, sh = fri ? null : shiftOfDate(d); sel.textContent = '';
-  [1, 2, 3].forEach(p => { const o = el('option', '', 'زنگ ' + fa(p) + (sh ? ' (' + SHIFT_TIMES[sh][p - 1] + ')' : '')); o.value = p; sel.append(o); });
+  perOpts(sel, d);
   const x = INB && INB[+$('#inbSel').value || 0]; let pre = 0;
   if (x && sh) { const day = (d.getDay() + 1) % 7, r = SCH.find(r => r[0] === x.c && normT(r[3]) === normT(x.s) && r[1] === day && (!r[5] || r[5] === SH_FA[sh]) && (ROLE === 'manager' || normT(r[4]) === normT(S.teacher))); if (r) pre = r[2]; }
   sel.value = String(CALP_USER && cur ? cur : (pre || cur || 1)); calInfo();
@@ -5182,13 +5267,13 @@ function renderLeaves() {
   if (pend.length) { const n = el('div', 'lv-note'); n.append(el('i', '', '🔔'), el('span', '', fa(pend.length) + ' درخواست مرخصی منتظر تصمیم شماست')); box.append(n); }
   else box.append(el('div', 'empty', LV.length ? 'درخواست جدیدی در انتظار نیست.' : 'درخواستی ثبت نشده است.'));
   more.hidden = !done.length; more.textContent = LV_SHOW ? 'پنهان کردن سوابق' : 'نمایش سوابق (' + fa(done.length) + ')';
-  const perTxt = pr => !pr || !pr.length || pr.length === 3 ? 'هر سه زنگ' : 'زنگ ' + pr.map(fa).join(' و ');
+  const perTxt = pr => !pr || !pr.length || pr.length >= NP() ? 'همه‌ی زنگ‌ها' : 'زنگ ' + pr.map(fa).join(' و ');
   const perPanel = (init, label, onSave) => {      // انتخاب زنگ‌ها: همه یا زنگ مشخص
     const w = el('div', 'lv-per'), row = el('div', 'lv-per-r'), cbs = [];
     w.append(el('div', 'now-sub', 'این مرخصی برای کدام زنگ‌ها ثبت شود؟'));
-    [1, 2, 3].forEach(p => { const l = el('label', 'sms-opt'), cb = el('input'); cb.type = 'checkbox'; cb.value = p; cb.checked = !init.length || init.length === 3 || init.indexOf(p) >= 0; l.append(cb, document.createTextNode('زنگ ' + fa(p))); row.append(l); cbs.push(cb); });
+    perList().forEach(p => { const l = el('label', 'sms-opt'), cb = el('input'); cb.type = 'checkbox'; cb.value = p; cb.checked = !init.length || init.length >= NP() || init.indexOf(p) >= 0; l.append(cb, document.createTextNode('زنگ ' + fa(p))); row.append(l); cbs.push(cb); });
     const go = el('button', 'btn', label); go.type = 'button';
-    go.addEventListener('click', () => { const v = cbs.filter(c => c.checked).map(c => +c.value); if (!v.length) return toast('دست‌کم یک زنگ را انتخاب کنید'); go.disabled = true; onSave(v.length === 3 ? [] : v, go); });
+    go.addEventListener('click', () => { const v = cbs.filter(c => c.checked).map(c => +c.value); if (!v.length) return toast('دست‌کم یک زنگ را انتخاب کنید'); go.disabled = true; onSave(v.length >= NP() ? [] : v, go); });
     w.append(row, go); return w;
   };
   (LV_SHOW ? pend.concat(done.slice(0, 40)) : pend).forEach(x => {
@@ -5256,6 +5341,74 @@ function setSchoolName(n) {          // نام ذخیره‌شده در سرور
   ['#logo', '#gateLogo'].forEach(q => { const e = document.querySelector(q); if (e) e.alt = 'لوگوی ' + n; });
   try { if (HONOR) renderHonor(); } catch (e) {}
 }
+/* ---------- راه‌اندازی مدرسه: نوع مدرسه، شیفت و زنگ‌ها (نسخه‌ی ۱٫۲۱) ---------- */
+const SCH_TYPES = ['دولتی', 'نمونه دولتی', 'استعدادهای درخشان (سمپاد)', 'شاهد', 'هیئت امنایی', 'غیردولتی', 'فنی و حرفه‌ای', 'کاردانش', 'سایر'];
+const ZC_LBL = { rot:'چرخشی صبح/ظهر', morning:'ثابت صبح', afternoon:'ثابت ظهر' };
+const ZC = { sh:'rot', t:{ morning:[], afternoon:[] }, d:null, np:0 };
+const zcParse = l => l.map(x => toEn(x).split('–').map(y => y.trim()));          // «۰۸:۰۰–۰۹:۲۰» ← ['08:00', '09:20']
+const zcMin = v => { const m = /^(\d{1,2}):(\d{2})$/.exec(String(v || '')); return m ? +m[1] * 60 + +m[2] : NaN; };
+const zcTxt = n => pad(Math.floor(n / 60) % 24) + ':' + pad(n % 60);
+const zcShs = () => ZC.sh === 'rot' ? ['morning', 'afternoon'] : [ZC.sh];
+function zcInit() {
+  const c = CFG, ty = $('#zcTyp'); if (!ty) return;
+  $('#zcLvl').value = c ? c.lvl : 'دوم'; $('#zcGen').value = c ? c.gen : 'پسرانه';
+  if (!ty.options.length) SCH_TYPES.forEach(x => { const o = el('option', '', x); o.value = x; ty.append(o); }); ty.value = c ? c.typ : 'دولتی';
+  ZC.sh = c ? c.sh : SHIFT_ANCHOR.fixed || 'rot';
+  ZC.t = { morning:c && c.t.morning ? c.t.morning.map(x => x.slice()) : zcParse(SHIFT_TIMES.morning), afternoon:c && c.t.afternoon ? c.t.afternoon.map(x => x.slice()) : zcParse(SHIFT_TIMES.afternoon) };
+  ZC.d = c && c.d ? c.d.slice() : null; ZC.np = 0; $('#zcWk').value = shiftOfDate(new Date());
+  zcRender();
+}
+function zcRender() {
+  const sb = $('#zcSh'); sb.textContent = '';
+  Object.keys(ZC_LBL).forEach(k => { const b = el('button', 'chip' + (ZC.sh === k ? ' on' : ''), ZC_LBL[k]); b.type = 'button'; b.setAttribute('aria-pressed', String(ZC.sh === k)); b.addEventListener('click', () => { ZC.sh = k; zcRender(); }); sb.append(b); });
+  $('#zcWkF').hidden = ZC.sh !== 'rot';
+  const box = $('#zcTimes'); box.textContent = ''; zcShs().forEach(k => box.append(zcShift(k)));
+  zcDays();
+}
+function zcShift(k) {                // ساعت شروع و پایان هر زنگ یک شیفت؛ استراحت بین زنگ‌ها نمایش داده می‌شود
+  const L = ZC.t[k], w = el('div', 'zc-sh'); w.append(el('b', '', 'زنگ‌های شیفت ' + SH_FA[k] + ' (' + fa(L.length) + ' زنگ)'));
+  L.forEach((x, i) => {
+    if (i) { const gap = zcMin(x[0]) - zcMin(L[i - 1][1]);
+      w.append(el('div', 'zc-br' + (gap < 0 ? ' bad' : ''), isNaN(gap) ? '' : gap < 0 ? '⚠ زنگ ' + fa(i + 1) + ' پیش از پایان زنگ قبل شروع می‌شود' : gap ? '☕ زنگ استراحت: ' + fa(gap) + ' دقیقه (' + fa(L[i - 1][1]) + ' تا ' + fa(x[0]) + ')' : 'بدون استراحت')); }
+    const row = el('div', 'zc-row'), dur = zcMin(x[1]) - zcMin(x[0]);
+    const mk = (j, lb) => { const inp = el('input'); inp.type = 'time'; inp.value = x[j]; inp.setAttribute('aria-label', lb + ' زنگ ' + fa(i + 1) + ' شیفت ' + SH_FA[k]); inp.addEventListener('change', () => { x[j] = inp.value; zcRender(); }); return inp; };
+    const del = el('button', 'btn', '✕'); del.type = 'button'; del.title = 'حذف زنگ ' + fa(i + 1); del.disabled = L.length < 2; del.addEventListener('click', () => { L.splice(i, 1); zcRender(); });
+    row.append(el('span', 'num', 'زنگ ' + fa(i + 1)), mk(0, 'شروع'), mk(1, 'پایان'), del); if (dur > 0) row.title = fa(dur) + ' دقیقه'; w.append(row);
+    if (!(dur > 0) && !isNaN(dur)) w.append(el('div', 'zc-br bad', '⚠ پایان زنگ ' + fa(i + 1) + ' باید بعد از شروع آن باشد'));
+  });
+  const add = el('button', 'btn', '➕ افزودن زنگ'); add.type = 'button'; add.style.cssText = 'width:100%;margin-top:8px'; add.disabled = L.length >= 8;
+  add.addEventListener('click', () => { const z = L[L.length - 1], du = z ? zcMin(z[1]) - zcMin(z[0]) : 80, st = z ? zcMin(z[1]) + 15 : (k === 'morning' ? 480 : 780); L.push([zcTxt(st), zcTxt(st + (du > 0 ? du : 80))]); zcRender(); });
+  const g = el('details'), sm = el('summary', 'now-sub', '⚙ ساخت خودکار ساعت‌ها (شروع، مدت هر زنگ، مدت استراحت)'); g.style.marginTop = '8px'; sm.style.cursor = 'pointer'; g.append(sm);
+  const gr = el('div', 'zc-gen'), f = (lb, type, v) => { const l = el('label', '', lb), i = el('input'); i.type = type; i.value = v; if (type === 'number') { i.inputMode = 'numeric'; i.min = 0; } l.append(i); gr.append(l); return i; };
+  const d0 = L[0] ? zcMin(L[0][1]) - zcMin(L[0][0]) : 80, b0 = L[1] ? zcMin(L[1][0]) - zcMin(L[0][1]) : 15;
+  const gs = f('شروع زنگ اول', 'time', L[0] ? L[0][0] : (k === 'morning' ? '08:00' : '13:00')), gd = f('مدت زنگ (دقیقه)', 'number', d0 > 0 ? d0 : 80), gb = f('استراحت (دقیقه)', 'number', b0 >= 0 ? b0 : 15), gn = f('تعداد زنگ', 'number', L.length || 3);
+  const go = el('button', 'btn', 'ساخت ساعت‌ها'); go.type = 'button'; go.style.gridColumn = '1 / -1';
+  go.addEventListener('click', () => {
+    const s0 = zcMin(gs.value), du = Math.round(+en(gd.value)), br = Math.round(+en(gb.value)), n = Math.round(+en(gn.value));
+    if (isNaN(s0) || !(du > 0) || !(br >= 0) || !(n >= 1 && n <= 8)) return toast('مقدارها را درست وارد کنید (تعداد زنگ ۱ تا ۸).');
+    if (s0 + n * du + (n - 1) * br >= 24 * 60) return toast('با این مقدارها زنگ‌ها از نیمه‌شب می‌گذرند.');
+    ZC.t[k] = Array.from({ length:n }, (_, i) => { const a = s0 + i * (du + br); return [zcTxt(a), zcTxt(a + du)]; }); zcRender();
+  });
+  gr.append(go); g.append(gr); w.append(add, g); return w;
+}
+function zcDays() {                  // تعداد زنگ هر روز هفته (۰ = بدون کلاس)
+  const box = $('#zcDays'); box.textContent = ''; const np = Math.max(...zcShs().map(k => ZC.t[k].length));
+  if (!ZC.d) ZC.d = DAYS.map(() => np);
+  ZC.d = ZC.d.map(n => n === ZC.np || n > np ? np : n); ZC.np = np;               // روزی که «همه‌ی زنگ‌ها» بود، با تغییر تعداد زنگ همراه می‌شود
+  DAYS.forEach((dn, i) => {
+    const l = el('label', '', dn), sl = el('select'); sl.setAttribute('aria-label', 'تعداد زنگ ' + dn);
+    for (let n = np; n >= 0; n--) { const o = el('option', '', n ? fa(n) + ' زنگ' : 'تعطیل'); o.value = n; sl.append(o); }
+    sl.value = ZC.d[i]; sl.addEventListener('change', () => { ZC.d[i] = +sl.value; }); l.append(sl); box.append(l);
+  });
+}
+$('#zcGo').addEventListener('click', async () => {
+  const t0 = new Date(); t0.setHours(12, 0, 0, 0); t0.setDate(t0.getDate() + (t0.getDay() === 5 ? 1 : -((t0.getDay() + 1) % 7)));   // شنبه‌ی همین هفته (جمعه = هفته‌ی بعد)
+  const t = {}; zcShs().forEach(k => { t[k] = ZC.t[k]; });
+  const cfg = { lvl:$('#zcLvl').value, gen:$('#zcGen').value, typ:$('#zcTyp').value, sh:ZC.sh, wk:$('#zcWk').value, an:t0.getFullYear() + '-' + pad(t0.getMonth() + 1) + '-' + pad(t0.getDate()), t:t, d:ZC.d };
+  const r = await suSend({ action:'setCfg', cfg:cfg }, $('#zcGo')); if (!r) return;
+  applyCfg(r.cfg); lsSet('sia_cfg_v1', r.cfg); const rr = lsGet(R_KEY, null); if (rr) { rr.cfg = r.cfg; lsSet(R_KEY, rr); }
+  cfgRerender(); zcInit(); suHub(); toast('نوع مدرسه، شیفت و زنگ‌ها ذخیره شد ✓');
+});
 async function suSend(o, btn) {
   if (btn) btn.disabled = true; const r = await send(Object.assign({ pin:MG.pin, key:ACCESS_KEY }, o)); if (btn) btn.disabled = false;
   if (r.net) { toast('اینترنت در دسترس نیست.'); return null; } if (r.status !== 'ok') { toast(r.message || 'انجام نشد.'); return null; } return r;
@@ -5265,7 +5418,7 @@ const suStuOf = c => { for (const st of Object.keys(STUDENTS)) if (STUDENTS[st] 
 async function suOpen() {
   $('#suName').value = SCHOOL_NAME; fillDatalist('suStL', uniq(Object.keys(STUDENTS).concat(['تجربی', 'انسانی'])));
   fillDatalist('taCourseL', curAll() || uniq(lsGet('sia_rost_c', []).concat(P.courses)));
-  suClsPreview(); suClsList(); suTeachers(); suPwInit(); suHub();
+  suClsPreview(); suClsList(); suTeachers(); suPwInit(); zcInit(); suHub();
   const r = await send({ action:'setupInfo', pin:MG.pin, key:ACCESS_KEY }); if (r.status === 'ok') { SU = r; setSchoolName(r.school); $('#suName').value = SCHOOL_NAME; }
   await loadDir();
   suTeachers(); suPwInit(); suHub();
@@ -5302,6 +5455,7 @@ function suHub() {
   if (SU) pw.push(SU.stuNoPass ? fa(SU.stuNoPass) + ' دانش‌آموز هنوز رمز عبور نساخته‌اند' : 'همه‌ی دانش‌آموزان رمز عبور دارند');
   $('#suSchTx').textContent = cls.length ? fa(schC.length) + ' کلاس از ' + fa(cls.length) + ' کلاس برنامه‌ی هفتگی دارند.' : 'ابتدا کلاس‌ها را بسازید.';
   [['نام مدرسه', SCHOOL_NAME, 'ok', 'suSchool'],
+   ['نوع مدرسه، شیفت و زنگ‌ها', CFG ? ['متوسطه ' + CFG.lvl, CFG.gen, CFG.typ, CFG_TYP[CFG.sh], fa(NP()) + ' زنگ'].join(' · ') : 'هنوز تنظیم نشده؛ ساعت‌های پیش‌فرض برنامه به کار می‌رود', CFG ? 'ok' : 'warn', 'suCfg'],
    ['کلاس‌ها', cls.length ? fa(cls.length) + ' کلاس' : 'هنوز کلاسی ساخته نشده است', cls.length ? 'ok' : 'todo', 'suCls'],
    ['دانش‌آموزان', nStu ? fa(nStu) + ' دانش‌آموز' : 'هنوز دانش‌آموزی ثبت نشده است', nStu ? 'ok' : 'todo', 'saCard'],
    ['دبیران', T.length ? fa(T.length) + ' دبیر' : 'هنوز دبیری ثبت نشده است', T.length ? 'ok' : 'todo', 'taCard'],
@@ -5323,7 +5477,7 @@ $('#suNameGo').addEventListener('click', async () => {
 /* --- کلاس‌ها --- */
 function suClsName() {
   const raw = $('#suClsN').value.trim(), st = $('#suClsSt').value.trim(); if (!raw) return '';
-  return GRADES.some(g => raw.indexOf(g) >= 0) ? raw : [$('#suClsG').value, st, fa(raw)].filter(Boolean).join(' ');   // «یازدهم تجربی ۲۰۱»
+  return gradesNow().some(g => raw.indexOf(g) >= 0) ? raw : [$('#suClsG').value, st, fa(raw)].filter(Boolean).join(' ');   // «یازدهم تجربی ۲۰۱»
 }
 function suClsPreview() { const n = suClsName(); $('#suClsPrev').textContent = n ? 'نام کلاس: «' + n + '»' : 'مثلاً پایه‌ی یازدهم، رشته‌ی تجربی و شماره‌ی ۲۰۱ ← «یازدهم تجربی ۲۰۱». نام کامل هم می‌توانید بنویسید.'; }
 ['#suClsN', '#suClsSt', '#suClsG'].forEach(q => { $(q).addEventListener('input', suClsPreview); $(q).addEventListener('change', suClsPreview); });
@@ -5741,7 +5895,7 @@ function cfInfo() {
 }
 function cfRefresh() {
   const q = jParse(CF.get()), d = jGreg(q[0], q[1], q[2]), sh = d.getDay() === 5 ? null : shiftOfDate(d), per = $('#cfPer'), cur = per.value; per.textContent = '';
-  [1, 2, 3].forEach(p => { const o = el('option', '', 'زنگ ' + fa(p) + (sh ? ' (' + SHIFT_TIMES[sh][p - 1] + ')' : '')); o.value = p; per.append(o); });
+  perOpts(per, d);
   per.value = cur || '1'; cfTch(); cfInfo();
 }
 function cfInit() {
@@ -5885,12 +6039,12 @@ function tlDayTxt() {
   $('#tlDay').textContent = JWD[g.getDay()] + ' ' + fa(TL.pk.get()) + (g.getDay() === 5 ? ' — جمعه تعطیل است' : '');
 }
 function tlPerDraw() {
-  const box = $('#tlPer'); box.textContent = '';
+  const box = $('#tlPer'); box.textContent = ''; box.style.gridTemplateColumns = 'repeat(' + Math.min(NP() + 1, 5) + ',1fr)';
   const all = el('button', 'chip' + (TL.per.length ? '' : ' on'), 'همه‌ی زنگ‌ها'); all.type = 'button';
   all.addEventListener('click', () => { TL.per = []; tlPerDraw(); }); box.append(all);
-  [1, 2, 3].forEach(p => {
+  perList().forEach(p => {
     const on = TL.per.indexOf(p) >= 0, b = el('button', 'chip' + (on ? ' on' : ''), 'زنگ ' + fa(p)); b.type = 'button';
-    b.addEventListener('click', () => { let s2 = TL.per.filter(x => x !== p); if (!on) s2.push(p); s2 = s2.sort(); TL.per = s2.length === 3 ? [] : s2; tlPerDraw(); });
+    b.addEventListener('click', () => { let s2 = TL.per.filter(x => x !== p); if (!on) s2.push(p); s2 = s2.sort(); TL.per = s2.length >= NP() ? [] : s2; tlPerDraw(); });
     box.append(b);
   });
 }
@@ -6015,7 +6169,7 @@ let AB = { p:0, open:null, init:false };
 const abToday = () => plJ(new Date());
 function abDateOf() { const q = jParse($('#abDate').value); return q ? jGreg(q[0], q[1], q[2]) : null; }
 function abPer(r, ps) {           // زنگ هر ردیف حضور و غیاب؛ ردیف‌های قدیمی که زنگ ندارند از روی ساعت ثبت تخمین زده می‌شوند
-  const p = Number(en(String(r[11] == null ? '' : r[11]))); if (p >= 1 && p <= 3) return p;
+  const p = Number(en(String(r[11] == null ? '' : r[11]))); if (p >= 1 && p <= NP()) return p;
   const m = /(\d{1,2}):(\d{2})/.exec(en(String(r[1] || ''))); if (!m || !ps.length) return 0;
   const t = +m[1] * 60 + +m[2], mins = d => d.getHours() * 60 + d.getMinutes();
   const hit = ps.find(P => t >= mins(P.a) - 10 && t <= mins(P.b) + 20); if (hit) return hit.p;
@@ -6055,7 +6209,7 @@ function abRender() {
   abLoadExc(ds);   // غیبت موجه‌ی ثبت‌شده توسط مدیر (حتی برای جلسه‌ای که هنوز حضور و غیابش ثبت نشده)
   Object.keys(S).forEach(k => S[k].rows.forEach(r => { if (String(r.st).indexOf('موجه') >= 0) r.mgr = true; }));
   (AB.excFor === ds ? AB.exc || [] : []).forEach(x => {
-    Object.keys(S).map(k => S[k]).filter(o => normT(o.c) === normT(x.c) && (!x.p || !x.p.length || x.p.length === 3 || (o.p && x.p.indexOf(o.p) >= 0))).forEach(o => {
+    Object.keys(S).map(k => S[k]).filter(o => normT(o.c) === normT(x.c) && (!x.p || !x.p.length || x.p.length >= NP() || (o.p && x.p.indexOf(o.p) >= 0))).forEach(o => {
       const hit = o.rows.find(r => normT(r.n) === normT(x.n));
       if (hit) { hit.st = 'غیبت موجه'; hit.mgr = true; if (!hit.why) hit.why = x.r; } else o.rows.push({ n:x.n, st:'غیبت موجه', why:x.r, mgr:true });
     });
@@ -6154,7 +6308,7 @@ function mcCourseFill() {
 function mcPerFill() {
   if (!MC.pk) return; const q = jParse(MC.pk.get()); if (!q) return;
   const d = jGreg(q[0], q[1], q[2]), sel = $('#mcPer'), cur = sel.value, sh = d.getDay() === 5 ? null : shiftOfDate(d); sel.textContent = '';
-  [1, 2, 3].forEach(p => { const o = el('option', '', 'زنگ ' + fa(p) + (sh ? ' (' + SHIFT_TIMES[sh][p - 1] + ')' : '')); o.value = p; sel.append(o); });
+  perOpts(sel, d);
   let pre = 0; if (sh) { const day = (d.getDay() + 1) % 7, c = $('#mcCls').value, s0 = $('#mcCourse').value; const r = SCH.find(x => x[0] === c && normT(x[3]) === normT(s0) && x[1] === day && (!x[5] || x[5] === SH_FA[sh])); if (r) pre = r[2]; }
   sel.value = String(MC.up && cur ? cur : (pre || cur || 1)); mcInfo();
 }
