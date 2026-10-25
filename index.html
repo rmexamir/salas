@@ -2340,6 +2340,7 @@ body:not(.in-mod) .lbl-ic{width:auto;height:auto;background:none;border:0;box-sh
           <div class="lbl" style="margin-bottom:8px">تنظیمات (وزن‌ها مجموعاً ۱۰۰)</div>
           <div class="mg-bar"><label>حضور و غیاب <input id="scW_att" type="text" inputmode="numeric"></label><label>آزمون <input id="scW_exam" type="text" inputmode="numeric"></label><label>نمره‌ی به‌موقع <input id="scW_grade" type="text" inputmode="numeric"></label><label>ورود و خروج <input id="scW_entry" type="text" inputmode="numeric"></label></div>
           <div class="mg-bar"><label>حداقل نمونه <input id="scMin" type="text" inputmode="numeric"></label><label>مهلت ثبت نمره (روز) <input id="scDl" type="text" inputmode="numeric"></label><button id="scCfgSave" class="btn" type="button">ذخیره‌ی تنظیمات</button></div>
+          <div id="scMsg" class="now-sub" role="status" style="margin-top:6px"></div>
         </div>
         <div class="card">
           <div id="scMgrBox"></div>
@@ -7680,10 +7681,22 @@ async function scoreMgrTable() {
   box.append(scoreCard(r, (p, d) => { MGSC = { period:p, date:d }; scoreMgrTable(); }));
 }
 $('#scCfgSave').addEventListener('click', async () => {
-  const d = await send({ action:'scoreCfgSave', pin:MG.pin, w_att:$('#scW_att').value, w_exam:$('#scW_exam').value,
-    w_grade:$('#scW_grade').value, w_entry:$('#scW_entry').value, minN:$('#scMin').value, dl:$('#scDl').value, key:ACCESS_KEY });
-  toast(d.status === 'ok' ? 'تنظیمات ذخیره شد' : (d.message || 'ناموفق'));
-  if (d.status === 'ok') scoreMgrTable();
+  const msg = $('#scMsg'), btn = $('#scCfgSave');
+  const toNum = v => { const t = String(v || '').replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d)).trim(); return t === '' ? NaN : Number(t); };
+  const w = ['att', 'exam', 'grade', 'entry'].map(k => toNum($('#scW_' + k).value));
+  if (w.some(x => !isFinite(x) || x < 0 || x > 100)) { msg.textContent = 'وزن‌ها باید عددی بین ۰ و ۱۰۰ باشند.'; return; }
+  const sum = w.reduce((a, b) => a + b, 0);
+  if (Math.abs(sum - 100) > 0.01) { msg.textContent = 'مجموع وزن‌ها باید ۱۰۰ باشد؛ الان ' + fa(sum) + ' است.'; return; }
+  btn.disabled = true; msg.textContent = 'در حال ذخیره…';
+  try {
+    const d = await send({ action:'scoreCfgSave', pin:MG.pin, w_att:$('#scW_att').value, w_exam:$('#scW_exam').value,
+      w_grade:$('#scW_grade').value, w_entry:$('#scW_entry').value, minN:$('#scMin').value, dl:$('#scDl').value, key:ACCESS_KEY });
+    if (d.status !== 'ok') { msg.textContent = d.message || 'ذخیره نشد.'; return; }
+    const c = d.cfg;
+    msg.textContent = 'ذخیره شد ✓ — حضور ' + fa(c.w.att) + ' · آزمون ' + fa(c.w.exam) + ' · نمره ' + fa(c.w.grade) + ' · ورود ' + fa(c.w.entry) + ' · حداقل نمونه ' + fa(c.minN) + ' · مهلت ' + fa(c.dl) + ' روز';
+    toast('تنظیمات ذخیره شد');
+    scoreMgrLoad();   // بارگذاری مجدد از سرور: آنچه نمایش داده می‌شود همان چیزی است که ذخیره شده
+  } finally { btn.disabled = false; }
 });
 $('#scSnap').addEventListener('click', async () => {
   const d = await send({ action:'scoreSave', pin:MG.pin, period:MGSC.period, date:MGSC.date, key:ACCESS_KEY });
