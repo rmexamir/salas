@@ -2318,74 +2318,11 @@ body:not(.in-mod) .lbl-ic{width:auto;height:auto;background:none;border:0;box-sh
         <div class="now-sub" style="margin-top:8px">معدل و میانگین کل = مجموع (میانگین هر درس × تعداد واحد) ÷ مجموع واحدها. منبع: «مشخصات رشته درس» وزارت آموزش و پرورش، شاخه‌ی نظری (علوم تجربی ۱۶۰۰۰، ادبیات و علوم انسانی ۱۷۰۰۰). در فرم‌های ثبت و ویرایش برنامه، همین دروس برای رشته و پایه‌ی هر کلاس پیشنهاد می‌شود.</div>
       </div>
       </div>
-      <div class="mg-sec" data-sec="abs" data-t="جریمه‌ی غیبت و تأخیر" hidden>
-        <div class="mg-sec-d">کسر نمره‌ی تعیین‌شده برای هر غیبت و تأخیر بدون عذر. این بخش فقط گزارش است و نمره‌های ثبت‌شده را تغییر نمی‌دهد.</div>
-        <div class="card">
-          <div class="lbl" style="margin-bottom:8px">تنظیمات کسر (بین ۰ و ۲۰)</div>
-          <div class="mg-bar"><input id="nxA" type="text" inputmode="decimal" placeholder="هر غیبت" aria-label="کسر به‌ازای هر غیبت"><input id="nxL" type="text" inputmode="decimal" placeholder="هر تأخیر" aria-label="کسر به‌ازای هر تأخیر"><input id="nxC" type="text" inputmode="decimal" placeholder="سقف (۰ = بدون سقف)" aria-label="سقف کسر"></div>
-          <button id="nxASave" class="btn" type="button">ذخیره‌ی تنظیمات</button>
-        </div>
-        <div class="card">
-          <button id="nxARep" class="btn" type="button">🔄 نمایش گزارش</button>
-          <div id="nxAList"></div>
-        </div>
-      </div>
-      <div class="mg-sec" data-sec="ann" data-t="اطلاعیه و تکلیف" hidden>
-        <div class="mg-sec-d">اطلاعیه‌ی کل کلاس یا تکلیف یک درس. دانش‌آموزان همین کلاس در پرتال خود آن را می‌بینند.</div>
-        <div class="card">
-          <div class="lbl" style="margin-bottom:8px">ثبت جدید</div>
-          <div class="mg-bar"><select id="nxAnT" aria-label="نوع"><option value="اطلاعیه">اطلاعیه</option><option value="تکلیف">تکلیف</option></select><select id="nxAnC" aria-label="کلاس"></select><input id="nxAnS" type="text" placeholder="درس (برای تکلیف الزامی)" aria-label="درس"></div>
-          <div class="mg-bar"><input id="nxAnTi" type="text" maxlength="100" placeholder="عنوان" aria-label="عنوان"><input id="nxAnD" type="text" inputmode="numeric" placeholder="مهلت (مثلاً ۱۴۰۵/۰۸/۰۱)" aria-label="مهلت"></div>
-          <textarea id="nxAnTx" rows="3" maxlength="1000" placeholder="متن" aria-label="متن" style="width:100%"></textarea>
-          <button id="nxAnSave" class="btn" type="button">ثبت</button>
-        </div>
-        <div class="card">
-          <div class="lbl" style="margin-bottom:8px">فهرست</div>
-          <div id="nxAnList"></div>
-        </div>
-      </div>
-      <div class="mg-sec" data-sec="mpend" data-t="تأیید آزمون‌های آزمایشی" hidden>
-        <div class="mg-sec-d">نتیجه‌هایی که دانش‌آموز با کارنامه ثبت کرده است. تا تأیید مدیر، در تابلو و تحلیل دیده نمی‌شوند.</div>
-        <div class="card">
-          <div class="lbl" style="margin-bottom:8px">در انتظار تأیید</div>
-          <div id="nxMpList"></div>
-          <button id="nxMpRef" class="btn" type="button">🔄 به‌روزرسانی</button>
-        </div>
-      </div>
-      <div class="mg-sec" data-sec="miss" data-t="زنگ‌های ثبت‌نشده" hidden>
-        <div class="mg-sec-d">زنگ‌های برنامه‌ی هفتگی که حضور و غیابشان ثبت نشده و معاف هم نیستند.</div>
-        <div class="card">
-          <div class="mg-bar"><input id="nxMsDate" type="text" inputmode="numeric" placeholder="تاریخ (خالی = امروز)" aria-label="تاریخ"><button id="nxMsGo" class="btn" type="button">نمایش</button></div>
-          <div id="nxMsSum" class="now-sub" role="status"></div>
-          <div id="nxMsList"></div>
-        </div>
-      </div>
-      <div class="mg-sec" data-sec="live" data-t="حضور دبیران" hidden>
-        <div class="mg-sec-d">دبیرانی که در پنج دقیقه‌ی اخیر در سامانه فعال بوده‌اند. نمای دبیر فقط‌خواندنی است و چیزی را تغییر نمی‌دهد.</div>
-        <div class="card">
-          <div class="lbl" style="margin-bottom:8px">وضعیت دبیران</div>
-          <div id="nxLvList"></div>
-          <button id="nxLvRef" class="btn" type="button">🔄 به‌روزرسانی</button>
-        </div>
-        <div class="card">
-          <div class="lbl" style="margin-bottom:8px">نمای دبیر (فقط خواندنی)</div>
-          <div class="mg-bar"><select id="nxTvSel" aria-label="دبیر"></select><button id="nxTvGo" class="btn" type="button">نمایش</button></div>
-          <div id="nxTvBox"></div>
-        </div>
-      </div>
-      <div class="mg-sec" data-sec="bkp" data-t="پشتیبان‌گیری" hidden>
-        <div class="mg-sec-d">پشتیبان هفتگی هر جمعه ساعت ۳ بامداد ساخته می‌شود و ۱۲ نسخه‌ی آخر نگه داشته می‌شود.</div>
-        <div class="card">
-          <div id="nxBkInfo" class="now-sub" role="status"></div>
-          <button id="nxBkRun" class="btn" type="button">📦 پشتیبان‌گیری همین حالا</button>
-        </div>
-      </div>
       <div class="mg-sec" data-sec="mkinst" data-t="مؤسسات آزمون آزمایشی" hidden>
-        <div class="mg-sec-d">فهرست مؤسسه‌هایی که دانش‌آموز در فرم نتیجه‌ی آزمون انتخاب می‌کند. «سایر» همیشه در فهرست می‌ماند. تغییر نام، نتیجه‌های قبلی را هم به‌روز می‌کند؛ حذف، نتیجه‌های قبلی را تغییر نمی‌دهد.</div>
+        <div class="mg-sec-d">فهرست مؤسسه‌هایی که دانش‌آموز در فرم نتیجه‌ی آزمون انتخاب می‌کند. «سایر» همیشه می‌ماند. تغییر نام، نتیجه‌های قبلی را هم به‌روز می‌کند؛ حذف، نتیجه‌های قبلی را تغییر نمی‌دهد.</div>
         <div class="card">
-          <div class="mg-bar"><label for="nxHl">کادر زرد برای:</label><select id="nxHl" aria-label="مؤسسه‌ی کادر زرد"></select></div>
-          <div id="nxInList"></div>
-          <div class="mg-bar"><input id="nxInNew" type="text" maxlength="40" placeholder="نام مؤسسه‌ی جدید" aria-label="نام مؤسسه‌ی جدید"><button id="nxInAdd" class="btn" type="button">➕ افزودن</button></div>
+          <div id="mkInList"></div>
+          <div class="mg-bar"><input id="mkInNew" type="text" maxlength="40" placeholder="نام مؤسسه‌ی جدید" aria-label="نام مؤسسه‌ی جدید"><button id="mkInAdd" class="btn" type="button">➕ افزودن</button></div>
         </div>
       </div>
       <div class="mg-sec" data-sec="sys" data-t="اطلاعات و سامانه" hidden>
@@ -4856,8 +4793,7 @@ setInterval(pollToday, 60000); setInterval(renderAlerts, 15000);
 document.addEventListener('visibilitychange', () => { if (!document.hidden) pollToday(); });
 
 /* ======================= غیبت موجه (ثبت مدیر، قفل برای دبیر) و آزمون‌های آزمایشی ======================= */
-let MOCK_HL = 'هیچکدام';
-let INST = ['ماز', 'قلمچی', 'راه موفقیت', 'خیلی سبز', 'گزینه دو', 'آرمان', 'هیچکدام', 'سایر'];   // با فهرست سرور جایگزین می‌شود
+let INST = ['ماز', 'قلمچی', 'راه موفقیت', 'خیلی سبز', 'گزینه دو', 'آرمان', 'هیچکدام', 'سایر'];
 const SUBJ = { exp:['زیست‌شناسی', 'فیزیک', 'شیمی', 'ریاضی', 'زمین‌شناسی'], hum:['علوم و فنون ادبی', 'ریاضی و آمار', 'جامعه‌شناسی', 'عربی', 'تاریخ و جغرافیا', 'فلسفه و منطق', 'روانشناسی', 'اقتصاد'] };
 // --- دبیر: دانش‌آموزان دارای غیبت موجه‌ی ثبت‌شده توسط مدیر، قفل و غیرقابل تغییر می‌شوند
 async function loadExc() {
@@ -4958,7 +4894,7 @@ function mkRender() {
     h.append(el('b', '', k.c), el('span', 'mk-cnt', '✓ ' + fa(ok) + ' از ' + fa(k.st.length)));
     i.style.width = Math.round(ok / k.st.length * 100) + '%'; bar.append(i); bar.setAttribute('role', 'img'); bar.setAttribute('aria-label', fa(ok) + ' نفر از ' + fa(k.st.length) + ' نفر نتیجه را ثبت کرده‌اند');
     k.st.forEach(x => {
-      const dd = el('details', 'mk-st ' + (x.ok ? 'ok' : 'no') + (MOCK_HL && x.i === MOCK_HL ? ' none' : '')), sm = el('summary'), body = el('div', 'dir-b'), ed = el('button', 'btn mk-edb', x.ok ? '✏️ ویرایش نتیجه' : '➕ درج نتیجه (مدیر)'); ed.type = 'button';
+      const dd = el('details', 'mk-st ' + (x.ok ? 'ok' : 'no') + (x.i === 'هیچکدام' ? ' none' : '')), sm = el('summary'), body = el('div', 'dir-b'), ed = el('button', 'btn mk-edb', x.ok ? '✏️ ویرایش نتیجه' : '➕ درج نتیجه (مدیر)'); ed.type = 'button';
       if (x.ok) { sm.append(el('span', '', '✓ ' + x.n), el('small', '', x.i + (x.z == null ? '' : ' · تراز ' + fa(x.z)) + (x.a ? ' · ' + x.a.lv : ''))); body.append(mkDet(x)); }
       else { sm.append(el('span', '', '✗ ' + x.n)); body.append(el('div', 'now-sub', 'برای این آزمون نتیجه‌ای ثبت نشده است.')); }
       ed.addEventListener('click', () => mkEditor(k, x, body)); body.append(ed); dd.append(sm, body); g.append(dd);
@@ -4991,7 +4927,7 @@ function mockHist() {
   const c = el('div', 'card'); c.append(el('div', 'lbl', 'آزمون‌های ثبت‌شده‌ی شما'));
   if (!SD.mocks || !SD.mocks.length) { c.append(el('div', 'now-sub', 'هنوز آزمونی ثبت نکرده‌اید.')); return c; }
   c.append(goalBox());
-  SD.mocks.forEach(x => { const d = el('details', 'dir-it' + (MOCK_HL && x.i === MOCK_HL ? ' mk-none' : '')), h = el('summary'), b = el('div', 'dir-b');
+  SD.mocks.forEach(x => { const d = el('details', 'dir-it' + (x.i === 'هیچکدام' ? ' mk-none' : '')), h = el('summary'), b = el('div', 'dir-b');
     h.append(el('span', '', x.i + ' | ' + x.e), el('small', '', x.z == null ? '' : 'تراز ' + fa(x.z)));
     b.append(infoRow('تراز کل', x.z == null ? '' : fa(x.z)), infoRow('رتبه کشوری', x.k == null ? '' : fa(x.k)));
     if (x.d.length) b.append(tbl(['درس', 'تراز', 'درصد'], x.d.map(q => [q.s, q.t === '' ? '—' : fa(q.t), q.p === '' ? '—' : fa(q.p)])));
@@ -7535,7 +7471,7 @@ function mgShow(k, scroll) {
   if (k === 'pw' && MG.pin && !$('#mgBody').hidden) pwOpen();
   if (k === 'blk' && MG.pin && !$('#mgBody').hidden) blkOpen();
   if (k === 'setup' && MG.pin && !$('#mgBody').hidden) suOpen();
-  nxOpen(k);
+  if (k === 'mkinst' && MG.pin && !$('#mgBody').hidden) mkinstLoad();
   modAfter('m:' + k); if (MODS_OK) secIndex(k);
   if (scroll) { const r = $('#mgNav').getBoundingClientRect(); if (r.top < 0) $('#mgNav').scrollIntoView({ behavior:'smooth', block:'start' }); }
 }
@@ -7630,173 +7566,12 @@ function mgGo(id) {               // رفتن به یک کارت، حتی اگر
 })();
 </script>
 <script>
-/* ===== نسخه‌ی ۱٫۳۹: بخش‌های جدید پنل مدیر ===== */
-function nxOpen(k) {
-  if (!MG.pin || $('#mgBody').hidden) return;
-  if (k === 'abs') nxAbsInit();
-  else if (k === 'ann') nxAnnLoad();
-  else if (k === 'mpend') nxMpLoad();
-  else if (k === 'miss') nxMissLoad();
-  else if (k === 'live') nxLiveLoad();
-  else if (k === 'bkp') nxBkpLoad();
-  else if (k === 'mkinst') nxInLoad();
-}
-function nxMsg(r, ok) { toast(r && r.status === 'ok' ? ok : ((r && r.message) || 'ناموفق')); }
-function nxClear(box) { box.textContent = ''; return box; }
-function nxFillCls(sel) {                  // فهرست کلاس‌ها از همان انتخابگر «ثبت غیبت موجه»
-  const src = $('#excCls'); if (!src) return;
-  const cur = sel.value; sel.textContent = '';
-  Array.from(src.options).forEach(o => { if (o.value) sel.append(new Option(o.textContent, o.value)); });
-  if (cur) sel.value = cur;
-}
-
-/* --- جریمه‌ی غیبت --- */
-async function nxAbsInit() {
-  const r = await send({ action:'absPenReport', pin:MG.pin, key:ACCESS_KEY });
-  if (r.status !== 'ok') return nxMsg(r);
-  $('#nxA').value = r.cfg.a; $('#nxL').value = r.cfg.l; $('#nxC').value = r.cfg.c;
-  const box = nxClear($('#nxAList'));
-  if (!r.classes.length) { box.append(el('div', 'now-sub', 'گزارشی برای نمایش نیست.')); return; }
-  r.classes.forEach(c => {
-    box.append(el('div', 'lbl', c.c));
-    c.st.forEach(s => {
-      box.append(el('div', 'now-sub', s.n + ' — غیبت بدون عذر: ' + s.ab + ' · تأخیر: ' + s.lt + ' · موجه: ' + s.ex +
-        ' · کسر: ' + s.pen + ' · معدل: ' + (s.avg === null ? '—' : s.avg) + ' · پس از کسر: ' + (s.adj === null ? '—' : s.adj)));
-    });
-  });
-}
-$('#nxASave').addEventListener('click', async () => {
-  const r = await send({ action:'absPenSave', pin:MG.pin, a:$('#nxA').value, l:$('#nxL').value, c:$('#nxC').value, key:ACCESS_KEY });
-  nxMsg(r, 'ذخیره شد');
-  if (r.status === 'ok') nxAbsInit();
-});
-$('#nxARep').addEventListener('click', nxAbsInit);
-
-/* --- اطلاعیه و تکلیف --- */
-async function nxAnnLoad() {
-  nxFillCls($('#nxAnC'));
-  const r = await send({ action:'annList', pin:MG.pin, key:ACCESS_KEY });
-  if (r.status !== 'ok') return nxMsg(r);
-  const box = nxClear($('#nxAnList'));
-  if (!r.list.length) box.append(el('div', 'now-sub', 'موردی ثبت نشده است.'));
-  r.list.forEach(x => {
-    const row = el('div', 'now-sub', x.t + ' · ' + x.c + ' · ' + (x.s || 'همه‌ی درس‌ها') + ' · ' + x.ti + (x.due ? ' · مهلت ' + x.due : '') + ' · ' + x.nm + ' (' + x.d + ')');
-    const del = el('button', 'link-btn', 'حذف'); del.type = 'button';
-    del.addEventListener('click', async () => {
-      if (!confirm('حذف شود؟')) return;
-      const d = await send({ action:'annDel', pin:MG.pin, id:x.id, key:ACCESS_KEY });
-      nxMsg(d, 'حذف شد'); nxAnnLoad();
-    });
-    row.append(' ', del);
-    box.append(row, el('div', 'now-sub', x.tx));
-  });
-}
-$('#nxAnSave').addEventListener('click', async () => {
-  const r = await send({ action:'annAdd', pin:MG.pin, type:$('#nxAnT').value, cls:$('#nxAnC').value, course:$('#nxAnS').value.trim(),
-    title:$('#nxAnTi').value.trim(), text:$('#nxAnTx').value.trim(), due:$('#nxAnD').value.trim(), key:ACCESS_KEY });
-  nxMsg(r, 'ثبت شد');
-  if (r.status === 'ok') { $('#nxAnTi').value = ''; $('#nxAnTx').value = ''; $('#nxAnD').value = ''; nxAnnLoad(); }
-});
-
-/* --- تأیید آزمون‌های آزمایشی --- */
-async function nxMpLoad() {
-  const r = await send({ action:'mockPend', pin:MG.pin, key:ACCESS_KEY });
-  if (r.status !== 'ok') return nxMsg(r);
-  const box = nxClear($('#nxMpList'));
-  if (!r.list.length) box.append(el('div', 'now-sub', 'موردی در انتظار تأیید نیست.'));
-  r.list.forEach(x => {
-    box.append(el('div', 'lbl', x.n + ' · ' + x.c));
-    box.append(el('div', 'now-sub', x.e + ' · ' + x.i + ' · تراز ' + (x.z === null ? '—' : x.z) + ' · رتبه ' + (x.k === null ? '—' : x.k) + ' · ' + x.t));
-    const v = el('button', 'btn', 'مشاهده‌ی کارنامه'); v.type = 'button';
-    v.addEventListener('click', () => nxMpView(x.f));
-    const ok = el('button', 'btn', '✓ تأیید'); ok.type = 'button';
-    ok.addEventListener('click', async () => {
-      const d = await send({ action:'mockDecide', pin:MG.pin, ok:true, exam:x.x, name:x.n, cls:x.c, key:ACCESS_KEY });
-      nxMsg(d, 'تأیید شد'); nxMpLoad();
-    });
-    const no = el('button', 'btn', '✗ رد'); no.type = 'button';
-    no.addEventListener('click', async () => {
-      const note = prompt('علت رد (برای دانش‌آموز):'); if (note === null) return;
-      const d = await send({ action:'mockDecide', pin:MG.pin, ok:false, note:note, exam:x.x, name:x.n, cls:x.c, key:ACCESS_KEY });
-      nxMsg(d, 'رد شد'); nxMpLoad();
-    });
-    box.append(v, ' ', ok, ' ', no);
-  });
-}
-async function nxMpView(id) {
-  const r = await send({ action:'mockFile', pin:MG.pin, id:id, key:ACCESS_KEY });
-  if (r.status !== 'ok') return nxMsg(r);
-  const bin = atob(r.data), u8 = new Uint8Array(bin.length);
-  for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
-  window.open(URL.createObjectURL(new Blob([u8], { type: r.mime })), '_blank');
-}
-$('#nxMpRef').addEventListener('click', nxMpLoad);
-
-/* --- زنگ‌های ثبت‌نشده --- */
-async function nxMissLoad() {
-  const r = await send({ action:'missRpt', pin:MG.pin, date:$('#nxMsDate').value.trim(), key:ACCESS_KEY });
-  if (r.status !== 'ok') return nxMsg(r);
-  const box = nxClear($('#nxMsList'));
-  if (r.holiday) { $('#nxMsSum').textContent = r.date + ' — روز تعطیل است.'; return; }
-  $('#nxMsSum').textContent = r.date + ' — کل زنگ‌ها: ' + r.total + ' · ثبت‌شده: ' + r.done + ' · معاف: ' + r.exempt + ' · ثبت‌نشده: ' + r.list.length;
-  if (!r.list.length) box.append(el('div', 'now-sub', 'همه‌ی زنگ‌ها ثبت شده‌اند.'));
-  r.list.forEach(x => box.append(el('div', 'now-sub', 'زنگ ' + x.p + ' · ' + x.c + ' · ' + x.s + ' · ' + x.t)));
-}
-$('#nxMsGo').addEventListener('click', nxMissLoad);
-
-/* --- حضور دبیران و نمای دبیر --- */
-const NX_DAYS = ['شنبه', 'یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنجشنبه'];
-async function nxLiveLoad() {
-  const r = await send({ action:'liveList', pin:MG.pin, key:ACCESS_KEY });
-  if (r.status !== 'ok') return nxMsg(r);
-  const box = nxClear($('#nxLvList'));
-  r.list.forEach(x => {
-    const state = x.on ? '🟢 آنلاین' : (x.m === null ? '⚪ هنوز وارد نشده' : '⚪ ' + x.m + ' دقیقه پیش');
-    box.append(el('div', 'now-sub', x.n + ' — ' + state));
-  });
-  const sel = $('#nxTvSel'), cur = sel.value; sel.textContent = '';
-  r.list.forEach(x => sel.append(new Option(x.n, x.n)));
-  if (cur) sel.value = cur;
-}
-$('#nxLvRef').addEventListener('click', nxLiveLoad);
-$('#nxTvGo').addEventListener('click', async () => {
-  const t = $('#nxTvSel').value; if (!t) return;
-  const r = await send({ action:'tviewGet', pin:MG.pin, teacher:t, key:ACCESS_KEY });
-  if (r.status !== 'ok') return nxMsg(r);
-  const box = nxClear($('#nxTvBox'));
-  box.append(el('div', 'lbl', r.name));
-  box.append(el('div', 'now-sub', 'برنامه‌ی هفتگی'));
-  r.sch.forEach(x => box.append(el('div', 'now-sub', NX_DAYS[x.d] + ' · زنگ ' + x.p + ' · ' + x.c + ' · ' + x.s)));
-  box.append(el('div', 'now-sub', 'کلاس‌ها و درس‌ها'));
-  r.items.forEach(x => {
-    const abs = x.students.reduce((a, q) => a + q.ab, 0);
-    box.append(el('div', 'now-sub', x.c + ' · ' + x.s + ' · جلسات: ' + x.sessions + ' · میانگین کلاس: ' + (x.avg === null ? '—' : x.avg) + ' · غیبت ثبت‌شده: ' + abs));
-  });
-  if (r.leaves.length) box.append(el('div', 'now-sub', 'مرخصی‌های اخیر'));
-  r.leaves.forEach(x => box.append(el('div', 'now-sub', x.d + ' · ' + x.r + ' · ' + x.s)));
-});
-
-/* --- پشتیبان --- */
-async function nxBkpLoad() {
-  const r = await send({ action:'bkpInfo', pin:MG.pin, key:ACCESS_KEY });
-  if (r.status !== 'ok') return nxMsg(r);
-  $('#nxBkInfo').textContent = 'تعداد نسخه‌ها: ' + r.count + (r.last ? ' · آخرین: ' + r.last : '') +
-    (r.trig ? ' · زمان‌بندی هفتگی فعال است' : ' · زمان‌بندی هفتگی فعال نیست؛ یک‌بار installBackup را در Apps Script اجرا کنید');
-}
-$('#nxBkRun').addEventListener('click', async () => {
-  const r = await send({ action:'bkpRun', pin:MG.pin, key:ACCESS_KEY });
-  nxMsg(r, 'پشتیبان ساخته شد'); nxBkpLoad();
-});
-/* --- مؤسسات آزمون آزمایشی: فهرست همگام با سرور --- */
-async function nxInLoad() {
+/* ===== مؤسسات آزمون آزمایشی: ویرایش فهرست (مدیر) و همگام‌سازی با فرم دانش‌آموز ===== */
+async function mkinstLoad() {
   const r = await send({ action:'mockInstList', key:ACCESS_KEY });
-  if (r.status !== 'ok') return nxMsg(r);
-  INST = r.list; MOCK_HL = r.hl || '';
-  const hs = $('#nxHl'); hs.textContent = '';
-  hs.append(new Option('— بدون کادر زرد —', ''));
-  r.list.filter(n => n !== 'سایر').forEach(n => hs.append(new Option(n, n)));
-  hs.value = MOCK_HL;
-  const box = nxClear($('#nxInList'));
+  if (r.status !== 'ok') return toast(r.message || 'ناموفق');
+  INST = r.list;
+  const box = $('#mkInList'); box.textContent = '';
   r.list.forEach(name => {
     const row = el('div', 'now-sub', name + (name === 'سایر' ? ' (ثابت)' : ''));
     if (name !== 'سایر') {
@@ -7804,31 +7579,29 @@ async function nxInLoad() {
       ren.addEventListener('click', async () => {
         const to = prompt('نام جدید «' + name + '»:', name); if (to === null || !to.trim() || to.trim() === name) return;
         const d = await send({ action:'mockInstSave', pin:MG.pin, op:'rename', name:name, to:to.trim(), key:ACCESS_KEY });
-        nxMsg(d, 'نام تغییر کرد'); if (d.status === 'ok') { INST = d.list; nxInLoad(); }
+        toast(d.status === 'ok' ? 'نام تغییر کرد' : (d.message || 'ناموفق'));
+        if (d.status === 'ok') mkinstLoad();
       });
       const del = el('button', 'link-btn', 'حذف'); del.type = 'button';
       del.addEventListener('click', async () => {
         if (!confirm('«' + name + '» از فهرست حذف شود؟ نتیجه‌های قبلی تغییر نمی‌کنند.')) return;
         const d = await send({ action:'mockInstSave', pin:MG.pin, op:'del', name:name, key:ACCESS_KEY });
-        nxMsg(d, 'حذف شد'); if (d.status === 'ok') { INST = d.list; nxInLoad(); }
+        toast(d.status === 'ok' ? 'حذف شد' : (d.message || 'ناموفق'));
+        if (d.status === 'ok') mkinstLoad();
       });
       row.append(' ', ren, ' ', del);
     }
     box.append(row);
   });
 }
-$('#nxInAdd').addEventListener('click', async () => {
-  const v = $('#nxInNew').value.trim(); if (!v) return;
+$('#mkInAdd').addEventListener('click', async () => {
+  const v = $('#mkInNew').value.trim(); if (!v) return;
   const d = await send({ action:'mockInstSave', pin:MG.pin, op:'add', name:v, key:ACCESS_KEY });
-  nxMsg(d, 'افزوده شد');
-  if (d.status === 'ok') { $('#nxInNew').value = ''; INST = d.list; nxInLoad(); }
+  toast(d.status === 'ok' ? 'افزوده شد' : (d.message || 'ناموفق'));
+  if (d.status === 'ok') { $('#mkInNew').value = ''; mkinstLoad(); }
 });
-$('#nxHl').addEventListener('change', async () => {
-  const d = await send({ action:'mockInstSave', pin:MG.pin, op:'hl', name:$('#nxHl').value, key:ACCESS_KEY });
-  nxMsg(d, 'ذخیره شد'); if (d.status === 'ok') { MOCK_HL = d.hl || ''; nxInLoad(); }
-});
-// فهرست و کادر زرد را پیش از نمایش فرم‌ها از سرور می‌گیریم
-send({ action:'mockInstList', key:ACCESS_KEY }).then(r => { if (r && r.status === 'ok') { if (r.list.length) INST = r.list; MOCK_HL = r.hl || ''; } }).catch(() => {});
+// فهرست را پیش از نمایش فرم‌ها از سرور می‌گیریم
+send({ action:'mockInstList', key:ACCESS_KEY }).then(r => { if (r && r.status === 'ok' && r.list.length) INST = r.list; }).catch(() => {});
 </script>
 </body>
 </html>
