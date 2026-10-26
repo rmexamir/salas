@@ -1667,18 +1667,6 @@ body:not(.in-mod) .lbl-ic{width:auto;height:auto;background:none;border:0;box-sh
 .gd-t{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
 .gd-t b{font-size:13.5px;color:var(--absent)} .gd-t small{font-size:12px;color:var(--ink)}
 .gd-row .btn{flex:none;font-size:12.5px;padding:6px 10px}
-.mk-st.none{background:#FFF1A8;color:#6B5200;border-color:#E0B000}
-.mk-st.none summary{color:#6B5200}
-.dir-it.mk-none{background:#FFF1A8;border-color:#E0B000;border-inline-start:5px solid #E0B000}
-.dir-it.mk-none summary{color:#6B5200}
-.score-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:8px 0}
-.score-bar input{width:150px}
-.score-tbl{margin-top:8px}
-.score-r{display:grid;grid-template-columns:34px minmax(0,1fr) 52px 46px 46px 46px 46px;gap:6px;align-items:center;padding:8px 6px;border-bottom:1px solid var(--line);font-size:13px}
-.score-r.score-h{font-weight:800;color:var(--muted);font-size:12px}
-.score-r.me{background:var(--input);border-radius:10px;font-weight:800}
-.score-r .sn{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
-.score-r .sc{font-weight:900;text-align:center}
 </style>
 </head>
 <body>
@@ -1844,7 +1832,6 @@ body:not(.in-mod) .lbl-ic{width:auto;height:auto;background:none;border:0;box-sh
   <!-- حضور و غیاب -->
   <section id="p-home" hidden>
   <div id="honorHome"></div>
-<div id="scoreHome"></div>
   <div class="tmw-host" id="tmHome"></div>
 </section>
 <section id="p-att">
@@ -2327,25 +2314,6 @@ body:not(.in-mod) .lbl-ic{width:auto;height:auto;background:none;border:0;box-sh
         <div class="now-sub" style="margin-top:8px">معدل و میانگین کل = مجموع (میانگین هر درس × تعداد واحد) ÷ مجموع واحدها. منبع: «مشخصات رشته درس» وزارت آموزش و پرورش، شاخه‌ی نظری (علوم تجربی ۱۶۰۰۰، ادبیات و علوم انسانی ۱۷۰۰۰). در فرم‌های ثبت و ویرایش برنامه، همین دروس برای رشته و پایه‌ی هر کلاس پیشنهاد می‌شود.</div>
       </div>
       </div>
-      <div class="mg-sec" data-sec="mkinst" data-t="مؤسسات آزمون آزمایشی" hidden>
-        <div class="mg-sec-d">فهرست مؤسسه‌هایی که دانش‌آموز در فرم نتیجه‌ی آزمون انتخاب می‌کند. «سایر» همیشه می‌ماند. تغییر نام، نتیجه‌های قبلی را هم به‌روز می‌کند؛ حذف، نتیجه‌های قبلی را تغییر نمی‌دهد.</div>
-        <div class="card">
-          <div id="mkInList"></div>
-          <div class="mg-bar"><input id="mkInNew" type="text" maxlength="40" placeholder="نام مؤسسه‌ی جدید" aria-label="نام مؤسسه‌ی جدید"><button id="mkInAdd" class="btn" type="button">➕ افزودن</button></div>
-        </div>
-      </div>
-      <div class="mg-sec" data-sec="score" data-t="امتیاز دبیران" hidden>
-        <div class="mg-sec-d">امتیاز دبیران بر اساس حضور و غیاب، برگزاری آزمون، ثبت نمره‌ی به‌موقع و ورود و خروج. هر درصد بر اساس برنامه‌ی همان دبیر محاسبه می‌شود.</div>
-        <div class="card">
-          <div class="lbl" style="margin-bottom:8px">تنظیمات (وزن‌ها مجموعاً ۱۰۰)</div>
-          <div class="mg-bar"><label>حضور و غیاب <input id="scW_att" type="text" inputmode="numeric"></label><label>آزمون <input id="scW_exam" type="text" inputmode="numeric"></label><label>نمره‌ی به‌موقع <input id="scW_grade" type="text" inputmode="numeric"></label><label>ورود و خروج <input id="scW_entry" type="text" inputmode="numeric"></label></div>
-          <div class="mg-bar"><label>حداقل نمونه <input id="scMin" type="text" inputmode="numeric"></label><label>مهلت ثبت نمره (روز) <input id="scDl" type="text" inputmode="numeric"></label><button id="scCfgSave" class="btn" type="button">ذخیره‌ی تنظیمات</button></div>
-        </div>
-        <div class="card">
-          <div id="scMgrBox"></div>
-          <button id="scSnap" class="btn" type="button">💾 ذخیره‌ی این جدول در شیت «امتیاز دبیران»</button>
-        </div>
-      </div>
       <div class="mg-sec" data-sec="sys" data-t="اطلاعات و سامانه" hidden>
       <div class="mg-sec-d">بانک اطلاعات دانش‌آموزان و دبیران، سابقه‌ی تغییرات و ابزارها.</div>
       <div class="card">
@@ -2602,7 +2570,7 @@ function setTab(t) {
   ['home', 'att', 'gr', 'mg', 'sch', 'inb', 'cns', 'stf', 'dis'].forEach(k => { $('#p-' + k).hidden = t !== k; });
   $('#common').hidden = ['home', 'sch', 'inb', 'cns', 'stf', 'dis'].includes(t);
   modAfter(t === 'mg' ? 'm:' + (($('#mgBody .mg-sec:not([hidden])') || { dataset:{} }).dataset.sec || 'today') : t);
-  if (t === 'home') { loadHonor(); scoreTeacherLoad(); } if (t === 'att') autoSlotApply(); if (t === 'sch') renderSch(); if (t === 'inb') loadInbox(); if (t === 'cns') cnsOpen(); if (t === 'stf') { stfOpen(); tlMineLoad(); } if (t === 'dis') disOpen('t');
+  if (t === 'home') loadHonor(); if (t === 'att') autoSlotApply(); if (t === 'sch') renderSch(); if (t === 'inb') loadInbox(); if (t === 'cns') cnsOpen(); if (t === 'stf') { stfOpen(); tlMineLoad(); } if (t === 'dis') disOpen('t');
 }
 $$('.tab').forEach(b => b.addEventListener('click', () => setTab(b.dataset.tab)));
 
@@ -4814,7 +4782,7 @@ setInterval(pollToday, 60000); setInterval(renderAlerts, 15000);
 document.addEventListener('visibilitychange', () => { if (!document.hidden) pollToday(); });
 
 /* ======================= غیبت موجه (ثبت مدیر، قفل برای دبیر) و آزمون‌های آزمایشی ======================= */
-let INST = ['ماز', 'قلمچی', 'راه موفقیت', 'خیلی سبز', 'گزینه دو', 'آرمان', 'هیچکدام', 'سایر'];
+const INST = ['ماز', 'قلمچی', 'راه موفقیت', 'خیلی سبز', 'گزینه دو', 'سایر'];
 const SUBJ = { exp:['زیست‌شناسی', 'فیزیک', 'شیمی', 'ریاضی', 'زمین‌شناسی'], hum:['علوم و فنون ادبی', 'ریاضی و آمار', 'جامعه‌شناسی', 'عربی', 'تاریخ و جغرافیا', 'فلسفه و منطق', 'روانشناسی', 'اقتصاد'] };
 // --- دبیر: دانش‌آموزان دارای غیبت موجه‌ی ثبت‌شده توسط مدیر، قفل و غیرقابل تغییر می‌شوند
 async function loadExc() {
@@ -4915,7 +4883,7 @@ function mkRender() {
     h.append(el('b', '', k.c), el('span', 'mk-cnt', '✓ ' + fa(ok) + ' از ' + fa(k.st.length)));
     i.style.width = Math.round(ok / k.st.length * 100) + '%'; bar.append(i); bar.setAttribute('role', 'img'); bar.setAttribute('aria-label', fa(ok) + ' نفر از ' + fa(k.st.length) + ' نفر نتیجه را ثبت کرده‌اند');
     k.st.forEach(x => {
-      const dd = el('details', 'mk-st ' + (x.ok ? 'ok' : 'no') + (x.i === 'هیچکدام' ? ' none' : '')), sm = el('summary'), body = el('div', 'dir-b'), ed = el('button', 'btn mk-edb', x.ok ? '✏️ ویرایش نتیجه' : '➕ درج نتیجه (مدیر)'); ed.type = 'button';
+      const dd = el('details', 'mk-st ' + (x.ok ? 'ok' : 'no')), sm = el('summary'), body = el('div', 'dir-b'), ed = el('button', 'btn mk-edb', x.ok ? '✏️ ویرایش نتیجه' : '➕ درج نتیجه (مدیر)'); ed.type = 'button';
       if (x.ok) { sm.append(el('span', '', '✓ ' + x.n), el('small', '', x.i + (x.z == null ? '' : ' · تراز ' + fa(x.z)) + (x.a ? ' · ' + x.a.lv : ''))); body.append(mkDet(x)); }
       else { sm.append(el('span', '', '✗ ' + x.n)); body.append(el('div', 'now-sub', 'برای این آزمون نتیجه‌ای ثبت نشده است.')); }
       ed.addEventListener('click', () => mkEditor(k, x, body)); body.append(ed); dd.append(sm, body); g.append(dd);
@@ -4948,7 +4916,7 @@ function mockHist() {
   const c = el('div', 'card'); c.append(el('div', 'lbl', 'آزمون‌های ثبت‌شده‌ی شما'));
   if (!SD.mocks || !SD.mocks.length) { c.append(el('div', 'now-sub', 'هنوز آزمونی ثبت نکرده‌اید.')); return c; }
   c.append(goalBox());
-  SD.mocks.forEach(x => { const d = el('details', 'dir-it' + (x.i === 'هیچکدام' ? ' mk-none' : '')), h = el('summary'), b = el('div', 'dir-b');
+  SD.mocks.forEach(x => { const d = el('details', 'dir-it'), h = el('summary'), b = el('div', 'dir-b');
     h.append(el('span', '', x.i + ' | ' + x.e), el('small', '', x.z == null ? '' : 'تراز ' + fa(x.z)));
     b.append(infoRow('تراز کل', x.z == null ? '' : fa(x.z)), infoRow('رتبه کشوری', x.k == null ? '' : fa(x.k)));
     if (x.d.length) b.append(tbl(['درس', 'تراز', 'درصد'], x.d.map(q => [q.s, q.t === '' ? '—' : fa(q.t), q.p === '' ? '—' : fa(q.p)])));
@@ -6566,7 +6534,7 @@ async function stfMark(isIn) {
     const g = await stfLocate(); if (g.err) return toast(g.err);
     const r = await send({ action:isIn ? 'staffIn' : 'staffOut', teacher:S.teacher.trim(), pin:S.pin.trim(), key:ACCESS_KEY, lat:g.lat, lng:g.lng, acc:g.acc });
     if (r.net) return toast('اینترنت در دسترس نیست'); if (r.status !== 'ok') return toast(r.message || 'ثبت نشد');
-    STF = r; toast(r.message || (isIn ? 'حضور شما ثبت شد ✓' : 'خروج شما ثبت شد ✓')); scoreTeacherLoad();
+    STF = r; toast(r.message || (isIn ? 'حضور شما ثبت شد ✓' : 'خروج شما ثبت شد ✓'));
   } finally { STF_BUSY = false; if (STF) stfPaint(); else { bi.disabled = di; bo.disabled = dout; } }
 }
 $('#stfIn').addEventListener('click', () => stfMark(true)); $('#stfOut').addEventListener('click', () => stfMark(false));
@@ -7492,8 +7460,6 @@ function mgShow(k, scroll) {
   if (k === 'pw' && MG.pin && !$('#mgBody').hidden) pwOpen();
   if (k === 'blk' && MG.pin && !$('#mgBody').hidden) blkOpen();
   if (k === 'setup' && MG.pin && !$('#mgBody').hidden) suOpen();
-  if (k === 'mkinst' && MG.pin && !$('#mgBody').hidden) mkinstLoad();
-  if (k === 'score' && MG.pin && !$('#mgBody').hidden) scoreMgrLoad();
   modAfter('m:' + k); if (MODS_OK) secIndex(k);
   if (scroll) { const r = $('#mgNav').getBoundingClientRect(); if (r.top < 0) $('#mgNav').scrollIntoView({ behavior:'smooth', block:'start' }); }
 }
@@ -7586,109 +7552,6 @@ function mgGo(id) {               // رفتن به یک کارت، حتی اگر
   new MutationObserver(sync).observe(mb, { attributes: true, attributeFilter: ['hidden'] });
   sync();
 })();
-</script>
-<script>
-/* ===== مؤسسات آزمون آزمایشی: ویرایش فهرست (مدیر) و همگام‌سازی با فرم دانش‌آموز ===== */
-async function mkinstLoad() {
-  const r = await send({ action:'mockInstList', key:ACCESS_KEY });
-  if (r.status !== 'ok') return toast(r.message || 'ناموفق');
-  INST = r.list;
-  const box = $('#mkInList'); box.textContent = '';
-  r.list.forEach(name => {
-    const row = el('div', 'now-sub', name + (name === 'سایر' ? ' (ثابت)' : ''));
-    if (name !== 'سایر') {
-      const ren = el('button', 'link-btn', 'تغییر نام'); ren.type = 'button';
-      ren.addEventListener('click', async () => {
-        const to = prompt('نام جدید «' + name + '»:', name); if (to === null || !to.trim() || to.trim() === name) return;
-        const d = await send({ action:'mockInstSave', pin:MG.pin, op:'rename', name:name, to:to.trim(), key:ACCESS_KEY });
-        toast(d.status === 'ok' ? 'نام تغییر کرد' : (d.message || 'ناموفق'));
-        if (d.status === 'ok') mkinstLoad();
-      });
-      const del = el('button', 'link-btn', 'حذف'); del.type = 'button';
-      del.addEventListener('click', async () => {
-        if (!confirm('«' + name + '» از فهرست حذف شود؟ نتیجه‌های قبلی تغییر نمی‌کنند.')) return;
-        const d = await send({ action:'mockInstSave', pin:MG.pin, op:'del', name:name, key:ACCESS_KEY });
-        toast(d.status === 'ok' ? 'حذف شد' : (d.message || 'ناموفق'));
-        if (d.status === 'ok') mkinstLoad();
-      });
-      row.append(' ', ren, ' ', del);
-    }
-    box.append(row);
-  });
-}
-$('#mkInAdd').addEventListener('click', async () => {
-  const v = $('#mkInNew').value.trim(); if (!v) return;
-  const d = await send({ action:'mockInstSave', pin:MG.pin, op:'add', name:v, key:ACCESS_KEY });
-  toast(d.status === 'ok' ? 'افزوده شد' : (d.message || 'ناموفق'));
-  if (d.status === 'ok') { $('#mkInNew').value = ''; mkinstLoad(); }
-});
-// فهرست را پیش از نمایش فرم‌ها از سرور می‌گیریم
-send({ action:'mockInstList', key:ACCESS_KEY }).then(r => { if (r && r.status === 'ok' && r.list.length) INST = r.list; }).catch(() => {});
-</script>
-<script>
-/* ===== امتیاز دبیران: جدول هفتگی و ماهانه (دبیر و مدیر) ===== */
-function scoreCard(r, onChange) {
-  const pc = v => v === null ? '—' : fa(Math.round(v)) + '٪';
-  const c = el('div', 'card score-card');
-  c.append(el('div', 'honor-t', '🏆 جدول امتیاز دبیران — ' + (r.period === 'month' ? 'ماهانه' : 'هفتگی')));
-  c.append(el('div', 'honor-s', fa(r.from) + ' تا ' + fa(r.to) + (r.end !== r.to ? ' (تا امروز)' : '')));
-  const bar = el('div', 'score-bar');
-  const bw = el('button', r.period === 'week' ? 'btn' : 'link-btn', 'هفتگی'); bw.type = 'button';
-  const bm = el('button', r.period === 'month' ? 'btn' : 'link-btn', 'ماهانه'); bm.type = 'button';
-  const di = el('input', '', ''); di.type = 'text'; di.inputMode = 'numeric'; di.placeholder = 'تاریخ (خالی = امروز)'; di.setAttribute('aria-label', 'تاریخ');
-  const go = el('button', 'link-btn', 'نمایش'); go.type = 'button';
-  bw.addEventListener('click', () => onChange('week', di.value.trim()));
-  bm.addEventListener('click', () => onChange('month', di.value.trim()));
-  go.addEventListener('click', () => onChange(r.period, di.value.trim()));
-  bar.append(bw, bm, di, go); c.append(bar);
-  const tb = el('div', 'score-tbl');
-  const hd = el('div', 'score-r score-h'); ['رتبه', 'دبیر', 'امتیاز', 'حضور', 'آزمون', 'نمره', 'ورود'].forEach(h => hd.append(el('span', '', h)));
-  tb.append(hd);
-  if (!r.rows.length) tb.append(el('div', 'now-sub', 'برنامه‌ی تدریسی ثبت نشده است.'));
-  r.rows.forEach((x, i) => {
-    const row = el('div', 'score-r' + (x.k === r.me ? ' me' : ''));
-    row.title = 'حضور ' + fa(x.attD) + ' از ' + fa(x.attN) + ' · آزمون ' + fa(x.examN) + ' · نمره‌ی به‌موقع ' + fa(x.gradeN) + ' · ورود و خروج ' + fa(x.entryD) + ' از ' + fa(x.entryN);
-    row.append(el('span', '', x.score === null ? '—' : fa(i + 1)), el('span', 'sn', x.t), el('span', 'sc', x.score === null ? '—' : fa(x.score)),
-      el('span', '', pc(x.att)), el('span', '', pc(x.exam)), el('span', '', pc(x.grade)), el('span', '', pc(x.entry)));
-    tb.append(row);
-  });
-  c.append(tb);
-  return c;
-}
-let SCORE_P = 'week', SCORE_D = '';
-async function scoreTeacherLoad() {
-  const box = $('#scoreHome'); if (!box || !S.teacher.trim() || !S.pin.trim()) return;
-  const r = await send({ action:'scoreTable', teacher:S.teacher.trim(), pin:S.pin.trim(), period:SCORE_P, date:SCORE_D, key:ACCESS_KEY });
-  if (r.status !== 'ok') return;
-  box.textContent = '';
-  box.append(scoreCard(r, (p, d) => { SCORE_P = p; SCORE_D = d; scoreTeacherLoad(); }));
-}
-let MGSC = { period:'week', date:'' };
-async function scoreMgrLoad() {
-  const c = await send({ action:'scoreCfgGet', pin:MG.pin, key:ACCESS_KEY });
-  if (c.status === 'ok') {
-    const w = c.cfg.w;
-    $('#scW_att').value = w.att; $('#scW_exam').value = w.exam; $('#scW_grade').value = w.grade; $('#scW_entry').value = w.entry;
-    $('#scMin').value = c.cfg.minN; $('#scDl').value = c.cfg.dl;
-  }
-  scoreMgrTable();
-}
-async function scoreMgrTable() {
-  const r = await send({ action:'scoreTable', pin:MG.pin, period:MGSC.period, date:MGSC.date, key:ACCESS_KEY });
-  const box = $('#scMgrBox'); box.textContent = '';
-  if (r.status !== 'ok') return toast(r.message || 'ناموفق');
-  box.append(scoreCard(r, (p, d) => { MGSC = { period:p, date:d }; scoreMgrTable(); }));
-}
-$('#scCfgSave').addEventListener('click', async () => {
-  const d = await send({ action:'scoreCfgSave', pin:MG.pin, w_att:$('#scW_att').value, w_exam:$('#scW_exam').value,
-    w_grade:$('#scW_grade').value, w_entry:$('#scW_entry').value, minN:$('#scMin').value, dl:$('#scDl').value, key:ACCESS_KEY });
-  toast(d.status === 'ok' ? 'تنظیمات ذخیره شد' : (d.message || 'ناموفق'));
-  if (d.status === 'ok') scoreMgrTable();
-});
-$('#scSnap').addEventListener('click', async () => {
-  const d = await send({ action:'scoreSave', pin:MG.pin, period:MGSC.period, date:MGSC.date, key:ACCESS_KEY });
-  toast(d.status === 'ok' ? 'جدول در شیت ذخیره شد' : (d.message || 'ناموفق'));
-});
 </script>
 </body>
 </html>
