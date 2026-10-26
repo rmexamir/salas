@@ -2347,6 +2347,14 @@ body:not(.in-mod) .lbl-ic{width:auto;height:auto;background:none;border:0;box-sh
           <button id="scSnap" class="btn" type="button">💾 ذخیره‌ی این جدول در شیت «امتیاز دبیران»</button>
         </div>
       </div>
+      <div class="mg-sec" data-sec="stumod" data-t="دسترسی دانش‌آموزان" hidden>
+        <div class="mg-sec-d">دسترسی دانش‌آموزان به ماژول‌ها. اگر «قفل تا تکمیل» را روی آزمون‌های آزمایشی بگذارید، همه‌ی بخش‌های دیگر برای هر دانش‌آموز بسته می‌ماند تا آزمون آزمایشی را ثبت کند؛ پس از آن بقیه‌ی بخش‌ها برایش باز می‌شود.</div>
+        <div class="card">
+          <div id="suMods" class="chips" style="grid-template-columns:1fr 1fr"></div>
+          <div class="mg-bar" style="margin-top:10px"><label>قفل تا تکمیل: <select id="suGate" aria-label="قفل تا تکمیل"></select></label><button id="suSave" class="btn" type="button">ذخیره</button></div>
+          <div id="suMsg" class="now-sub" role="status"></div>
+        </div>
+      </div>
       <div class="mg-sec" data-sec="sys" data-t="اطلاعات و سامانه" hidden>
       <div class="mg-sec-d">بانک اطلاعات دانش‌آموزان و دبیران، سابقه‌ی تغییرات و ابزارها.</div>
       <div class="card">
@@ -3521,6 +3529,7 @@ function gateMode() {
 }
 function applyRole() {
   MODS_OK = false;
+  if (ROLE === 'teacher') setTimeout(scoreTeacherLoad, 0);
   const st = ROLE === 'student', mgr = ROLE === 'manager', cn = ROLE === 'counselor', staff = ROLE === 'teacher' || mgr;
   $('#gate').hidden = !!ROLE; document.body.classList.toggle('signed', !!ROLE); $('#whoBar').hidden = !ROLE; $('#p-stu').hidden = !st;
   const vis = cn ? ['cns', 'sch'] : mgr ? ['att', 'gr', 'sch', 'inb', 'mg'] : ROLE === 'teacher' ? ['att', 'gr', 'sch', 'inb', 'cns', 'stf', 'dis'] : ['att', 'gr', 'sch', 'inb'];
@@ -3695,9 +3704,10 @@ function stuVis(box) {
 }
 function stuNav(k) {
   if (stuLocked()) k = 'prof';           // تا تکمیل اطلاعات، سایر منوها بسته است
+  if (SD && SD.allowed && k !== 'prof' && SD.allowed.indexOf(k) < 0) k = SD.allowed[0] || 'dash';   // قفل: فقط ماژول مجاز
   STU_K = k; modAfter('s:' + k); const nv = $('#stuNav'); nv.textContent = '';
-  (stuLocked() ? [['prof', '📝 تکمیل اطلاعات']] : []).concat([['dash', '📊 وضعیت من'], ['sch', 'برنامه هفتگی'], ['plan', '📖 برنامه مطالعه'], ['qz', '📝 آزمونک‌ها'], ['kar', 'کارنامه'], ['att', 'حضور و غیاب'], ['avg', 'میانگین کلاس'], ['mock', 'آزمون‌های آزمایشی'], ['cal', 'تقویم آزمون و تکلیف'], ['leave', 'درخواست مرخصی'], ['vis', '👪 مراجعه‌ی اولیا']].map(q => stuLocked() ? [q[0], '🔒 ' + q[1], 1] : q)).forEach(q => { const b = el('button', 'chip' + (k === q[0] ? ' on' : ''), q[1]); b.type = 'button'; b.dataset.k = q[0]; if (q[2]) { b.disabled = true; b.style.opacity = '.5'; } b.addEventListener('click', () => stuNav(q[0])); nv.append(b); }); qzBadge();
-  stuBanner(); remNotify();
+  (stuLocked() ? [['prof', '📝 تکمیل اطلاعات']] : []).concat([['dash', '📊 وضعیت من'], ['sch', 'برنامه هفتگی'], ['plan', '📖 برنامه مطالعه'], ['qz', '📝 آزمونک‌ها'], ['kar', 'کارنامه'], ['att', 'حضور و غیاب'], ['avg', 'میانگین کلاس'], ['mock', 'آزمون‌های آزمایشی'], ['cal', 'تقویم آزمون و تکلیف'], ['leave', 'درخواست مرخصی'], ['vis', '👪 مراجعه‌ی اولیا']].map(q => stuLocked() || (SD && SD.allowed && SD.allowed.indexOf(q[0]) < 0) ? [q[0], '🔒 ' + q[1], 1] : q)).forEach(q => { const b = el('button', 'chip' + (k === q[0] ? ' on' : ''), q[1]); b.type = 'button'; b.dataset.k = q[0]; if (q[2]) { b.disabled = true; b.style.opacity = '.5'; } b.addEventListener('click', () => stuNav(q[0])); nv.append(b); }); qzBadge();
+  stuBanner(); remNotify(); stuLockNote();
   const sch = k === 'sch'; $('#p-sch').hidden = !sch; $('#stuBody').hidden = sch;
   if (sch) { Z.who = 'c:' + SD.cls; renderSch(); return; }
   const box = $('#stuBody'); box.textContent = ''; ({ dash:stuDash, vis:stuVis, prof:stuProf, plan:stuPlan, qz:stuQz, kar:stuKar, att:stuAtt, avg:stuAvg, mock:stuMock, cal:stuCal, leave:stuLeave })[k](box);
@@ -6325,7 +6335,7 @@ function tmwQuote(first) {
   if (first) { set(); return; }
   TMQ++; $$('.tmq').forEach(e => e.classList.add('fade')); setTimeout(set, 450);
 }
-tmwBuild($('#tmGate')); tmwBuild($('#tmHome')); tmwBuild($('#tmLaunch')); tmwTick(); tmwQuote(true); loadHonor(); setInterval(loadHonor, 300000);
+tmwBuild($('#tmGate')); tmwBuild($('#tmHome')); tmwBuild($('#tmLaunch')); tmwTick(); tmwQuote(true); loadHonor(); setInterval(loadHonor, 300000); setInterval(() => { if (ROLE === 'teacher') scoreTeacherLoad(); }, 300000);
 setInterval(tmwTick, 1000); setInterval(() => tmwQuote(), 15000);
 
 /* ---------- مشاوره ---------- */
@@ -7495,6 +7505,7 @@ function mgShow(k, scroll) {
   if (k === 'setup' && MG.pin && !$('#mgBody').hidden) suOpen();
   if (k === 'mkinst' && MG.pin && !$('#mgBody').hidden) mkinstLoad();
   if (k === 'score' && MG.pin && !$('#mgBody').hidden) scoreMgrLoad();
+  if (k === 'stumod' && MG.pin && !$('#mgBody').hidden) suLoad();
   modAfter('m:' + k); if (MODS_OK) secIndex(k);
   if (scroll) { const r = $('#mgNav').getBoundingClientRect(); if (r.top < 0) $('#mgNav').scrollIntoView({ behavior:'smooth', block:'start' }); }
 }
@@ -7660,7 +7671,7 @@ let SCORE_P = 'week', SCORE_D = '';
 async function scoreTeacherLoad() {
   const box = $('#scoreHome'); if (!box || !S.teacher.trim() || !S.pin.trim()) return;
   const r = await send({ action:'scoreTable', teacher:S.teacher.trim(), pin:S.pin.trim(), period:SCORE_P, date:SCORE_D, key:ACCESS_KEY });
-  if (r.status !== 'ok') return;
+  if (r.status !== 'ok') { box.textContent = ''; box.append(el('div', 'now-sub', r.net ? 'اتصال برقرار نشد؛ دوباره تلاش کنید.' : (r.message || 'جدول امتیاز در دسترس نیست.'))); return; }
   box.textContent = '';
   box.append(scoreCard(r, (p, d) => { SCORE_P = p; SCORE_D = d; scoreTeacherLoad(); }));
 }
@@ -7686,14 +7697,15 @@ $('#scCfgSave').addEventListener('click', async () => {
   const w = ['att', 'exam', 'grade', 'entry'].map(k => toNum($('#scW_' + k).value));
   if (w.some(x => !isFinite(x) || x < 0 || x > 100)) { msg.textContent = 'وزن‌ها باید عددی بین ۰ و ۱۰۰ باشند.'; return; }
   const sum = w.reduce((a, b) => a + b, 0);
-  if (Math.abs(sum - 100) > 0.01) { msg.textContent = 'مجموع وزن‌ها باید ۱۰۰ باشد؛ الان ' + fa(sum) + ' است.'; return; }
+  if (w.some(x => !isFinite(x))) { msg.textContent = 'وزن‌ها باید عدد باشند.'; return; }
+  if (!(sum > 0)) { msg.textContent = 'حداقل یک وزن باید بیشتر از صفر باشد.'; return; }
   btn.disabled = true; msg.textContent = 'در حال ذخیره…';
   try {
     const d = await send({ action:'scoreCfgSave', pin:MG.pin, w_att:$('#scW_att').value, w_exam:$('#scW_exam').value,
       w_grade:$('#scW_grade').value, w_entry:$('#scW_entry').value, minN:$('#scMin').value, dl:$('#scDl').value, key:ACCESS_KEY });
     if (d.status !== 'ok') { msg.textContent = d.message || 'ذخیره نشد.'; return; }
     const c = d.cfg;
-    msg.textContent = 'ذخیره شد ✓ — حضور ' + fa(c.w.att) + ' · آزمون ' + fa(c.w.exam) + ' · نمره ' + fa(c.w.grade) + ' · ورود ' + fa(c.w.entry) + ' · حداقل نمونه ' + fa(c.minN) + ' · مهلت ' + fa(c.dl) + ' روز';
+    msg.textContent = 'ذخیره شد ✓ (مجموع وزن‌ها ' + fa(sum) + '؛ امتیاز به‌صورت نسبی محاسبه می‌شود) — حضور ' + fa(c.w.att) + ' · آزمون ' + fa(c.w.exam) + ' · نمره ' + fa(c.w.grade) + ' · ورود ' + fa(c.w.entry) + ' · حداقل نمونه ' + fa(c.minN) + ' · مهلت ' + fa(c.dl) + ' روز';
     toast('تنظیمات ذخیره شد');
     scoreMgrLoad();   // بارگذاری مجدد از سرور: آنچه نمایش داده می‌شود همان چیزی است که ذخیره شده
   } finally { btn.disabled = false; }
@@ -7701,6 +7713,38 @@ $('#scCfgSave').addEventListener('click', async () => {
 $('#scSnap').addEventListener('click', async () => {
   const d = await send({ action:'scoreSave', pin:MG.pin, period:MGSC.period, date:MGSC.date, key:ACCESS_KEY });
   toast(d.status === 'ok' ? 'جدول در شیت ذخیره شد' : (d.message || 'ناموفق'));
+});
+</script>
+<script>
+/* ===== دسترسی دانش‌آموزان به ماژول‌ها و قفل تا تکمیل ===== */
+function stuLockNote() {
+  let b = document.getElementById('stuLockMsg');
+  if (!SD || !SD.lockMsg) { if (b) b.remove(); return; }
+  if (!b) { b = el('div', 'stu-rem', SD.lockMsg); b.id = 'stuLockMsg'; const nv = $('#stuNav'); nv.parentNode.insertBefore(b, nv.nextSibling); }
+  else b.textContent = SD.lockMsg;
+}
+const SU_MODS = [['dash','وضعیت من'],['sch','برنامه هفتگی'],['plan','برنامه مطالعه'],['qz','آزمونک‌ها'],['kar','کارنامه'],['att','حضور و غیاب'],['avg','میانگین کلاس'],['mock','آزمون‌های آزمایشی'],['cal','تقویم آزمون و تکلیف'],['leave','درخواست مرخصی'],['vis','مراجعه‌ی اولیا']];
+async function suLoad() {
+  const r = await send({ action:'stuModGet', pin:MG.pin, key:ACCESS_KEY });
+  if (r.status !== 'ok') return toast(r.message || 'ناموفق');
+  const box = $('#suMods'); box.textContent = '';
+  SU_MODS.forEach(([k, l]) => {
+    const cb = document.createElement('input'); cb.type = 'checkbox'; cb.id = 'suM_' + k; cb.checked = !!r.cfg.open[k];
+    const lb = document.createElement('label'); lb.append(cb, ' ' + l); box.append(lb);
+  });
+  const g = $('#suGate'); g.textContent = '';
+  g.append(new Option('بدون قفل', ''));
+  g.append(new Option('آزمون‌های آزمایشی', 'mock'));
+  g.value = r.cfg.gate || '';
+}
+$('#suSave').addEventListener('click', async () => {
+  const payload = { action:'stuModSave', pin:MG.pin, gate:$('#suGate').value, key:ACCESS_KEY };
+  SU_MODS.forEach(([k]) => { payload['m_' + k] = $('#suM_' + k).checked; });
+  const d = await send(payload);
+  const m = $('#suMsg');
+  if (d.status !== 'ok') { m.textContent = d.message || 'ذخیره نشد.'; return; }
+  m.textContent = 'ذخیره شد ✓ — ' + (d.cfg.gate ? 'سایر بخش‌ها تا تکمیل «آزمون‌های آزمایشی» قفل است' : 'بدون قفل');
+  suLoad();
 });
 </script>
 </body>
