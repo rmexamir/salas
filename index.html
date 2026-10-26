@@ -2334,19 +2334,6 @@ body:not(.in-mod) .lbl-ic{width:auto;height:auto;background:none;border:0;box-sh
           <div class="mg-bar"><input id="mkInNew" type="text" maxlength="40" placeholder="نام مؤسسه‌ی جدید" aria-label="نام مؤسسه‌ی جدید"><button id="mkInAdd" class="btn" type="button">➕ افزودن</button></div>
         </div>
       </div>
-      <div class="mg-sec" data-sec="score" data-t="امتیاز دبیران" hidden>
-        <div class="mg-sec-d">امتیاز دبیران بر اساس حضور و غیاب، برگزاری آزمون، ثبت نمره‌ی به‌موقع و ورود و خروج. هر درصد بر اساس برنامه‌ی همان دبیر محاسبه می‌شود.</div>
-        <div class="card">
-          <div class="lbl" style="margin-bottom:8px">تنظیمات (وزن‌ها مجموعاً ۱۰۰)</div>
-          <div class="mg-bar"><label>حضور و غیاب <input id="scW_att" type="text" inputmode="numeric"></label><label>آزمون <input id="scW_exam" type="text" inputmode="numeric"></label><label>نمره‌ی به‌موقع <input id="scW_grade" type="text" inputmode="numeric"></label><label>ورود و خروج <input id="scW_entry" type="text" inputmode="numeric"></label></div>
-          <div class="mg-bar"><label>حداقل نمونه <input id="scMin" type="text" inputmode="numeric"></label><label>مهلت ثبت نمره (روز) <input id="scDl" type="text" inputmode="numeric"></label><button id="scCfgSave" class="btn" type="button">ذخیره‌ی تنظیمات</button></div>
-          <div id="scMsg" class="now-sub" role="status" style="margin-top:6px"></div>
-        </div>
-        <div class="card">
-          <div id="scMgrBox"></div>
-          <button id="scSnap" class="btn" type="button">💾 ذخیره‌ی این جدول در شیت «امتیاز دبیران»</button>
-        </div>
-      </div>
       <div class="mg-sec" data-sec="stumod" data-t="دسترسی دانش‌آموزان" hidden>
         <div class="mg-sec-d">دسترسی دانش‌آموزان به ماژول‌ها. اگر «قفل تا تکمیل» را روی آزمون‌های آزمایشی بگذارید، همه‌ی بخش‌های دیگر برای هر دانش‌آموز بسته می‌ماند تا آزمون آزمایشی را ثبت کند؛ پس از آن بقیه‌ی بخش‌ها برایش باز می‌شود.</div>
         <div class="card">
@@ -5038,7 +5025,7 @@ function stuMock(box) {
     go.disabled = false; if (r.net) return fail('اینترنت در دسترس نیست.');
     if (r.status === 'duplicate') return showModal({ icon:'warn', title:'قبلاً ثبت کرده‌ای', msg:r.message, buttons:[{ text:'انصراف', primary:true }, { text:'جایگزین کن', onClick:() => { go.disabled = true; submit(true); } }] });
     if (r.status !== 'ok') return fail(r.message || 'ثبت نشد.');
-    SD.mocks = r.mocks; if (r.mockEx) SD.mockEx = r.mockEx; SD.mockAna = r.mockAna || null; toast('نتیجه‌ی آزمون ثبت شد ✓'); stuNav('mock');
+    SD.mocks = r.mocks; if (r.mockEx) SD.mockEx = r.mockEx; SD.mockAna = r.mockAna || null; toast('نتیجه‌ی آزمون ثبت شد ✓'); stuRefresh(); stuNav('mock');
   };
   go.addEventListener('click', async () => {
     msg.hidden = true; go.disabled = true; const q = F.read(); if (q.err) return fail(q.err);
@@ -7504,7 +7491,6 @@ function mgShow(k, scroll) {
   if (k === 'blk' && MG.pin && !$('#mgBody').hidden) blkOpen();
   if (k === 'setup' && MG.pin && !$('#mgBody').hidden) suOpen();
   if (k === 'mkinst' && MG.pin && !$('#mgBody').hidden) mkinstLoad();
-  if (k === 'score' && MG.pin && !$('#mgBody').hidden) scoreMgrLoad();
   if (k === 'stumod' && MG.pin && !$('#mgBody').hidden) suLoad();
   modAfter('m:' + k); if (MODS_OK) secIndex(k);
   if (scroll) { const r = $('#mgNav').getBoundingClientRect(); if (r.top < 0) $('#mgNav').scrollIntoView({ behavior:'smooth', block:'start' }); }
@@ -7675,48 +7661,15 @@ async function scoreTeacherLoad() {
   box.textContent = '';
   box.append(scoreCard(r, (p, d) => { SCORE_P = p; SCORE_D = d; scoreTeacherLoad(); }));
 }
-let MGSC = { period:'week', date:'' };
-async function scoreMgrLoad() {
-  const c = await send({ action:'scoreCfgGet', pin:MG.pin, key:ACCESS_KEY });
-  if (c.status === 'ok') {
-    const w = c.cfg.w;
-    $('#scW_att').value = w.att; $('#scW_exam').value = w.exam; $('#scW_grade').value = w.grade; $('#scW_entry').value = w.entry;
-    $('#scMin').value = c.cfg.minN; $('#scDl').value = c.cfg.dl;
-  }
-  scoreMgrTable();
-}
-async function scoreMgrTable() {
-  const r = await send({ action:'scoreTable', pin:MG.pin, period:MGSC.period, date:MGSC.date, key:ACCESS_KEY });
-  const box = $('#scMgrBox'); box.textContent = '';
-  if (r.status !== 'ok') return toast(r.message || 'ناموفق');
-  box.append(scoreCard(r, (p, d) => { MGSC = { period:p, date:d }; scoreMgrTable(); }));
-}
-$('#scCfgSave').addEventListener('click', async () => {
-  const msg = $('#scMsg'), btn = $('#scCfgSave');
-  const toNum = v => { const t = String(v || '').replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d)).trim(); return t === '' ? NaN : Number(t); };
-  const w = ['att', 'exam', 'grade', 'entry'].map(k => toNum($('#scW_' + k).value));
-  if (w.some(x => !isFinite(x) || x < 0 || x > 100)) { msg.textContent = 'وزن‌ها باید عددی بین ۰ و ۱۰۰ باشند.'; return; }
-  const sum = w.reduce((a, b) => a + b, 0);
-  if (w.some(x => !isFinite(x))) { msg.textContent = 'وزن‌ها باید عدد باشند.'; return; }
-  if (!(sum > 0)) { msg.textContent = 'حداقل یک وزن باید بیشتر از صفر باشد.'; return; }
-  btn.disabled = true; msg.textContent = 'در حال ذخیره…';
-  try {
-    const d = await send({ action:'scoreCfgSave', pin:MG.pin, w_att:$('#scW_att').value, w_exam:$('#scW_exam').value,
-      w_grade:$('#scW_grade').value, w_entry:$('#scW_entry').value, minN:$('#scMin').value, dl:$('#scDl').value, key:ACCESS_KEY });
-    if (d.status !== 'ok') { msg.textContent = d.message || 'ذخیره نشد.'; return; }
-    const c = d.cfg;
-    msg.textContent = 'ذخیره شد ✓ (مجموع وزن‌ها ' + fa(sum) + '؛ امتیاز به‌صورت نسبی محاسبه می‌شود) — حضور ' + fa(c.w.att) + ' · آزمون ' + fa(c.w.exam) + ' · نمره ' + fa(c.w.grade) + ' · ورود ' + fa(c.w.entry) + ' · حداقل نمونه ' + fa(c.minN) + ' · مهلت ' + fa(c.dl) + ' روز';
-    toast('تنظیمات ذخیره شد');
-    scoreMgrLoad();   // بارگذاری مجدد از سرور: آنچه نمایش داده می‌شود همان چیزی است که ذخیره شده
-  } finally { btn.disabled = false; }
-});
-$('#scSnap').addEventListener('click', async () => {
-  const d = await send({ action:'scoreSave', pin:MG.pin, period:MGSC.period, date:MGSC.date, key:ACCESS_KEY });
-  toast(d.status === 'ok' ? 'جدول در شیت ذخیره شد' : (d.message || 'ناموفق'));
-});
+
 </script>
 <script>
 /* ===== دسترسی دانش‌آموزان به ماژول‌ها و قفل تا تکمیل ===== */
+async function stuRefresh() {                      // دسترسی و داده‌ها را از سرور دوباره می‌گیرد (مثلاً پس از ثبت آزمون)
+  if (!SD || SD.viewAs || !SD.nid) return;
+  const r = await send({ action:'student', nid:SD.nid, secret:SD.sec || '', today:dateStr(), ym:dateStr().slice(0, 7), key:ACCESS_KEY });
+  if (r && r.status === 'ok' && !r.first && !r.blocked) { Object.assign(SD, r, { nid:SD.nid, sec:SD.sec, viewAs:SD.viewAs }); stuLockNote(); }
+}
 function stuLockNote() {
   let b = document.getElementById('stuLockMsg');
   if (!SD || !SD.lockMsg) { if (b) b.remove(); return; }
