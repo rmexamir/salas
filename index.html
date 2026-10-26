@@ -2334,29 +2334,6 @@ body:not(.in-mod) .lbl-ic{width:auto;height:auto;background:none;border:0;box-sh
           <div class="mg-bar"><input id="mkInNew" type="text" maxlength="40" placeholder="نام مؤسسه‌ی جدید" aria-label="نام مؤسسه‌ی جدید"><button id="mkInAdd" class="btn" type="button">➕ افزودن</button></div>
         </div>
       </div>
-      <div class="mg-sec" data-sec="stumod" data-t="دسترسی دانش‌آموزان" hidden>
-        <div class="mg-sec-d">۱) ماژول‌های باز برای همه‌ی دانش‌آموزان. ۲) قفل تا تکمیل: دانش‌آموزان را از فهرست (به ترتیب کلاس) انتخاب کنید، بخش‌هایی را که باید قفل شوند تیک بزنید و «افزودن قفل» را بزنید. آن بخش‌ها برای این دانش‌آموزان بسته می‌ماند تا آزمون آزمایشی را ثبت کنند؛ با ثبت، باز می‌شود.</div>
-        <div class="card">
-          <div class="lbl" style="margin-bottom:8px">ماژول‌های باز</div>
-          <div id="suMods" style="display:flex;flex-wrap:wrap;gap:10px"></div>
-          <button id="suSave" class="btn" type="button" style="margin-top:8px">ذخیره‌ی ماژول‌های باز</button>
-        </div>
-        <div class="card">
-          <div class="lbl" style="margin-bottom:8px">دانش‌آموزان (به ترتیب کلاس)</div>
-          <div id="suStu" style="max-height:340px;overflow:auto"></div>
-        </div>
-        <div class="card">
-          <div class="lbl" style="margin-bottom:8px">بخش‌های قفل‌شونده (تا تکمیل آزمون‌های آزمایشی)</div>
-          <div id="suLockMods" style="display:flex;flex-wrap:wrap;gap:10px"></div>
-          <button id="suAdd" class="btn" type="button" style="margin-top:8px">➕ افزودن قفل برای دانش‌آموزان انتخابی</button>
-        </div>
-        <div class="card">
-          <div class="lbl" style="margin-bottom:8px">قفل‌های فعال</div>
-          <div id="suRules"></div>
-          <button id="suRulesSave" class="btn" type="button" style="margin-top:8px">💾 ذخیره‌ی قفل‌ها</button>
-        </div>
-        <div id="suMsg" class="now-sub" role="status"></div>
-      </div>
       <div class="mg-sec" data-sec="sys" data-t="اطلاعات و سامانه" hidden>
       <div class="mg-sec-d">بانک اطلاعات دانش‌آموزان و دبیران، سابقه‌ی تغییرات و ابزارها.</div>
       <div class="card">
@@ -3706,10 +3683,9 @@ function stuVis(box) {
 }
 function stuNav(k) {
   if (stuLocked()) k = 'prof';           // تا تکمیل اطلاعات، سایر منوها بسته است
-  if (SD && SD.allowed && k !== 'prof' && SD.allowed.indexOf(k) < 0) k = SD.allowed[0] || 'dash';   // قفل: فقط ماژول مجاز
   STU_K = k; modAfter('s:' + k); const nv = $('#stuNav'); nv.textContent = '';
-  (stuLocked() ? [['prof', '📝 تکمیل اطلاعات']] : []).concat([['dash', '📊 وضعیت من'], ['sch', 'برنامه هفتگی'], ['plan', '📖 برنامه مطالعه'], ['qz', '📝 آزمونک‌ها'], ['kar', 'کارنامه'], ['att', 'حضور و غیاب'], ['avg', 'میانگین کلاس'], ['mock', 'آزمون‌های آزمایشی'], ['cal', 'تقویم آزمون و تکلیف'], ['leave', 'درخواست مرخصی'], ['vis', '👪 مراجعه‌ی اولیا']].map(q => stuLocked() || (SD && SD.allowed && SD.allowed.indexOf(q[0]) < 0) ? [q[0], '🔒 ' + q[1], 1] : q)).forEach(q => { const b = el('button', 'chip' + (k === q[0] ? ' on' : ''), q[1]); b.type = 'button'; b.dataset.k = q[0]; if (q[2]) { b.disabled = true; b.style.opacity = '.5'; } b.addEventListener('click', () => stuNav(q[0])); nv.append(b); }); qzBadge();
-  stuBanner(); remNotify(); stuLockNote();
+  (stuLocked() ? [['prof', '📝 تکمیل اطلاعات']] : []).concat([['dash', '📊 وضعیت من'], ['sch', 'برنامه هفتگی'], ['plan', '📖 برنامه مطالعه'], ['qz', '📝 آزمونک‌ها'], ['kar', 'کارنامه'], ['att', 'حضور و غیاب'], ['avg', 'میانگین کلاس'], ['mock', 'آزمون‌های آزمایشی'], ['cal', 'تقویم آزمون و تکلیف'], ['leave', 'درخواست مرخصی'], ['vis', '👪 مراجعه‌ی اولیا']].map(q => stuLocked() ? [q[0], '🔒 ' + q[1], 1] : q)).forEach(q => { const b = el('button', 'chip' + (k === q[0] ? ' on' : ''), q[1]); b.type = 'button'; b.dataset.k = q[0]; if (q[2]) { b.disabled = true; b.style.opacity = '.5'; } b.addEventListener('click', () => stuNav(q[0])); nv.append(b); }); qzBadge();
+  stuBanner(); remNotify();
   const sch = k === 'sch'; $('#p-sch').hidden = !sch; $('#stuBody').hidden = sch;
   if (sch) { Z.who = 'c:' + SD.cls; renderSch(); return; }
   const box = $('#stuBody'); box.textContent = ''; ({ dash:stuDash, vis:stuVis, prof:stuProf, plan:stuPlan, qz:stuQz, kar:stuKar, att:stuAtt, avg:stuAvg, mock:stuMock, cal:stuCal, leave:stuLeave })[k](box);
@@ -5040,7 +5016,7 @@ function stuMock(box) {
     go.disabled = false; if (r.net) return fail('اینترنت در دسترس نیست.');
     if (r.status === 'duplicate') return showModal({ icon:'warn', title:'قبلاً ثبت کرده‌ای', msg:r.message, buttons:[{ text:'انصراف', primary:true }, { text:'جایگزین کن', onClick:() => { go.disabled = true; submit(true); } }] });
     if (r.status !== 'ok') return fail(r.message || 'ثبت نشد.');
-    SD.mocks = r.mocks; if (r.mockEx) SD.mockEx = r.mockEx; SD.mockAna = r.mockAna || null; toast('نتیجه‌ی آزمون ثبت شد ✓'); stuRefresh(); stuNav('mock');
+    SD.mocks = r.mocks; if (r.mockEx) SD.mockEx = r.mockEx; SD.mockAna = r.mockAna || null; toast('نتیجه‌ی آزمون ثبت شد ✓'); stuNav('mock');
   };
   go.addEventListener('click', async () => {
     msg.hidden = true; go.disabled = true; const q = F.read(); if (q.err) return fail(q.err);
@@ -7506,7 +7482,6 @@ function mgShow(k, scroll) {
   if (k === 'blk' && MG.pin && !$('#mgBody').hidden) blkOpen();
   if (k === 'setup' && MG.pin && !$('#mgBody').hidden) suOpen();
   if (k === 'mkinst' && MG.pin && !$('#mgBody').hidden) mkinstLoad();
-  if (k === 'stumod' && MG.pin && !$('#mgBody').hidden) suLoad();
   modAfter('m:' + k); if (MODS_OK) secIndex(k);
   if (scroll) { const r = $('#mgNav').getBoundingClientRect(); if (r.top < 0) $('#mgNav').scrollIntoView({ behavior:'smooth', block:'start' }); }
 }
@@ -7679,82 +7654,7 @@ async function scoreTeacherLoad() {
 
 </script>
 <script>
-/* ===== دسترسی دانش‌آموزان به ماژول‌ها و قفل تا تکمیل ===== */
-async function stuRefresh() {                      // دسترسی و داده‌ها را از سرور دوباره می‌گیرد (مثلاً پس از ثبت آزمون)
-  if (!SD || SD.viewAs || !SD.nid) return;
-  const r = await send({ action:'student', nid:SD.nid, secret:SD.sec || '', today:dateStr(), ym:dateStr().slice(0, 7), key:ACCESS_KEY });
-  if (r && r.status === 'ok' && !r.first && !r.blocked) { Object.assign(SD, r, { nid:SD.nid, sec:SD.sec, viewAs:SD.viewAs }); stuLockNote(); }
-}
-function stuLockNote() {
-  let b = document.getElementById('stuLockMsg');
-  if (!SD || !SD.lockMsg) { if (b) b.remove(); return; }
-  if (!b) { b = el('div', 'stu-rem', SD.lockMsg); b.id = 'stuLockMsg'; const nv = $('#stuNav'); nv.parentNode.insertBefore(b, nv.nextSibling); }
-  else b.textContent = SD.lockMsg;
-}
-const SU_MODS = [['dash','وضعیت من'],['sch','برنامه هفتگی'],['plan','برنامه مطالعه'],['qz','آزمونک‌ها'],['kar','کارنامه'],['att','حضور و غیاب'],['avg','میانگین کلاس'],['mock','آزمون‌های آزمایشی'],['cal','تقویم آزمون و تکلیف'],['leave','درخواست مرخصی'],['vis','مراجعه‌ی اولیا']];
-let SU_RULES = [], SU_CLASSES = [];
-const suLabel = k => (SU_MODS.find(x => x[0] === k) || [0, k])[1];
-const suName = k => { for (const c of SU_CLASSES) { const s = c.st.find(x => x.k === k); if (s) return s.n + ' (' + c.c + ')'; } return k; };
-async function suLoad() {
-  const r = await send({ action:'stuRulesGet', pin:MG.pin, key:ACCESS_KEY });
-  if (r.status !== 'ok') return toast(r.message || 'ناموفق');
-  SU_RULES = r.rules || []; SU_CLASSES = r.classes || [];
-  const m = await send({ action:'stuModGet', pin:MG.pin, key:ACCESS_KEY });
-  const mb = $('#suMods'); mb.textContent = '';
-  if (m.status === 'ok') SU_MODS.forEach(([k, l]) => {
-    const cb = document.createElement('input'); cb.type = 'checkbox'; cb.id = 'suM_' + k; cb.checked = !!m.cfg.open[k];
-    const lb = document.createElement('label'); lb.append(cb, ' ' + l); mb.append(lb);
-  });
-  const sb = $('#suStu'); sb.textContent = '';
-  SU_CLASSES.forEach(cl => {
-    const head = document.createElement('label'); head.className = 'lbl';
-    const all = document.createElement('input'); all.type = 'checkbox';
-    head.append(all, ' کلاس ' + cl.c + ' (' + fa(cl.st.length) + ' نفر)'); sb.append(head);
-    cl.st.forEach(s => {
-      const lb = document.createElement('label'); lb.style.display = 'block';
-      const cb = document.createElement('input'); cb.type = 'checkbox'; cb.className = 'suStu'; cb.value = s.k; cb.dataset.cls = cl.c;
-      lb.append(cb, ' ' + s.n); sb.append(lb);
-    });
-    all.addEventListener('change', () => sb.querySelectorAll('input.suStu').forEach(x => { if (x.dataset.cls === cl.c) x.checked = all.checked; }));
-  });
-  const lb2 = $('#suLockMods'); lb2.textContent = '';
-  SU_MODS.forEach(([k, l]) => {
-    if (k === 'mock') return;                       // خود آزمون آزمایشی شرط تکمیل است
-    const cb = document.createElement('input'); cb.type = 'checkbox'; cb.className = 'suLk'; cb.value = k;
-    const lb = document.createElement('label'); lb.append(cb, ' ' + l); lb2.append(lb);
-  });
-  renderSuRules();
-}
-function renderSuRules() {
-  const box = $('#suRules'); box.textContent = '';
-  if (!SU_RULES.length) { box.append(el('div', 'now-sub', 'قفلی تعریف نشده است.')); return; }
-  SU_RULES.forEach((rl, i) => {
-    const row = el('div', 'now-sub', rl.students.map(suName).join('، ') + ' — قفل: ' + rl.modules.map(suLabel).join('، ') + ' — تا تکمیل آزمون‌های آزمایشی');
-    const del = document.createElement('button'); del.type = 'button'; del.className = 'link-btn'; del.textContent = 'حذف';
-    del.addEventListener('click', () => { SU_RULES.splice(i, 1); renderSuRules(); });
-    row.append(' ', del); box.append(row);
-  });
-}
-$('#suSave').addEventListener('click', async () => {
-  const payload = { action:'stuModSave', pin:MG.pin, key:ACCESS_KEY };
-  SU_MODS.forEach(([k]) => { payload['m_' + k] = $('#suM_' + k).checked; });
-  const d = await send(payload);
-  $('#suMsg').textContent = d.status === 'ok' ? 'ماژول‌های باز ذخیره شد ✓' : (d.message || 'ذخیره نشد.');
-});
-$('#suAdd').addEventListener('click', () => {
-  const students = Array.from(document.querySelectorAll('#suStu input.suStu:checked')).map(x => x.value);
-  const modules = Array.from(document.querySelectorAll('#suLockMods input.suLk:checked')).map(x => x.value);
-  if (!students.length || !modules.length) { $('#suMsg').textContent = 'حداقل یک دانش‌آموز و یک بخش قفل‌شونده انتخاب کنید.'; return; }
-  SU_RULES.push({ students:students, modules:modules, until:'mock' });
-  document.querySelectorAll('#suStu input, #suLockMods input').forEach(x => { x.checked = false; });
-  $('#suMsg').textContent = 'به فهرست افزوده شد. برای اعمال، «ذخیره‌ی قفل‌ها» را بزنید.';
-  renderSuRules();
-});
-$('#suRulesSave').addEventListener('click', async () => {
-  const d = await send({ action:'stuRulesSave', pin:MG.pin, rules:JSON.stringify(SU_RULES), key:ACCESS_KEY });
-  if (d.status === 'ok') { SU_RULES = d.rules; renderSuRules(); $('#suMsg').textContent = 'قفل‌ها ذخیره شد ✓ (' + fa(d.rules.length) + ' قفل)'; }
-  else $('#suMsg').textContent = d.message || 'ذخیره نشد.';
-});
+
 </script>
 </body>
 </html>
