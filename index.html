@@ -2334,6 +2334,18 @@ body:not(.in-mod) .lbl-ic{width:auto;height:auto;background:none;border:0;box-sh
           <div class="mg-bar"><input id="mkInNew" type="text" maxlength="40" placeholder="نام مؤسسه‌ی جدید" aria-label="نام مؤسسه‌ی جدید"><button id="mkInAdd" class="btn" type="button">➕ افزودن</button></div>
         </div>
       </div>
+      <div class="mg-sec" data-sec="score" data-t="امتیاز دبیران" hidden>
+        <div class="mg-sec-d">امتیاز دبیران بر اساس حضور و غیاب، برگزاری آزمون، ثبت نمره‌ی به‌موقع و ورود و خروج. هر درصد بر اساس برنامه‌ی همان دبیر محاسبه می‌شود.</div>
+        <div class="card">
+          <div class="lbl" style="margin-bottom:8px">تنظیمات (وزن‌ها مجموعاً ۱۰۰)</div>
+          <div class="mg-bar"><label>حضور و غیاب <input id="scW_att" type="text" inputmode="numeric"></label><label>آزمون <input id="scW_exam" type="text" inputmode="numeric"></label><label>نمره‌ی به‌موقع <input id="scW_grade" type="text" inputmode="numeric"></label><label>ورود و خروج <input id="scW_entry" type="text" inputmode="numeric"></label></div>
+          <div class="mg-bar"><label>حداقل نمونه <input id="scMin" type="text" inputmode="numeric"></label><label>مهلت ثبت نمره (روز) <input id="scDl" type="text" inputmode="numeric"></label><button id="scCfgSave" class="btn" type="button">ذخیره‌ی تنظیمات</button></div>
+        </div>
+        <div class="card">
+          <div id="scMgrBox"></div>
+          <button id="scSnap" class="btn" type="button">💾 ذخیره‌ی این جدول در شیت «امتیاز دبیران»</button>
+        </div>
+      </div>
       <div class="mg-sec" data-sec="sys" data-t="اطلاعات و سامانه" hidden>
       <div class="mg-sec-d">بانک اطلاعات دانش‌آموزان و دبیران، سابقه‌ی تغییرات و ابزارها.</div>
       <div class="card">
@@ -3508,7 +3520,6 @@ function gateMode() {
 }
 function applyRole() {
   MODS_OK = false;
-  if (ROLE === 'teacher') setTimeout(scoreTeacherLoad, 0);
   const st = ROLE === 'student', mgr = ROLE === 'manager', cn = ROLE === 'counselor', staff = ROLE === 'teacher' || mgr;
   $('#gate').hidden = !!ROLE; document.body.classList.toggle('signed', !!ROLE); $('#whoBar').hidden = !ROLE; $('#p-stu').hidden = !st;
   const vis = cn ? ['cns', 'sch'] : mgr ? ['att', 'gr', 'sch', 'inb', 'mg'] : ROLE === 'teacher' ? ['att', 'gr', 'sch', 'inb', 'cns', 'stf', 'dis'] : ['att', 'gr', 'sch', 'inb'];
@@ -6313,7 +6324,7 @@ function tmwQuote(first) {
   if (first) { set(); return; }
   TMQ++; $$('.tmq').forEach(e => e.classList.add('fade')); setTimeout(set, 450);
 }
-tmwBuild($('#tmGate')); tmwBuild($('#tmHome')); tmwBuild($('#tmLaunch')); tmwTick(); tmwQuote(true); loadHonor(); setInterval(loadHonor, 300000); setInterval(() => { if (ROLE === 'teacher') scoreTeacherLoad(); }, 300000);
+tmwBuild($('#tmGate')); tmwBuild($('#tmHome')); tmwBuild($('#tmLaunch')); tmwTick(); tmwQuote(true); loadHonor(); setInterval(loadHonor, 300000);
 setInterval(tmwTick, 1000); setInterval(() => tmwQuote(), 15000);
 
 /* ---------- مشاوره ---------- */
@@ -7482,6 +7493,7 @@ function mgShow(k, scroll) {
   if (k === 'blk' && MG.pin && !$('#mgBody').hidden) blkOpen();
   if (k === 'setup' && MG.pin && !$('#mgBody').hidden) suOpen();
   if (k === 'mkinst' && MG.pin && !$('#mgBody').hidden) mkinstLoad();
+  if (k === 'score' && MG.pin && !$('#mgBody').hidden) scoreMgrLoad();
   modAfter('m:' + k); if (MODS_OK) secIndex(k);
   if (scroll) { const r = $('#mgNav').getBoundingClientRect(); if (r.top < 0) $('#mgNav').scrollIntoView({ behavior:'smooth', block:'start' }); }
 }
@@ -7647,14 +7659,36 @@ let SCORE_P = 'week', SCORE_D = '';
 async function scoreTeacherLoad() {
   const box = $('#scoreHome'); if (!box || !S.teacher.trim() || !S.pin.trim()) return;
   const r = await send({ action:'scoreTable', teacher:S.teacher.trim(), pin:S.pin.trim(), period:SCORE_P, date:SCORE_D, key:ACCESS_KEY });
-  if (r.status !== 'ok') { box.textContent = ''; box.append(el('div', 'now-sub', r.net ? 'اتصال برقرار نشد؛ دوباره تلاش کنید.' : (r.message || 'جدول امتیاز در دسترس نیست.'))); return; }
+  if (r.status !== 'ok') return;
   box.textContent = '';
   box.append(scoreCard(r, (p, d) => { SCORE_P = p; SCORE_D = d; scoreTeacherLoad(); }));
 }
-
-</script>
-<script>
-
+let MGSC = { period:'week', date:'' };
+async function scoreMgrLoad() {
+  const c = await send({ action:'scoreCfgGet', pin:MG.pin, key:ACCESS_KEY });
+  if (c.status === 'ok') {
+    const w = c.cfg.w;
+    $('#scW_att').value = w.att; $('#scW_exam').value = w.exam; $('#scW_grade').value = w.grade; $('#scW_entry').value = w.entry;
+    $('#scMin').value = c.cfg.minN; $('#scDl').value = c.cfg.dl;
+  }
+  scoreMgrTable();
+}
+async function scoreMgrTable() {
+  const r = await send({ action:'scoreTable', pin:MG.pin, period:MGSC.period, date:MGSC.date, key:ACCESS_KEY });
+  const box = $('#scMgrBox'); box.textContent = '';
+  if (r.status !== 'ok') return toast(r.message || 'ناموفق');
+  box.append(scoreCard(r, (p, d) => { MGSC = { period:p, date:d }; scoreMgrTable(); }));
+}
+$('#scCfgSave').addEventListener('click', async () => {
+  const d = await send({ action:'scoreCfgSave', pin:MG.pin, w_att:$('#scW_att').value, w_exam:$('#scW_exam').value,
+    w_grade:$('#scW_grade').value, w_entry:$('#scW_entry').value, minN:$('#scMin').value, dl:$('#scDl').value, key:ACCESS_KEY });
+  toast(d.status === 'ok' ? 'تنظیمات ذخیره شد' : (d.message || 'ناموفق'));
+  if (d.status === 'ok') scoreMgrTable();
+});
+$('#scSnap').addEventListener('click', async () => {
+  const d = await send({ action:'scoreSave', pin:MG.pin, period:MGSC.period, date:MGSC.date, key:ACCESS_KEY });
+  toast(d.status === 'ok' ? 'جدول در شیت ذخیره شد' : (d.message || 'ناموفق'));
+});
 </script>
 </body>
 </html>
