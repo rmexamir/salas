@@ -18,7 +18,7 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxzPr6P54uH4gV_rQrss
 // کلید دسترسی اختیاری (باید با ACCESS_KEY در Code.gs یکی باشد)
 const ACCESS_KEY = "";
 // نسخه‌ی برنامه — با هر به‌روزرسانی این عدد بالا می‌رود و در صفحه‌ی ورود و پایین صفحه نمایش داده می‌شود.
-const APP_VERSION = "1.25";
+const APP_VERSION = "1.26";
 // (اختیاری) لینک Google Sheet برای دکمه «باز کردن Google Sheet» در تب مدیر
 const SHEET_URL = "https://docs.google.com/spreadsheets/d/10i-IGQKyj078M6kJ7YhdAniuJInl6JemwVxAqs7FnrY/edit";
 const DEFAULT_MAX_SCORE = 20;
@@ -1520,6 +1520,10 @@ body.mods .send:active:not(:disabled){transform:translateY(2px);box-shadow:inset
 .img-pv.lg img{width:100px;height:100px;object-fit:contain;border-radius:50%;background:#fff;padding:4px;box-shadow:0 6px 14px rgba(8,20,40,.25)}
 .img-pv.hd img{width:100%;aspect-ratio:16/7;object-fit:cover}
 .img-up{display:flex;align-items:center;justify-content:center;text-align:center;cursor:pointer}
+.mi-list{display:flex;flex-direction:column;gap:6px}
+.mi-row{display:grid;grid-template-columns:minmax(0,1fr) auto auto auto;gap:6px;align-items:center}
+.mi-row .btn{padding:6px 10px;min-width:40px}
+.mi-empty{padding:10px;border:1.5px dashed var(--line);border-radius:12px;text-align:center}
 /* تم تیره */
 [data-theme="dark"] .tile{background:radial-gradient(120% 90% at 100% 0%,rgba(255,255,255,.06),transparent 60%),linear-gradient(165deg,var(--card) 0%,var(--input) 100%);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.07),inset 0 -4px 0 rgba(0,0,0,.25),0 14px 26px -14px rgba(0,0,0,.8)}
@@ -2178,7 +2182,7 @@ body:not(.in-mod) .lbl-ic{width:auto;height:auto;background:none;border:0;box-sh
       </div>
       </div>
       <div class="mg-sec" data-sec="set" data-t="تنظیمات عمومی" hidden>
-      <div class="mg-sec-d">لوگو و سربرگ مدرسه. رمزها در ماژول «عملیات رمز» است.</div>
+      <div class="mg-sec-d">لوگو و سربرگ مدرسه و فهرست مؤسسه‌های آزمون آزمایشی. رمزها در ماژول «عملیات رمز» است.</div>
       <div class="card" id="imgCard">
         <div class="lbl" style="margin-bottom:8px">🖼 لوگو و سربرگ مدرسه</div>
         <div class="now-sub" style="margin-bottom:10px">تصویری که اینجا بارگذاری کنید برای همه‌ی کاربران (مدیر، دبیران، مشاور و دانش‌آموزان) در صفحه‌ی ورود، بالای برنامه و برگه‌های چاپی نمایش داده می‌شود. تصویر پیش از ارسال در همین گوشی کوچک و فشرده می‌شود.</div>
@@ -2191,6 +2195,13 @@ body:not(.in-mod) .lbl-ic{width:auto;height:auto;background:none;border:0;box-sh
             <button class="btn" id="imgHeadDel" type="button">بازگشت به سربرگ پیش‌فرض</button></div>
         </div>
         <div class="now-sub" style="margin-top:8px">پیشنهاد: لوگو مربع (مثلاً ۵۱۲×۵۱۲ با پس‌زمینه‌ی شفاف)، سربرگ افقی (مثلاً ۱۶۰۰×۷۰۰).</div>
+      </div>
+      <div class="card" id="miCard">
+        <div class="lbl" style="margin-bottom:8px">📝 فهرست مؤسسه‌های آزمون آزمایشی</div>
+        <div class="now-sub" style="margin-bottom:10px">دانش‌آموزان هنگام ثبت نتیجه‌ی آزمون آزمایشی یکی از این مؤسسه‌ها را انتخاب می‌کنند (مثلاً ماز، قلمچی، راه موفقیت، خیلی سبز، گزینه دو). گزینه‌ی «سایر» همیشه آخر فهرست می‌ماند. نتیجه‌های ثبت‌شده‌ی قبلی تغییر نمی‌کنند.</div>
+        <div id="miList" class="mi-list"></div>
+        <div class="su-add" style="margin-top:8px"><input id="miNew" type="text" maxlength="40" autocomplete="off" aria-label="نام مؤسسه‌ی تازه" placeholder="نام مؤسسه‌ی تازه، مثلاً سنجش"><button id="miAdd" class="btn" type="button">➕ افزودن</button></div>
+        <div class="mg-bar" style="margin-top:10px"><button id="miSave" class="send" type="button" disabled>💾 ذخیره‌ی فهرست</button><button id="miDef" class="btn" type="button">↺ فهرست پیش‌فرض</button></div>
       </div>
       </div>
       <div class="mg-sec" data-sec="blk" data-t="بستن ورود دانش‌آموزان" hidden>
@@ -2934,6 +2945,7 @@ function applyRoster(r) {
   if (!r || !r.classes) return;
   if (r.cur && r.cur.streams) CUR = r.cur;
   if (r.school) setSchoolName(r.school);                       // نام مدرسه از «راه‌اندازی مدرسه»
+  if (r.mockInst) setInst(r.mockInst);                          // فهرست مؤسسه‌های آزمون آزمایشی
   if (r.img) imgSync(r.img);                                     // لوگو و سربرگ بارگذاری‌شده توسط مدیر
   if (Array.isArray(r.tiles) && JSON.stringify(r.tiles) !== JSON.stringify(TILES_ORD)) { TILES_ORD = r.tiles; lsSet('sia_tiles_v1', r.tiles); if (LAUNCH_ON && !TEDIT) renderTiles(); }
   if (r.cfg !== undefined && JSON.stringify(r.cfg || null) !== JSON.stringify(CFG)) { applyCfg(r.cfg); lsSet('sia_cfg_v1', r.cfg || null); cfgRerender(); }
@@ -3724,6 +3736,38 @@ setTimeout(() => {          // بازگرداندن نشست قبلی بعد ا�
 $('#imgLogoF').addEventListener('change', e => { imgUp('logo', e.target.files[0]); e.target.value = ''; });
 $('#imgHeadF').addEventListener('change', e => { imgUp('head', e.target.files[0]); e.target.value = ''; });
 $('#imgLogoDel').addEventListener('click', () => imgDel('logo')); $('#imgHeadDel').addEventListener('click', () => imgDel('head'));
+/* ---------- فهرست مؤسسه‌های آزمون آزمایشی (تنظیمات عمومی، نسخه‌ی ۱٫۲۶) ---------- */
+const MI_DEF = ['ماز', 'قلمچی', 'راه موفقیت', 'خیلی سبز', 'گزینه دو']; let MI = [], MI_BASE = '';
+const miKey = () => JSON.stringify(MI);
+function miOpen() { MI = INST.filter(x => x !== 'سایر' && x !== MK_NONE); MI_BASE = miKey(); miRender(); }
+function miRender() {
+  const box = $('#miList'); if (!box) return; box.textContent = '';
+  if (!MI.length) box.append(el('div', 'now-sub mi-empty', 'فهرست خالی است؛ فقط گزینه‌ی «سایر» نمایش داده می‌شود.'));
+  MI.forEach((n, i) => {
+    const row = el('div', 'mi-row'), inp = el('input'); inp.type = 'text'; inp.maxLength = 40; inp.value = n; inp.setAttribute('aria-label', 'نام مؤسسه ' + fa(i + 1)); inp.autocomplete = 'off';
+    inp.addEventListener('input', () => { MI[i] = inp.value; miDirty(); });
+    const mk = (t, lb, dis, fn) => { const b = el('button', 'btn', t); b.type = 'button'; b.title = lb; b.setAttribute('aria-label', lb); b.disabled = dis; b.addEventListener('click', fn); return b; };
+    row.append(inp, mk('▲', 'بالا', i === 0, () => { MI.splice(i - 1, 0, MI.splice(i, 1)[0]); miRender(); miDirty(); }), mk('▼', 'پایین', i === MI.length - 1, () => { MI.splice(i + 1, 0, MI.splice(i, 1)[0]); miRender(); miDirty(); }), mk('✕', 'حذف', false, () => { MI.splice(i, 1); miRender(); miDirty(); }));
+    box.append(row);
+  });
+  miDirty();
+}
+function miClean() { const o = []; MI.forEach(x => { const n = String(x).trim(); if (n && n !== 'سایر' && n !== MK_NONE && o.indexOf(n) < 0) o.push(n); }); return o; }
+function miDirty() { const b = $('#miSave'); if (b) b.disabled = JSON.stringify(miClean()) === MI_BASE; }
+function miAdd() {
+  const i = $('#miNew'), n = i.value.trim(); if (!n) return i.focus();
+  if (n === 'سایر' || n === MK_NONE) return toast('«' + n + '» خودکار در فهرست هست.');
+  if (MI.some(x => String(x).trim() === n)) return toast('این مؤسسه در فهرست هست.');
+  if (MI.length >= 30) return toast('حداکثر ۳۰ مؤسسه.');
+  MI.push(n); i.value = ''; miRender(); i.focus();
+}
+async function miSave() {
+  const l = miClean(); const r = await suSend({ action:'setMockInst', list:l }, $('#miSave')); if (!r) return;
+  setInst(r.inst); MI = r.inst.slice(); MI_BASE = miKey(); miRender(); toast('فهرست مؤسسه‌ها ذخیره شد و برای دانش‌آموزان اعمال می‌شود ✓');
+}
+$('#miAdd').addEventListener('click', miAdd); $('#miNew').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); miAdd(); } });
+$('#miSave').addEventListener('click', miSave);
+$('#miDef').addEventListener('click', () => { MI = MI_DEF.slice(); miRender(); });
 /* --- بستن ورود دانش‌آموز به علت خاص (نسخه‌ی ۱٫۲۴) --- */
 let BK = { list:[], reasons:[] }, BK_EDIT = false;
 const BK_R = ['عدم انجام آزمون غربالگری', 'عدم شرکت در آزمون آزمایشی', 'مسائل انضباطی', 'ناقص بودن مدارک یا پرونده', 'سایر'];
@@ -4782,7 +4826,9 @@ setInterval(pollToday, 60000); setInterval(renderAlerts, 15000);
 document.addEventListener('visibilitychange', () => { if (!document.hidden) pollToday(); });
 
 /* ======================= غیبت موجه (ثبت مدیر، قفل برای دبیر) و آزمون‌های آزمایشی ======================= */
-const INST = ['ماز', 'قلمچی', 'راه موفقیت', 'خیلی سبز', 'گزینه دو', 'سایر'];
+let INST = ['هیچکدام', 'ماز', 'قلمچی', 'راه موفقیت', 'خیلی سبز', 'گزینه دو', 'سایر'];
+const MK_NONE = 'هیچکدام';           // گزینه‌ی ثابتِ اول: تراز و رتبه ۰ و قفل، بدون کارنامه
+function setInst(l) { if (Array.isArray(l)) INST = [MK_NONE].concat(l.map(String).filter(x => x && x !== 'سایر' && x !== MK_NONE), ['سایر']); }   // نسخه‌ی ۱٫۲۶: فهرست را مدیر در «تنظیمات عمومی» ویرایش می‌کند؛ «سایر» همیشه آخر است
 const SUBJ = { exp:['زیست‌شناسی', 'فیزیک', 'شیمی', 'ریاضی', 'زمین‌شناسی'], hum:['علوم و فنون ادبی', 'ریاضی و آمار', 'جامعه‌شناسی', 'عربی', 'تاریخ و جغرافیا', 'فلسفه و منطق', 'روانشناسی', 'اقتصاد'] };
 // --- دبیر: دانش‌آموزان دارای غیبت موجه‌ی ثبت‌شده توسط مدیر، قفل و غیرقابل تغییر می‌شوند
 async function loadExc() {
@@ -4836,7 +4882,7 @@ $('#excSave').addEventListener('click', async () => {
 let MKB = null;
 async function loadMocks() {
   const r = await send({ action:'mockBoard', pin:MG.pin, exam:$('#mkEx').value || '', key:ACCESS_KEY });
-  if (r.status === 'ok') { MKB = r; mkFill(); mkRender(); } else if (!r.net) toast(r.message || 'دریافت نشد');
+  if (r.status === 'ok') { MKB = r; setInst(r.mockInst); mkFill(); mkRender(); } else if (!r.net) toast(r.message || 'دریافت نشد');
 }
 function mkFill() {
   const e = $('#mkEx'), c = $('#mkCls'), vc = c.value; e.textContent = ''; c.textContent = '';
@@ -4920,7 +4966,7 @@ function mockHist() {
     h.append(el('span', '', x.i + ' | ' + x.e), el('small', '', x.z == null ? '' : 'تراز ' + fa(x.z)));
     b.append(infoRow('تراز کل', x.z == null ? '' : fa(x.z)), infoRow('رتبه کشوری', x.k == null ? '' : fa(x.k)));
     if (x.d.length) b.append(tbl(['درس', 'تراز', 'درصد'], x.d.map(q => [q.s, q.t === '' ? '—' : fa(q.t), q.p === '' ? '—' : fa(q.p)])));
-    b.append(el('div', 'now-sub', '✓ کارنامه آپلود شده و برای مدیر قابل مشاهده است.')); d.append(h, b); c.append(d); });
+    b.append(el('div', 'now-sub', x.i === MK_NONE ? 'در این آزمون شرکت نکرده‌ای (تراز و رتبه ۰).' : '✓ کارنامه آپلود شده و برای مدیر قابل مشاهده است.')); d.append(h, b); c.append(d); });
   return c;
 }
 function mockStrip(exs, done) {      // آزمون‌های امسال: سبز = ثبت کرده‌ای، قرمز = ثبت نکرده‌ای
@@ -4931,7 +4977,8 @@ function mockStrip(exs, done) {      // آزمون‌های امسال: سبز =
   if (nx) c.append(el('div', 'now-sub', 'آزمون بعدی: ' + nx.t + ' (' + fa(nx.a) + ')'));
   return c;
 }
-function mockErr(v) {              // نسخه‌ی ۱٫۲۵: تراز کل و رتبه الزامی، رتبه عدد صحیح، درصد بین ۳۳٫۳۳- و ۱۰۰
+function mockErr(v) {
+  if (v.inst === MK_NONE) return '';              // نسخه‌ی ۱٫۲۵: تراز کل و رتبه الزامی، رتبه عدد صحیح، درصد بین ۳۳٫۳۳- و ۱۰۰
   if (!v.inst) return 'مؤسسه را انتخاب کنید.'; if (v.inst === 'سایر' && !v.other) return 'نام مؤسسه را بنویسید.';
   if (v.tz === '' || v.rank === '') return 'تراز کل و رتبه‌ی کشوری الزامی است.';
   if (v.subj.reduce((a, x) => a.concat([x.t, x.p]), [v.tz, v.rank]).some(n => n !== '' && isNaN(n))) return 'تراز، درصد و رتبه را فقط با عدد بنویسید.';
@@ -4943,10 +4990,11 @@ function mockFields(g, x) {          // فیلدهای مشترک نتیجه (د
   const mkIn = (ph, mode) => { const q = el('input'); q.type = 'text'; q.inputMode = mode || 'decimal'; q.placeholder = ph; q.autocomplete = 'off'; q.setAttribute('aria-label', ph); return q; };
   const fld = (label, node) => { const f = el('div', 'field'); f.append(el('label', '', label), node); return f; };
   const nv = v => v === '' || v == null ? '' : fa(v);
+  if (SD && SD.mockInst) setInst(SD.mockInst);
   const inst = el('select'); [['', '— انتخاب مؤسسه —']].concat(INST.map(q => [q, q])).forEach(q => { const o = el('option', '', q[1]); o.value = q[0]; inst.append(o); });
   const other = mkIn('نام مؤسسه (سایر)', 'text'); other.hidden = true;
-  inst.addEventListener('change', () => { other.hidden = inst.value !== 'سایر'; });
-  if (x && x.i) { if (x.i.indexOf('سایر') === 0) { inst.value = 'سایر'; other.value = x.i.replace(/^سایر:\s*/, ''); other.hidden = false; } else inst.value = x.i; }
+  let cbNone = null;
+  if (x && x.i) { if (x.i.indexOf('سایر') === 0) { inst.value = 'سایر'; other.value = x.i.replace(/^سایر:\s*/, ''); other.hidden = false; } else { if (INST.indexOf(x.i) < 0) { const o = el('option', '', x.i); o.value = x.i; inst.insertBefore(o, inst.options[1] || null); } inst.value = x.i; } }
   const nodes = [fld('مؤسسه (فقط یکی را انتخاب کنید)', inst), other]; let subj = [];
   if (g) {
     const grid = el('div'); grid.style.cssText = 'display:grid;grid-template-columns:1fr 84px 84px;gap:6px;align-items:center;margin:8px 0';
@@ -4957,8 +5005,14 @@ function mockFields(g, x) {          // فیلدهای مشترک نتیجه (د
   } else nodes.push(el('div', 'now-sub', 'برای این رشته تراز کل، رتبه و کارنامه ثبت می‌شود.'));
   const tz = mkIn('تراز کل'), rk = mkIn('رتبه کشوری', 'numeric'); if (x) { tz.value = nv(x.z); rk.value = nv(x.k); }
   nodes.push(fld('تراز کل (الزامی)', tz), fld('رتبه‌ی کشوری (الزامی)', rk));
-  const read = () => { const v = { inst:inst.value, other:other.value.trim(), tz:numOf(tz.value), rank:numOf(rk.value), subj:subj.map(q => ({ s:q.s, t:numOf(q.t.value), p:numOf(q.p.value) })) }; return { v:v, err:mockErr(v) }; };
-  return { nodes:nodes, read:read };
+  const lockNone = () => { const nn = inst.value === MK_NONE; other.hidden = inst.value !== 'سایر';
+    if (nn) { tz.value = fa(0); rk.value = fa(0); subj.forEach(q => { q.t.value = ''; q.p.value = ''; }); }
+    [tz, rk].concat(subj.reduce((a, q) => a.concat([q.t, q.p]), [])).forEach(i => { i.disabled = nn; });
+    if (cbNone) cbNone(nn); };
+  inst.addEventListener('change', lockNone); if (x && x.i === MK_NONE) lockNone();
+  const read = () => { if (inst.value === MK_NONE) return { v:{ inst:MK_NONE, other:'', tz:0, rank:0, subj:[] }, err:'' };
+    const v = { inst:inst.value, other:other.value.trim(), tz:numOf(tz.value), rank:numOf(rk.value), subj:subj.map(q => ({ s:q.s, t:numOf(q.t.value), p:numOf(q.p.value) })) }; return { v:v, err:mockErr(v) }; };
+  return { nodes:nodes, read:read, onNone:fn => { cbNone = fn; } };
 }
 const MA_NOTE = 'تحلیل خودکار و قاعده‌محور: میانگین درصد ۷۰ به بالا عالی، ۵۰ تا ۷۰ خوب، ۳۰ تا ۵۰ متوسط، ۱۵ تا ۳۰ ضعیف، کمتر از ۱۵ خیلی ضعیف؛ بدون درصد، از روی تراز کل. جای مشاوره را نمی‌گیرد.';
 function maBody(a) {                 // نمایش تحلیل وضعیت (محاسبه در سرور)
@@ -4987,7 +5041,8 @@ function stuMock(box) {
   const F = mockFields(g, null), file = el('input'); file.type = 'file'; file.accept = 'image/*,application/pdf';
   const msg = el('div', 'empty'); msg.hidden = true; msg.style.color = 'var(--absent)';
   const go = el('button', 'send', 'ثبت نتیجه‌ی آزمون'); go.type = 'button';
-  c.append(fld('کدام آزمون؟', exSel), ...F.nodes, fld('آپلود کارنامه (عکس یا PDF) — الزامی', file), go, msg);
+  const fileF = fld('آپلود کارنامه (عکس یا PDF) — الزامی', file); F.onNone(nn => { fileF.hidden = nn; });
+  c.append(fld('کدام آزمون؟', exSel), ...F.nodes, fileF, go, msg);
   let FL = null, V = null;
   const fail = m => { msg.textContent = m; msg.hidden = false; go.disabled = false; };
   const submit = async force => {
@@ -4995,12 +5050,13 @@ function stuMock(box) {
     go.disabled = false; if (r.net) return fail('اینترنت در دسترس نیست.');
     if (r.status === 'duplicate') return showModal({ icon:'warn', title:'قبلاً ثبت کرده‌ای', msg:r.message, buttons:[{ text:'انصراف', primary:true }, { text:'جایگزین کن', onClick:() => { go.disabled = true; submit(true); } }] });
     if (r.status !== 'ok') return fail(r.message || 'ثبت نشد.');
-    SD.mocks = r.mocks; if (r.mockEx) SD.mockEx = r.mockEx; SD.mockAna = r.mockAna || null; toast('نتیجه‌ی آزمون ثبت شد ✓'); stuNav('mock');
+    SD.mocks = r.mocks; if (r.mockEx) SD.mockEx = r.mockEx; if (r.mockInst) SD.mockInst = r.mockInst; SD.mockAna = r.mockAna || null; toast('نتیجه‌ی آزمون ثبت شد ✓'); stuNav('mock');
   };
   go.addEventListener('click', async () => {
     msg.hidden = true; go.disabled = true; const q = F.read(); if (q.err) return fail(q.err);
-    if (!file.files[0]) return fail('کارنامه‌ی آزمون را آپلود کنید.');
-    try { FL = await readFile(file.files[0]); } catch (e) { return fail(String(e)); }
+    FL = null;
+    if (q.v.inst !== MK_NONE) { if (!file.files[0]) return fail('کارنامه‌ی آزمون را آپلود کنید.');
+      try { FL = await readFile(file.files[0]); } catch (e) { return fail(String(e)); } }
     V = q.v; submit(false);
   });
   box.append(c, mockHist());
@@ -5530,7 +5586,7 @@ function valSvg(vals, target) {
   wrap.append(svg, legend([['var(--c-me)', 'تراز کل']].concat(target ? [['var(--c-cls)', 'هدف']] : []))); return wrap;
 }
 function goalBox() {
-  const w = el('div'), key = 'sia_goal_' + SD.nid, gl = lsGet(key, {}), vals = SD.mocks.slice().reverse().map(x => x.z).filter(v => v != null);
+  const w = el('div'), key = 'sia_goal_' + SD.nid, gl = lsGet(key, {}), vals = SD.mocks.filter(x => x.i !== MK_NONE).reverse().map(x => x.z).filter(v => v != null);
   const ti = el('input'), ri = el('input'), sb = el('button', 'btn', 'ذخیره‌ی هدف'), g = el('div'), note = el('div', 'now-sub');
   [ti, ri].forEach(x => { x.type = 'text'; x.inputMode = 'numeric'; }); ti.placeholder = 'تراز هدف'; ri.placeholder = 'رتبه‌ی هدف'; ti.value = gl.tz || ''; ri.value = gl.rank || ''; sb.type = 'button';
   g.style.cssText = 'display:grid;grid-template-columns:1fr 1fr auto;gap:6px;margin-top:8px'; g.append(ti, ri, sb);
@@ -7456,7 +7512,7 @@ function mgShow(k, scroll) {
   if (window.innerWidth < 900) { const ab = $('#mgNav .mg-nb.on'); if (ab && ab.scrollIntoView) ab.scrollIntoView({ block:'nearest', inline:'center' }); }   // منوی افقی موبایل: بخش فعال دیده شود
   if (k === 'dis' && MG.pin && !$('#mgBody').hidden) disOpen('m');
   if (k === 'pta' && MG.pin && !$('#mgBody').hidden) ptOpen();
-  if (k === 'set' && MG.pin && !$('#mgBody').hidden) imgApply();
+  if (k === 'set' && MG.pin && !$('#mgBody').hidden) { imgApply(); miOpen(); }
   if (k === 'pw' && MG.pin && !$('#mgBody').hidden) pwOpen();
   if (k === 'blk' && MG.pin && !$('#mgBody').hidden) blkOpen();
   if (k === 'setup' && MG.pin && !$('#mgBody').hidden) suOpen();
