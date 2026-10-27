@@ -18,7 +18,7 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxzPr6P54uH4gV_rQrss
 // کلید دسترسی اختیاری (باید با ACCESS_KEY در Code.gs یکی باشد)
 const ACCESS_KEY = "";
 // نسخه‌ی برنامه — با هر به‌روزرسانی این عدد بالا می‌رود و در صفحه‌ی ورود و پایین صفحه نمایش داده می‌شود.
-const APP_VERSION = "1.27";
+const APP_VERSION = "1.28";
 // (اختیاری) لینک Google Sheet برای دکمه «باز کردن Google Sheet» در تب مدیر
 const SHEET_URL = "https://docs.google.com/spreadsheets/d/10i-IGQKyj078M6kJ7YhdAniuJInl6JemwVxAqs7FnrY/edit";
 const DEFAULT_MAX_SCORE = 20;
@@ -1680,6 +1680,49 @@ body:not(.in-mod) .lbl-ic{width:auto;height:auto;background:none;border:0;box-sh
 .inb-gef input[type=text]{width:72px;min-width:0;padding:6px 8px;text-align:center}
 .inb-gef .btn{padding:4px 10px;min-width:34px}
 .inb-ab{display:inline-flex;align-items:center;gap:4px;font-size:12.5px;font-weight:700}
+
+/* ===== نسخه‌ی ۱٫۲۸: کارتابل با زبانه‌ها، سابقه‌ی تغییرات، یکسان‌سازی نام دروس ===== */
+.inb-pick{display:flex;gap:8px;align-items:center}
+.inb-pick select{flex:1;min-width:0}
+.inb-pick .btn{flex:none;width:48px;min-height:46px;padding:0;font-size:18px}
+.inb-pick-card .inb-chips{flex-wrap:nowrap;overflow-x:auto;margin:10px 0 0;padding-bottom:2px}
+.inb-pick-card .inb-chips:empty{display:none}
+.inb-pick-card .inb-chip{flex:none;min-height:36px}
+.inb-kpi{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}
+.inb-kpi>div{padding:10px 6px;border-radius:14px;background:var(--input);border:1px solid var(--line);text-align:center}
+.inb-kpi b{display:block;font-size:19px;font-weight:900;color:var(--ink);line-height:1.4}
+.inb-kpi small{font-size:11.5px;color:var(--muted)}
+.inb-top{margin-top:8px}
+.inb-tabs{display:flex;gap:6px;overflow-x:auto;margin:0 0 12px;padding:2px 2px 6px;scrollbar-width:thin}
+.inb-tab{flex:none;display:inline-flex;align-items:center;gap:6px;min-height:42px;padding:0 14px;border-radius:99px;border:1px solid var(--line);font:inherit;font-size:13px;font-weight:800;color:var(--ink);cursor:pointer;
+  background:linear-gradient(165deg,var(--card),var(--input));box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 6px 12px -10px rgba(12,24,48,.45)}
+.inb-tab em{font-style:normal;min-width:22px;padding:0 6px;border-radius:99px;background:var(--input);border:1px solid var(--line);font-size:11.5px;text-align:center}
+.inb-tab.on{color:#fff;border-color:transparent;background:linear-gradient(150deg,var(--e6),var(--e8));box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 8px 16px -8px rgba(8,20,40,.6)}
+.inb-tab.on em{background:rgba(255,255,255,.18);border-color:transparent;color:#fff}
+.inb-tab:focus-visible,.au-k:focus-visible{outline:3px solid var(--g4);outline-offset:2px}
+[data-theme="dark"] .inb-tab.on{background:linear-gradient(150deg,var(--g5),var(--g6));color:#1A1300}
+[data-theme="dark"] .inb-tab.on em{color:#1A1300}
+.inb-search{width:100%;margin:0 0 8px}
+.inb-pane>.card:first-child{margin-top:0}
+.au-kinds{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.au-k{flex:none;width:auto;min-height:36px;padding:0 12px;font-size:12.5px}
+.au-row{display:flex;gap:8px;align-items:flex-start;padding:8px 10px;border-radius:12px;border:1px solid var(--line);background:var(--card);margin-top:6px}
+.au-row .btn{flex:none;font-size:12px;padding:4px 10px}
+.au-b{flex:none;min-width:58px;padding:2px 8px;border-radius:99px;font-size:11px;font-weight:800;text-align:center;background:var(--input);color:var(--ink)}
+.au-b.m{background:var(--excused-bg);color:var(--excused)} .au-b.t{background:var(--late-bg);color:var(--late)} .au-b.s{background:var(--present-bg);color:var(--present)}
+.au-t{flex:1;min-width:0;font-size:12.5px;line-height:1.8;overflow-wrap:anywhere} .au-t small{color:var(--muted);font-size:11.5px}
+.cg-undo{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:14px;background:var(--input);border:1px solid var(--line);margin:10px 0}
+.cg-cls{margin:14px 0 4px;font-weight:900;font-size:14px}
+.cg-row{display:grid;grid-template-columns:auto minmax(0,1fr);gap:6px 10px;align-items:center;padding:10px 12px;border-radius:14px;border:1px solid var(--line);background:var(--card);margin-top:6px;cursor:pointer}
+.cg-row input[type=checkbox]{grid-row:span 2;width:20px;height:20px}
+.cg-h{display:flex;align-items:center;gap:8px;font-weight:800}
+.cg-o{color:var(--absent);text-decoration:line-through;text-decoration-thickness:1.5px}
+.cg-ar{color:var(--muted)}
+.cg-row select,.cg-row small{grid-column:2}
+.cg-row small{color:var(--muted);font-size:11.5px;line-height:1.7}
+.cg-row small.cg-warn{color:var(--late);font-weight:700}
+#cgGo{margin-top:12px}
+.cg-tch{margin-top:10px;padding:10px 12px;border-radius:12px;background:var(--late-bg);color:var(--ink)}
 </style>
 </head>
 <body>
@@ -1932,13 +1975,11 @@ body:not(.in-mod) .lbl-ic{width:auto;height:auto;background:none;border:0;box-sh
   </section>
 
   <section id="p-inb" hidden>
-    <div class="card">
-      <div class="lbl" style="margin-bottom:8px">کارتابل — حضور و غیاب و نمرات ثبت‌شده‌ی کلاس و درس شما</div>
-      <div class="field"><select id="inbSel" aria-label="کلاس و درس"></select></div>
+    <div class="card inb-pick-card">
+      <div class="inb-pick"><select id="inbSel" aria-label="کلاس و درس"></select><button id="inbRef" class="btn" type="button" title="به‌روزرسانی" aria-label="به‌روزرسانی">🔄</button></div>
       <div id="inbChips" class="inb-chips" role="group" aria-label="وضعیت ثبت نمره"></div>
-      <button id="inbRef" class="btn" type="button" style="width:100%">به‌روزرسانی</button>
     </div>
-    <div class="card" id="calCard">
+    <div class="card" id="calCard" hidden>
       <div class="lbl" style="margin-bottom:8px">ثبت آزمون یا تکلیف برای کلاس و درس انتخاب‌شده</div>
       <div class="mg-bar jp"><select id="calD" aria-label="روز"></select><select id="calM" aria-label="ماه"></select><select id="calY" aria-label="سال"></select></div>
       <div class="mg-bar"><select id="calPer" aria-label="زنگ برگزاری"></select><select id="calKind" aria-label="نوع"><option>آزمون</option><option>تکلیف</option></select></div>
@@ -1947,7 +1988,7 @@ body:not(.in-mod) .lbl-ic{width:auto;height:auto;background:none;border:0;box-sh
       <button id="calAdd" class="send" type="button">ثبت در تقویم دانش‌آموزان</button>
       <div id="calList" style="margin-top:10px"></div>
     </div>
-    <div id="taMine"></div><div id="inbBody"></div>
+    <div id="inbBody"></div>
   </section>
 
   <section id="p-cns" hidden>
@@ -1992,6 +2033,7 @@ body:not(.in-mod) .lbl-ic{width:auto;height:auto;background:none;border:0;box-sh
       <div class="now-sub" style="margin-top:8px">ساعت و تاریخ از سرور ثبت می‌شود و با ساعت گوشی تغییر نمی‌کند.</div>
     </div>
     <div class="card"><div class="lbl" style="margin-bottom:8px">سابقه‌ی ورود و خروج شما</div><div id="stfHist"></div></div>
+    <div id="taMine"></div>
     <div class="card" id="tlCard">
       <div class="lbl" style="margin-bottom:8px">درخواست مرخصی</div>
       <div class="mg-bar jp"><select id="tlD" aria-label="روز"></select><select id="tlM" aria-label="ماه"></select><select id="tlY" aria-label="سال"></select></div>
@@ -2189,9 +2231,16 @@ body:not(.in-mod) .lbl-ic{width:auto;height:auto;background:none;border:0;box-sh
         <div class="now-sub" id="suSchTx" style="margin-bottom:8px"></div>
         <button id="suSchGo" class="btn" type="button" style="width:100%">باز کردن ویرایش برنامه‌ی هفتگی</button>
       </div>
+      <div class="card" id="miCard">
+        <div class="lbl" style="margin-bottom:8px">۸. مؤسسه‌های آزمون آزمایشی</div>
+        <div class="now-sub" style="margin-bottom:10px">دانش‌آموزان هنگام ثبت نتیجه‌ی آزمون آزمایشی یکی از این مؤسسه‌ها را انتخاب می‌کنند (مثلاً ماز، قلمچی، راه موفقیت، خیلی سبز، گزینه دو). گزینه‌ی «سایر» همیشه آخر فهرست می‌ماند. نتیجه‌های ثبت‌شده‌ی قبلی تغییر نمی‌کنند.</div>
+        <div id="miList" class="mi-list"></div>
+        <div class="su-add" style="margin-top:8px"><input id="miNew" type="text" maxlength="40" autocomplete="off" aria-label="نام مؤسسه‌ی تازه" placeholder="نام مؤسسه‌ی تازه، مثلاً سنجش"><button id="miAdd" class="btn" type="button">➕ افزودن</button></div>
+        <div class="mg-bar" style="margin-top:10px"><button id="miSave" class="send" type="button" disabled>💾 ذخیره‌ی فهرست</button><button id="miDef" class="btn" type="button">↺ فهرست پیش‌فرض</button></div>
+      </div>
       </div>
       <div class="mg-sec" data-sec="set" data-t="تنظیمات عمومی" hidden>
-      <div class="mg-sec-d">لوگو و سربرگ مدرسه و فهرست مؤسسه‌های آزمون آزمایشی. رمزها در ماژول «عملیات رمز» است.</div>
+      <div class="mg-sec-d">لوگو و سربرگ مدرسه. فهرست مؤسسه‌های آزمون آزمایشی در «راه‌اندازی مدرسه» و رمزها در ماژول «عملیات رمز» است.</div>
       <div class="card" id="imgCard">
         <div class="lbl" style="margin-bottom:8px">🖼 لوگو و سربرگ مدرسه</div>
         <div class="now-sub" style="margin-bottom:10px">تصویری که اینجا بارگذاری کنید برای همه‌ی کاربران (مدیر، دبیران، مشاور و دانش‌آموزان) در صفحه‌ی ورود، بالای برنامه و برگه‌های چاپی نمایش داده می‌شود. تصویر پیش از ارسال در همین گوشی کوچک و فشرده می‌شود.</div>
@@ -2204,13 +2253,6 @@ body:not(.in-mod) .lbl-ic{width:auto;height:auto;background:none;border:0;box-sh
             <button class="btn" id="imgHeadDel" type="button">بازگشت به سربرگ پیش‌فرض</button></div>
         </div>
         <div class="now-sub" style="margin-top:8px">پیشنهاد: لوگو مربع (مثلاً ۵۱۲×۵۱۲ با پس‌زمینه‌ی شفاف)، سربرگ افقی (مثلاً ۱۶۰۰×۷۰۰).</div>
-      </div>
-      <div class="card" id="miCard">
-        <div class="lbl" style="margin-bottom:8px">📝 فهرست مؤسسه‌های آزمون آزمایشی</div>
-        <div class="now-sub" style="margin-bottom:10px">دانش‌آموزان هنگام ثبت نتیجه‌ی آزمون آزمایشی یکی از این مؤسسه‌ها را انتخاب می‌کنند (مثلاً ماز، قلمچی، راه موفقیت، خیلی سبز، گزینه دو). گزینه‌ی «سایر» همیشه آخر فهرست می‌ماند. نتیجه‌های ثبت‌شده‌ی قبلی تغییر نمی‌کنند.</div>
-        <div id="miList" class="mi-list"></div>
-        <div class="su-add" style="margin-top:8px"><input id="miNew" type="text" maxlength="40" autocomplete="off" aria-label="نام مؤسسه‌ی تازه" placeholder="نام مؤسسه‌ی تازه، مثلاً سنجش"><button id="miAdd" class="btn" type="button">➕ افزودن</button></div>
-        <div class="mg-bar" style="margin-top:10px"><button id="miSave" class="send" type="button" disabled>💾 ذخیره‌ی فهرست</button><button id="miDef" class="btn" type="button">↺ فهرست پیش‌فرض</button></div>
       </div>
       </div>
       <div class="mg-sec" data-sec="blk" data-t="بستن ورود دانش‌آموزان" hidden>
@@ -2343,9 +2385,18 @@ body:not(.in-mod) .lbl-ic{width:auto;height:auto;background:none;border:0;box-sh
         <div class="field"><input id="dirQ" type="search" placeholder="جست‌وجو: نام، کلاس، کد ملی، شماره..." autocomplete="off" aria-label="جست‌وجو در بانک اطلاعات"></div>
         <div id="dirList"></div>
       </div>
+      <div class="card" id="cgCard">
+        <div class="lbl" style="margin-bottom:8px">🧹 یکسان‌سازی نام دروس با فهرست رسمی</div>
+        <div class="now-sub" style="margin-bottom:10px">دروسی که نامشان در فهرست رسمی پایه و رشته‌ی کلاس نیست (بدون واحد؛ مثلاً «فلسفه» در یازدهم انسانی به‌جای «فلسفه ۱») پیدا می‌شوند تا نمرات، حضور و غیاب، برنامه‌ی هفتگی و تقویمشان به درس رسمی منتقل شود. پیش از انتقال از هر خانه پشتیبان گرفته می‌شود و آخرین انتقال قابل بازگرداندن است.</div>
+        <button id="cgScan" class="btn" type="button" style="width:100%">🔍 بررسی دروس غیررسمی</button>
+        <div id="cgBody"></div>
+      </div>
       <div class="card" id="auCard">
-        <div class="lbl" style="margin-bottom:8px">سابقه‌ی تغییرات (آخرین ۱۲۰ مورد)</div>
-        <button id="auLoad" class="btn" type="button" style="width:100%">بارگذاری</button><div id="auList" style="margin-top:8px"></div>
+        <div class="lbl" style="margin-bottom:8px">🕘 سابقه‌ی تغییرات (یک هفته‌ی اخیر)</div>
+        <div class="now-sub" style="margin-bottom:8px">فقط کارهای ۷ روز اخیر نگه داشته می‌شود؛ موارد قدیمی‌تر خودکار پاک می‌شوند.</div>
+        <div id="auKinds" class="au-kinds" role="group" aria-label="فیلتر بر اساس کاربر"></div>
+        <div class="inb-pick"><select id="auWho" aria-label="یک کاربر"></select><button id="auLoad" class="btn" type="button" title="به‌روزرسانی" aria-label="به‌روزرسانی">🔄</button></div>
+        <div id="auList" style="margin-top:8px"></div>
       </div>
       <div class="card" id="mgTools">
         <div class="lbl" style="margin-bottom:10px">ابزارهای سامانه</div>
@@ -2966,7 +3017,7 @@ function applyRoster(r) {
   $('#pinField').hidden = !S.authReq;
   fillDatalist('teacherList', uniq((r.teachers || []).concat(P.teachers)));
   fillDatalist('courseList', curFor(S.cls) || uniq((r.courses || []).concat(P.courses)));
-  lsSet('sia_rost_t', r.teachers || []); lsSet('sia_rost_c', r.courses || []); lsSet('sia_assign', r.assign || {}); gateFill(); curRender();
+  lsSet('sia_rost_t', r.teachers || []); lsSet('sia_rost_c', r.courses || []); lsSet('sia_assign', r.assign || {}); gateFill(); curRender(); courseMemClean();
 }
 function rosterCred() {            // اعتبار ورود کادر مدرسه؛ فقط با آن نام دانش‌آموزان برگردانده می‌شود
   if (ROLE === 'counselor' && CPIN) return { cpin:CPIN };
@@ -3772,7 +3823,7 @@ function miAdd() {
 }
 async function miSave() {
   const l = miClean(); const r = await suSend({ action:'setMockInst', list:l }, $('#miSave')); if (!r) return;
-  setInst(r.inst); MI = r.inst.slice(); MI_BASE = miKey(); miRender(); toast('فهرست مؤسسه‌ها ذخیره شد و برای دانش‌آموزان اعمال می‌شود ✓');
+  setInst(r.inst); MI = r.inst.slice(); MI_BASE = miKey(); miRender(); toast('فهرست مؤسسه‌ها ذخیره شد و برای دانش‌آموزان اعمال می‌شود ✓'); suHub();
 }
 $('#miAdd').addEventListener('click', miAdd); $('#miNew').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); miAdd(); } });
 $('#miSave').addEventListener('click', miSave);
@@ -4039,13 +4090,13 @@ function refreshRestrict() {
   P.stream = S.stream; P.cls = S.cls; savePrefs(); paintStreams(); fillClasses(); loadClass();
 }
 async function loadInbox() {
-  const box = $('#inbBody'); if (!INB) box.textContent = 'در حال بارگذاری…';
+  inbPark(); const box = $('#inbBody'); if (!INB) box.textContent = 'در حال بارگذاری…';   // کارت تقویم پیش از پاک شدن بدنه بیرون می‌رود
   const r = await send({ action:'inbox', teacher:S.teacher.trim(), pin:S.pin.trim(), key:ACCESS_KEY });
   if (r.net) { box.textContent = 'اینترنت در دسترس نیست.'; return; }
   if (r.status !== 'ok') { box.textContent = r.message || 'بارگذاری نشد.'; return; }
   INB = r.items; if (ISMGR) INB = INB.filter(x => inbGrCount(x) > 0);
   const sel = $('#inbSel'), cur = +sel.value || 0; sel.textContent = '';
-  INB.forEach((x, i) => { const o = el('option', '', (inbGrCount(x) ? '✅ ' : '') + x.c + ' — ' + x.s); o.value = i; sel.append(o); }); sel.value = INB[cur] ? cur : 0; renderInb(); inbChips(); calLoad(); taMineLoad();
+  INB.forEach((x, i) => { const o = el('option', '', (inbGrCount(x) ? '✅ ' : '') + x.c + ' — ' + x.s); o.value = i; sel.append(o); }); sel.value = INB[cur] ? cur : 0; renderInb(); inbChips(); calLoad();
 }
 /* نشانگر درس‌های دارای نمره: ✓ سبز؛ تا وقتی دبیر آن را باز نکرده (یا نمره‌ی تازه آمده) چشمک می‌زند */
 const inbGrCount = x => (x.students || []).reduce((n, st) => n + (st.gr ? st.gr.length : 0), 0);
@@ -4089,25 +4140,60 @@ function inbGrEdit(tr, x, st, g) {
   };
   ok.addEventListener('click', save); inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); save(); } if (e.key === 'Escape') no.click(); });
 }
+/* کارتابل (نسخه‌ی ۱٫۲۸): خلاصه + زبانه‌ها؛ هر بار فقط یک بخش؛ تحلیل و آزمونک فقط وقتی زبانه‌شان باز شود بار می‌شوند */
+const INB_TABS = [['stu', '👥', 'دانش‌آموزان'], ['att', '🗓', 'حضور و غیاب'], ['ana', '📊', 'تحلیل آزمون'], ['qz', '📝', 'آزمونک'], ['cal', '📅', 'تقویم آزمون']];
+let INB_TAB = lsGet('sia_inb_tab', 'stu');
+function inbPark() { const cc = $('#calCard'), h = $('#p-inb'); if (cc && h && cc.parentNode !== h) { cc.hidden = true; h.append(cc); } }   // کارت تقویم پیش از پاک شدن بدنه بیرون می‌رود
 function renderInb() {
-  const box = $('#inbBody'); box.textContent = '';
+  inbPark(); const box = $('#inbBody'); box.textContent = '';
   if (!INB || !INB.length) { box.append(el('div', 'empty', 'برای شما در برنامه‌ی هفتگی کلاس و درسی ثبت نشده است.')); return; }
-  const x = INB[+$('#inbSel').value || 0], sm = el('div', 'card');
-  sm.append(el('div', 'now-t', x.c + ' | ' + x.s), el('div', 'now-sub', 'جلسات ثبت‌شده: ' + fa(x.sessions) + ' | میانگین کلاس: ' + f2(x.avg) + ' (از ۲۰)'));
-  if (x.top && x.top.length) sm.append(el('div', 'now-sub', x.top.map((t, i) => ['🥇', '🥈', '🥉'][i] + ' ' + t.n + ' (' + f2(t.avg) + ')').join('  |  '))); box.append(sm); anaMount(box, x); qzMount(box, x);
-  box.append(attCard(x));
+  const x = INB[+$('#inbSel').value || 0], sm = el('div', 'card inb-sum'), k = el('div', 'inb-kpi');
+  sm.append(el('div', 'now-t', x.c + ' | ' + x.s));
+  [[fa(x.students.length), 'دانش‌آموز'], [fa(x.sessions), 'جلسه‌ی ثبت‌شده'], [f2(x.avg), 'میانگین کلاس']].forEach(q => { const b = el('div'); b.append(el('b', '', q[0]), el('small', '', q[1])); k.append(b); });
+  sm.append(k); if (x.top && x.top.length) sm.append(el('div', 'now-sub inb-top', x.top.map((t, i) => ['🥇', '🥈', '🥉'][i] + ' ' + t.n + ' (' + f2(t.avg) + ')').join('  |  ')));
+  const bar = el('div', 'inb-tabs'), panes = {}, btns = {}, done = {}, nEx = anaExams(x).length; bar.setAttribute('role', 'tablist'); bar.setAttribute('aria-label', 'بخش‌های کارتابل');
+  INB_TABS.forEach(([key, ic, t]) => {
+    const b = el('button', 'inb-tab'), p = el('div', 'inb-pane'), n = key === 'stu' ? x.students.length : key === 'att' ? x.sessions : key === 'ana' ? nEx : 0;
+    b.type = 'button'; b.dataset.k = key; b.id = 'inbT-' + key; b.setAttribute('role', 'tab'); b.setAttribute('aria-controls', 'inbP-' + key); b.append(el('span', 'ic', ic), el('span', '', t)); if (n) b.append(el('em', '', fa(n)));
+    p.dataset.k = key; p.id = 'inbP-' + key; p.setAttribute('role', 'tabpanel'); p.setAttribute('aria-labelledby', b.id); p.hidden = true;
+    b.addEventListener('click', () => show(key)); bar.append(b); btns[key] = b; panes[key] = p;
+  });
+  bar.addEventListener('keydown', e => {                // پیمایش با کلیدهای جهت (راست‌به‌چپ)
+    const i = INB_TABS.findIndex(t => t[0] === INB_TAB), d = e.key === 'ArrowLeft' ? 1 : e.key === 'ArrowRight' ? -1 : 0; if (!d) return;
+    e.preventDefault(); const nk = INB_TABS[(i + d + INB_TABS.length) % INB_TABS.length][0]; show(nk); btns[nk].focus(); });
+  box.append(sm, bar); INB_TABS.forEach(t => box.append(panes[t[0]]));
+  const mount = key => { if (done[key]) return; done[key] = 1; const p = panes[key];
+    if (key === 'stu') inbStudents(p, x);
+    else if (key === 'att') p.append(attCard(x));
+    else if (key === 'ana') { anaMount(p, x); const d = p.querySelector('details.ana'); if (d) d.open = true; else p.append(el('div', 'empty', 'هنوز نمره‌ای برای تحلیل ثبت نشده است.')); }
+    else if (key === 'qz') { qzMount(p, x); const d = p.querySelector('details.ana'); if (d) d.open = true; }
+    else if (key === 'cal') { const cc = $('#calCard'); if (cc) { cc.hidden = false; p.append(cc); } }
+  };
+  function show(key) {
+    INB_TAB = key; lsSet('sia_inb_tab', key);
+    INB_TABS.forEach(([q]) => { const on = q === key; btns[q].classList.toggle('on', on); btns[q].setAttribute('aria-selected', String(on)); btns[q].tabIndex = on ? 0 : -1; panes[q].hidden = !on; });
+    mount(key);
+  }
+  show(INB_TABS.some(t => t[0] === INB_TAB) ? INB_TAB : 'stu');
+}
+function inbStudents(p, x) {
+  if (!x.students.length) { p.append(el('div', 'empty', 'دانش‌آموزی در این کلاس نیست.')); return; }
+  if (x.students.length > 8) {         // کلاس پرجمعیت: جست‌وجوی نام
+    const q = el('input'); q.type = 'search'; q.placeholder = 'جست‌وجوی نام دانش‌آموز'; q.setAttribute('aria-label', 'جست‌وجوی نام دانش‌آموز'); q.className = 'inb-search';
+    q.addEventListener('input', () => { const t = normT(q.value); p.querySelectorAll(':scope > details.dir-it').forEach(d => { d.hidden = !!t && normT(d.dataset.n).indexOf(t) < 0; }); });
+    p.append(q);
+  }
   x.students.forEach(st => {
-    const d = el('details', 'dir-it'), h = el('summary'), b = el('div', 'dir-b');
+    const d = el('details', 'dir-it'), h = el('summary'), b = el('div', 'dir-b'); d.dataset.n = st.n;
     h.append(el('span', '', st.n), el('small', '', 'غ ' + fa(st.ab) + ' | ت ' + fa(st.lt) + ' | میانگین ' + f2(st.avg)));
     if (st.n === INB_OPEN) d.open = true;
-    b.append(
-      el('div', 'lbl', 'نمرات'), st.gr.length ? inbGrTbl(x, st) : el('div', 'now-sub', 'نمره‌ای ثبت نشده.'));
+    b.append(el('div', 'lbl', 'نمرات'), st.gr.length ? inbGrTbl(x, st) : el('div', 'now-sub', 'نمره‌ای ثبت نشده است.'));
     b.append(el('div', 'lbl', 'روند نمره'), trendSvg(st.gr.slice().reverse().filter(g => g.n != null)));
     { const bi = el('input'), bk = el('select'), bb = el('button', 'btn', 'ثبت یادداشت'), rw = el('div'); bi.type = 'text'; bi.maxLength = 300; bi.placeholder = 'یادداشت رفتاری'; bb.type = 'button';
       ['مثبت', 'منفی', 'مشاوره'].forEach(k => { const o = el('option', '', k); o.value = k; bk.append(o); }); rw.style.cssText = 'display:grid;grid-template-columns:1fr auto auto;gap:6px'; rw.append(bi, bk, bb);
       bb.addEventListener('click', async () => { if (!bi.value.trim()) return; const q = await send({ action:'behAdd', teacher:S.teacher.trim(), pin:S.pin.trim(), cls:x.c, name:st.n, kind:bk.value, note:bi.value.trim(), key:ACCESS_KEY }); if (q.status !== 'ok') return toast(q.message || 'ثبت نشد'); bi.value = ''; toast('یادداشت ثبت شد ✓'); });
       b.append(el('div', 'lbl', 'یادداشت رفتاری'), rw); }
-    d.append(h, b); box.append(d);
+    d.append(h, b); p.append(d);
   });
 }
 /* حضور و غیاب کلاس به‌صورت جدول: هر ردیف یک دانش‌آموز، هر ستون یک جلسه */
@@ -6043,6 +6129,7 @@ async function suSend(o, btn) {
 const suClasses = () => { const o = []; Object.keys(STUDENTS).forEach(st => Object.keys(STUDENTS[st] || {}).forEach(c => o.push({ st:st, c:c, n:(STUDENTS[st][c] || []).length }))); return o.sort((a, b) => a.c.localeCompare(b.c, 'fa')); };
 const suStuOf = c => { for (const st of Object.keys(STUDENTS)) if (STUDENTS[st] && STUDENTS[st][c]) return STUDENTS[st][c]; return []; };
 async function suOpen() {
+  miOpen();                           // نسخه‌ی ۱٫۲۸: فهرست مؤسسه‌های آزمون آزمایشی در راه‌اندازی مدرسه
   $('#suName').value = SCHOOL_NAME; fillDatalist('suStL', uniq(Object.keys(STUDENTS).concat(['تجربی', 'انسانی'])));
   fillDatalist('taCourseL', curAll() || uniq(lsGet('sia_rost_c', []).concat(P.courses)));
   suClsPreview(); suClsList(); suTeachers(); suPwInit(); zcInit(); suHub();
@@ -6088,6 +6175,7 @@ function suHub() {
    ['دبیران', T.length ? fa(T.length) + ' دبیر' : 'هنوز دبیری ثبت نشده است', T.length ? 'ok' : 'todo', 'taCard'],
    ['تخصیص درس به دبیر', !T.length ? 'ابتدا دبیران را ثبت کنید' : noC.length ? fa(noC.length) + ' دبیر بدون درس: ' + noC.map(t => t.n).join('، ') : 'همه‌ی دبیران درس دارند', !T.length ? 'todo' : noC.length ? 'warn' : 'ok', 'suTc'],
    ['برنامه‌ی هفتگی', $('#suSchTx').textContent, !cls.length || !schC.length ? 'todo' : schC.length < cls.length ? 'warn' : 'ok', 'suSch'],
+   (mi => ['مؤسسه‌های آزمون آزمایشی', mi.length ? fa(mi.length) + ' مؤسسه: ' + mi.slice(0, 3).join('، ') + (mi.length > 3 ? '، …' : '') + ' (+ «سایر» و «هیچکدام»)' : 'فقط «سایر» و «هیچکدام»؛ مؤسسه‌ها را اضافه کنید', mi.length ? 'ok' : 'warn', 'miCard'])(INST.filter(x => x !== 'سایر' && x !== MK_NONE)),
    ['عملیات رمز', SU ? pw.join(' | ') : 'در حال بررسی…', !SU ? 'todo' : pwSt.length ? 'warn' : 'ok', 'suPw']
   ].forEach((s, i) => {
     const b = el('button', 'su-step ' + s[2]), tx = el('span'); b.type = 'button';
@@ -6296,21 +6384,85 @@ function gdAsk(r, name) {
 $('#gdCls').addEventListener('change', gdRender);
 function auRestore(x) {
   showModal({ icon:'warn', title:'بازنشانی آزمون/تکلیف', msg:'این آزمون یا تکلیف دوباره در فهرست آزمون‌های ثبت‌شده برگردانده شود؟\n' + x.d, buttons:[
-    { text:'بازنشانی', primary:true, onClick:async () => { const q = await send({ action:'calRestore', pin:MG.pin, key:ACCESS_KEY, id:x.id }); toast(q.status === 'ok' ? 'بازنشانی شد ✓' : (q.message || 'ناموفق')); $('#auLoad').click(); } },
+    { text:'بازنشانی', primary:true, onClick:async () => { const q = await send({ action:'calRestore', pin:MG.pin, key:ACCESS_KEY, id:x.id, ts:x.t, d:x.d }); toast(q.status === 'ok' ? 'بازنشانی شد ✓' : (q.message || 'ناموفق')); $('#auLoad').click(); } },
     { text:'انصراف' } ] });
 }
-$('#auLoad').addEventListener('click', async () => {
-  const box = $('#auList'); box.textContent = 'در حال بارگذاری…'; const r = await send({ action:'auditList', pin:MG.pin, key:ACCESS_KEY }); box.textContent = '';
+/* --- سابقه‌ی تغییرات (نسخه‌ی ۱٫۲۸): یک هفته‌ی اخیر، فیلتر دانش‌آموزان / دبیران / مدیر / مشاور و یک نفر --- */
+const AU_K = [['', 'همه'], ['s', 'دانش‌آموزان'], ['t', 'دبیران'], ['m', 'مدیر'], ['c', 'مشاور'], ['o', 'سایر']], AU_B = { m:'مدیر', t:'دبیر', s:'دانش‌آموز', c:'مشاور', o:'سایر' };
+const AU = { k:'', w:'' };
+async function auLoad() {
+  const box = $('#auList'); if (!box) return; box.textContent = 'در حال بارگذاری…';
+  const r = await send({ action:'auditList', pin:MG.pin, key:ACCESS_KEY, k:AU.k, w:AU.w }); box.textContent = '';
   if (r.status !== 'ok') { box.append(el('div', 'empty', r.message || 'بارگذاری نشد.')); return; }
-  if (!r.list.length) return box.append(el('div', 'now-sub', 'موردی ثبت نشده است.'));
+  const kb = $('#auKinds'), cnt = r.cnt || {}, tot = Object.keys(cnt).reduce((a, k) => a + cnt[k], 0); kb.textContent = '';
+  AU_K.forEach(([k, t]) => { const n = k ? cnt[k] || 0 : tot; if (k && !n && AU.k !== k) return;
+    const b = el('button', 'chip au-k' + (AU.k === k ? ' on' : ''), t + ' (' + fa(n) + ')'); b.type = 'button'; b.setAttribute('aria-pressed', String(AU.k === k));
+    b.addEventListener('click', () => { AU.k = k; AU.w = ''; auLoad(); }); kb.append(b); });
+  const sel = $('#auWho'); sel.textContent = ''; const o0 = el('option', '', 'همه‌ی ' + (AU.k ? AU_K.find(q => q[0] === AU.k)[1] : 'کاربران')); o0.value = ''; sel.append(o0);
+  (r.people || []).forEach(q => { const o = el('option', '', q.w + ' (' + fa(q.n) + ')'); o.value = q.w; sel.append(o); }); sel.value = AU.w;
+  if (r.purged) box.append(el('div', 'now-sub', fa(r.purged) + ' مورد قدیمی‌تر از یک هفته پاک شد.'));
+  if (!r.list.length) return box.append(el('div', 'empty', 'در یک هفته‌ی اخیر موردی ثبت نشده است.'));
   r.list.forEach(x => {
-    const row = el('div', 'dir-r'), txt = el('span', '', fa(x.t) + ' | ' + x.w + ' | ' + x.a + ' | ' + x.d);
-    row.append(txt);
+    const row = el('div', 'au-row'), t = el('div', 'au-t'); t.append(el('b', '', x.w), document.createTextNode(' — ' + x.a), el('br'), el('small', '', fa(x.t) + (x.d ? ' | ' + x.d : '')));
+    row.append(el('span', 'au-b ' + x.k, AU_B[x.k] || ''), t);
     if (x.r) { const b = el('button', 'btn', 'بازنشانی'); b.type = 'button'; b.addEventListener('click', () => auRestore(x)); row.append(b); }
-    else if (x.rs) row.append(el('span', 'now-sub', x.rs ? 'بازنشانی شده' : ''));
+    else if (x.rs) row.append(el('span', 'now-sub', 'بازنشانی شده'));
     box.append(row);
   });
-});
+}
+$('#auLoad').addEventListener('click', auLoad);
+$('#auWho').addEventListener('change', e => { AU.w = e.target.value; auLoad(); });
+/* --- یکسان‌سازی نام دروس با فهرست رسمی (نسخه‌ی ۱٫۲۸): همه‌ی محاسبه و کنترل در سرور --- */
+const CG_FA = { att:'حضور و غیاب', gr:'نمره', sch:'برنامه', cal:'تقویم', sub:'جایگزین', cns:'مشاوره', qz:'آزمونک', ng:'درخواست ویرایش', off:'درس غیرفعال' };
+let CG = null;
+async function cgScan() {
+  const box = $('#cgBody'); box.textContent = 'در حال بررسی…'; const r = await send({ action:'cmigScan', pin:MG.pin, key:ACCESS_KEY });
+  if (r.net) { box.textContent = 'اینترنت در دسترس نیست.'; return; } if (r.status !== 'ok') { box.textContent = r.message || 'بررسی نشد.'; return; }
+  CG = r; cgRender();
+}
+function cgRender() {
+  const box = $('#cgBody'), d = CG; box.textContent = '';
+  if (d.last) { const u = el('div', 'cg-undo'), b = el('button', 'btn', '↩ بازگرداندن آخرین انتقال'); b.type = 'button';
+    u.append(el('span', '', 'آخرین انتقال: ' + fa(d.last.t) + ' (' + fa(d.last.n) + ' خانه)'), b);
+    b.addEventListener('click', () => showModal({ icon:'warn', title:'بازگرداندن آخرین انتقال', msg:'نام دروسِ آخرین انتقال به نام قبلی برمی‌گردد. خانه‌هایی که بعد از انتقال تغییر کرده‌اند دست نمی‌خورند.',
+      buttons:[{ text:'انصراف', primary:true }, { text:'بازگرداندن', onClick:async () => { const q = await send({ action:'cmigUndo', pin:MG.pin, key:ACCESS_KEY, id:d.last.id });
+        if (q.status !== 'ok') return toast(q.message || 'انجام نشد'); toast(fa(q.ok) + ' خانه برگشت' + (q.skip ? '، ' + fa(q.skip) + ' خانه تغییر کرده بود و دست نخورد' : '') + ' ✓'); loadRoster(); cgScan(); } }] }));
+    box.append(u); }
+  if (!d.items.length) box.append(el('div', 'empty', 'همه‌ی دروسِ کلاس‌ها با فهرست رسمی یکسان است ✓'));
+  else {
+    box.append(el('div', 'now-sub', fa(d.items.length) + ' درس غیررسمی در ' + fa(uniq(d.items.map(x => x.c)).length) + ' کلاس. درس رسمی را انتخاب و تیک بزنید؛ موارد بدون تیک دست نمی‌خورند.'));
+    const rows = [];
+    uniq(d.items.map(x => x.c)).forEach(c => {
+      box.append(el('div', 'cg-cls', c));
+      d.items.filter(x => x.c === c).forEach(x => {
+        const row = el('label', 'cg-row'), cb = el('input'), sel = el('select'), head = el('div', 'cg-h'); cb.type = 'checkbox'; cb.checked = !!x.n;
+        const o0 = el('option', '', '— درس رسمی را انتخاب کنید —'); o0.value = ''; sel.append(o0); x.list.forEach(n => { const o = el('option', '', n); o.value = n; sel.append(o); }); sel.value = x.n || '';
+        sel.setAttribute('aria-label', 'درس رسمی به‌جای ' + x.o); sel.addEventListener('change', () => { cb.checked = !!sel.value; cgCount(); }); cb.addEventListener('change', () => { if (cb.checked && !sel.value) cb.checked = false; cgCount(); });
+        head.append(el('span', 'cg-o', x.o), el('span', 'cg-ar', '←'));
+        const info = Object.keys(x.cnt).map(k => (CG_FA[k] || k) + ' ' + fa(x.cnt[k])).join('، ') + (x.tch.length ? ' | دبیر: ' + x.tch.join('، ') : '') + (x.cands.length ? ' | چند درس شبیه پیدا شد؛ خودتان انتخاب کنید' : !x.n ? ' | درس شبیهی پیدا نشد' : '');
+        row.append(cb, head, sel, el('small', '', info)); if (x.clash) row.append(el('small', 'cg-warn', '⚠ ' + fa(x.clash) + ' ردیف هم‌زمان با همین درس رسمی ثبت شده؛ بعد از انتقال تکراری دیده می‌شود.'));
+        rows.push({ x:x, cb:cb, sel:sel }); box.append(row);
+      });
+    });
+    const go = el('button', 'send', ''); go.type = 'button'; go.id = 'cgGo'; box.append(go);
+    const cgCount = () => { const n = rows.filter(q => q.cb.checked && q.sel.value).length; go.textContent = n ? '🔁 انتقال ' + fa(n) + ' درس به نام رسمی' : 'درسی انتخاب نشده'; go.disabled = !n; };
+    cgCount();
+    go.addEventListener('click', () => {
+      const items = rows.filter(q => q.cb.checked && q.sel.value).map(q => ({ c:q.x.c, o:q.x.o, n:q.sel.value })); if (!items.length) return;
+      showModal({ icon:'warn', title:'انتقال ' + fa(items.length) + ' درس', msg:items.map(q => q.c + ': «' + q.o + '» ← «' + q.n + '»').join('\n') + '\n\nنمرات، حضور و غیاب، برنامه و تقویمِ همین کلاس‌ها منتقل می‌شود. پشتیبان گرفته می‌شود و قابل بازگرداندن است.',
+        buttons:[{ text:'انصراف', primary:true }, { text:'انتقال', onClick:async () => { go.disabled = true; const q = await send({ action:'cmigApply', pin:MG.pin, key:ACCESS_KEY, items:items });
+          if (q.status !== 'ok') { go.disabled = false; return toast(q.message || 'انجام نشد'); }
+          toast(fa(q.total) + ' خانه به نام رسمی منتقل شد ✓'); loadRoster(); cgScan(); } }] });
+    });
+  }
+  if (d.tchOnly && d.tchOnly.length) box.append(el('div', 'now-sub cg-tch', 'این دروس فقط در فهرست دروس دبیران هست و در برنامه‌ی هیچ کلاسی نیست؛ از «راه‌اندازی ← تخصیص درس به دبیر» اصلاح کنید: ' + d.tchOnly.map(q => q.t + ' («' + q.s + '»)').join('، ')));
+}
+$('#cgScan').addEventListener('click', cgScan);
+function courseMemClean() {          // نام دروس غیررسمی از حافظه‌ی همین دستگاه (پیشنهادهای درس) پنهان می‌شود
+  const all = curAll(); if (!all || !all.length) return; const ok = new Set(all.map(normT)), keep = l => (l || []).filter(c => ok.has(normT(c)));
+  const pc = keep(P.courses); if (pc.length !== (P.courses || []).length) { P.courses = pc; savePrefs(); fillDatalist('courseList', pc); }
+  lsSet('sia_rost_c', keep(lsGet('sia_rost_c', [])));
+}
 async function pfBeh() {
   const box = el('div', 'card'), lst = el('div'), inp = el('input'), kind = el('select'), add = el('button', 'btn', 'ثبت یادداشت'); box.append(el('div', 'lbl', 'یادداشت‌های رفتاری و تربیتی'), lst);
   inp.type = 'text'; inp.maxLength = 300; inp.placeholder = 'یادداشت جدید'; add.type = 'button'; ['مثبت', 'منفی', 'مشاوره'].forEach(k => { const o = el('option', '', k); o.value = k; kind.append(o); });
@@ -6630,6 +6782,7 @@ function grDuePaint() {
 /* ---------- حضور و خروج همکاران ---------- */
 let STF = null;
 async function stfOpen() {
+  taMineLoad();                       // نسخه‌ی ۱٫۲۸: «عدم حضور، تأخیر و مرخصی شما» از کارتابل به همین ماژول آمد
   const r = await send({ action:'staffToday', teacher:S.teacher.trim(), pin:S.pin.trim(), key:ACCESS_KEY });
   if (r.net) { $('#stfState').textContent = 'اینترنت در دسترس نیست.'; return; } if (r.status !== 'ok') { $('#stfState').textContent = r.message || 'بارگذاری نشد.'; return; }
   STF = r; stfPaint();
@@ -7580,7 +7733,8 @@ function mgShow(k, scroll) {
   if (window.innerWidth < 900) { const ab = $('#mgNav .mg-nb.on'); if (ab && ab.scrollIntoView) ab.scrollIntoView({ block:'nearest', inline:'center' }); }   // منوی افقی موبایل: بخش فعال دیده شود
   if (k === 'dis' && MG.pin && !$('#mgBody').hidden) disOpen('m');
   if (k === 'pta' && MG.pin && !$('#mgBody').hidden) ptOpen();
-  if (k === 'set' && MG.pin && !$('#mgBody').hidden) { imgApply(); miOpen(); }
+  if (k === 'set' && MG.pin && !$('#mgBody').hidden) imgApply();
+  if (k === 'sys' && MG.pin && !$('#mgBody').hidden) auLoad();
   if (k === 'pw' && MG.pin && !$('#mgBody').hidden) pwOpen();
   if (k === 'blk' && MG.pin && !$('#mgBody').hidden) blkOpen();
   if (k === 'setup' && MG.pin && !$('#mgBody').hidden) suOpen();
