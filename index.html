@@ -18,7 +18,7 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxzPr6P54uH4gV_rQrss
 // کلید دسترسی اختیاری (باید با ACCESS_KEY در Code.gs یکی باشد)
 const ACCESS_KEY = "";
 // نسخه‌ی برنامه — با هر به‌روزرسانی این عدد بالا می‌رود و در صفحه‌ی ورود و پایین صفحه نمایش داده می‌شود.
-const APP_VERSION = "1.26";
+const APP_VERSION = "1.27";
 // (اختیاری) لینک Google Sheet برای دکمه «باز کردن Google Sheet» در تب مدیر
 const SHEET_URL = "https://docs.google.com/spreadsheets/d/10i-IGQKyj078M6kJ7YhdAniuJInl6JemwVxAqs7FnrY/edit";
 const DEFAULT_MAX_SCORE = 20;
@@ -1671,6 +1671,15 @@ body:not(.in-mod) .lbl-ic{width:auto;height:auto;background:none;border:0;box-sh
 .gd-t{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
 .gd-t b{font-size:13.5px;color:var(--absent)} .gd-t small{font-size:12px;color:var(--ink)}
 .gd-row .btn{flex:none;font-size:12.5px;padding:6px 10px}
+
+/* ===== نسخه‌ی ۱٫۲۷: نمودار ستونی پرونده‌ی دانش‌آموز + ویرایش نمره در کارتابل ===== */
+.cols-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:8px 0 2px;padding-bottom:4px}
+.cols-wrap svg{display:block;margin-inline:auto;max-width:none}
+.inb-ed{padding:2px 7px;font-size:12px;min-height:0;line-height:1.6;vertical-align:middle}
+.inb-gef{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.inb-gef input[type=text]{width:72px;min-width:0;padding:6px 8px;text-align:center}
+.inb-gef .btn{padding:4px 10px;min-width:34px}
+.inb-ab{display:inline-flex;align-items:center;gap:4px;font-size:12.5px;font-weight:700}
 </style>
 </head>
 <body>
@@ -4054,6 +4063,32 @@ function inbChips() {
     box.append(b);
   });
 }
+let INB_OPEN = '';                     // دانش‌آموزی که بعد از ویرایش نمره باز می‌ماند
+function inbGrTbl(x, st) {            // جدول نمرات دانش‌آموز در کارتابل؛ مدیر (نسخه‌ی ۱٫۲۷) کنار هر نمره «ویرایش» دارد — کنترل دسترسی در سرور (grEdit)
+  const mgr = ROLE === 'manager' || ISMGR;
+  const w = tbl(['تاریخ', 'آزمون', 'نمره', 'از ۲۰', 'میانگین کلاس'], st.gr.map(g => [fa(g.d), g.e, g.a ? 'غایب' : fa(g.s) + ' از ' + fa(g.m), g.a ? '—' : f2(g.n), f2(g.ca)]));
+  if (mgr) w.querySelectorAll('tbody tr').forEach((tr, i) => { const g = st.gr[i], b = el('button', 'btn inb-ed', '✏️'); b.type = 'button'; b.title = 'ویرایش نمره';   // دکمه داخل خانه‌ی «نمره» تا در گوشی دیده شود
+    b.setAttribute('aria-label', 'ویرایش نمره‌ی ' + st.n + ' در ' + g.e + ' ' + fa(g.d)); b.addEventListener('click', () => inbGrEdit(tr, x, st, g)); tr.children[2].append(' ', b); });
+  return w;
+}
+function inbGrEdit(tr, x, st, g) {
+  const td = tr.children[2], old = Array.from(td.childNodes), f = el('div', 'inb-gef'), inp = el('input'), ab = el('label', 'inb-ab'), cb = el('input');
+  inp.type = 'text'; inp.inputMode = 'decimal'; inp.autocomplete = 'off'; inp.value = g.a ? '' : fa(g.s); inp.setAttribute('aria-label', 'نمره‌ی تازه از ' + fa(g.m));
+  cb.type = 'checkbox'; cb.checked = !!g.a; ab.append(cb, el('span', '', 'غایب')); cb.addEventListener('change', () => { inp.disabled = cb.checked; });
+  inp.disabled = cb.checked;
+  const ok = el('button', 'btn', '✓'), no = el('button', 'btn', '✕'); ok.type = no.type = 'button'; ok.title = 'ذخیره'; no.title = 'انصراف'; ok.setAttribute('aria-label', 'ذخیره'); no.setAttribute('aria-label', 'انصراف');
+  f.append(inp, el('span', 'now-sub', 'از ' + fa(g.m)), ab, ok, no); td.textContent = ''; td.append(f); inp.focus();
+  no.addEventListener('click', () => { td.textContent = ''; old.forEach(n => td.append(n)); });
+  const save = async () => {
+    let extra; if (cb.checked) extra = { absent:true };
+    else { const n = numOf(inp.value); if (n === '' || !isFinite(n) || n < 0 || n > g.m) return toast('نمره باید بین ۰ و ' + fa(g.m) + ' باشد'); extra = { absent:false, score:n }; }
+    ok.disabled = true;
+    const q = await send(Object.assign({ action:'grEdit', pin:MG.pin || S.pin, key:ACCESS_KEY, date:g.d, time:g.t || '', cls:x.c, course:x.s, examType:g.e, student:st.n, max:g.m }, extra));
+    ok.disabled = false; if (q.net) return toast('اینترنت در دسترس نیست.'); if (q.status !== 'ok') return toast(q.message || 'ویرایش نشد.');
+    toast('نمره‌ی ' + st.n + ' ویرایش شد ✓'); INB_OPEN = st.n; loadInbox();
+  };
+  ok.addEventListener('click', save); inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); save(); } if (e.key === 'Escape') no.click(); });
+}
 function renderInb() {
   const box = $('#inbBody'); box.textContent = '';
   if (!INB || !INB.length) { box.append(el('div', 'empty', 'برای شما در برنامه‌ی هفتگی کلاس و درسی ثبت نشده است.')); return; }
@@ -4064,8 +4099,9 @@ function renderInb() {
   x.students.forEach(st => {
     const d = el('details', 'dir-it'), h = el('summary'), b = el('div', 'dir-b');
     h.append(el('span', '', st.n), el('small', '', 'غ ' + fa(st.ab) + ' | ت ' + fa(st.lt) + ' | میانگین ' + f2(st.avg)));
+    if (st.n === INB_OPEN) d.open = true;
     b.append(
-      el('div', 'lbl', 'نمرات'), st.gr.length ? tbl(['تاریخ', 'آزمون', 'نمره', 'از ۲۰', 'میانگین کلاس'], st.gr.map(g => [g.d, g.e, g.a ? 'غایب' : fa(g.s) + ' از ' + fa(g.m), g.a ? '—' : f2(g.n), f2(g.ca)])) : el('div', 'now-sub', 'نمره‌ای ثبت نشده.'));
+      el('div', 'lbl', 'نمرات'), st.gr.length ? inbGrTbl(x, st) : el('div', 'now-sub', 'نمره‌ای ثبت نشده.'));
     b.append(el('div', 'lbl', 'روند نمره'), trendSvg(st.gr.slice().reverse().filter(g => g.n != null)));
     { const bi = el('input'), bk = el('select'), bb = el('button', 'btn', 'ثبت یادداشت'), rw = el('div'); bi.type = 'text'; bi.maxLength = 300; bi.placeholder = 'یادداشت رفتاری'; bb.type = 'button';
       ['مثبت', 'منفی', 'مشاوره'].forEach(k => { const o = el('option', '', k); o.value = k; bk.append(o); }); rw.style.cssText = 'display:grid;grid-template-columns:1fr auto auto;gap:6px'; rw.append(bi, bk, bb);
@@ -5197,6 +5233,28 @@ function bars3(title, a) {
     const v = el('span', '', f2(q[1])); v.style.minWidth = '46px'; r.append(el('span', 'k', q[0]), b, v); w.append(r); });
   return w;
 }
+function colsSvg(groups) {           // نسخه‌ی ۱٫۲۷: نمودار ستونی گروهی (دانش‌آموز، میانگین کلاس، میانگین پایه/رشته) از ۲۰؛ اولین گروه سمت راست
+  const S3 = [['me', 'var(--c-me)', 'دانش‌آموز'], ['cls', 'var(--c-cls)', 'میانگین کلاس'], ['str', 'var(--c-str)', 'میانگین پایه/رشته']];
+  const BW = 14, GP = 3, IN = 3 * BW + 2 * GP, GW = IN + 22, L = 30, R = 6, T = 20, B = 46, H = 250, N = groups.length, W = Math.max(300, L + R + N * GW);
+  const svg = sv('svg', { viewBox:'0 0 ' + W + ' ' + H, width:W, height:H, role:'img', 'aria-label':'نمودار ستونی میانگین نمره‌ی دانش‌آموز، کلاس و پایه/رشته در هر درس (از ۲۰)' });
+  const Y = v => T + (1 - Math.max(0, Math.min(20, v)) / 20) * (H - T - B), y0 = Y(0);
+  [0, 5, 10, 15, 20].forEach(v => svg.append(sv('line', { x1:L, x2:W - R, y1:Y(v), y2:Y(v), style:'stroke:var(--line);stroke-width:1' + (v ? ';stroke-dasharray:3 3' : '') }),
+    sv('text', { x:L - 6, y:Y(v) + 4, 'text-anchor':'end', 'font-size':10, style:'fill:var(--muted)' }, fa(v))));
+  const lines = t => { const w = String(t).split(/\s+/), o = ['']; w.forEach(x => { const c = o[o.length - 1]; if (c && (c + ' ' + x).length > 11) o.push(x); else o[o.length - 1] = c ? c + ' ' + x : x; });
+    return o.length > 2 ? [o[0], o.slice(1).join(' ').slice(0, 10) + '…'] : o; };
+  groups.forEach((g, i) => {
+    const gx = W - R - (i + 1) * GW, x0 = gx + (GW - IN) / 2;
+    if (g.sep && N > 1) svg.append(sv('line', { x1:gx, x2:gx, y1:T - 6, y2:y0, style:'stroke:var(--muted);stroke-width:1;stroke-dasharray:4 3' }));
+    S3.forEach((q, j) => {
+      const v = g[q[0]], x = x0 + (2 - j) * (BW + GP);                     // دانش‌آموز سمت راستِ هر گروه
+      if (v == null) { svg.append(sv('text', { x:x + BW / 2, y:y0 - 4, 'text-anchor':'middle', 'font-size':10, style:'fill:var(--muted)' }, '—')); return; }
+      const rc = sv('rect', { x:x, y:Y(v), width:BW, height:Math.max(1.5, y0 - Y(v)), rx:3, style:'fill:' + q[1] }); rc.append(sv('title', {}, g.t + ' — ' + q[2] + ': ' + f2(v))); svg.append(rc);
+    });
+    if (g.me != null) svg.append(sv('text', { x:x0 + 2 * (BW + GP) + BW / 2, y:Y(g.me) - 5, 'text-anchor':'middle', 'font-size':10, 'font-weight':800, style:'fill:var(--c-me)' }, f2(g.me)));
+    lines(g.t).forEach((t, k) => svg.append(sv('text', { x:gx + GW / 2, y:y0 + 16 + k * 13, 'text-anchor':'middle', 'font-size':10.5, 'font-weight':g.sep ? 800 : 600, style:'fill:var(--ink)' }, t)));
+  });
+  const w = el('div', 'cols-wrap'); w.append(svg); return w;
+}
 function pfRender() {
   const box = $('#pfBody'), d = PF; box.textContent = '';
   const diff = (x, y, nm) => x == null || y == null ? '' : (x >= y ? '▲ ' + f2(x - y) + ' نمره بالاتر از ' : '▼ ' + f2(y - x) + ' نمره پایین‌تر از ') + nm;
@@ -5206,7 +5264,15 @@ function pfRender() {
     el('div', 'now-sub', [diff(d.overall.me, d.overall.cls, 'میانگین کلاس'), diff(d.overall.me, d.overall.str, 'میانگین پایه/رشته')].filter(String).join(' | ')));
   box.append(hd);
   const c1 = el('div', 'card'); c1.append(el('div', 'lbl', 'وضعیت نمرات نسبت به کلاس و پایه/رشته (از ۲۰)'));
-  if (!d.courses.length) c1.append(el('div', 'empty', 'نمره‌ای ثبت نشده است.')); else { c1.append(bars3('معدل کل (وزنی)', d.overall)); d.courses.forEach(x => c1.append(bars3(x.c + (x.u ? ' — ' + fa(x.u) + ' واحد' : ''), x))); c1.append(legend([['var(--c-me)', 'دانش‌آموز'], ['var(--c-cls)', 'کلاس'], ['var(--c-str)', 'پایه/رشته']])); }
+  if (!d.courses.length) c1.append(el('div', 'empty', 'نمره‌ای ثبت نشده است.'));
+  else {                               // نسخه‌ی ۱٫۲۷: فقط دروس همین کلاس، نمودار ستونی
+    c1.append(el('div', 'now-sub', 'دروس کلاس ' + d.cls + ' | هر ستون: میانگین نمره از ۲۰' + (d.courses.length > 4 ? ' | برای دیدن همه‌ی دروس، نمودار را افقی بکشید.' : '')));
+    c1.append(colsSvg([Object.assign({ t:'معدل کل', sep:true }, d.overall)].concat(d.courses.map(x => Object.assign({ t:x.c }, x)))));
+    c1.append(legend([['var(--c-me)', 'دانش‌آموز'], ['var(--c-cls)', 'میانگین کلاس'], ['var(--c-str)', 'میانگین پایه/رشته']]));
+    const dn = el('details', 'dir-it'), ds = el('summary'); ds.append(el('span', '', 'جدول اعداد')); dn.style.marginTop = '8px';
+    const tw = tbl(['درس', 'واحد', 'دانش‌آموز', 'میانگین کلاس', 'میانگین پایه/رشته'], [['معدل کل (وزنی)', '—', f2(d.overall.me), f2(d.overall.cls), f2(d.overall.str)]].concat(d.courses.map(x => [x.c, x.u ? fa(x.u) : '—', f2(x.me), f2(x.cls), f2(x.str)])));
+    tw.style.margin = '0 10px 10px'; dn.append(ds, tw); c1.append(dn);
+  }
   const c2 = el('div', 'card'), a = d.att; c2.append(el('div', 'lbl', 'حضور و غیاب'));
   c2.append(tbl(['', 'دانش‌آموز', 'میانگین کلاس', 'میانگین پایه/رشته'], [['غیبت', fa(a.absent), f2(d.cmp.abs.cls), f2(d.cmp.abs.str)], ['تأخیر', fa(a.late), f2(d.cmp.late.cls), f2(d.cmp.late.str)]]),
     el('div', 'now-sub', 'کل جلسات کلاس: ' + fa(a.sessions) + ' | غیبت موجه: ' + fa(a.excused) + ' | (میانگین‌ها = تعداد برای هر دانش‌آموز)'));
@@ -5659,6 +5725,7 @@ $('#calAdd').addEventListener('click', async () => {
   const qd = jParse(CALP.get()), dd = jGreg(qd[0], qd[1], qd[2]);
   const base = { action:'calAdd', teacher:S.teacher.trim(), pin:S.pin.trim(), cls:x.c, course:x.s, date:CALP.get(), period:+$('#calPer').value || 1, kind:$('#calKind').value, title:$('#calTitle').value.trim(), shift:dd.getDay() === 5 ? '' : SH_FA[shiftOfDate(dd)], key:ACCESS_KEY };
   const r = await send(base);
+  if (r.status === 'duplicate') return showModal({ icon:'err', title:'ثبت تکراری', msg:r.message });      // نسخه‌ی ۱٫۲۷: یک درس در یک روز فقط یک بار
   if (r.status === 'conflict' || r.status === 'mismatch') return calConflict(r, base, q => { if (q.status === 'ok' || q.status === 'pending') { $('#calTitle').value = ''; calLoad(); } });
   if (r.status === 'pending') { $('#calTitle').value = ''; toast('برای تأیید مدیر ارسال شد ⏳'); return calLoad(); }
   if (r.status !== 'ok') return toast(r.message || 'ثبت نشد'); $('#calTitle').value = ''; toast('ثبت شد ✓'); calLoad();
@@ -6943,6 +7010,7 @@ async function mcAdd() {
   const b = $('#mcAdd'); b.disabled = true;
   const base = { action:'calAdd', teacher:'مدیر', pin:MG.pin, cls:c, course:s0, date:MC.pk.get(), period:+$('#mcPer').value || 1, kind:$('#mcKind').value, title:title, key:ACCESS_KEY };
   const r = await send(base); b.disabled = false;
+  if (r.status === 'duplicate') return showModal({ icon:'err', title:'ثبت تکراری', msg:r.message });      // نسخه‌ی ۱٫۲۷: یک درس در یک روز فقط یک بار
   if (r.status === 'conflict') return calConflict(r, base, q => { if (q.status === 'ok') { $('#mcTitle').value = ''; toast('در تقویم آموزشی ثبت شد ✓'); mcLoad(); } else toast(q.message || 'ثبت نشد'); });
   if (r.status !== 'ok') return toast(r.message || 'ثبت نشد');
   $('#mcTitle').value = ''; toast('در تقویم آموزشی ثبت شد ✓'); mcLoad();
@@ -7535,8 +7603,7 @@ function mgGo(id) {               // رفتن به یک کارت، حتی اگر
     const T = [['abFindCard', ab, 'دانش‌آموز غایب امروز', 'امروز غایبی ثبت نشده', 'warn'],
       ['alertCard', al, 'زنگ بدون حضور و غیاب', 'حضور و غیاب امروز کامل است', 'bad'],
       ['leaveCard', lv, 'مرخصی در انتظار تصمیم', 'مرخصی در انتظار نیست', 'warn'],
-      ['cnsMgCard', cn, 'مشاوره‌ی منتظر تأیید', 'تأیید مشاوره لازم نیست', 'warn'],
-      ['disMgCard', df, 'تماس با خانواده‌ی سررسیدشده', 'پیگیری معوقی نیست', 'warn']];
+      ['cnsMgCard', cn, 'مشاوره‌ی منتظر تأیید', 'تأیید مشاوره لازم نیست', 'warn']];   // نسخه‌ی ۱٫۲۷: «پیگیری تماس با خانواده» از میز کار برداشته شد (نقطه‌ی هشدار ماژول انضباطی می‌ماند)
     const box = $('#mgAttn'); box.textContent = '';
     T.forEach(t => { const b = el('button', 'mg-at ' + (t[1] ? t[4] : 'ok')); b.type = 'button'; b.append(el('b', '', t[1] ? fa(t[1]) : '✓'), el('span', '', t[1] ? t[2] : t[3]));
       b.addEventListener('click', () => mgGo(t[0])); box.append(b); });
