@@ -18,7 +18,7 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxzPr6P54uH4gV_rQrss
 // کلید دسترسی اختیاری (باید با ACCESS_KEY در Code.gs یکی باشد)
 const ACCESS_KEY = "";
 // نسخه‌ی برنامه — با هر به‌روزرسانی این عدد بالا می‌رود و در صفحه‌ی ورود و پایین صفحه نمایش داده می‌شود.
-const APP_VERSION = "1.28";
+const APP_VERSION = "1.29";
 // (اختیاری) لینک Google Sheet برای دکمه «باز کردن Google Sheet» در تب مدیر
 const SHEET_URL = "https://docs.google.com/spreadsheets/d/10i-IGQKyj078M6kJ7YhdAniuJInl6JemwVxAqs7FnrY/edit";
 const DEFAULT_MAX_SCORE = 20;
@@ -1723,6 +1723,33 @@ body:not(.in-mod) .lbl-ic{width:auto;height:auto;background:none;border:0;box-sh
 .cg-row small.cg-warn{color:var(--late);font-weight:700}
 #cgGo{margin-top:12px}
 .cg-tch{margin-top:10px;padding:10px 12px;border-radius:12px;background:var(--late-bg);color:var(--ink)}
+
+/* ===== نسخه‌ی ۱٫۲۹: کمک به مدرسه ===== */
+.don-acc{display:grid;gap:4px;justify-items:center;margin:12px 0 4px;padding:16px 12px;border-radius:18px;text-align:center;
+  border:1.5px dashed color-mix(in srgb,var(--present) 45%,transparent);background:linear-gradient(165deg,var(--present-bg),var(--card))}
+.don-acc small{color:var(--muted);font-size:12px;font-weight:700}
+.don-no{font-size:clamp(20px,6.4vw,27px);font-weight:900;letter-spacing:1.5px;color:var(--ink);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.don-nm{font-weight:800;font-size:14px;color:var(--present)}
+.don-acc .btn{margin-top:6px;min-width:150px}
+.don-words{margin:-6px 0 10px;font-weight:700;color:var(--present)}
+.don-row,.dn-row{display:flex;align-items:center;gap:10px;margin-top:8px;padding:10px 12px;border-radius:14px;border:1px solid var(--line);background:var(--card)}
+.don-t{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.don-t b{font-size:14px}
+.don-t small{color:var(--muted);font-size:12px;line-height:1.7}
+.don-st{flex:none;padding:3px 10px;border-radius:99px;font-size:12px;font-weight:800;white-space:nowrap}
+.don-st.ok{background:var(--present-bg);color:var(--present)} .don-st.p{background:var(--late-bg);color:var(--late)} .don-st.no{background:var(--absent-bg);color:var(--absent)}
+.dn-row{flex-wrap:wrap;border-inline-start:4px solid var(--line)}
+.dn-row.p{border-inline-start-color:var(--late)} .dn-row.ok{border-inline-start-color:var(--present)} .dn-row.no{border-inline-start-color:var(--absent);opacity:.8}
+.dn-amt{font-weight:900;font-size:15px;color:var(--ink)}
+.dn-act{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.dn-act .btn{padding:5px 10px;font-size:12.5px;min-height:0}
+.dn-act .btn.ok{color:var(--present)} .dn-act .btn.no{color:var(--absent)}
+.dn-cls{margin-top:12px;display:grid;gap:6px}
+.dn-c{display:grid;grid-template-columns:minmax(80px,1fr) minmax(60px,2fr) auto;align-items:center;gap:8px;font-size:12.5px}
+.dn-bar{height:10px;border-radius:99px;background:var(--input);border:1px solid var(--line);overflow:hidden}
+.dn-bar i{display:block;height:100%;border-radius:99px;background:var(--present)}
+#dnSum .inb-kpi b{font-size:15px}
+@media (max-width:420px){.dn-row{align-items:flex-start}.dn-act{width:100%}}
 </style>
 </head>
 <body>
@@ -2253,6 +2280,32 @@ body:not(.in-mod) .lbl-ic{width:auto;height:auto;background:none;border:0;box-sh
             <button class="btn" id="imgHeadDel" type="button">بازگشت به سربرگ پیش‌فرض</button></div>
         </div>
         <div class="now-sub" style="margin-top:8px">پیشنهاد: لوگو مربع (مثلاً ۵۱۲×۵۱۲ با پس‌زمینه‌ی شفاف)، سربرگ افقی (مثلاً ۱۶۰۰×۷۰۰).</div>
+      </div>
+      </div>
+      <div class="mg-sec" data-sec="don" data-t="کمک به مدرسه" hidden>
+      <div class="mg-sec-d">کمک‌های اولیا به مدرسه (به تومان). واریزهایی که دانش‌آموزان ثبت می‌کنند «در انتظار بررسی» است تا با صورت‌حساب بانک تطبیق دهید و تأیید یا رد کنید؛ کمکی را که اولیا حضوری می‌دهند خودتان ثبت کنید.</div>
+      <div class="card" id="dnSumCard">
+        <div class="lbl" style="margin-bottom:8px">💚 خلاصه‌ی کمک‌ها</div>
+        <div id="dnSum"></div>
+      </div>
+      <div class="card" id="dnAddCard">
+        <div class="lbl" style="margin-bottom:8px">➕ ثبت دستی کمک اولیا</div>
+        <div class="grid2"><div class="field"><label for="dnCls">کلاس</label><select id="dnCls"></select></div><div class="field"><label for="dnStu">دانش‌آموز</label><select id="dnStu"></select></div></div>
+        <div id="dnForm"></div>
+        <button id="dnGo" class="send" type="button">ثبت کمک</button>
+        <div id="dnMsg" class="empty" hidden style="color:var(--absent)"></div>
+      </div>
+      <div class="card" id="dnListCard">
+        <div class="lbl" style="margin-bottom:8px">📋 فهرست کمک‌ها</div>
+        <div class="mg-bar"><select id="dnFSt" aria-label="وضعیت"></select><select id="dnFCls" aria-label="کلاس"></select><button id="dnPrint" class="btn" type="button">🖨 چاپ</button></div>
+        <div id="dnList"></div>
+      </div>
+      <div class="card" id="dnAccCard">
+        <div class="lbl" style="margin-bottom:8px">🏦 حساب کمک به مدرسه</div>
+        <div class="now-sub" style="margin-bottom:8px">این شماره و نام در پنل دانش‌آموزان نمایش داده می‌شود. اگر شماره را خالی بگذارید، ثبت کمک برای دانش‌آموزان بسته می‌شود.</div>
+        <div class="field"><label for="dnAcc">شماره‌ی حساب، کارت یا شبا</label><input id="dnAcc" type="text" inputmode="numeric" dir="ltr" maxlength="40" autocomplete="off"></div>
+        <div class="field"><label for="dnAccN">به نام</label><input id="dnAccN" type="text" maxlength="80" autocomplete="off"></div>
+        <button id="dnAccGo" class="btn" type="button" style="width:100%">💾 ذخیره‌ی حساب</button>
       </div>
       </div>
       <div class="mg-sec" data-sec="blk" data-t="بستن ورود دانش‌آموزان" hidden>
@@ -3063,6 +3116,7 @@ async function mgLoad() {
   btn.disabled = false; btn.textContent = 'ورود و دریافت گزارش از Google Sheets';
   if (r.net) return toast('اینترنت در دسترس نیست.');
   if (r.status !== 'ok') return toast(r.message || 'خطا در دریافت گزارش.');
+  DON_P = r.donPend || 0;             // نسخه‌ی ۱٫۲۹: واریزهای در انتظار بررسی ← نقطه‌ی هشدار ماژول «کمک به مدرسه»
   MG.att = r.att || []; MG.gr = r.gr || []; MG.attHead = r.attHead || []; MG.grHead = r.grHead || [];
   $('#mgLogin').hidden = true; $('#mgBody').hidden = false; edInit(); loadDir(); excInit(); pfInit(); v3Init(); addInit(); gdInit();
   mgRender(); absInit(); pollToday(); abInit(); try { const ds = document.querySelector('.mg-sec[data-sec="dis"]'); if (ds && !ds.hidden) disOpen('m'); dsBadge(); } catch (e) {}
@@ -3735,11 +3789,11 @@ function stuVis(box) {
 function stuNav(k) {
   if (stuLocked()) k = 'prof';           // تا تکمیل اطلاعات، سایر منوها بسته است
   STU_K = k; modAfter('s:' + k); const nv = $('#stuNav'); nv.textContent = '';
-  (stuLocked() ? [['prof', '📝 تکمیل اطلاعات']] : []).concat([['dash', '📊 وضعیت من'], ['sch', 'برنامه هفتگی'], ['plan', '📖 برنامه مطالعه'], ['qz', '📝 آزمونک‌ها'], ['kar', 'کارنامه'], ['att', 'حضور و غیاب'], ['avg', 'میانگین کلاس'], ['mock', 'آزمون‌های آزمایشی'], ['cal', 'تقویم آزمون و تکلیف'], ['leave', 'درخواست مرخصی'], ['vis', '👪 مراجعه‌ی اولیا']].map(q => stuLocked() ? [q[0], '🔒 ' + q[1], 1] : q)).forEach(q => { const b = el('button', 'chip' + (k === q[0] ? ' on' : ''), q[1]); b.type = 'button'; b.dataset.k = q[0]; if (q[2]) { b.disabled = true; b.style.opacity = '.5'; } b.addEventListener('click', () => stuNav(q[0])); nv.append(b); }); qzBadge();
+  (stuLocked() ? [['prof', '📝 تکمیل اطلاعات']] : []).concat([['dash', '📊 وضعیت من'], ['sch', 'برنامه هفتگی'], ['plan', '📖 برنامه مطالعه'], ['qz', '📝 آزمونک‌ها'], ['kar', 'کارنامه'], ['att', 'حضور و غیاب'], ['avg', 'میانگین کلاس'], ['mock', 'آزمون‌های آزمایشی'], ['cal', 'تقویم آزمون و تکلیف'], ['leave', 'درخواست مرخصی'], ['vis', '👪 مراجعه‌ی اولیا'], ['don', '💚 کمک به مدرسه']].map(q => stuLocked() ? [q[0], '🔒 ' + q[1], 1] : q)).forEach(q => { const b = el('button', 'chip' + (k === q[0] ? ' on' : ''), q[1]); b.type = 'button'; b.dataset.k = q[0]; if (q[2]) { b.disabled = true; b.style.opacity = '.5'; } b.addEventListener('click', () => stuNav(q[0])); nv.append(b); }); qzBadge();
   stuBanner(); remNotify();
   const sch = k === 'sch'; $('#p-sch').hidden = !sch; $('#stuBody').hidden = sch;
   if (sch) { Z.who = 'c:' + SD.cls; renderSch(); return; }
-  const box = $('#stuBody'); box.textContent = ''; ({ dash:stuDash, vis:stuVis, prof:stuProf, plan:stuPlan, qz:stuQz, kar:stuKar, att:stuAtt, avg:stuAvg, mock:stuMock, cal:stuCal, leave:stuLeave })[k](box);
+  const box = $('#stuBody'); box.textContent = ''; ({ dash:stuDash, vis:stuVis, prof:stuProf, plan:stuPlan, qz:stuQz, kar:stuKar, att:stuAtt, avg:stuAvg, mock:stuMock, cal:stuCal, leave:stuLeave, don:stuDon })[k](box);
 }
 function stuKar(box) {
   const c1 = el('div', 'card'), c2 = el('div', 'card'); c1.append(el('div', 'lbl', 'کارنامه — میانگین هر درس (از ۲۰)')); c2.append(el('div', 'lbl', 'نمره‌های هر آزمون'));
@@ -3828,6 +3882,134 @@ async function miSave() {
 $('#miAdd').addEventListener('click', miAdd); $('#miNew').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); miAdd(); } });
 $('#miSave').addEventListener('click', miSave);
 $('#miDef').addEventListener('click', () => { MI = MI_DEF.slice(); miRender(); });
+/* ======================= کمک به مدرسه (نسخه‌ی ۱٫۲۹) — مبلغ به تومان؛ همه‌ی بررسی‌ها در سرور ======================= */
+var DON_P = 0;                       // تعداد واریزهای در انتظار بررسی (var: پیش از اجرای این خط هم در دسترس است)
+const DON_WHO = ['پدر', 'مادر', 'خود دانش‌آموز', 'سایر'], DON_ST = { p:'در انتظار بررسی', ok:'تأیید شده', no:'رد شده' };
+const toman = n => fa(Math.round(Number(n) || 0).toLocaleString('en-US')).replace(/,/g, '٬') + ' تومان';
+function numWords(n) {               // عدد به حروف (برای جلوگیری از اشتباه در صفرها)
+  n = Math.floor(Number(n) || 0); if (!n) return 'صفر';
+  const yk = ['', 'یک', 'دو', 'سه', 'چهار', 'پنج', 'شش', 'هفت', 'هشت', 'نه'], dh = ['ده', 'یازده', 'دوازده', 'سیزده', 'چهارده', 'پانزده', 'شانزده', 'هفده', 'هجده', 'نوزده'];
+  const ds = ['', '', 'بیست', 'سی', 'چهل', 'پنجاه', 'شصت', 'هفتاد', 'هشتاد', 'نود'], sd = ['', 'صد', 'دویست', 'سیصد', 'چهارصد', 'پانصد', 'ششصد', 'هفتصد', 'هشتصد', 'نهصد'];
+  const big = ['', 'هزار', 'میلیون', 'میلیارد', 'هزار میلیارد'];
+  const three = x => { const o = [], h = Math.floor(x / 100), t = x % 100; if (h) o.push(sd[h]); if (t >= 10 && t < 20) o.push(dh[t - 10]); else { if (t >= 20) o.push(ds[Math.floor(t / 10)]); if (t % 10) o.push(yk[t % 10]); } return o.join(' و '); };
+  const out = []; let i = 0;
+  while (n > 0) { const x = n % 1000; if (x) out.unshift(x === 1 && i === 1 ? 'هزار' : three(x) + (big[i] ? ' ' + big[i] : '')); n = Math.floor(n / 1000); i++; }
+  return out.join(' و ');
+}
+async function copyTxt(t, ok) {
+  let done = false; try { await navigator.clipboard.writeText(t); done = true; } catch (e) {
+    try { const x = document.createElement('textarea'); x.value = t; x.style.cssText = 'position:fixed;opacity:0'; document.body.append(x); x.select(); done = document.execCommand('copy'); x.remove(); } catch (e2) {} }
+  toast(done ? ok || 'کپی شد ✓' : 'کپی خودکار انجام نشد؛ شماره را دستی یادداشت کنید.');
+}
+function donForm() {                 // فرم مشترک دانش‌آموز و مدیر: واریزکننده، مبلغ (تومان، با حروف)، تاریخ، شماره‌ی پیگیری، توضیح
+  const who = el('select'), wn = el('input'), amt = el('input'), aw = el('div', 'now-sub don-words'), d = el('input'), ref = el('input'), note = el('input');
+  DON_WHO.forEach(x => { const o = el('option', '', x); o.value = x; who.append(o); });
+  wn.type = 'text'; wn.maxLength = 40; wn.placeholder = 'نام واریزکننده'; wn.setAttribute('aria-label', 'نام واریزکننده');
+  amt.type = 'text'; amt.inputMode = 'numeric'; amt.placeholder = 'مثلاً ۵۰۰٬۰۰۰'; amt.autocomplete = 'off';
+  d.type = 'text'; d.inputMode = 'numeric'; d.value = fa(dateStr()); ref.type = 'text'; ref.maxLength = 30; ref.inputMode = 'numeric'; ref.placeholder = 'از پیامک یا رسید بانک'; ref.autocomplete = 'off';
+  note.type = 'text'; note.maxLength = 150; note.placeholder = 'مثلاً برای کتابخانه';
+  const num = () => { const v = en(amt.value).replace(/[,٬،\s]/g, ''); return /^\d+$/.test(v) ? Number(v) : NaN; };
+  const paint = () => { const n = num(); aw.textContent = n ? toman(n) + ' — ' + numWords(n) + ' تومان' : 'مبلغ به تومان است (نه ریال).'; };
+  amt.addEventListener('input', paint); paint();
+  const wf = fldOf('نام واریزکننده', wn); wf.hidden = true; who.addEventListener('change', () => { wf.hidden = who.value !== 'سایر'; });
+  const nodes = [fldOf('واریزکننده', who), wf, fldOf('مبلغ (تومان)', amt), aw, fldOf('تاریخ واریز', d), fldOf('شماره‌ی پیگیری (اختیاری)', ref), fldOf('توضیح (اختیاری)', note)];
+  const read = () => {
+    const n = num(), dt = en(d.value).replace(/-/g, '/').trim();
+    if (!n || n !== Math.floor(n) || n < 1000) return { err:'مبلغ را به تومان و دست‌کم ۱٬۰۰۰ تومان بنویسید (فقط عدد).' };
+    if (!/^\d{4}\/\d{2}\/\d{2}$/.test(dt)) return { err:'تاریخ واریز را به شکل ۱۴۰۵/۰۸/۰۵ بنویسید.' };
+    if (who.value === 'سایر' && !wn.value.trim()) return { err:'نام واریزکننده را بنویسید.' };
+    return { v:{ who:who.value, whoName:wn.value.trim(), amount:n, date:dt, ref:en(ref.value).replace(/\s/g, ''), note:note.value.trim() } };
+  };
+  const reset = () => { amt.value = ''; ref.value = ''; note.value = ''; wn.value = ''; paint(); };
+  return { nodes:nodes, read:read, reset:reset };
+}
+const donBadge = st => el('span', 'don-st ' + (st === DON_ST.ok ? 'ok' : st === DON_ST.no ? 'no' : 'p'), (st === DON_ST.ok ? '✓ ' : st === DON_ST.no ? '✕ ' : '⏳ ') + st);
+function stuDon(box) {               // دانش‌آموز: شماره‌ی حساب مدرسه، ثبت واریز، واریزهای خودش
+  const D = SD.don || { acc:{}, list:[] }, A = D.acc || {}, c = el('div', 'card');
+  c.append(el('div', 'lbl', '💚 کمک به مدرسه'), el('div', 'now-sub', 'کمک شما و خانواده‌تان صرف بهبود امکانات آموزشی و رفاهی مدرسه می‌شود. هر مبلغی ارزشمند است؛ سپاس از همراهی شما.'));
+  const hist = el('div', 'card'); hist.append(el('div', 'lbl', '🧾 واریزهای ثبت‌شده‌ی تو'));
+  if (!D.list.length) hist.append(el('div', 'now-sub', 'هنوز واریزی ثبت نکرده‌ای.'));
+  D.list.forEach(x => { const row = el('div', 'don-row'), t = el('div', 'don-t'); t.append(el('b', '', toman(x.a)), el('small', '', fa(x.d) + ' | ' + x.w + (x.ref ? ' | پیگیری ' + fa(x.ref) : '') + (x.note ? ' | ' + x.note : ''))); row.append(t, donBadge(x.s)); hist.append(row); });
+  if (!A.acc) { c.append(el('div', 'empty', 'حساب کمک به مدرسه هنوز تعیین نشده است.')); box.append(c, hist); return; }
+  const ac = el('div', 'don-acc'), no = el('b', 'don-no', A.acc), cp = el('button', 'btn', '📋 کپی شماره'); cp.type = 'button'; no.setAttribute('dir', 'ltr');
+  ac.append(el('small', '', /^IR/.test(A.acc) ? 'شماره‌ی شبا' : 'شماره‌ی حساب'), no, el('div', 'don-nm', 'به نام: ' + A.name), cp);
+  cp.addEventListener('click', () => copyTxt(A.acc, 'شماره‌ی حساب کپی شد ✓')); c.append(ac);
+  const f = el('div', 'card'), F = donForm(), msg = el('div', 'empty'), go = el('button', 'send', 'ثبت واریز'); go.type = 'button'; msg.hidden = true; msg.style.color = 'var(--absent)';
+  f.append(el('div', 'lbl', '➕ ثبت واریز'), el('div', 'now-sub', 'بعد از واریز، مشخصاتش را این‌جا ثبت کن تا مدیر مدرسه بررسی و تأیید کند.'), ...F.nodes, go, msg);
+  go.addEventListener('click', async () => {
+    msg.hidden = true; const q = F.read(); if (q.err) { msg.textContent = q.err; msg.hidden = false; return; }
+    go.disabled = true; const r = await send(Object.assign({ action:'donAdd', nid:SD.nid, secret:SD.sec || '', key:ACCESS_KEY }, q.v)); go.disabled = false;
+    if (r.net) { msg.textContent = 'اینترنت در دسترس نیست.'; msg.hidden = false; return; }
+    if (r.status !== 'ok') { msg.textContent = r.message || 'ثبت نشد.'; msg.hidden = false; return; }
+    SD.don = r.don; toast('واریز ثبت شد؛ پس از بررسی مدیر تأیید می‌شود ✓'); stuNav('don');
+  });
+  box.append(c, f, hist);
+}
+/* --- مدیر: کمک به مدرسه --- */
+let DN = null, DNF = null;
+function dnDot() { const b = $('#mgNav .mg-nb[data-sec="don"]'); if (b) b.classList.toggle('dot', DON_P > 0); }
+function dnStus() {
+  const c = $('#dnCls').value, s = $('#dnStu'), st = Object.keys(STUDENTS).find(k => STUDENTS[k][c]); s.textContent = '';
+  const o0 = el('option', '', c ? '— انتخاب دانش‌آموز —' : '— ابتدا کلاس —'); o0.value = ''; s.append(o0);
+  (st ? STUDENTS[st][c] : []).slice().sort((a, b) => a.localeCompare(b, 'fa')).forEach(n => { const o = el('option', '', n); o.value = n; s.append(o); });
+}
+async function dnOpen() {
+  const c = $('#dnCls'), cur = c.value; c.textContent = ''; [''].concat(allClasses()).forEach(x => { const o = el('option', '', x || '— انتخاب کلاس —'); o.value = x; c.append(o); }); c.value = allClasses().includes(cur) ? cur : ''; dnStus();
+  if (!DNF) { DNF = donForm(); $('#dnForm').append(...DNF.nodes); }
+  const r = await send({ action:'donList', pin:MG.pin, key:ACCESS_KEY }); if (r.status !== 'ok') { if (!r.net) toast(r.message || 'دریافت نشد'); return; }
+  DN = r; dnRender(); $('#dnAcc').value = r.acc.acc; $('#dnAccN').value = r.acc.name;
+}
+function dnRender() {
+  const d = DN, t = d.tot; DON_P = t.nP; dnDot();
+  const sm = $('#dnSum'); sm.textContent = ''; const k = el('div', 'inb-kpi');
+  [[toman(t.ok), 'جمع کمک‌های تأییدشده'], [fa(t.nOk), 'تعداد کمک'], [fa(t.nP), 'در انتظار بررسی' + (t.nP ? ' (' + toman(t.p) + ')' : '')]].forEach(q => { const b = el('div'); b.append(el('b', '', q[0]), el('small', '', q[1])); k.append(b); });
+  sm.append(k);
+  if (d.byC.length) { const mx = d.byC[0].a, w = el('div', 'dn-cls'); w.append(el('div', 'now-sub', 'به تفکیک کلاس (تأییدشده):'));
+    d.byC.forEach(x => { const row = el('div', 'dn-c'), bar = el('div', 'dn-bar'), i = el('i'); i.style.width = Math.max(3, Math.round(x.a / mx * 100)) + '%'; bar.append(i); row.append(el('span', '', x.c), bar, el('b', '', toman(x.a))); w.append(row); });
+    sm.append(w); }
+  const fs = $('#dnFSt'), fc = $('#dnFCls'), vs = fs.value, vc = fc.value; fs.textContent = ''; fc.textContent = '';
+  [['', 'همه‌ی وضعیت‌ها'], [DON_ST.p, '⏳ ' + DON_ST.p + ' (' + fa(t.nP) + ')'], [DON_ST.ok, '✓ ' + DON_ST.ok], [DON_ST.no, '✕ ' + DON_ST.no]].forEach(q => { const o = el('option', '', q[1]); o.value = q[0]; fs.append(o); });
+  [''].concat(uniq(d.list.map(x => x.c))).forEach(x => { const o = el('option', '', x || 'همه‌ی کلاس‌ها'); o.value = x; fc.append(o); });
+  fs.value = vs || (t.nP ? DON_ST.p : ''); fc.value = vc; dnList();
+}
+const dnRows = () => DN.list.filter(x => (!$('#dnFSt').value || x.s === $('#dnFSt').value) && (!$('#dnFCls').value || x.c === $('#dnFCls').value));
+function dnList() {
+  const box = $('#dnList'), l = dnRows(); box.textContent = '';
+  if (!l.length) { box.append(el('div', 'empty', 'موردی نیست.')); return; }
+  box.append(el('div', 'now-sub', fa(l.length) + ' مورد | جمع: ' + toman(l.reduce((a, x) => a + x.a, 0))));
+  l.slice(0, 300).forEach(x => {
+    const row = el('div', 'dn-row ' + (x.s === DON_ST.p ? 'p' : x.s === DON_ST.ok ? 'ok' : 'no')), t = el('div', 'don-t'), act = el('div', 'dn-act');
+    t.append(el('b', '', x.n + ' — ' + x.c), el('span', 'dn-amt', toman(x.a)), el('small', '', fa(x.d) + ' | ' + x.w + (x.ref ? ' | پیگیری ' + fa(x.ref) : '') + ' | ثبت: ' + x.by + (x.note ? ' | ' + x.note : '')));
+    act.append(donBadge(x.s));
+    const bt = (txt, cls, fn) => { const b = el('button', 'btn ' + cls, txt); b.type = 'button'; b.addEventListener('click', fn); act.append(b); };
+    const call = async (a, extra, m) => { const q = await send(Object.assign({ action:a, pin:MG.pin, key:ACCESS_KEY, id:x.id }, extra || {})); if (q.status !== 'ok') return toast(q.message || 'انجام نشد'); DN = q; dnRender(); toast(m); };
+    if (x.s !== DON_ST.ok) bt('✓ تأیید', 'ok', () => call('donDecide', { ok:true }, 'تأیید شد ✓'));
+    if (x.s === DON_ST.p) bt('✕ رد', 'no', () => call('donDecide', { ok:false }, 'رد شد'));
+    bt('🗑', 'del', () => showModal({ icon:'warn', title:'حذف این کمک', msg:x.n + ' — ' + toman(x.a) + ' (' + fa(x.d) + ') حذف شود؟ در سابقه‌ی تغییرات ثبت می‌شود.', buttons:[{ text:'انصراف', primary:true }, { text:'حذف', onClick:() => call('donDel', {}, 'حذف شد') }] }));
+    row.append(t, act); box.append(row);
+  });
+}
+$('#dnCls').addEventListener('change', dnStus); $('#dnFSt').addEventListener('change', dnList); $('#dnFCls').addEventListener('change', dnList);
+$('#dnGo').addEventListener('click', async () => {
+  const m = $('#dnMsg'), fail = t => { m.textContent = t; m.hidden = false; }; m.hidden = true;
+  if (!$('#dnCls').value || !$('#dnStu').value) return fail('کلاس و دانش‌آموز را انتخاب کنید.');
+  const q = DNF.read(); if (q.err) return fail(q.err);
+  const b = $('#dnGo'); b.disabled = true; const r = await send(Object.assign({ action:'donSet', pin:MG.pin, key:ACCESS_KEY, cls:$('#dnCls').value, name:$('#dnStu').value }, q.v)); b.disabled = false;
+  if (r.net) return fail('اینترنت در دسترس نیست.'); if (r.status !== 'ok') return fail(r.message || 'ثبت نشد.');
+  DN = r; DNF.reset(); $('#dnFSt').value = ''; dnRender(); toast('کمک ثبت شد ✓');
+});
+$('#dnPrint').addEventListener('click', () => {
+  if (!DN) return; const l = dnRows(), pa = $('#printArea'); pa.textContent = '';
+  pa.append(el('h1', '', 'کمک به مدرسه' + ($('#dnFCls').value ? ' — ' + $('#dnFCls').value : '') + ($('#dnFSt').value ? ' — ' + $('#dnFSt').value : '')), el('div', '', SCHOOL_NAME + ' | ' + fa(dateStr())),
+    tbl(['تاریخ', 'دانش‌آموز', 'کلاس', 'واریزکننده', 'مبلغ (تومان)', 'پیگیری', 'وضعیت'], l.map(x => [fa(x.d), x.n, x.c, x.w, fa(x.a.toLocaleString('en-US')).replace(/,/g, '٬'), x.ref ? fa(x.ref) : '—', x.s])),
+    el('p', '', 'جمع: ' + toman(l.reduce((a, x) => a + x.a, 0)) + ' | تعداد: ' + fa(l.length)));
+  document.body.classList.add('printing'); window.print();
+});
+$('#dnAccGo').addEventListener('click', async () => {
+  const b = $('#dnAccGo'); b.disabled = true; const r = await send({ action:'setDonAcc', pin:MG.pin, key:ACCESS_KEY, acc:en($('#dnAcc').value), name:$('#dnAccN').value.trim() }); b.disabled = false;
+  if (r.status !== 'ok') return toast(r.message || 'ذخیره نشد'); $('#dnAcc').value = r.acc.acc; $('#dnAccN').value = r.acc.name; if (DN) DN.acc = r.acc;
+  toast(r.acc.acc ? 'حساب کمک به مدرسه ذخیره شد ✓' : 'ثبت کمک برای دانش‌آموزان بسته شد');
+});
 /* --- بستن ورود دانش‌آموز به علت خاص (نسخه‌ی ۱٫۲۴) --- */
 let BK = { list:[], reasons:[] }, BK_EDIT = false;
 const BK_R = ['عدم انجام آزمون غربالگری', 'عدم شرکت در آزمون آزمایشی', 'مسائل انضباطی', 'ناقص بودن مدارک یا پرونده', 'سایر'];
@@ -7580,27 +7762,29 @@ const TIC = {
   's:avg':'<path d="M4 20h16"/><rect x="6" y="11" width="3" height="7" rx="1"/><rect x="11" y="6" width="3" height="12" rx="1"/><rect x="16" y="13" width="3" height="5" rx="1"/>',
   's:mock':'<path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5"/><path d="M10 13h6M10 17h4"/>',
   's:leave':'<path d="M14 3H6v18h8"/><path d="M14 3l5 2v14l-5 2z"/><path d="M11 12h.01"/>',
-  's:vis':'<circle cx="8" cy="7" r="3"/><circle cx="16" cy="7" r="3"/><path d="M2 20c0-3 2.7-5.5 6-5.5s6 2.5 6 5.5M10 20c0-3 2.7-5.5 6-5.5s6 2.5 6 5.5"/>'
+  's:vis':'<circle cx="8" cy="7" r="3"/><circle cx="16" cy="7" r="3"/><path d="M2 20c0-3 2.7-5.5 6-5.5s6 2.5 6 5.5M10 20c0-3 2.7-5.5 6-5.5s6 2.5 6 5.5"/>',
+  's:don':'<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/>',
+  'm:don':'<path d="M12 19s-6.5-4-6.5-9.2A3.6 3.6 0 0 1 12 7.5a3.6 3.6 0 0 1 6.5 2.3C18.5 15 12 19 12 19z"/><path d="M12 10.5v4M10 12.5h4"/>'
 };
 TIC['s:sch'] = TIC.sch; TIC['s:cal'] = TIC['m:cal']; TIC['s:att'] = TIC.att;
 const TTONE = { att:'p', gr:'g', sch:'b', inb:'n', cns:'b', dis:'n', stf:'g', 'm:today':'n', 'm:cal':'b', 'm:stu':'p', 'm:setup':'g', 'm:set':'n', 'm:pta':'b', 'm:rep':'g', 'm:dis':'n', 'm:tch':'b', 'm:sys':'n', 'm:pw':'g', 'm:blk':'n',
-  's:prof':'g', 's:dash':'n', 's:sch':'b', 's:plan':'p', 's:qz':'g', 's:kar':'n', 's:att':'p', 's:avg':'b', 's:mock':'g', 's:cal':'b', 's:leave':'n', 's:vis':'p' };
+  's:prof':'g', 's:dash':'n', 's:sch':'b', 's:plan':'p', 's:qz':'g', 's:kar':'n', 's:att':'p', 's:avg':'b', 's:mock':'g', 's:cal':'b', 's:leave':'n', 's:vis':'p', 's:don':'p', 'm:don':'p' };
 const TTITLE = { att:'حضور و غیاب', gr:'ثبت نمرات', sch:'برنامه هفتگی', inb:'کارتابل', cns:'مشاوره', dis:'انضباطی', stf:'ورود و خروج',
   's:prof':'تکمیل اطلاعات', 's:dash':'وضعیت من', 's:sch':'برنامه هفتگی', 's:plan':'برنامه مطالعه', 's:qz':'آزمونک‌ها', 's:kar':'کارنامه', 's:att':'حضور و غیاب', 's:avg':'میانگین کلاس',
-  's:mock':'آزمون‌های آزمایشی', 's:cal':'تقویم آزمون و تکلیف', 's:leave':'درخواست مرخصی', 's:vis':'مراجعه‌ی اولیا' };
+  's:mock':'آزمون‌های آزمایشی', 's:cal':'تقویم آزمون و تکلیف', 's:leave':'درخواست مرخصی', 's:vis':'مراجعه‌ی اولیا', 's:don':'کمک به مدرسه' };
 const TDESC = { att:'غایبین و تأخیر هر زنگ', gr:'نمره‌ی آزمون‌ها و فعالیت‌ها', sch:'برنامه‌ی هفتگی و زنگ جاری', inb:'کلاس‌ها، تحلیل آزمون و تقویم', cns:'درخواست و پیگیری مشاوره', dis:'موارد انضباطی و تشویقی',
   stf:'ورود، خروج و مرخصی', 'm:today':'غایبین، هشدارها و میز کار', 'm:cal':'آزمون‌ها و تکالیف همه‌ی کلاس‌ها', 'm:stu':'پرونده، مشاوره، آزمون آزمایشی', 'm:setup':'کلاس‌ها، دانش‌آموزان، دبیران، زنگ‌ها',
-  'm:set':'لوگو و سربرگ مدرسه', 'm:pw':'رمز مدیر، کد دبیران، رمز دانش‌آموزان', 'm:blk':'بستن موقت ورود به علت خاص', 'm:pta':'جلسات و حضور اولیا', 'm:rep':'گزارش‌ها، نمودارها و آمار', 'm:dis':'پرونده‌ی انضباطی و پرورشی', 'm:tch':'مرخصی، عدم حضور و برنامه‌ی دبیران', 'm:sys':'بانک اطلاعات و سامانه',
+  'm:set':'لوگو و سربرگ مدرسه', 'm:pw':'رمز مدیر، کد دبیران، رمز دانش‌آموزان', 'm:blk':'بستن موقت ورود به علت خاص', 'm:don':'کمک‌های اولیا (تومان)', 'm:pta':'جلسات و حضور اولیا', 'm:rep':'گزارش‌ها، نمودارها و آمار', 'm:dis':'پرونده‌ی انضباطی و پرورشی', 'm:tch':'مرخصی، عدم حضور و برنامه‌ی دبیران', 'm:sys':'بانک اطلاعات و سامانه',
   's:prof':'پیش از همه، این بخش را کامل کن', 's:dash':'معدل، رتبه و نشان‌ها', 's:sch':'کلاس‌های هر روز', 's:plan':'برنامه‌ی روزانه‌ی درس خواندن', 's:qz':'آزمون‌های آنلاین کلاس', 's:kar':'میانگین هر درس و کارنامه',
-  's:att':'غیبت‌ها و تأخیرهای من', 's:avg':'مقایسه با میانگین کلاس', 's:mock':'تراز و رتبه‌ی آزمون‌ها', 's:cal':'آزمون‌ها و تکالیف پیش رو', 's:leave':'درخواست مرخصی از مدرسه', 's:vis':'نوبت مراجعه‌ی اولیا' };
+  's:att':'غیبت‌ها و تأخیرهای من', 's:avg':'مقایسه با میانگین کلاس', 's:mock':'تراز و رتبه‌ی آزمون‌ها', 's:cal':'آزمون‌ها و تکالیف پیش رو', 's:leave':'درخواست مرخصی از مدرسه', 's:vis':'نوبت مراجعه‌ی اولیا', 's:don':'شماره‌ی حساب مدرسه و ثبت واریز' };
 document.body.classList.add('mods');   // نشانه‌ی حالت ماژول‌ها روی body
 const tSvg = k => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (TIC[k] || TIC.inb) + '</svg>';
 function modTitle(k) { if (k.indexOf('m:') === 0) { const x = document.querySelector('#mgBody .mg-sec[data-sec="' + k.slice(2) + '"]'); return x ? x.dataset.t : ''; } return TTITLE[k] || k; }
 function modKeys() {
-  if (ROLE === 'student') return ['s:dash', 's:sch', 's:plan', 's:qz', 's:kar', 's:att', 's:avg', 's:mock', 's:cal', 's:leave', 's:vis'];
+  if (ROLE === 'student') return ['s:dash', 's:sch', 's:plan', 's:qz', 's:kar', 's:att', 's:avg', 's:mock', 's:cal', 's:leave', 's:vis', 's:don'];
   if (ROLE === 'counselor') return ['cns', 'sch'];
   if (ROLE === 'manager') {
-    const def = ['m:today', 'att', 'gr', 'm:stu', 'm:cal', 'sch', 'inb', 'm:tch', 'm:dis', 'm:pta', 'm:rep', 'm:setup', 'm:sys', 'm:pw', 'm:blk', 'm:set'];
+    const def = ['m:today', 'att', 'gr', 'm:stu', 'm:cal', 'sch', 'inb', 'm:tch', 'm:dis', 'm:pta', 'm:rep', 'm:setup', 'm:sys', 'm:pw', 'm:blk', 'm:don', 'm:set'];
     const all = def.concat($$('#mgBody .mg-sec').map(x => 'm:' + x.dataset.sec).filter(k => !def.includes(k))), o = TILES_ORD.filter(k => all.includes(k));
     return o.concat(all.filter(k => !o.includes(k)));
   }
@@ -7737,6 +7921,7 @@ function mgShow(k, scroll) {
   if (k === 'sys' && MG.pin && !$('#mgBody').hidden) auLoad();
   if (k === 'pw' && MG.pin && !$('#mgBody').hidden) pwOpen();
   if (k === 'blk' && MG.pin && !$('#mgBody').hidden) blkOpen();
+  if (k === 'don' && MG.pin && !$('#mgBody').hidden) dnOpen();
   if (k === 'setup' && MG.pin && !$('#mgBody').hidden) suOpen();
   modAfter('m:' + k); if (MODS_OK) secIndex(k);
   if (scroll) { const r = $('#mgNav').getBoundingClientRect(); if (r.top < 0) $('#mgNav').scrollIntoView({ behavior:'smooth', block:'start' }); }
@@ -7762,7 +7947,7 @@ function mgGo(id) {               // رفتن به یک کارت، حتی اگر
     T.forEach(t => { const b = el('button', 'mg-at ' + (t[1] ? t[4] : 'ok')); b.type = 'button'; b.append(el('b', '', t[1] ? fa(t[1]) : '✓'), el('span', '', t[1] ? t[2] : t[3]));
       b.addEventListener('click', () => mgGo(t[0])); box.append(b); });
     $('#mgDeskStamp').textContent = $('#mgStamp').textContent;
-    const dot = { today:al + lv > 0, stu:cn > 0, dis:df > 0 };
+    const dot = { today:al + lv > 0, stu:cn > 0, dis:df > 0, don:DON_P > 0 };
     $$('#mgNav button').forEach(b => b.classList.toggle('dot', !!dot[b.dataset.sec]));
   };
   let tm; const later = () => { clearTimeout(tm); tm = setTimeout(paint, 80); };
