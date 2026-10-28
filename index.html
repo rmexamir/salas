@@ -18,7 +18,7 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxzPr6P54uH4gV_rQrss
 // کلید دسترسی اختیاری (باید با ACCESS_KEY در Code.gs یکی باشد)
 const ACCESS_KEY = "";
 // نسخه‌ی برنامه — با هر به‌روزرسانی این عدد بالا می‌رود و در صفحه‌ی ورود و پایین صفحه نمایش داده می‌شود.
-const APP_VERSION = "1.29";
+const APP_VERSION = "1.30";
 // (اختیاری) لینک Google Sheet برای دکمه «باز کردن Google Sheet» در تب مدیر
 const SHEET_URL = "https://docs.google.com/spreadsheets/d/10i-IGQKyj078M6kJ7YhdAniuJInl6JemwVxAqs7FnrY/edit";
 const DEFAULT_MAX_SCORE = 20;
@@ -1750,6 +1750,67 @@ body:not(.in-mod) .lbl-ic{width:auto;height:auto;background:none;border:0;box-sh
 .dn-bar i{display:block;height:100%;border-radius:99px;background:var(--present)}
 #dnSum .inb-kpi b{font-size:15px}
 @media (max-width:420px){.dn-row{align-items:flex-start}.dn-act{width:100%}}
+/* ===== نسخه‌ی ۱٫۳۰: کارنامه به شکل رسمی + کارنامه‌ی کلی کلاس + تاریخ کشویی ===== */
+.kc-scroll,.km-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;margin-top:8px}
+.kc{min-width:640px;color:var(--ink);font-size:12.5px;line-height:1.75;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px}
+.kc-top{display:grid;grid-template-columns:1.1fr 1.25fr 1.25fr;gap:6px}
+.kc-box{border:1px solid var(--ink);border-radius:4px;padding:6px 8px}
+.kc-box.kc-gov div:nth-child(-n+3){text-align:center;font-weight:800}
+.kc-k{color:var(--muted);font-weight:600}
+.kc-t,.kc-sum{width:100%;border-collapse:collapse;margin-top:6px}
+.kc-t th,.kc-t td,.kc-sum th,.kc-sum td{border:1px solid var(--ink);padding:3px 6px;text-align:center}
+.kc-t th{background:var(--input);font-weight:800;font-size:12px}
+.kc-t td.c{text-align:start;font-weight:700}
+.kc-t td.n,.kc-sum td{font-variant-numeric:tabular-nums}
+.kc-t tbody tr:nth-child(even) td{background:color-mix(in srgb,var(--input) 70%,transparent)}
+.kc-t th.on,.kc-t td.on{background:color-mix(in srgb,var(--present-bg) 75%,transparent)!important;font-weight:800}
+.kc-t td.lo,.km-t td.lo{color:var(--absent);text-decoration:underline;font-weight:900}
+.kc-sum th{background:var(--input);font-size:12px} .kc-sum td.b{font-weight:900}
+.kc-note{margin-top:6px;padding:6px 8px;border:1px solid var(--ink);border-radius:4px;font-size:12px}
+.kc-sign{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px}
+.kc-sign>div{border:1px solid var(--ink);border-radius:4px;padding:6px 8px;display:grid;gap:2px;min-height:64px}
+.kc-sign small{color:var(--muted);text-align:left}
+.kc-ft{display:flex;justify-content:space-between;gap:12px;margin-top:6px;font-size:11.5px;font-weight:700}
+.kc.cp{min-width:0;padding:8px} .kc.cp .kc-top{grid-template-columns:1fr} .kc.cp .kc-ft{flex-direction:column;gap:2px}
+.kc-cp{margin-top:6px;color:var(--muted);font-size:11.5px}
+.km-h{font-weight:900;font-size:15px} .km-s{color:var(--muted);font-size:12px;margin-top:2px}
+.km-scroll{max-height:70vh;border:1px solid var(--line);border-radius:12px}
+.km-t{border-collapse:separate;border-spacing:0;font-size:12.5px;min-width:100%}
+.km-t th,.km-t td{border-bottom:1px solid var(--line);border-inline-start:1px solid var(--line);padding:5px 6px;text-align:center;white-space:nowrap;background:var(--card)}
+.km-t thead th{position:sticky;top:0;z-index:2;background:var(--input);font-weight:800;vertical-align:bottom}
+.km-t th.v span{writing-mode:vertical-rl;transform:rotate(180deg);display:inline-block;max-height:170px;white-space:normal;line-height:1.35;text-align:start}
+.km-t th.v small{color:var(--muted);font-weight:600}
+.km-t .i{position:sticky;right:0;z-index:1;width:34px;min-width:34px;color:var(--muted)}
+.km-t .nm{position:sticky;right:34px;z-index:1;text-align:start;font-weight:700;min-width:120px;box-shadow:-2px 0 0 var(--line)}
+.km-t thead .i,.km-t thead .nm{z-index:3}
+.km-t td.n{font-variant-numeric:tabular-nums} .km-t td.nil{color:var(--muted)} .km-t td.b{font-weight:900}
+.km-t tbody tr:nth-child(even) td{background:color-mix(in srgb,var(--input) 60%,var(--card))}
+.km-t tfoot td{position:sticky;bottom:0;background:var(--input);font-weight:800;border-top:2px solid var(--line)}
+.km-lg{color:var(--muted);font-size:12px;line-height:1.8;margin-top:8px}
+.kf-list{display:grid;gap:6px;margin:6px 0 10px}
+.kf-it{display:flex;align-items:center;gap:8px;font-size:13px}
+.kf-it span{flex:1;min-width:0}
+.kf-it input{width:96px;flex:none;text-align:center}
+.jd{display:inline-flex;flex-wrap:wrap;align-items:center;gap:6px;max-width:100%}
+.jd select{width:auto;min-width:0;padding-inline:8px}
+.jd .jd-d{min-width:58px} .jd .jd-m{min-width:92px} .jd .jd-y{min-width:76px}
+.jd small{color:var(--muted);font-weight:700;font-size:12px;min-width:3.5em}
+@media print{
+  #printArea .kc{min-width:0;border:0;padding:0;font-size:11.5px;line-height:1.55;color:#000}
+  #printArea .kc-box,#printArea .kc-note,#printArea .kc-sign>div{border-color:#000}
+  #printArea .kc-t th,#printArea .kc-t td,#printArea .kc-sum th,#printArea .kc-sum td{border:1px solid #000;padding:2px 5px;text-align:center}
+  #printArea .kc-t td.c{text-align:right}
+  #printArea .kc-t th{background:#e9e9e9!important}
+  #printArea .kc-t td.lo,#printArea .km-t td.lo{text-decoration:underline;font-weight:900}
+  #printArea .kc-pg{break-after:page;page-break-after:always}
+  #printArea.land{padding:0}
+  #printArea .km-scroll{max-height:none;overflow:visible;border:0}
+  #printArea .km-t{font-size:10.5px;width:100%}
+  #printArea .km-t th,#printArea .km-t td{border:1px solid #000;padding:2px 3px;white-space:nowrap;text-align:center}
+  #printArea .km-t .nm{text-align:right}
+  #printArea .km-t th.v span{max-height:150px}
+  #printArea .km-t thead{display:table-header-group}
+}
 </style>
 </head>
 <body>
@@ -2094,7 +2155,7 @@ body:not(.in-mod) .lbl-ic{width:auto;height:auto;background:none;border:0;box-sh
       </div>
       <div class="card" id="abFindCard">
         <div class="lbl" style="margin-bottom:8px">غایبین هر کلاس و زنگ</div>
-        <div class="ab-date"><input id="abDate" type="text" inputmode="numeric" aria-label="تاریخ" placeholder="۱۴۰۵/۰۷/۲۳"><button id="abPrev" class="btn" type="button">→ قبل</button><button id="abNow" class="btn" type="button">امروز</button><button id="abNext" class="btn" type="button">بعد ←</button></div>
+        <div class="ab-date"><input id="abDate" type="text" inputmode="numeric" aria-label="تاریخ" placeholder="۱۴۰۵/۰۷/۲۳" data-jd><button id="abPrev" class="btn" type="button">→ قبل</button><button id="abNow" class="btn" type="button">امروز</button><button id="abNext" class="btn" type="button">بعد ←</button></div>
         <div class="field"><select id="abCls" aria-label="کلاس"></select></div>
         <div id="abPer" class="chips ab-per"></div>
         <div id="abSum" class="now-sub" role="status"></div>
@@ -2114,7 +2175,7 @@ body:not(.in-mod) .lbl-ic{width:auto;height:auto;background:none;border:0;box-sh
       <div class="card" id="excCard">
         <div class="lbl" style="margin-bottom:8px">ثبت غیبت موجه (فقط مدیر)</div>
         <div class="now-sub" style="margin-bottom:8px">غیبت موجه برای زنگ‌های انتخاب‌شده (پیش‌فرض همه‌ی زنگ‌ها) ثابت می‌شود و دبیر نمی‌تواند آن را تغییر دهد.</div>
-        <div class="mg-bar"><input id="excDate" type="text" inputmode="numeric" placeholder="تاریخ (مثلاً ۱۴۰۵/۰۷/۱۷)" aria-label="تاریخ"><select id="excCls" aria-label="کلاس"></select></div>
+        <div class="mg-bar"><input id="excDate" type="text" inputmode="numeric" placeholder="تاریخ (مثلاً ۱۴۰۵/۰۷/۱۷)" aria-label="تاریخ غیبت موجه" data-jd><select id="excCls" aria-label="کلاس"></select></div>
         <div id="excStu"></div>
         <div class="field"><input id="excWhy" type="text" maxlength="80" placeholder="علت (اختیاری)" aria-label="علت"></div>
         <div class="field"><span class="lbl">زنگ‌ها</span><div class="lv-per-r" id="excPers"></div></div>
@@ -2265,6 +2326,20 @@ body:not(.in-mod) .lbl-ic{width:auto;height:auto;background:none;border:0;box-sh
         <div class="su-add" style="margin-top:8px"><input id="miNew" type="text" maxlength="40" autocomplete="off" aria-label="نام مؤسسه‌ی تازه" placeholder="نام مؤسسه‌ی تازه، مثلاً سنجش"><button id="miAdd" class="btn" type="button">➕ افزودن</button></div>
         <div class="mg-bar" style="margin-top:10px"><button id="miSave" class="send" type="button" disabled>💾 ذخیره‌ی فهرست</button><button id="miDef" class="btn" type="button">↺ فهرست پیش‌فرض</button></div>
       </div>
+      <div class="card" id="kfCard">
+        <div class="lbl" style="margin-bottom:8px">۹. مشخصات کارنامه</div>
+        <div class="now-sub" style="margin-bottom:10px">در سربرگ و پایین کارنامه‌ی دانش‌آموزان چاپ می‌شود. کد هر درس در ستون «کد درس» کارنامه می‌آید (خالی = بدون کد).</div>
+        <div class="grid2">
+          <div class="field"><label for="kfP">استان</label><input id="kfP" type="text" maxlength="40" autocomplete="off"></div>
+          <div class="field"><label for="kfR">منطقه / ناحیه</label><input id="kfR" type="text" maxlength="40" autocomplete="off"></div>
+          <div class="field"><label for="kfC">کد آموزشگاه</label><input id="kfC" type="text" inputmode="numeric" dir="ltr" maxlength="12" autocomplete="off"></div>
+          <div class="field"><label for="kfM">نام مدیر آموزشگاه</label><input id="kfM" type="text" maxlength="60" autocomplete="off"></div>
+          <div class="field"><label for="kfG">مسئول ثبت نمره / معاون اجرایی</label><input id="kfG" type="text" maxlength="60" autocomplete="off"></div>
+          <div class="field"><label for="kfSg">کد دروس — پایه و رشته</label><select id="kfSg"></select></div>
+        </div>
+        <div id="kfList" class="kf-list"></div>
+        <button id="kfGo" class="send" type="button">💾 ذخیره‌ی مشخصات کارنامه</button>
+      </div>
       </div>
       <div class="mg-sec" data-sec="set" data-t="تنظیمات عمومی" hidden>
       <div class="mg-sec-d">لوگو و سربرگ مدرسه. فهرست مؤسسه‌های آزمون آزمایشی در «راه‌اندازی مدرسه» و رمزها در ماژول «عملیات رمز» است.</div>
@@ -2307,6 +2382,20 @@ body:not(.in-mod) .lbl-ic{width:auto;height:auto;background:none;border:0;box-sh
         <div class="field"><label for="dnAccN">به نام</label><input id="dnAccN" type="text" maxlength="80" autocomplete="off"></div>
         <button id="dnAccGo" class="btn" type="button" style="width:100%">💾 ذخیره‌ی حساب</button>
       </div>
+      </div>
+      <div class="mg-sec" data-sec="kar" data-t="کارنامه‌ها" hidden>
+      <div class="mg-sec-d">کارنامه‌ی هر دانش‌آموز به شکل کارنامه‌ی رسمی، و کارنامه‌ی کلی هر کلاس (همه‌ی دانش‌آموزان × همه‌ی دروس). فعلاً فقط ستون «مستمر نوبت اول» پر می‌شود: میانگین نمره‌های ثبت‌شده‌ی هر درس از ۱ مهر تا امروز، بدون آزمون پایانی و غیبت‌ها.</div>
+      <div class="card" id="kaCard">
+        <div class="lbl" style="margin-bottom:8px">📊 کارنامه‌ی کلی کلاس</div>
+        <div class="mg-bar"><select id="kaCls" aria-label="کلاس"></select><button id="kaPrint" class="btn" type="button" disabled>🖨 چاپ</button><button id="kaCsv" class="btn" type="button" disabled>⬇️ خروجی Excel</button></div>
+        <div id="kaMat"></div>
+      </div>
+      <div class="card" id="kaOneCard">
+        <div class="lbl" style="margin-bottom:8px">📄 کارنامه‌ی فردی</div>
+        <div class="mg-bar"><select id="kaStu" aria-label="دانش‌آموز"></select><button id="kaOnePr" class="btn" type="button" disabled>🖨 چاپ این کارنامه</button><button id="kaAll" class="btn" type="button" disabled>🖨 چاپ همه‌ی کارنامه‌های کلاس</button></div>
+        <div id="kaOne"></div>
+      </div>
+      <div class="now-sub" style="padding:0 6px">سربرگ کارنامه (استان، منطقه، کد آموزشگاه، نام مدیر و مسئول ثبت نمره) و کد دروس در «راه‌اندازی مدرسه ← مشخصات کارنامه» تنظیم می‌شود.</div>
       </div>
       <div class="mg-sec" data-sec="blk" data-t="بستن ورود دانش‌آموزان" hidden>
       <div class="mg-sec-d">ورود دانش‌آموز را به علت خاص (مثلاً انجام ندادن آزمون غربالگری) ببندید. دانش‌آموز با رمز خودش وارد می‌شود، اما فقط پیام شما را می‌بیند و به هیچ بخشی دسترسی ندارد؛ تا وقتی ورودش را باز کنید.</div>
@@ -3564,9 +3653,9 @@ function renderDir() {
       { const eb = el('button', 'btn', '✏️ ویرایش مشخصات'); eb.type = 'button'; eb.addEventListener('click', () => dirEdit(b, x, 's')); b.append(eb); }
       { const vb = el('button', 'btn', '👁 ورود به پنل این دانش‌آموز'); vb.type = 'button'; vb.addEventListener('click', () => viewStudent(x)); b.append(vb); }
       { const db = el('button', 'btn', '🗑 حذف دانش‌آموز'); db.type = 'button'; db.style.color = 'var(--absent)'; db.addEventListener('click', () => stuDelAsk(x)); b.append(db); }
-      if (x.id) { const pb = el('button', 'btn', 'کارنامه (چاپ / PDF)'); pb.type = 'button';
+      if (x.id) [['کارنامه (چاپ / PDF)', r => r.card ? printK(r.card) : printCard(r)], ['گزارش وضعیت برای اولیا (چاپ)', printCard]].forEach(([t, f]) => { const pb = el('button', 'btn', t); pb.type = 'button';
         pb.addEventListener('click', async () => { pb.disabled = true; const r = await send({ action:'studentCard', pin:MG.pin, nid:x.id, ym:dateStr().slice(0, 7), key:ACCESS_KEY }); pb.disabled = false;
-          if (r.status === 'ok') printCard(r); else toast(r.message || 'کارنامه دریافت نشد.'); }); b.append(pb); }
+          if (r.status === 'ok') f(r); else toast(r.message || 'کارنامه دریافت نشد.'); }); b.append(pb); });
     } else {
       const tm = tDirMissing(x); sm.append(el('span', '', (tm.length ? '' : '✓ ') + x.n), el('small', '', x.courses.join('، ')));
       if (tm.length) b.append(el('div', 'dir-miss', 'اطلاعات تکمیل‌نشده: ' + tm.join('، ')));
@@ -3796,8 +3885,9 @@ function stuNav(k) {
   const box = $('#stuBody'); box.textContent = ''; ({ dash:stuDash, vis:stuVis, prof:stuProf, plan:stuPlan, qz:stuQz, kar:stuKar, att:stuAtt, avg:stuAvg, mock:stuMock, cal:stuCal, leave:stuLeave, don:stuDon })[k](box);
 }
 function stuKar(box) {
-  const c1 = el('div', 'card'), c2 = el('div', 'card'); c1.append(el('div', 'lbl', 'کارنامه — میانگین هر درس (از ۲۰)')); c2.append(el('div', 'lbl', 'نمره‌های هر آزمون'));
-  c1.append(SD.courses.length ? tbl(['درس', 'واحد', 'میانگین شما', 'میانگین کلاس'], SD.courses.map(x => [x.c, uTx(x.u), f2(x.me), f2(x.cls)]).concat([['معدل کل (وزنی)', uSum(SD.courses), f2(SD.overall.me), f2(SD.overall.cls)]])) : el('div', 'empty', 'هنوز نمره‌ای ثبت نشده است.'));
+  const c1 = el('div', 'card'), c2 = el('div', 'card'); c1.append(el('div', 'lbl', SD.card && SD.card.rows ? 'کارنامه — مستمر نوبت اول تا امروز' : 'کارنامه — میانگین هر درس (از ۲۰)')); c2.append(el('div', 'lbl', 'نمره‌های هر آزمون'));
+  if (SD.card && SD.card.rows && SD.card.rows[0]) c1.append(kWrap(kCardEl(SD.card, SD.card.rows[0], kNarrow())));
+  else c1.append(SD.courses.length ? tbl(['درس', 'واحد', 'میانگین شما', 'میانگین کلاس'], SD.courses.map(x => [x.c, uTx(x.u), f2(x.me), f2(x.cls)]).concat([['معدل کل (وزنی)', uSum(SD.courses), f2(SD.overall.me), f2(SD.overall.cls)]])) : el('div', 'empty', 'هنوز نمره‌ای ثبت نشده است.'));
   c2.append(SD.grades.length ? tbl(['تاریخ', 'درس', 'آزمون', 'نمره', 'از ۲۰', 'میانگین کلاس'], SD.grades.slice().reverse().map(g => [g.d, g.c, g.e, g.a ? 'غایب' : fa(g.s) + ' از ' + fa(g.m), g.a ? '—' : f2(g.n), f2(g.ca)])) : el('div', 'empty', '—'));
   const bc = el('div', 'card'), c3 = el('div', 'card'), pr = el('button', 'btn', 'چاپ یا ذخیره‌ی کارنامه (PDF)');
   bc.append(el('div', 'lbl', 'نشان‌های شما'));
@@ -3808,8 +3898,8 @@ function stuKar(box) {
   [''].concat(SD.courses.map(x => x.c)).forEach(c => { const o = el('option', '', c || 'همه درس‌ها'); o.value = c; sel.append(o); });
   const draw = () => { hold.textContent = ''; hold.append(trendSvg(SD.grades.filter(g => g.n != null && (!sel.value || g.c === sel.value)).sort(byDate))); };
   sel.addEventListener('change', draw); fd.append(sel); c3.append(fd, hold); draw();
-  pr.type = 'button'; pr.style.width = '100%'; pr.addEventListener('click', () => printCard(SD));
-  box.append(bc, c1, c3, c2, pr);
+  pr.type = 'button'; pr.style.width = '100%'; pr.addEventListener('click', () => SD.card && SD.card.rows ? printK(SD.card) : printCard(SD));
+  box.append(c1, pr, bc, c3, c2);
 }
 function stuAtt(box) {
   const a = SD.att, c = el('div', 'card'), g = el('div'); c.append(el('div', 'lbl', 'وضعیت حضور و غیاب'));
@@ -3906,7 +3996,7 @@ function donForm() {                 // فرم مشترک دانش‌آموز و
   DON_WHO.forEach(x => { const o = el('option', '', x); o.value = x; who.append(o); });
   wn.type = 'text'; wn.maxLength = 40; wn.placeholder = 'نام واریزکننده'; wn.setAttribute('aria-label', 'نام واریزکننده');
   amt.type = 'text'; amt.inputMode = 'numeric'; amt.placeholder = 'مثلاً ۵۰۰٬۰۰۰'; amt.autocomplete = 'off';
-  d.type = 'text'; d.inputMode = 'numeric'; d.value = fa(dateStr()); ref.type = 'text'; ref.maxLength = 30; ref.inputMode = 'numeric'; ref.placeholder = 'از پیامک یا رسید بانک'; ref.autocomplete = 'off';
+  d.type = 'text'; d.inputMode = 'numeric'; d.value = fa(dateStr()); d.dataset.jd = ''; d.setAttribute('aria-label', 'تاریخ واریز'); ref.type = 'text'; ref.maxLength = 30; ref.inputMode = 'numeric'; ref.placeholder = 'از پیامک یا رسید بانک'; ref.autocomplete = 'off';
   note.type = 'text'; note.maxLength = 150; note.placeholder = 'مثلاً برای کتابخانه';
   const num = () => { const v = en(amt.value).replace(/[,٬،\s]/g, ''); return /^\d+$/.test(v) ? Number(v) : NaN; };
   const paint = () => { const n = num(); aw.textContent = n ? toman(n) + ' — ' + numWords(n) + ' تومان' : 'مبلغ به تومان است (نه ریال).'; };
@@ -4183,7 +4273,7 @@ function ptView() {
 function ptForm(m) {
   const h = $('#ptHost'); h.textContent = ''; const c = el('div', 'card'); c.append(el('div', 'lbl', m ? 'ویرایش جلسه' : 'جلسه‌ی جدید اولیا و مربیان'));
   const fd = (lb, v, ph) => { const f = el('div', 'field'), i = el('input'); i.type = 'text'; i.value = v || ''; if (ph) i.placeholder = ph; f.append(el('label', '', lb), i); c.append(f); return i; };
-  const d = fd('تاریخ (مثل ۱۴۰۵/۰۷/۲۵)', m ? m.d : dateStr()), t = fd('عنوان جلسه', m ? m.t : '', 'مثلاً جلسه‌ی اولیا و مربیان — نیمسال اول'), note = fd('توضیحات (محل برگزاری و ...)', m ? m.note : '');
+  const d = jdMark(fd('تاریخ جلسه', m ? m.d : dateStr()), 'تاریخ جلسه'), t = fd('عنوان جلسه', m ? m.t : '', 'مثلاً جلسه‌ی اولیا و مربیان — نیمسال اول'), note = fd('توضیحات (محل برگزاری و ...)', m ? m.note : '');
   d.style.direction = 'ltr'; d.style.textAlign = 'right';
   c.append(el('div', 'now-sub', 'کلاس‌های دعوت‌شده (اگر هیچ‌کدام انتخاب نشود، همه‌ی کلاس‌ها):'));
   const sel = {}, g = el('div', 'pt-g'); (m && !m.all ? m.cl : []).forEach(x => { sel[x] = 1; });
@@ -4219,7 +4309,7 @@ function pvForm(v) {
   const loadS = async keep => { ss.textContent = ''; const r = await ptCall('ptGet', { id:'', cls:cs.value }); (r.list || []).forEach(x => { const o = el('option', '', x.n); o.value = x.n; ss.append(o); }); if (keep) ss.value = keep; };
   cs.addEventListener('change', () => loadS()); if (v) cs.value = v.c; loadS(v ? v.n : '');
   const fd = (lb, val, ph) => { const f = el('div', 'field'), i = el('input'); i.type = 'text'; i.value = val || ''; if (ph) i.placeholder = ph; f.append(el('label', '', lb), i); return [f, i]; };
-  const [df, di] = fd('تاریخ مراجعه (مثل ۱۴۰۵/۰۷/۲۵)', v ? v.d : dateStr()); di.style.direction = 'ltr'; di.style.textAlign = 'right';
+  const [df, di] = fd('تاریخ مراجعه', v ? v.d : dateStr()); di.dataset.jd = ''; di.setAttribute('aria-label', 'تاریخ مراجعه');
   const [sf2, si] = fd('موضوع مراجعه', v ? v.s : '', 'مثلاً پیگیری وضعیت تحصیلی'), [nf, ni] = fd('توضیح داخلی (دانش‌آموز نمی‌بیند)', v ? v.note : '');
   let who = v ? v.w : ''; const wg = el('div', 'pt-seg'); ['پدر', 'مادر', 'هر دو', 'سایر'].forEach(q => { const b = el('button', 'chip' + (who === q ? ' on' : ''), q); b.type = 'button'; b.addEventListener('click', () => { who = q; $$('#pvWho .chip').forEach(x => x.classList.toggle('on', x === b)); }); wg.append(b); }); wg.id = 'pvWho';
   const qg = el('div', 'pt-seg'); ['وضعیت تحصیلی', 'غیبت و تأخیر', 'انضباط و رفتار', 'مدارک و ثبت‌نام', 'مشاوره', 'سایر'].forEach(q => { const b = el('button', 'chip', q); b.type = 'button'; b.addEventListener('click', () => { si.value = q; }); qg.append(b); });
@@ -4714,7 +4804,7 @@ function qzEdit(x, q, reload) {
   paintQ();
   // زمان‌بندی
   const s3 = qzSec(O.body, 'زمان‌بندی'), j0 = d => { const j = g2j(d.getFullYear(), d.getMonth() + 1, d.getDate()); return fa(j[0] + '/' + pad(j[1]) + '/' + pad(j[2])); };
-  const dtRow = (lbl, ms) => { const f = el('div', 'field'), w = el('div', 'qz-dt'), d = el('input'), t = el('input'), dt = new Date(ms); d.type = 'text'; d.inputMode = 'numeric'; d.value = j0(dt); d.setAttribute('aria-label', lbl + ' — تاریخ');
+  const dtRow = (lbl, ms) => { const f = el('div', 'field'), w = el('div', 'qz-dt'), d = el('input'), t = el('input'), dt = new Date(ms); d.type = 'text'; d.inputMode = 'numeric'; d.value = j0(dt); d.setAttribute('aria-label', lbl + ' — تاریخ'); d.dataset.jd = '';
     t.type = 'time'; t.value = pad(dt.getHours()) + ':' + pad(dt.getMinutes()); t.setAttribute('aria-label', lbl + ' — ساعت'); w.append(d, t); f.append(el('span', 'lbl', lbl), w); return { f:f, d:d, t:t }; };
   const rd = o => { const p = jParse(o.d.value), m = /^(\d{1,2}):(\d{2})$/.exec(en(o.t.value)); if (!p || !m) return NaN; return jGreg(p[0], p[1], p[2]).getTime() + (+m[1] * 60 + +m[2]) * 6e4; };
   const wr = (o, ms) => { const dt = new Date(ms); o.d.value = j0(dt); o.t.value = pad(dt.getHours()) + ':' + pad(dt.getMinutes()); };
@@ -4974,7 +5064,7 @@ function qzPaper(x, ti, qs) {
   C.ti = ti; C.d = fa(plJ(new Date()));
   const O = qzOv('نسخه‌ی کاغذی — ' + ti), s = qzSec(O.body, 'برگه‌ی امتحان'), n = qs.length, bar = Math.round(20 / n * 100) / 100;
   const inp = (lbl, id, val, ph, num) => { const f = el('div', 'field'), l = el('label', '', lbl), i = el('input'); i.type = 'text'; i.id = id; i.value = val; i.placeholder = ph || ''; if (num) i.inputMode = 'numeric'; l.htmlFor = id; f.append(l, i); s.append(f); return i; };
-  const iT = inp('عنوان روی برگه', 'ppTi', C.ti), iK = inp('نوع آزمون', 'ppKind', C.kind, 'مثلاً آزمون کلاسی، میان‌نوبت'), iD = inp('تاریخ آزمون', 'ppDate', C.d, '۱۴۰۵/۰۷/۲۵', true), iM = inp('مدت (دقیقه)', 'ppDur', C.dur, 'مثلاً ۴۵', true);
+  const iT = inp('عنوان روی برگه', 'ppTi', C.ti), iK = inp('نوع آزمون', 'ppKind', C.kind, 'مثلاً آزمون کلاسی، میان‌نوبت'), iD = jdMark(inp('تاریخ آزمون', 'ppDate', C.d, '۱۴۰۵/۰۷/۲۵', true), 'تاریخ آزمون', true), iM = inp('مدت (دقیقه)', 'ppDur', C.dur, 'مثلاً ۴۵', true);
   const vc = el('div', 'chips'); vc.style.gridTemplateColumns = '1fr 1fr';
   [[1, 'یک نسخه'], [2, 'دو نسخه‌ی الف و ب']].forEach(v => { const b = el('button', 'chip' + (C.v === v[0] ? ' on' : ''), v[1]); b.type = 'button';
     b.addEventListener('click', () => { C.v = v[0]; Array.from(vc.children).forEach(c => c.classList.toggle('on', c === b)); }); vc.append(b); });
@@ -5091,6 +5181,152 @@ function printCard(d) {
 window.addEventListener('afterprint', () => document.body.classList.remove('printing'));
 { const pa = document.createElement('div'); pa.id = 'printArea'; document.body.append(pa); }
 
+/* ======================= کارنامه به شکل رسمی + کارنامه‌ی کلی کلاس (نسخه‌ی ۱٫۳۰) =======================
+   همه‌ی عددها از سرور (kClass_)؛ فعلاً فقط ستون «مستمر نوبت اول» پر است و بقیه‌ی ستون‌ها خالی می‌ماند. */
+const K_ST = { 'تجربی':'علوم تجربی', 'انسانی':'ادبیات و علوم انسانی' };
+const kNum = v => v == null ? '' : f2(v);
+const kLo = v => v != null && v < 10;
+function kCardEl(d, row, cp) {      // cp: نمای فشرده‌ی تلفن همراه (فقط ستون‌های پرشده)؛ چاپ همیشه کامل است
+  const h = d.head || {}, lvl = h.lvl === 'اول' ? 'اول' : 'دوم', w = el('div', 'kc' + (cp ? ' cp' : '')), top = el('div', 'kc-top');
+  const box = (cls, lines) => { const b = el('div', 'kc-box ' + cls); lines.filter(Boolean).forEach(([k, v]) => { const p = el('div'); if (k) p.append(el('span', 'kc-k', k + ':'), ' '); p.append(el('b', '', v === '' || v == null ? '—' : v)); b.append(p); }); return b; };
+  top.append(
+    box('kc-gov', [['', 'جمهوری اسلامی ایران'], ['', 'وزارت آموزش و پرورش'], ['', 'کارنامه‌ی موقت دوره‌ی متوسطه‌ی ' + lvl], ['سال تحصیلی', fa(d.year || '')], ['پایه', d.g]]),
+    box('kc-sch', [['استان', h.p], ['منطقه', h.r], ['آموزشگاه', [h.c ? fa(h.c) : '', h.school].filter(Boolean).join(' ')], lvl === 'دوم' && d.st ? ['شاخه', 'نظری'] : null, d.st ? ['رشته', K_ST[d.st] || d.st] : null, ['کلاس', d.cls]]),
+    box('kc-stu', [['نام و نام خانوادگی', row.n], ['نام پدر', row.fn], ['کد ملی', row.id ? fa(row.id) : '']]));
+  const t = el('table', 'kc-t'), hd = el('thead'), r1 = el('tr'), r2 = el('tr'), th = (tx, a) => { const x = el('th', '', tx); Object.assign(x, a || {}); return x; };
+  if (cp) { const m1 = th('مستمر نوبت اول'); m1.className = 'on'; r1.append(th('ردیف'), th('کد درس'), th('نام درس'), th('واحد'), m1); hd.append(r1); }
+  else {
+    r1.append(th('ردیف', { rowSpan:2 }), th('کد درس', { rowSpan:2 }), th('نام درس', { rowSpan:2 }), th('واحد', { rowSpan:2 }), th('نمره‌ی نهایی', { rowSpan:2 }),
+      th('نمرات نوبت اول', { colSpan:2 }), th('نمرات نوبت دوم', { colSpan:2 }), th('نتیجه', { rowSpan:2 }), th('ملاحظات', { rowSpan:2 }));
+    const m1 = th('مستمر'); m1.className = 'on'; r2.append(m1, th('پایانی'), th('مستمر'), th('پایانی')); hd.append(r1, r2);
+  }
+  t.append(hd);
+  const tb = el('tbody');
+  d.courses.forEach((c, i) => {
+    const tr = el('tr'), v = row.v[i], cell = (tx, cl) => { const x = el('td', cl || '', tx); tr.append(x); return x; };
+    cell(fa(i + 1), 'n'); cell(c.k ? fa(c.k) : '', 'n'); cell(c.c, 'c'); cell(fa(c.u), 'n'); if (!cp) cell('', 'n');
+    const m = cell(kNum(v), 'n on' + (kLo(v) ? ' lo' : '')); if (kLo(v)) m.title = 'کمتر از ۱۰';
+    if (!cp) { cell('', 'n'); cell('', 'n'); cell('', 'n'); cell(''); cell(''); }
+    tb.append(tr);
+  });
+  t.append(tb);
+  const sm = el('table', 'kc-sum'), sh = el('tr'), sv = el('tr');
+  ['', 'واحد اخذشده', 'واحد دارای نمره', 'جمع نمرات (نمره × واحد)', 'معدل مستمر نوبت اول'].forEach(x => sh.append(el('th', '', x)));
+  [['تا امروز'], [fa(d.uT)], [fa(row.uG || 0)], [row.uG ? f2(row.s) : '—'], [f2(row.avg), 'b']].forEach(([x, c]) => sv.append(el('td', c || '', x)));
+  sm.append(sh, sv);
+  const note = el('div', 'kc-note', 'در این کارنامه‌ی موقت فقط ستون «مستمر نوبت اول» پر شده است: میانگین نمره‌های ثبت‌شده‌ی هر درس از ۱ مهر تا امروز (بدون آزمون پایانی و جلسه‌های غیبت). معدل فقط از دروس دارای نمره و بر اساس تعداد واحد حساب شده است.');
+  const sg = el('div', 'kc-sign'), sb = (role, nm, s) => { const b = el('div'); b.append(el('div', 'kc-k', role), el('b', '', nm || ' '), el('small', '', s)); return b; };
+  sg.append(sb('مسئول ثبت نمره / معاون اجرایی', h.g, 'امضاء'), sb('مدیر آموزشگاه', h.m, 'مهر و امضاء'));
+  const ft = el('div', 'kc-ft'); ft.append(el('span', '', 'تاریخ: ' + fa(d.today || dateStr())), el('span', '', 'این کارنامه‌ی موقت توسط سامانه‌ی مدرسه برای اطلاع دانش‌آموز و اولیا صادر شده و ارزش رسمی ندارد.'));
+  w.append(top, t, sm, note, sg, ft);
+  if (cp) w.append(el('div', 'kc-cp', 'در تلفن همراه فقط ستون‌های پرشده نمایش داده می‌شود؛ کارنامه‌ی کامل را با «چاپ» ببینید.'));
+  return w;
+}
+const kNarrow = () => window.innerWidth < 640;
+const kWrap = n => { const s = el('div', 'kc-scroll'); s.append(n); return s; };
+function kPrint(nodes, land) {
+  const pa = $('#printArea'); pa.textContent = ''; pa.classList.toggle('land', !!land);
+  let st = $('#kPage'); if (!st) { st = el('style'); st.id = 'kPage'; document.head.append(st); }
+  st.textContent = '@media print{@page{size:A4 ' + (land ? 'landscape' : 'portrait') + ';margin:8mm}}';
+  nodes.forEach((n, i) => { if (i < nodes.length - 1) n.classList.add('kc-pg'); pa.append(n); });
+  document.body.classList.add('printing'); window.print();
+}
+window.addEventListener('afterprint', () => { const st = $('#kPage'); if (st) st.remove(); $('#printArea').classList.remove('land'); });
+const printK = (d, rows) => kPrint((rows || d.rows).map(r => kCardEl(d, r)));
+function kMatEl(d) {
+  const h = d.head || {}, w = el('div', 'km');
+  w.append(el('div', 'km-h', 'کارنامه‌ی کلی کلاس ' + d.cls + ' — مستمر نوبت اول'),
+    el('div', 'km-s', [h.school, 'سال تحصیلی ' + fa(d.year), d.g, K_ST[d.st] || d.st, fa(d.rows.length) + ' دانش‌آموز', 'تا تاریخ ' + fa(d.today)].filter(Boolean).join(' | ')));
+  const t = el('table', 'km-t'), hd = el('thead'), tr = el('tr');
+  tr.append(el('th', 'i', 'ردیف'), el('th', 'nm', 'نام و نام خانوادگی'));
+  d.courses.forEach(c => { const x = el('th', 'v'), s = el('span'); s.append(c.c, el('small', '', ' (' + fa(c.u) + ' واحد)')); x.append(s); x.title = c.c; tr.append(x); });
+  tr.append(el('th', 'g', 'درس دارای نمره'), el('th', 'g', 'معدل')); hd.append(tr); t.append(hd);
+  const tb = el('tbody');
+  d.rows.forEach((r, i) => {
+    const x = el('tr'); x.append(el('td', 'i', fa(i + 1)), el('td', 'nm', r.n));
+    r.v.forEach(v => { const c = el('td', 'n' + (kLo(v) ? ' lo' : ''), v == null ? '—' : f2(v)); if (v == null) c.classList.add('nil'); x.append(c); });
+    x.append(el('td', 'n', fa(r.nG) + ' از ' + fa(d.courses.length)), el('td', 'n b' + (kLo(r.avg) ? ' lo' : ''), f2(r.avg))); tb.append(x);
+  });
+  t.append(tb);
+  if (d.cavg) {
+    const fo = el('tfoot'), x = el('tr'), al = d.rows.map(r => r.avg).filter(v => v != null);
+    x.append(el('td', 'i', ''), el('td', 'nm', 'میانگین کلاس'));
+    d.cavg.forEach(v => x.append(el('td', 'n' + (kLo(v) ? ' lo' : ''), v == null ? '—' : f2(v))));
+    x.append(el('td', 'n', ''), el('td', 'n b', al.length ? f2(Math.round(al.reduce((a, b) => a + b, 0) / al.length * 100) / 100) : '—')); fo.append(x); t.append(fo);
+  }
+  const sc = el('div', 'km-scroll'); sc.append(t);
+  w.append(sc, el('div', 'km-lg', 'هر خانه: میانگین نمره‌های آن درس از ۱ مهر تا امروز (بدون آزمون پایانی و غیبت‌ها). «—» یعنی نمره‌ای ثبت نشده. نمره‌ی کمتر از ۱۰ قرمز و زیرخط‌دار است. معدل بر اساس تعداد واحد دروس دارای نمره است.'));
+  return w;
+}
+function kCsv(d) {
+  const al = d.rows.map(r => r.avg).filter(v => v != null);
+  mgCsv('karnameh-' + (en(d.cls).replace(/\D+/g, '') || 'class') + '-' + d.today.replace(/\//g, '-') + '.csv',   // نام لاتین: Chrome نام فارسی فایل را نادیده می‌گیرد
+   
+    ['ردیف', 'نام و نام خانوادگی', 'نام پدر', 'کد ملی'].concat(d.courses.map(c => c.c + ' (' + c.u + ' واحد)'), ['تعداد درس دارای نمره', 'جمع واحد دارای نمره', 'معدل']),
+    d.rows.map((r, i) => [i + 1, r.n, r.fn, r.id ? fa(r.id) : ''].concat(r.v.map(v => v == null ? '' : v), [r.nG, r.uG, r.avg == null ? '' : r.avg]))
+      .concat([['', 'میانگین کلاس', '', ''].concat((d.cavg || []).map(v => v == null ? '' : v), ['', '', al.length ? Math.round(al.reduce((a, b) => a + b, 0) / al.length * 100) / 100 : ''])]));
+}
+let KA = null;
+function kaBtns() { ['kaPrint', 'kaCsv', 'kaAll'].forEach(id => { $('#' + id).disabled = !KA || !KA.rows.length; }); $('#kaOnePr').disabled = !KA || $('#kaStu').value === ''; }
+function kaOpen() {
+  const c = $('#kaCls'), cur = c.value; c.textContent = '';
+  [''].concat(allClasses()).forEach(x => { const o = el('option', '', x || '— انتخاب کلاس —'); o.value = x; c.append(o); }); c.value = allClasses().includes(cur) ? cur : '';
+  if (!kaOpen.on) {
+    kaOpen.on = 1; c.addEventListener('change', kaLoad); $('#kaStu').addEventListener('change', kaOne);
+    $('#kaPrint').addEventListener('click', () => KA && kPrint([kMatEl(KA)], true));
+    $('#kaCsv').addEventListener('click', () => KA && kCsv(KA));
+    $('#kaAll').addEventListener('click', () => KA && printK(KA));
+    $('#kaOnePr').addEventListener('click', () => { const i = $('#kaStu').value; if (KA && i !== '') printK(KA, [KA.rows[+i]]); });
+  }
+  kaLoad();
+}
+async function kaLoad() {
+  const cls = $('#kaCls').value, box = $('#kaMat'); KA = null; box.textContent = ''; kaStus();
+  if (!cls) { box.append(el('div', 'empty', 'کلاس را انتخاب کنید تا کارنامه‌ی کلی آن ساخته شود.')); return; }
+  box.append(el('div', 'empty', 'در حال ساختن کارنامه‌ی کلاس ' + cls + '…'));
+  const r = await send({ action:'kClass', pin:MG.pin, cls:cls, key:ACCESS_KEY });
+  if ($('#kaCls').value !== cls) return;
+  box.textContent = '';
+  if (r.status !== 'ok') { box.append(el('div', 'empty', r.net ? 'اینترنت در دسترس نیست؛ دوباره تلاش کنید.' : r.message || 'کارنامه دریافت نشد.')); return; }
+  KA = r; box.append(kMatEl(r)); kaStus();
+}
+function kaStus() {
+  const s = $('#kaStu'); s.textContent = ''; const o0 = el('option', '', KA ? '— انتخاب دانش‌آموز —' : '— ابتدا کلاس —'); o0.value = ''; s.append(o0);
+  (KA ? KA.rows : []).forEach((r, i) => { const o = el('option', '', r.n); o.value = i; s.append(o); });
+  kaOne();
+}
+function kaOne() {
+  const box = $('#kaOne'), i = $('#kaStu').value; box.textContent = ''; kaBtns();
+  if (KA && i !== '') box.append(kWrap(kCardEl(KA, KA.rows[+i], kNarrow())));
+}
+/* مشخصات کارنامه در «راه‌اندازی مدرسه» */
+const KF = { k:{} };
+function kfInit() {
+  if (!SU || !SU.kcfg) return; const c = SU.kcfg;
+  [['kfP', 'p'], ['kfR', 'r'], ['kfC', 'c'], ['kfM', 'm'], ['kfG', 'g']].forEach(([id, f]) => { $('#' + id).value = f === 'c' && c[f] ? fa(c[f]) : c[f] || ''; });
+  const s = $('#kfSg'), cur = s.value; s.textContent = '';
+  (SU.kc || []).forEach((x, i) => { const o = el('option', '', x.g + ' ' + x.s); o.value = i; s.append(o); });
+  if (cur !== '' && s.options[+cur]) s.value = cur;
+  if (!kfInit.on) {
+    kfInit.on = 1; s.addEventListener('change', kfList);
+    $('#kfGo').addEventListener('click', async () => {
+      const b = $('#kfGo'), v = id => $('#' + id).value.trim(); b.disabled = true;
+      const r = await send({ action:'setKCfg', pin:MG.pin, cfg:{ p:v('kfP'), r:v('kfR'), c:en(v('kfC')), m:v('kfM'), g:v('kfG'), k:KF.k }, key:ACCESS_KEY }); b.disabled = false;
+      if (r.status !== 'ok') { toast(r.message || 'ذخیره نشد'); return; }
+      SU.kcfg = r.kcfg; SU.kc = r.kc; KF.k = {}; kfInit(); suHub(); toast('مشخصات کارنامه ذخیره شد ✓');
+    });
+  }
+  kfList();
+}
+function kfList() {
+  const box = $('#kfList'), x = (SU.kc || [])[+$('#kfSg').value || 0]; box.textContent = ''; if (!x) return;
+  x.l.forEach(c => {
+    const r = el('label', 'kf-it'), i = el('input'); i.type = 'text'; i.inputMode = 'numeric'; i.dir = 'ltr'; i.maxLength = 8; i.autocomplete = 'off'; i.placeholder = '—';
+    i.value = c.key in KF.k ? fa(KF.k[c.key]) : c.k ? fa(c.k) : ''; i.setAttribute('aria-label', 'کد ' + c.c);
+    i.addEventListener('input', () => { KF.k[c.key] = en(i.value).replace(/\D/g, ''); });
+    r.append(el('span', '', c.c), i); box.append(r);
+  });
+}
 /* ======================= گزارش فشرده و هشدار حضور و غیاب ثبت‌نشده ======================= */
 const ATT_GRACE_MIN = 15;            // اگر تا ۱۵ دقیقه بعد از شروع زنگ حضور و غیاب ثبت نشود، هشدار می‌آید
 let TODAY = [], EXEMPT = [], SEEN = {};
@@ -5608,8 +5844,8 @@ function stuCal(box) {
 function stuLeave(box) {
   const c = el('div', 'card'), d = el('input'), w = el('input'), f = el('input'), msg = el('div', 'empty'), go = el('button', 'send', 'ارسال درخواست');
   c.append(el('div', 'lbl', 'درخواست مرخصی (غیبت موجه)'));
-  d.type = 'text'; d.inputMode = 'numeric'; d.value = dateStr(); w.type = 'text'; w.maxLength = 120; w.placeholder = 'مثلاً بیماری'; f.type = 'file'; f.accept = 'image/*,application/pdf'; msg.hidden = true; msg.style.color = 'var(--absent)'; go.type = 'button';
-  c.append(fldOf('تاریخ مرخصی (مثلاً ۱۴۰۵/۰۷/۱۷)', d), fldOf('علت', w), fldOf('مدرک (اختیاری: عکس یا PDF)', f), go, msg);
+  d.type = 'text'; d.inputMode = 'numeric'; d.value = dateStr(); d.dataset.jd = ''; d.setAttribute('aria-label', 'تاریخ مرخصی'); w.type = 'text'; w.maxLength = 120; w.placeholder = 'مثلاً بیماری'; f.type = 'file'; f.accept = 'image/*,application/pdf'; msg.hidden = true; msg.style.color = 'var(--absent)'; go.type = 'button';
+  c.append(fldOf('تاریخ مرخصی', d), fldOf('علت', w), fldOf('مدرک (اختیاری: عکس یا PDF)', f), go, msg);
   go.addEventListener('click', async () => {
     msg.hidden = true; go.disabled = true; const fail = m => { msg.textContent = m; msg.hidden = false; go.disabled = false; };
     let fl = null; if (f.files[0]) { try { fl = await readFile(f.files[0]); } catch (e) { return fail(String(e)); } }
@@ -6317,7 +6553,7 @@ async function suOpen() {
   suClsPreview(); suClsList(); suTeachers(); suPwInit(); zcInit(); suHub();
   const r = await send({ action:'setupInfo', pin:MG.pin, key:ACCESS_KEY }); if (r.status === 'ok') { SU = r; setSchoolName(r.school); $('#suName').value = SCHOOL_NAME; }
   await loadDir();
-  suTeachers(); suPwInit(); suHub();
+  suTeachers(); suPwInit(); suHub(); kfInit();
 }
 async function suSoft() {             // فقط وضعیت راه‌اندازی و فهرست‌های همین بخش
   const r = await send({ action:'setupInfo', pin:MG.pin, key:ACCESS_KEY }); if (r.status === 'ok') SU = r;
@@ -6358,6 +6594,7 @@ function suHub() {
    ['تخصیص درس به دبیر', !T.length ? 'ابتدا دبیران را ثبت کنید' : noC.length ? fa(noC.length) + ' دبیر بدون درس: ' + noC.map(t => t.n).join('، ') : 'همه‌ی دبیران درس دارند', !T.length ? 'todo' : noC.length ? 'warn' : 'ok', 'suTc'],
    ['برنامه‌ی هفتگی', $('#suSchTx').textContent, !cls.length || !schC.length ? 'todo' : schC.length < cls.length ? 'warn' : 'ok', 'suSch'],
    (mi => ['مؤسسه‌های آزمون آزمایشی', mi.length ? fa(mi.length) + ' مؤسسه: ' + mi.slice(0, 3).join('، ') + (mi.length > 3 ? '، …' : '') + ' (+ «سایر» و «هیچکدام»)' : 'فقط «سایر» و «هیچکدام»؛ مؤسسه‌ها را اضافه کنید', mi.length ? 'ok' : 'warn', 'miCard'])(INST.filter(x => x !== 'سایر' && x !== MK_NONE)),
+   (k => ['مشخصات کارنامه', !SU ? 'در حال بررسی…' : [k.p, k.r, k.c ? 'کد آموزشگاه ' + fa(k.c) : ''].filter(Boolean).join(' · ') || 'استان، منطقه و کد آموزشگاه هنوز وارد نشده', !SU ? 'todo' : k.p && k.r && k.c ? 'ok' : 'warn', 'kfCard'])((SU && SU.kcfg) || {}),
    ['عملیات رمز', SU ? pw.join(' | ') : 'در حال بررسی…', !SU ? 'todo' : pwSt.length ? 'warn' : 'ok', 'suPw']
   ].forEach((s, i) => {
     const b = el('button', 'su-step ' + s[2]), tx = el('span'); b.type = 'button';
@@ -6693,6 +6930,41 @@ function jPicker(dS, mS, yS, on) {          // انتخاب‌گر تاریخ ش
   [mS, yS].forEach(s => s.addEventListener('change', () => { fillD(); on && on(); })); dS.addEventListener('change', () => on && on());
   fillD(); api.today(); on && on(); return api;
 }
+/* نسخه‌ی ۱٫۳۰: هر خانه‌ی تاریخِ دستی (input با data-jd) به سه لیست کشویی «روز، ماه، سال» تبدیل می‌شود.
+   خانه‌ی اصلی پنهان می‌ماند و مقدارش همیشه با لیست‌ها یکی است تا کدهای قبلی (value، رویدادهای input و change) بدون تغییر کار کنند.
+   data-jd="o": اختیاری (گزینه‌ی خالی دارد)؛ data-jdl: برچسب کوتاه کنار لیست‌ها (مثلاً «از»). */
+const JD_VAL = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value');
+function jdBox(inp) {
+  if (inp.jdOn) return; inp.jdOn = true;
+  const opt = inp.dataset.jd === 'o', t = jOf(new Date()), lbl = inp.getAttribute('aria-label') || inp.dataset.jdl || 'تاریخ';
+  const w = el('span', 'jd'), dS = el('select', 'jd-d'), mS = el('select', 'jd-m'), yS = el('select', 'jd-y'), wd = el('small');
+  [[dS, 'روز'], [mS, 'ماه'], [yS, 'سال']].forEach(([s, n]) => s.setAttribute('aria-label', lbl + ' — ' + n));
+  const fill = (s, a, b, tx, nm) => { const cur = s.value; s.textContent = ''; if (opt) { const o = el('option', '', nm); o.value = ''; s.append(o); } for (let k = a; k <= b; k++) { const o = el('option', '', tx(k)); o.value = k; s.append(o); } return cur; };
+  fill(mS, 1, 12, k => MONTHS[k - 1], 'ماه');
+  const setY = y => { yS.value = fill(yS, Math.min(t[0] - 2, y || t[0]), Math.max(t[0] + 1, y || t[0]), fa, 'سال'); };
+  const setD = () => { const mx = jDays(+yS.value || t[0], +mS.value || 1), cur = fill(dS, 1, mx, fa, 'روز'); dS.value = cur && +cur > mx ? String(mx) : cur; };
+  const show = q => { wd.textContent = q ? JWD[jGreg(q[0], q[1], q[2]).getDay()] : ''; };
+  const read = () => yS.value && mS.value && dS.value ? jStr(+yS.value, +mS.value, +dS.value) : '';
+  const sync = v => {
+    const q = jParse(v), z = q || (opt ? null : t);
+    setY(z ? z[0] : 0); yS.value = z ? z[0] : ''; mS.value = z ? z[1] : ''; setD(); dS.value = z ? z[2] : ''; show(z);
+    if (!q && !opt) JD_VAL.set.call(inp, read());            // خانه‌ی الزامیِ خالی یا نامعتبر ← امروز
+  };
+  const pick = function () {
+    if (this !== dS) setD();
+    const v = read(); JD_VAL.set.call(inp, v); show(jParse(v));
+    inp.dispatchEvent(new Event('input', { bubbles:true })); inp.dispatchEvent(new Event('change', { bubbles:true }));
+  };
+  [dS, mS, yS].forEach(s => s.addEventListener('change', pick));
+  Object.defineProperty(inp, 'value', { configurable:true, get() { return JD_VAL.get.call(inp); }, set(v) { JD_VAL.set.call(inp, v == null ? '' : v); sync(String(v == null ? '' : v)); } });
+  if (inp.dataset.jdl) w.append(el('b', 'jd-l', inp.dataset.jdl));
+  w.append(dS, mS, yS, wd); inp.style.display = 'none'; inp.after(w);
+  sync(JD_VAL.get.call(inp));
+}
+const jdMark = (i, lbl, opt) => { i.dataset.jd = opt ? 'o' : ''; if (lbl) i.setAttribute('aria-label', lbl); return i; };
+const jdScan = n => { if (n.matches && n.matches('input[data-jd]')) jdBox(n); if (n.querySelectorAll) n.querySelectorAll('input[data-jd]').forEach(jdBox); };
+new MutationObserver(ms => ms.forEach(m => m.addedNodes.forEach(n => { if (n.nodeType === 1) jdScan(n); }))).observe(document.body, { childList:true, subtree:true });
+jdScan(document.body);
 
 /* ---------- نفرات برتر هر کلاس (صفحه اول، ورودی و صفحه‌ی دانش‌آموز)؛ دانش‌آموز با معدل زیر ۱۷ را سرور نمی‌فرستد ---------- */
 let HONOR = null, HONOR_MIN = 17;
@@ -7522,7 +7794,7 @@ function dsViewNew(box) {
   } else {
     fc.append(dsField('موضوع تماس / دلیل پیگیری', (() => { const i = el('input'); i.type = 'text'; i.maxLength = 200; i.value = f.topic || ''; i.placeholder = 'مثلاً غیبت مکرر در هفته‌ی گذشته'; i.addEventListener('input', () => { f.topic = i.value; }); return i; })()));
     const rs = el('select'); rs.id = 'dsRel'; rs.addEventListener('change', () => { f.rel = rs.value; }); dsOpt(rs, '', '— بدون ارتباط —'); fc.append(dsField('مرتبط با (اختیاری)', rs));
-    const di = el('input'); di.type = 'text'; di.inputMode = 'numeric'; di.setAttribute('dir', 'ltr'); di.style.textAlign = 'center'; di.placeholder = 'موعد پیگیری (اختیاری) — ' + fa('1405/07/30'); di.value = f.due ? fa(f.due) : '';
+    const di = el('input'); di.type = 'text'; di.inputMode = 'numeric'; di.setAttribute('dir', 'ltr'); di.style.textAlign = 'center'; di.placeholder = 'موعد پیگیری (اختیاری) — ' + fa('1405/07/30'); di.dataset.jd = 'o'; di.setAttribute('aria-label', 'موعد پیگیری'); di.value = f.due ? fa(f.due) : '';
     di.addEventListener('input', () => { f.due = di.value; });
     const qb = el('div', 'mg-bar'); qb.style.marginTop = '6px'; [['امروز', 0], ['فردا', 1], ['۳ روز دیگر', 3], ['یک هفته دیگر', 7]].forEach(q => { const b = el('button', 'btn', q[0]); b.type = 'button'; b.style.cssText = 'height:38px;padding:0 10px;font-size:13px;flex:1 1 70px'; b.addEventListener('click', () => { f.due = dsPlus(q[1]); di.value = fa(f.due); }); qb.append(b); });
     const df = dsField('موعد پیگیری', di); df.append(qb); fc.append(df);
@@ -7577,7 +7849,7 @@ function dsViewList(box, preset) {
   const mdv = el('div'); mdv.style.marginTop = fam ? '10px' : '0'; c.append(mdv);
   if (!dsPick(mdv, L, { allCls:true, allStu:true, onChange:() => load() })) { box.append(c); return; }
   let kindSel = null; const q = el('input'); q.type = 'search'; q.placeholder = 'جست‌وجو در متن…'; q.maxLength = 60; q.value = L.q || ''; q.addEventListener('input', () => { L.q = q.value; });
-  const fr = el('input'), to = el('input'); [fr, to].forEach((i, k) => { i.type = 'text'; i.inputMode = 'numeric'; i.setAttribute('dir', 'ltr'); i.style.textAlign = 'center'; i.placeholder = (k ? 'تا ' : 'از ') + fa('1405/07/01'); i.value = L[k ? 'to' : 'from'] ? fa(L[k ? 'to' : 'from']) : ''; i.addEventListener('input', () => { L[k ? 'to' : 'from'] = i.value; }); });
+  const fr = el('input'), to = el('input'); [fr, to].forEach((i, k) => { i.type = 'text'; i.inputMode = 'numeric'; i.setAttribute('dir', 'ltr'); i.style.textAlign = 'center'; i.placeholder = (k ? 'تا ' : 'از ') + fa('1405/07/01'); i.dataset.jd = 'o'; i.dataset.jdl = k ? 'تا' : 'از'; i.value = L[k ? 'to' : 'from'] ? fa(L[k ? 'to' : 'from']) : ''; i.addEventListener('input', () => { L[k ? 'to' : 'from'] = i.value; }); });
   const bar = el('div', 'mg-bar'); if (!fam && L.e === 'rec') { kindSel = dsSelect(M.kinds, L.kind, 'همه‌ی انواع', v => { L.kind = v; load(); }); bar.append(kindSel); } bar.append(q); c.append(bar);
   if (!fam) { const b2 = el('div', 'mg-bar'); b2.append(fr, to); c.append(b2); }
   const opts = el('div', 'ds-opts');
@@ -7688,7 +7960,7 @@ function dsViewRep(box) {
   const sb = el('div', 'chips'); sb.style.cssText = 'grid-template-columns:repeat(3,1fr);margin:8px 0 10px';
   [['school', 'کل مدرسه'], ['class', 'یک کلاس'], ['student', 'یک دانش‌آموز']].forEach(q => { const b = el('button', 'chip' + (R.scope === q[0] ? ' on' : ''), q[1]); b.type = 'button'; b.addEventListener('click', () => { R.scope = q[0]; R.data = null; disRender(); }); sb.append(b); }); c.append(sb);
   if (R.scope !== 'school') { const pk = el('div'); c.append(pk); if (!dsPick(pk, R, { noStu:R.scope === 'class' })) { box.append(c); return; } }
-  const fr = el('input'), to = el('input'); [fr, to].forEach((i, k) => { i.type = 'text'; i.inputMode = 'numeric'; i.setAttribute('dir', 'ltr'); i.style.textAlign = 'center'; i.placeholder = (k ? 'تا تاریخ ' : 'از تاریخ ') + fa('1405/07/01') + ' (اختیاری)'; i.value = R[k ? 'to' : 'from'] ? fa(R[k ? 'to' : 'from']) : ''; i.addEventListener('input', () => { R[k ? 'to' : 'from'] = i.value; }); });
+  const fr = el('input'), to = el('input'); [fr, to].forEach((i, k) => { i.type = 'text'; i.inputMode = 'numeric'; i.setAttribute('dir', 'ltr'); i.style.textAlign = 'center'; i.placeholder = (k ? 'تا تاریخ ' : 'از تاریخ ') + fa('1405/07/01') + ' (اختیاری)'; i.dataset.jd = 'o'; i.dataset.jdl = k ? 'تا تاریخ' : 'از تاریخ'; i.value = R[k ? 'to' : 'from'] ? fa(R[k ? 'to' : 'from']) : ''; i.addEventListener('input', () => { R[k ? 'to' : 'from'] = i.value; }); });
   const bar = el('div', 'mg-bar'); bar.append(fr, to); c.append(bar);
   if (R.scope !== 'student') { const l = el('label', 'sms-opt'), i = el('input'); i.type = 'checkbox'; i.checked = !!R.det; i.addEventListener('change', () => { R.det = i.checked; if (R.data) draw(); }); l.append(i, document.createTextNode(' شامل فهرست جزئیات همه‌ی موارد')); c.append(l); }
   const b1 = el('button', 'send', 'نمایش گزارش'), b2 = el('button', 'btn', '🖨 چاپ'); b1.type = b2.type = 'button'; b2.style.cssText = 'width:100%;margin-top:8px';
@@ -7764,18 +8036,19 @@ const TIC = {
   's:leave':'<path d="M14 3H6v18h8"/><path d="M14 3l5 2v14l-5 2z"/><path d="M11 12h.01"/>',
   's:vis':'<circle cx="8" cy="7" r="3"/><circle cx="16" cy="7" r="3"/><path d="M2 20c0-3 2.7-5.5 6-5.5s6 2.5 6 5.5M10 20c0-3 2.7-5.5 6-5.5s6 2.5 6 5.5"/>',
   's:don':'<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/>',
-  'm:don':'<path d="M12 19s-6.5-4-6.5-9.2A3.6 3.6 0 0 1 12 7.5a3.6 3.6 0 0 1 6.5 2.3C18.5 15 12 19 12 19z"/><path d="M12 10.5v4M10 12.5h4"/>'
+  'm:don':'<path d="M12 19s-6.5-4-6.5-9.2A3.6 3.6 0 0 1 12 7.5a3.6 3.6 0 0 1 6.5 2.3C18.5 15 12 19 12 19z"/><path d="M12 10.5v4M10 12.5h4"/>',
+  'm:kar':'<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M3 14h18M9 4v16M15 4v16"/>'
 };
 TIC['s:sch'] = TIC.sch; TIC['s:cal'] = TIC['m:cal']; TIC['s:att'] = TIC.att;
 const TTONE = { att:'p', gr:'g', sch:'b', inb:'n', cns:'b', dis:'n', stf:'g', 'm:today':'n', 'm:cal':'b', 'm:stu':'p', 'm:setup':'g', 'm:set':'n', 'm:pta':'b', 'm:rep':'g', 'm:dis':'n', 'm:tch':'b', 'm:sys':'n', 'm:pw':'g', 'm:blk':'n',
-  's:prof':'g', 's:dash':'n', 's:sch':'b', 's:plan':'p', 's:qz':'g', 's:kar':'n', 's:att':'p', 's:avg':'b', 's:mock':'g', 's:cal':'b', 's:leave':'n', 's:vis':'p', 's:don':'p', 'm:don':'p' };
+  's:prof':'g', 's:dash':'n', 's:sch':'b', 's:plan':'p', 's:qz':'g', 's:kar':'n', 's:att':'p', 's:avg':'b', 's:mock':'g', 's:cal':'b', 's:leave':'n', 's:vis':'p', 's:don':'p', 'm:don':'p', 'm:kar':'b' };
 const TTITLE = { att:'حضور و غیاب', gr:'ثبت نمرات', sch:'برنامه هفتگی', inb:'کارتابل', cns:'مشاوره', dis:'انضباطی', stf:'ورود و خروج',
   's:prof':'تکمیل اطلاعات', 's:dash':'وضعیت من', 's:sch':'برنامه هفتگی', 's:plan':'برنامه مطالعه', 's:qz':'آزمونک‌ها', 's:kar':'کارنامه', 's:att':'حضور و غیاب', 's:avg':'میانگین کلاس',
   's:mock':'آزمون‌های آزمایشی', 's:cal':'تقویم آزمون و تکلیف', 's:leave':'درخواست مرخصی', 's:vis':'مراجعه‌ی اولیا', 's:don':'کمک به مدرسه' };
 const TDESC = { att:'غایبین و تأخیر هر زنگ', gr:'نمره‌ی آزمون‌ها و فعالیت‌ها', sch:'برنامه‌ی هفتگی و زنگ جاری', inb:'کلاس‌ها، تحلیل آزمون و تقویم', cns:'درخواست و پیگیری مشاوره', dis:'موارد انضباطی و تشویقی',
   stf:'ورود، خروج و مرخصی', 'm:today':'غایبین، هشدارها و میز کار', 'm:cal':'آزمون‌ها و تکالیف همه‌ی کلاس‌ها', 'm:stu':'پرونده، مشاوره، آزمون آزمایشی', 'm:setup':'کلاس‌ها، دانش‌آموزان، دبیران، زنگ‌ها',
-  'm:set':'لوگو و سربرگ مدرسه', 'm:pw':'رمز مدیر، کد دبیران، رمز دانش‌آموزان', 'm:blk':'بستن موقت ورود به علت خاص', 'm:don':'کمک‌های اولیا (تومان)', 'm:pta':'جلسات و حضور اولیا', 'm:rep':'گزارش‌ها، نمودارها و آمار', 'm:dis':'پرونده‌ی انضباطی و پرورشی', 'm:tch':'مرخصی، عدم حضور و برنامه‌ی دبیران', 'm:sys':'بانک اطلاعات و سامانه',
-  's:prof':'پیش از همه، این بخش را کامل کن', 's:dash':'معدل، رتبه و نشان‌ها', 's:sch':'کلاس‌های هر روز', 's:plan':'برنامه‌ی روزانه‌ی درس خواندن', 's:qz':'آزمون‌های آنلاین کلاس', 's:kar':'میانگین هر درس و کارنامه',
+  'm:set':'لوگو و سربرگ مدرسه', 'm:pw':'رمز مدیر، کد دبیران، رمز دانش‌آموزان', 'm:blk':'بستن موقت ورود به علت خاص', 'm:don':'کمک‌های اولیا (تومان)', 'm:kar':'کارنامه‌ی فردی و کلی هر کلاس', 'm:pta':'جلسات و حضور اولیا', 'm:rep':'گزارش‌ها، نمودارها و آمار', 'm:dis':'پرونده‌ی انضباطی و پرورشی', 'm:tch':'مرخصی، عدم حضور و برنامه‌ی دبیران', 'm:sys':'بانک اطلاعات و سامانه',
+  's:prof':'پیش از همه، این بخش را کامل کن', 's:dash':'معدل، رتبه و نشان‌ها', 's:sch':'کلاس‌های هر روز', 's:plan':'برنامه‌ی روزانه‌ی درس خواندن', 's:qz':'آزمون‌های آنلاین کلاس', 's:kar':'کارنامه‌ی نوبت اول و نمره‌ی آزمون‌ها',
   's:att':'غیبت‌ها و تأخیرهای من', 's:avg':'مقایسه با میانگین کلاس', 's:mock':'تراز و رتبه‌ی آزمون‌ها', 's:cal':'آزمون‌ها و تکالیف پیش رو', 's:leave':'درخواست مرخصی از مدرسه', 's:vis':'نوبت مراجعه‌ی اولیا', 's:don':'شماره‌ی حساب مدرسه و ثبت واریز' };
 document.body.classList.add('mods');   // نشانه‌ی حالت ماژول‌ها روی body
 const tSvg = k => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (TIC[k] || TIC.inb) + '</svg>';
@@ -7784,7 +8057,7 @@ function modKeys() {
   if (ROLE === 'student') return ['s:dash', 's:sch', 's:plan', 's:qz', 's:kar', 's:att', 's:avg', 's:mock', 's:cal', 's:leave', 's:vis', 's:don'];
   if (ROLE === 'counselor') return ['cns', 'sch'];
   if (ROLE === 'manager') {
-    const def = ['m:today', 'att', 'gr', 'm:stu', 'm:cal', 'sch', 'inb', 'm:tch', 'm:dis', 'm:pta', 'm:rep', 'm:setup', 'm:sys', 'm:pw', 'm:blk', 'm:don', 'm:set'];
+    const def = ['m:today', 'att', 'gr', 'm:stu', 'm:kar', 'm:cal', 'sch', 'inb', 'm:tch', 'm:dis', 'm:pta', 'm:rep', 'm:setup', 'm:sys', 'm:pw', 'm:blk', 'm:don', 'm:set'];
     const all = def.concat($$('#mgBody .mg-sec').map(x => 'm:' + x.dataset.sec).filter(k => !def.includes(k))), o = TILES_ORD.filter(k => all.includes(k));
     return o.concat(all.filter(k => !o.includes(k)));
   }
@@ -7922,6 +8195,7 @@ function mgShow(k, scroll) {
   if (k === 'pw' && MG.pin && !$('#mgBody').hidden) pwOpen();
   if (k === 'blk' && MG.pin && !$('#mgBody').hidden) blkOpen();
   if (k === 'don' && MG.pin && !$('#mgBody').hidden) dnOpen();
+  if (k === 'kar' && MG.pin && !$('#mgBody').hidden) kaOpen();
   if (k === 'setup' && MG.pin && !$('#mgBody').hidden) suOpen();
   modAfter('m:' + k); if (MODS_OK) secIndex(k);
   if (scroll) { const r = $('#mgNav').getBoundingClientRect(); if (r.top < 0) $('#mgNav').scrollIntoView({ behavior:'smooth', block:'start' }); }
