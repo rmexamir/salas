@@ -18,7 +18,7 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxzPr6P54uH4gV_rQrss
 // کلید دسترسی اختیاری (باید با ACCESS_KEY در Code.gs یکی باشد)
 const ACCESS_KEY = "";
 // نسخه‌ی برنامه — با هر به‌روزرسانی این عدد بالا می‌رود و در صفحه‌ی ورود و پایین صفحه نمایش داده می‌شود.
-const APP_VERSION = "1.31";
+const APP_VERSION = "1.33";
 // (اختیاری) لینک Google Sheet برای دکمه «باز کردن Google Sheet» در تب مدیر
 const SHEET_URL = "https://docs.google.com/spreadsheets/d/10i-IGQKyj078M6kJ7YhdAniuJInl6JemwVxAqs7FnrY/edit";
 const DEFAULT_MAX_SCORE = 20;
@@ -1838,6 +1838,39 @@ body:not(.in-mod) .lbl-ic{width:auto;height:auto;background:none;border:0;box-sh
 .qs-a .btn{min-height:0;padding:6px 10px;font-size:12.5px}
 a.btn.qs-tel{display:inline-flex;align-items:center;text-decoration:none;color:var(--present)}
 body.qs-on{overflow:hidden}
+/* ===== نسخه‌ی ۱٫۳۳: مدیران سامانه + رتبه ===== */
+.ad-row{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;padding:10px 12px;margin-top:6px;border:1px solid var(--line);border-radius:12px;background:var(--card);border-inline-start:4px solid var(--primary)}
+.ad-row.off{opacity:.7;border-inline-start-color:var(--line)}
+.ad-t{display:flex;flex-direction:column;gap:2px;min-width:0}
+.ad-t small{color:var(--muted);font-size:12px}
+.ad-act{display:flex;flex-wrap:wrap;gap:6px}
+.ad-act .btn{min-height:0;padding:5px 10px;font-size:12.5px}
+.ad-act .btn.no{color:var(--absent)}
+.ad-h{margin:14px 0 6px}
+.km-t td.rk{font-weight:900}
+.km-t td.rk.top{color:var(--primary)}
+/* ===== نسخه‌ی ۱٫۳۲: انتقال به سال تحصیلی جدید ===== */
+.yr-y{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 8px;font-size:14px}
+.yr-warn{padding:8px 10px;border-radius:12px;background:var(--late-bg);color:var(--late);font-weight:700;font-size:12.5px;margin-bottom:8px;line-height:1.8}
+.yr-last{font-size:12.5px;margin-bottom:8px;line-height:2} .yr-last a{color:var(--primary);font-weight:700}
+.yr-h{margin:14px 0 4px}
+.yr-row{display:grid;gap:6px;padding:8px 10px;border:1px solid var(--line);border-radius:12px;margin-top:6px;background:var(--card)}
+.yr-row .hd{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:6px}
+.yr-row .hd small{color:var(--muted);font-size:12px}
+.yr-row .to{display:flex;align-items:center;gap:8px}
+.yr-row .to input{flex:1;min-width:0}
+.yr-row .ar{color:var(--muted);font-weight:800}
+.yr-row.g .hd b{text-decoration:line-through;color:var(--muted)}
+.yr-row.need .to input{border-color:var(--absent)}
+.yr-g{display:inline-flex;align-items:center;gap:4px;font-size:12px;white-space:nowrap}
+.yr-opt{margin-top:6px}
+.yr-sh{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+.yr-sh span{padding:3px 9px;border-radius:99px;background:var(--input);border:1px solid var(--line);font-size:12px}
+#yrCf{width:100%;text-align:center;font-weight:800;margin-top:4px}
+.yr-hint{color:var(--absent);min-height:1.6em;margin:4px 0}
+.yr-go{width:100%}
+.yr-ok{display:grid;gap:8px;margin-top:10px;padding:12px;border-radius:14px;background:var(--present-bg);border:1px solid color-mix(in srgb,var(--present) 35%,transparent)}
+.yr-ok b{color:var(--present);font-size:15px} .yr-ok a.btn{text-decoration:none;text-align:center}
 </style>
 </head>
 <body>
@@ -2367,12 +2400,19 @@ body.qs-on{overflow:hidden}
           <div class="field"><label for="kfP">استان</label><input id="kfP" type="text" maxlength="40" autocomplete="off"></div>
           <div class="field"><label for="kfR">منطقه / ناحیه</label><input id="kfR" type="text" maxlength="40" autocomplete="off"></div>
           <div class="field"><label for="kfC">کد آموزشگاه</label><input id="kfC" type="text" inputmode="numeric" dir="ltr" maxlength="12" autocomplete="off"></div>
-          <div class="field"><label for="kfM">نام مدیر آموزشگاه</label><input id="kfM" type="text" maxlength="60" autocomplete="off"></div>
-          <div class="field"><label for="kfG">مسئول ثبت نمره / معاون اجرایی</label><input id="kfG" type="text" maxlength="60" autocomplete="off"></div>
+          <div class="field"><label for="kfM">نام مدیر آموزشگاه</label><input id="kfM" type="text" maxlength="60" autocomplete="off" list="kfAdm"></div>
+          <div class="field"><label for="kfG">مسئول ثبت نمره / معاون اجرایی</label><input id="kfG" type="text" maxlength="60" autocomplete="off" list="kfAdm"></div><datalist id="kfAdm"></datalist>
           <div class="field"><label for="kfSg">کد دروس — پایه و رشته</label><select id="kfSg"></select></div>
         </div>
         <div id="kfList" class="kf-list"></div>
         <button id="kfGo" class="send" type="button">💾 ذخیره‌ی مشخصات کارنامه</button>
+      </div>
+      <div class="card" id="adCard">
+        <div class="lbl" style="margin-bottom:8px">۱۰. مدیران سامانه</div>
+        <div class="now-sub" style="margin-bottom:10px">همکارانی که با رمز خودشان وارد پنل مدیر می‌شوند (مثلاً معاون اجرایی، معاون آموزشی). همه‌ی بخش‌های مدیر را دارند، جز تغییر رمز مدیر اصلی و تعریف مدیران؛ کارهایشان با نام و سمت در «سابقه‌ی تغییرات» ثبت می‌شود.</div>
+        <div id="adList"></div>
+        <div id="adForm"></div>
+        <datalist id="adRoles"></datalist>
       </div>
       </div>
       <div class="mg-sec" data-sec="set" data-t="تنظیمات عمومی" hidden>
@@ -2573,6 +2613,12 @@ body.qs-on{overflow:hidden}
         <div id="auKinds" class="au-kinds" role="group" aria-label="فیلتر بر اساس کاربر"></div>
         <div class="inb-pick"><select id="auWho" aria-label="یک کاربر"></select><button id="auLoad" class="btn" type="button" title="به‌روزرسانی" aria-label="به‌روزرسانی">🔄</button></div>
         <div id="auList" style="margin-top:8px"></div>
+      </div>
+      <div class="card" id="yrCard">
+        <div class="lbl" style="margin-bottom:8px">📦 انتقال به سال تحصیلی جدید</div>
+        <div class="now-sub" style="margin-bottom:10px">سالی یک بار، بعد از پایان امتحانات (بهترین زمان: تیر تا شهریور): همه‌ی اطلاعات امسال در یک فایل جدا در Google Drive بایگانی می‌شود، کلاس‌ها یک پایه بالا می‌روند و نمره‌ها، حضور و غیاب و … برای سال تازه خالی می‌شوند. پیش از انجام، پیش‌نمایش را می‌بینید.</div>
+        <button id="yrPrev" class="btn" type="button" style="width:100%">🔍 بررسی و پیش‌نمایش</button>
+        <div id="yrBox"></div>
       </div>
       <div class="card" id="mgTools">
         <div class="lbl" style="margin-bottom:10px">ابزارهای سامانه</div>
@@ -3750,7 +3796,7 @@ function applyRole() {
   const tb = document.querySelector('.tabs'); tb.hidden = st; tb.style.gridTemplateColumns = 'repeat(' + vis.length + ',1fr)';
   $$('.tab').forEach(b => { b.hidden = !vis.includes(b.dataset.tab); });
   $('#schWho').closest('.field').hidden = st; $('#nowLbl').textContent = st ? 'زنگ فعلی کلاس شما' : 'زنگ فعلی — همه‌ی کلاس‌ها';
-  $('#whoName').textContent = st && SD ? SD.name + ' | ' + SD.cls : mgr ? 'مدیر مدرسه' : cn ? 'مشاور: ' + COUNSELOR_NAME : ROLE === 'teacher' ? 'دبیر: ' + S.teacher : '';
+  $('#whoName').textContent = st && SD ? SD.name + ' | ' + SD.cls : mgr ? (MG.who ? MG.who.n + ' — ' + MG.who.r : 'مدیر مدرسه') : cn ? 'مشاور: ' + COUNSELOR_NAME : ROLE === 'teacher' ? 'دبیر: ' + S.teacher : '';
   $('#cnsC').hidden = !cn; $('#cnsT').hidden = ROLE !== 'teacher';
   if (st && SD) {
     ['home', 'att', 'gr', 'mg', 'inb', 'cns', 'stf', 'dis'].forEach(k => { $('#p-' + k).hidden = true; }); $('#common').hidden = true;
@@ -3796,7 +3842,7 @@ $('#gGo').addEventListener('click', async () => {
     const pin = $('#gPin').value.trim(); if (!pin) return fail('رمز مدیر را بنویسید.');
     const r = await send({ action:'mlogin', pin:pin, key:ACCESS_KEY });
     if (r.net) return fail('اینترنت در دسترس نیست.'); if (r.status !== 'ok') return fail(r.message || 'رمز مدیر نادرست است.');
-    S.pin = pin; MG.pin = pin; ISMGR = true; ROLE = 'manager'; try { sessionStorage.setItem('sia_mgr', pin); } catch (e) {}
+    S.pin = pin; MG.pin = pin; MG.who = r.who || null; MG.main = r.main !== false; ISMGR = true; ROLE = 'manager'; try { sessionStorage.setItem('sia_mgr', pin); } catch (e) {}
   } else {
     const t = $('#gTeacher').value, pin = $('#gPin').value.trim(); if (!t) return fail('نام خود را انتخاب کنید.');
     const r = await send({ action:'login', teacher:t, pin:pin, key:ACCESS_KEY });
@@ -3969,7 +4015,7 @@ setTimeout(() => {          // بازگرداندن نشست قبلی بعد ا�
   let cp = ''; try { cp = sessionStorage.getItem('sia_cns') || ''; } catch (e) {}
   let mp = ''; try { mp = sessionStorage.getItem('sia_mgr') || ''; } catch (e) {}
   if (cp) send({ action:'cnsLogin', cpin:cp, key:ACCESS_KEY }).then(r => { if (r.status === 'ok') { CPIN = cp; ROLE = 'counselor'; applyRole(); } });
-  else if (mp) send({ action:'mlogin', pin:mp, key:ACCESS_KEY }).then(r => { if (r.status === 'ok') { S.pin = mp; MG.pin = mp; ISMGR = true; ROLE = 'manager'; applyRole(); } });
+  else if (mp) send({ action:'mlogin', pin:mp, key:ACCESS_KEY }).then(r => { if (r.status === 'ok') { S.pin = mp; MG.pin = mp; MG.who = r.who || null; MG.main = r.main !== false; ISMGR = true; ROLE = 'manager'; applyRole(); } });
   else if (ss && ss.nid) send({ action:'student', nid:ss.nid, secret:ss.sec || '', today:dateStr(), ym:dateStr().slice(0, 7), key:ACCESS_KEY }).then(r => { if (r.status === 'ok' && r.blocked) gateBlock(r); else if (r.status === 'ok' && !r.first) { SD = r; SD.nid = ss.nid; SD.sec = ss.sec || ''; ROLE = 'student'; applyRole(); } });
   else if (lsGet('sia_role', {}).role === 'teacher' && P.teacher) {      // رمز فقط در حافظه‌ی نشست می‌ماند؛ با بستن برنامه دوباره وارد شوید
     let tp = null; try { tp = sessionStorage.getItem('sia_tpin'); } catch (e) {}
@@ -4252,6 +4298,7 @@ async function pwOpen() {             // ماژول «عملیات رمز»
 function setOpen() {
   imgApply();
   const h = $('#setHost'); h.textContent = ''; const c = el('div', 'card'); c.append(el('div', 'lbl', '🔑 تغییر رمز مدیر'));
+  if (MG.who) { c.append(el('div', 'now-sub', 'شما با رمز «' + MG.who.n + '» (' + MG.who.r + ') وارد شده‌اید. رمز مدیر اصلی را فقط خود او عوض می‌کند و رمز شما را مدیر اصلی در «راه‌اندازی مدرسه ← مدیران سامانه» تعیین می‌کند.')); h.append(c); return; }
   const fd = lb => { const f = el('div', 'field'), i = el('input'); i.type = 'password'; i.autocomplete = 'new-password'; f.append(el('label', '', lb), i); c.append(f); return i; };
   const cur = fd('رمز فعلی'), nw = fd('رمز جدید (دست‌کم ۶ نویسه)'), rp = fd('تکرار رمز جدید');
   const ok = el('button', 'send', 'ذخیره‌ی رمز جدید'); ok.type = 'button'; c.append(ok);
@@ -5281,31 +5328,31 @@ function kMatEl(d) {
   const t = el('table', 'km-t'), hd = el('thead'), tr = el('tr');
   tr.append(el('th', 'i', 'ردیف'), el('th', 'nm', 'نام و نام خانوادگی'));
   d.courses.forEach(c => { const x = el('th', 'v'), s = el('span'); s.append(c.c, el('small', '', ' (' + fa(c.u) + ' واحد)')); x.append(s); x.title = c.c; tr.append(x); });
-  tr.append(el('th', 'g', 'درس دارای نمره'), el('th', 'g', 'معدل')); hd.append(tr); t.append(hd);
+  tr.append(el('th', 'g', 'درس دارای نمره'), el('th', 'g', 'معدل'), el('th', 'g', 'رتبه')); hd.append(tr); t.append(hd);
   const tb = el('tbody');
   d.rows.forEach((r, i) => {
     const x = el('tr'); x.append(el('td', 'i', fa(i + 1)), el('td', 'nm', r.n));
     r.v.forEach(v => { const c = el('td', 'n' + (kLo(v) ? ' lo' : ''), v == null ? '—' : f2(v)); if (v == null) c.classList.add('nil'); x.append(c); });
-    x.append(el('td', 'n', fa(r.nG) + ' از ' + fa(d.courses.length)), el('td', 'n b' + (kLo(r.avg) ? ' lo' : ''), f2(r.avg))); tb.append(x);
+    x.append(el('td', 'n', fa(r.nG) + ' از ' + fa(d.courses.length)), el('td', 'n b' + (kLo(r.avg) ? ' lo' : ''), f2(r.avg)), el('td', 'n rk' + (r.rk && r.rk <= 3 ? ' top' : ''), r.rk ? fa(r.rk) : '—')); tb.append(x);
   });
   t.append(tb);
   if (d.cavg) {
     const fo = el('tfoot'), x = el('tr'), al = d.rows.map(r => r.avg).filter(v => v != null);
     x.append(el('td', 'i', ''), el('td', 'nm', 'میانگین کلاس'));
     d.cavg.forEach(v => x.append(el('td', 'n' + (kLo(v) ? ' lo' : ''), v == null ? '—' : f2(v))));
-    x.append(el('td', 'n', ''), el('td', 'n b', al.length ? f2(Math.round(al.reduce((a, b) => a + b, 0) / al.length * 100) / 100) : '—')); fo.append(x); t.append(fo);
+    x.append(el('td', 'n', ''), el('td', 'n b', al.length ? f2(Math.round(al.reduce((a, b) => a + b, 0) / al.length * 100) / 100) : '—'), el('td', 'n', '')); fo.append(x); t.append(fo);
   }
   const sc = el('div', 'km-scroll'); sc.append(t);
-  w.append(sc, el('div', 'km-lg', 'هر خانه: میانگین نمره‌های آن درس از ۱ مهر تا امروز (بدون آزمون پایانی و غیبت‌ها). «—» یعنی نمره‌ای ثبت نشده. نمره‌ی کمتر از ۱۰ قرمز و زیرخط‌دار است. معدل بر اساس تعداد واحد دروس دارای نمره است.'));
+  w.append(sc, el('div', 'km-lg', 'هر خانه: میانگین نمره‌های آن درس از ۱ مهر تا امروز (بدون آزمون پایانی و غیبت‌ها). «—» یعنی نمره‌ای ثبت نشده. نمره‌ی کمتر از ۱۰ قرمز و زیرخط‌دار است. معدل بر اساس تعداد واحد دروس دارای نمره است. ردیف‌ها به ترتیب رتبه‌اند؛ هم‌معدل‌ها رتبه‌ی یکسان دارند.'));
   return w;
 }
 function kCsv(d) {
   const al = d.rows.map(r => r.avg).filter(v => v != null);
   mgCsv('karnameh-' + (en(d.cls).replace(/\D+/g, '') || 'class') + '-' + d.today.replace(/\//g, '-') + '.csv',   // نام لاتین: Chrome نام فارسی فایل را نادیده می‌گیرد
    
-    ['ردیف', 'نام و نام خانوادگی', 'نام پدر', 'کد ملی'].concat(d.courses.map(c => c.c + ' (' + c.u + ' واحد)'), ['تعداد درس دارای نمره', 'جمع واحد دارای نمره', 'معدل']),
-    d.rows.map((r, i) => [i + 1, r.n, r.fn, r.id ? fa(r.id) : ''].concat(r.v.map(v => v == null ? '' : v), [r.nG, r.uG, r.avg == null ? '' : r.avg]))
-      .concat([['', 'میانگین کلاس', '', ''].concat((d.cavg || []).map(v => v == null ? '' : v), ['', '', al.length ? Math.round(al.reduce((a, b) => a + b, 0) / al.length * 100) / 100 : ''])]));
+    ['ردیف', 'نام و نام خانوادگی', 'نام پدر', 'کد ملی'].concat(d.courses.map(c => c.c + ' (' + c.u + ' واحد)'), ['تعداد درس دارای نمره', 'جمع واحد دارای نمره', 'معدل', 'رتبه']),
+    d.rows.map((r, i) => [i + 1, r.n, r.fn, r.id ? fa(r.id) : ''].concat(r.v.map(v => v == null ? '' : v), [r.nG, r.uG, r.avg == null ? '' : r.avg, r.rk == null ? '' : r.rk]))
+      .concat([['', 'میانگین کلاس', '', ''].concat((d.cavg || []).map(v => v == null ? '' : v), ['', '', al.length ? Math.round(al.reduce((a, b) => a + b, 0) / al.length * 100) / 100 : '', ''])]));
 }
 let KA = null;
 function kaBtns() { ['kaPrint', 'kaCsv', 'kaAll'].forEach(id => { $('#' + id).disabled = !KA || !KA.rows.length; }); $('#kaOnePr').disabled = !KA || $('#kaStu').value === ''; }
@@ -5316,7 +5363,7 @@ function kaOpen() {
     kaOpen.on = 1; c.addEventListener('change', kaLoad); $('#kaStu').addEventListener('change', kaOne);
     $('#kaPrint').addEventListener('click', () => KA && kPrint([kMatEl(KA)], true));
     $('#kaCsv').addEventListener('click', () => KA && kCsv(KA));
-    $('#kaAll').addEventListener('click', () => KA && printK(KA));
+    $('#kaAll').addEventListener('click', () => KA && printK(KA, KA.rows.slice().sort((a, b) => a.n.localeCompare(b.n, 'fa'))));   // کارنامه‌های فردی به ترتیب الفبا (برای توزیع)
     $('#kaOnePr').addEventListener('click', () => { const i = $('#kaStu').value; if (KA && i !== '') printK(KA, [KA.rows[+i]]); });
   }
   kaLoad();
@@ -5333,7 +5380,7 @@ async function kaLoad() {
 }
 function kaStus() {
   const s = $('#kaStu'); s.textContent = ''; const o0 = el('option', '', KA ? '— انتخاب دانش‌آموز —' : '— ابتدا کلاس —'); o0.value = ''; s.append(o0);
-  (KA ? KA.rows : []).forEach((r, i) => { const o = el('option', '', r.n); o.value = i; s.append(o); });
+  (KA ? KA.rows.map((r, i) => [r, i]).sort((a, b) => a[0].n.localeCompare(b[0].n, 'fa')) : []).forEach(([r, i]) => { const o = el('option', '', r.n); o.value = i; s.append(o); });   // فهرست به ترتیب الفبا
   kaOne();
 }
 function kaOne() {
@@ -5435,6 +5482,108 @@ document.addEventListener('keydown', e => {
   const tg = e.target, typing = tg && (/^(INPUT|TEXTAREA|SELECT)$/.test(tg.tagName) || tg.isContentEditable);
   if ((e.key === 'k' || e.key === 'K') && (e.ctrlKey || e.metaKey) || e.key === '/' && !typing && !e.ctrlKey && !e.metaKey && !e.altKey) { e.preventDefault(); qsOpen(); }
 });
+/* ======================= انتقال به سال تحصیلی جدید (نسخه‌ی ۱٫۳۲) =======================
+   همه‌ی کار در سرور (yrRun_): بایگانی کامل در Google Drive، ارتقای کلاس‌ها، خالی شدن برگه‌های سالانه؛ اینجا فقط پیش‌نمایش و تأیید. */
+let YR = null;
+async function yrPrev() {
+  const box = $('#yrBox'); busy(box, 3, 'در حال بررسی کلاس‌ها و برگه‌ها…');
+  const r = await send({ action:'yrPreview', pin:MG.pin, key:ACCESS_KEY }); box.textContent = '';
+  if (r.status !== 'ok') { box.append(el('div', 'empty', r.net ? 'اینترنت در دسترس نیست.' : r.message || 'بررسی نشد.')); return; }
+  YR = r; yrDraw();
+}
+function yrDraw() {
+  const r = YR, box = $('#yrBox'); box.textContent = ''; YR.rows = [];
+  const yl = el('div', 'yr-y'); yl.append(el('b', '', 'سال تحصیلی ' + fa(r.y.old) + ' بایگانی می‌شود'), el('span', '', 'و سال ' + fa(r.y.next) + ' شروع می‌شود.')); box.append(yl);
+  if (r.y.warn) box.append(el('div', 'yr-warn', r.y.warn === 'mid' ? '⚠️ سال تحصیلی هنوز در جریان است: همه‌ی نمره‌ها و حضور و غیاب‌های تا امروز هم بایگانی و از برنامه پاک می‌شوند. بهترین زمان: تیر تا شهریور.'
+    : '⚠️ مهر و آبان: اگر نمره یا حضور و غیاب سال تازه را ثبت کرده‌اید، آن‌ها هم بایگانی و پاک می‌شوند. بهترین زمان: تیر تا شهریور.'));
+  if (r.last && r.last.length) { const h = el('div', 'yr-last'); h.append(el('b', '', '📂 بایگانی‌های قبلی: ')); r.last.slice().reverse().forEach(x => { const a = el('a', '', 'سال ' + fa(x.y) + ' (' + fa(x.d) + ')'); a.href = x.url; a.target = '_blank'; a.rel = 'noopener'; h.append(a, ' '); }); box.append(h); }
+  box.append(el('div', 'lbl yr-h', '۱. کلاس هر گروه در سال بعد'), el('div', 'now-sub', 'پیشنهاد برنامه را ببینید و اگر لازم است اصلاح کنید. «پایه‌ی آخر» یعنی دانش‌آموزان این کلاس دانش‌آموخته‌اند و از فهرست فعال برداشته می‌شوند (در بایگانی می‌مانند). مردودی‌ها را بعداً از «بانک اطلاعات» به کلاس درست ببرید.'));
+  r.classes.forEach(c => {
+    const row = el('div', 'yr-row'), inp = el('input'), cb = el('input'), lab = el('label', 'yr-g'), to = el('div', 'to'), hd = el('div', 'hd');
+    inp.type = 'text'; inp.maxLength = 60; inp.autocomplete = 'off'; inp.value = c.to || ''; inp.setAttribute('aria-label', 'کلاس سال بعدِ ' + c.c); inp.placeholder = 'نام کلاس در سال ' + fa(r.y.next);
+    cb.type = 'checkbox'; cb.checked = c.to === ''; cb.setAttribute('aria-label', c.c + ': پایه‌ی آخر (دانش‌آموخته)');
+    const sync = () => { inp.disabled = cb.checked; if (cb.checked) inp.value = ''; row.classList.toggle('g', cb.checked); row.classList.toggle('need', !cb.checked && !inp.value.trim()); yrCheck(); };
+    cb.addEventListener('change', sync); inp.addEventListener('input', sync);
+    lab.append(cb, el('span', '', 'پایه‌ی آخر'));
+    hd.append(el('b', 'c', c.c), el('small', '', fa(c.n) + ' دانش‌آموز' + (c.off ? ' + ' + fa(c.off) + ' غیرفعال' : '')));
+    to.append(el('span', 'ar', '←'), inp, lab); row.append(hd, to); box.append(row); YR.rows.push({ c:c.c, inp:inp, cb:cb, sync:sync });
+  });
+  const opt = (id, tx, on) => { const l = el('label', 'sms-opt yr-opt'), i = el('input'); i.type = 'checkbox'; i.id = id; i.checked = on; l.append(i, document.createTextNode(' ' + tx)); return l; };
+  box.append(el('div', 'lbl yr-h', '۲. گزینه‌ها'), opt('yrKeep', 'برنامه‌ی هفتگی با نام تازه‌ی کلاس‌ها نگه داشته شود (بعداً دبیران را ویرایش کنید)', true),
+    opt('yrOff', 'دانش‌آموزان «انتقال رفته»، «ترک تحصیل» و «وقفه‌ی تحصیلی» از فهرست برداشته شوند', true));
+  const sh = el('div', 'yr-sh'); (r.sheets || []).forEach(x => sh.append(el('span', '', x.t + ' (' + fa(x.n) + ')')));
+  box.append(el('div', 'lbl yr-h', '۳. بایگانی و پاک شدن'), el('div', 'now-sub', 'اول یک نسخه‌ی کامل از همه‌ی اطلاعات در پوشه‌ی «بایگانی سال‌های تحصیلی سامانه مدرسه» در Google Drive ساخته و بررسی می‌شود؛ بعد این برگه‌ها خالی می‌شوند:'),
+    r.sheets && r.sheets.length ? sh : el('div', 'now-sub', '— (برگه‌ی سالانه‌ی پُری نیست)'),
+    el('div', 'now-sub', 'دست نمی‌خورند: دبیران، رمزها، کدهای ورود، تنظیمات مدرسه، تصاویر و پرونده‌ی دبیران. اگر وسط کار خطایی پیش بیاید، همه‌چیز خودکار به حالت قبل برمی‌گردد.'));
+  const cf = el('input'), go = el('button', 'send yr-go', '📦 بایگانی و انتقال به سال ' + fa(r.y.next)), hint = el('div', 'now-sub yr-hint');
+  cf.id = 'yrCf'; cf.type = 'text'; cf.inputMode = 'numeric'; cf.autocomplete = 'off'; cf.dir = 'ltr'; cf.placeholder = fa(r.y.next); cf.setAttribute('aria-label', 'برای تأیید، سال تحصیلی تازه را بنویسید');
+  go.id = 'yrGo'; go.type = 'button'; hint.id = 'yrHint';
+  box.append(el('div', 'lbl yr-h', '۴. تأیید: سال تحصیلی تازه را بنویسید (' + fa(r.y.next) + ')'), cf, hint, go);
+  cf.addEventListener('input', yrCheck); go.addEventListener('click', yrRun);
+  YR.rows.forEach(x => x.sync());
+}
+function yrCheck() {
+  const g = $('#yrGo'), h = $('#yrHint'); if (!g || !YR) return;
+  const names = YR.rows.filter(x => !x.cb.checked).map(x => dn(x.inp.value).replace(/\s+/g, ' ').trim());
+  const okRows = names.every(Boolean) && new Set(names).size === names.length, okCf = en($('#yrCf').value).replace(/\s/g, '') === YR.y.next;
+  g.disabled = !(okRows && okCf);
+  h.textContent = !okRows ? (names.some(x => !x) ? 'برای همه‌ی کلاس‌ها نام سال بعد را بنویسید یا «پایه‌ی آخر» را بزنید.' : 'دو کلاس نمی‌توانند به یک کلاس بروند.') : !okCf ? 'برای فعال شدن دکمه، سال تحصیلی تازه را بنویسید.' : '';
+}
+async function yrRun() {
+  const g = $('#yrGo'), map = {}; YR.rows.forEach(x => { map[x.c] = x.cb.checked ? '' : x.inp.value.trim(); });
+  g.disabled = true; g.textContent = '⏳ در حال بایگانی و انتقال… (چند ثانیه تا یک دقیقه؛ صفحه را نبندید)';
+  const r = await send({ action:'yrRun', pin:MG.pin, key:ACCESS_KEY, map:map, confirm:en($('#yrCf').value), keepSch:$('#yrKeep').checked, dropOff:$('#yrOff').checked });
+  if (r.status !== 'ok') { g.textContent = '📦 بایگانی و انتقال به سال ' + fa(YR.y.next); yrCheck(); toast(r.net ? 'اینترنت در دسترس نیست.' : r.message || 'انجام نشد.'); if (r.message) $('#yrHint').textContent = r.message; return; }
+  const box = $('#yrBox'), ok = el('div', 'yr-ok'), a = el('a', 'btn', '📂 باز کردن بایگانی سال ' + fa(r.y.old)), rl = el('button', 'send', '🔄 بارگذاری دوباره‌ی برنامه'); box.textContent = '';
+  a.href = r.url; a.target = '_blank'; a.rel = 'noopener'; rl.type = 'button'; rl.addEventListener('click', () => location.reload());
+  ok.append(el('b', '', '✓ سال تحصیلی ' + fa(r.y.next) + ' شروع شد'),
+    el('div', '', fa(r.n.up) + ' دانش‌آموز به پایه‌ی بالاتر رفتند، ' + fa(r.n.grad) + ' دانش‌آموخته' + (r.n.off ? ' و ' + fa(r.n.off) + ' غیرفعال' : '') + ' از فهرست برداشته شدند؛ ' + fa(r.n.cleared) + ' ردیف سال قبل بایگانی و پاک شد.'),
+    el('div', 'now-sub', 'همه‌ی اطلاعات سال ' + fa(r.y.old) + ' در فایل «' + r.name + '» در Google Drive است.'), a, rl);
+  box.append(ok); YR = null; toast('انتقال به سال تحصیلی جدید انجام شد ✓');
+}
+$('#yrPrev').addEventListener('click', yrPrev);
+/* ======================= مدیران سامانه (نسخه‌ی ۱٫۳۳) =======================
+   تعریف، ویرایش و حذف فقط با مدیر اصلی (سرور هم بررسی می‌کند)؛ دیگران فقط فهرست را می‌بینند. */
+const AD = { ed:null };
+function adInit() {
+  if (!SU) return; const main = SU.admMain !== false, list = SU.adm || [], box = $('#adList'), fm = $('#adForm'); box.textContent = ''; fm.textContent = '';
+  const dl = $('#adRoles'); dl.textContent = ''; (SU.admRoles || []).forEach(x => { const o = el('option'); o.value = x; dl.append(o); });
+  const kd = $('#kfAdm'); kd.textContent = ''; list.filter(a => a.on).forEach(a => { const o = el('option', '', a.r); o.value = a.n; kd.append(o); });
+  if (!list.length) box.append(el('div', 'empty', 'هنوز مدیری جز مدیر اصلی تعریف نشده است.'));
+  list.forEach(a => {
+    const r = el('div', 'ad-row' + (a.on ? '' : ' off')), t = el('div', 'ad-t'), act = el('div', 'ad-act');
+    t.append(el('b', '', a.n), el('small', '', a.r + (a.on ? '' : ' — غیرفعال (ورود بسته است)')));
+    if (main) {
+      const b = (tx, f, cl) => { const x = el('button', 'btn' + (cl ? ' ' + cl : ''), tx); x.type = 'button'; x.addEventListener('click', f); act.append(x); };
+      b('✏️ ویرایش', () => { AD.ed = a; adForm(); $('#adForm').scrollIntoView({ behavior:'smooth', block:'center' }); });
+      b(a.on ? '⛔ غیرفعال' : '✅ فعال', () => adSave({ id:a.id, n:a.n, r:a.r, on:!a.on }));
+      b('🗑 حذف', () => showModal({ icon:'warn', title:'حذف مدیر سامانه', msg:'«' + a.n + '» (' + a.r + ') حذف شود؟ دیگر نمی‌تواند وارد پنل مدیر شود. سابقه‌ی کارهایش در «سابقه‌ی تغییرات» می‌ماند.',
+        buttons:[{ text:'انصراف', primary:true }, { text:'🗑 حذف شود', onClick:async () => { const q = await send({ action:'admDel', pin:MG.pin, id:a.id, key:ACCESS_KEY }); if (q.status !== 'ok') return toast(q.net ? 'اینترنت در دسترس نیست.' : q.message || 'حذف نشد.'); SU.adm = q.list; AD.ed = null; adInit(); suHub(); toast('حذف شد'); } }] }), 'no');
+    }
+    r.append(t, act); box.append(r);
+  });
+  if (main) adForm(); else fm.append(el('div', 'now-sub', '🔒 فقط مدیر اصلی می‌تواند مدیران سامانه را تعریف یا ویرایش کند و رمز آن‌ها را عوض کند.'));
+}
+function adForm() {
+  const fm = $('#adForm'), e = AD.ed; fm.textContent = '';
+  const f = (lb, type, v, ph) => { const w = el('div', 'field'), i = el('input'); i.type = type; i.value = v || ''; if (ph) i.placeholder = ph; i.autocomplete = type === 'password' ? 'new-password' : 'off'; w.append(el('label', '', lb), i); return [w, i]; };
+  const [fn, n] = f('نام و نام خانوادگی', 'text', e && e.n, 'مثلاً اکبر رحمانی'), [fr, r] = f('سمت', 'text', e && e.r, 'مثلاً معاون اجرایی'), [fp, p1] = f(e ? 'رمز تازه (خالی = بدون تغییر)' : 'رمز ورود (دست‌کم ۶ نویسه)', 'password'), [fq, p2] = f('تکرار رمز', 'password');
+  r.setAttribute('list', 'adRoles'); n.maxLength = 60; r.maxLength = 40;
+  const g = el('div', 'grid2'); g.append(fn, fr, fp, fq);
+  const go = el('button', 'send', e ? '💾 ذخیره‌ی تغییرات ' + e.n : '➕ افزودن مدیر سامانه'); go.type = 'button';
+  fm.append(el('div', 'lbl ad-h', e ? '✏️ ویرایش ' + e.n : '➕ مدیر تازه'), g, go);
+  if (e) { const c = el('button', 'btn', 'انصراف'); c.type = 'button'; c.style.cssText = 'width:100%;margin-top:6px'; c.addEventListener('click', () => { AD.ed = null; adForm(); }); fm.append(c); }
+  go.addEventListener('click', () => {
+    if (p1.value !== p2.value) return toast('رمز و تکرار آن یکی نیستند.');
+    if (!e && !p1.value) return toast('برای مدیر تازه رمز تعیین کنید.');
+    adSave({ id:e ? e.id : '', n:n.value.trim(), r:r.value.trim(), on:e ? e.on : true, newPin:p1.value.trim() }, go);
+  });
+}
+async function adSave(o, btn) {
+  if (btn) btn.disabled = true; const q = await send(Object.assign({ action:'admSave', pin:MG.pin, key:ACCESS_KEY }, o)); if (btn) btn.disabled = false;
+  if (q.status !== 'ok') return toast(q.net ? 'اینترنت در دسترس نیست.' : q.message || 'ذخیره نشد.');
+  SU.adm = q.list; AD.ed = null; adInit(); suHub(); toast('ذخیره شد ✓');
+}
 /* ======================= گزارش فشرده و هشدار حضور و غیاب ثبت‌نشده ======================= */
 const ATT_GRACE_MIN = 15;            // اگر تا ۱۵ دقیقه بعد از شروع زنگ حضور و غیاب ثبت نشود، هشدار می‌آید
 let TODAY = [], EXEMPT = [], SEEN = {};
@@ -6661,7 +6810,7 @@ async function suOpen() {
   suClsPreview(); suClsList(); suTeachers(); suPwInit(); zcInit(); suHub();
   const r = await send({ action:'setupInfo', pin:MG.pin, key:ACCESS_KEY }); if (r.status === 'ok') { SU = r; setSchoolName(r.school); $('#suName').value = SCHOOL_NAME; }
   await loadDir();
-  suTeachers(); suPwInit(); suHub(); kfInit();
+  suTeachers(); suPwInit(); suHub(); kfInit(); adInit();
 }
 async function suSoft() {             // فقط وضعیت راه‌اندازی و فهرست‌های همین بخش
   const r = await send({ action:'setupInfo', pin:MG.pin, key:ACCESS_KEY }); if (r.status === 'ok') SU = r;
@@ -6703,6 +6852,7 @@ function suHub() {
    ['برنامه‌ی هفتگی', $('#suSchTx').textContent, !cls.length || !schC.length ? 'todo' : schC.length < cls.length ? 'warn' : 'ok', 'suSch'],
    (mi => ['مؤسسه‌های آزمون آزمایشی', mi.length ? fa(mi.length) + ' مؤسسه: ' + mi.slice(0, 3).join('، ') + (mi.length > 3 ? '، …' : '') + ' (+ «سایر» و «هیچکدام»)' : 'فقط «سایر» و «هیچکدام»؛ مؤسسه‌ها را اضافه کنید', mi.length ? 'ok' : 'warn', 'miCard'])(INST.filter(x => x !== 'سایر' && x !== MK_NONE)),
    (k => ['مشخصات کارنامه', !SU ? 'در حال بررسی…' : [k.p, k.r, k.c ? 'کد آموزشگاه ' + fa(k.c) : ''].filter(Boolean).join(' · ') || 'استان، منطقه و کد آموزشگاه هنوز وارد نشده', !SU ? 'todo' : k.p && k.r && k.c ? 'ok' : 'warn', 'kfCard'])((SU && SU.kcfg) || {}),
+   (l => ['مدیران سامانه', !SU ? 'در حال بررسی…' : l.length ? l.map(a => a.n + ' (' + a.r + ')' + (a.on ? '' : ' — غیرفعال')).join('، ') : 'فقط مدیر اصلی؛ معاونان را با رمز جدا تعریف کنید', 'ok', 'adCard'])((SU && SU.adm) || []),
    ['عملیات رمز', SU ? pw.join(' | ') : 'در حال بررسی…', !SU ? 'todo' : pwSt.length ? 'warn' : 'ok', 'suPw']
   ].forEach((s, i) => {
     const b = el('button', 'su-step ' + s[2]), tx = el('span'); b.type = 'button';
@@ -8173,7 +8323,7 @@ function modKeys() {
 }
 function launchHead() {
   const n = new Date(), j = jOf(n), st = ROLE === 'student' && SD;
-  $('#launchHi').textContent = 'سلام، ' + (st ? SD.name : ROLE === 'manager' ? 'مدیر مدرسه' : ROLE === 'counselor' ? COUNSELOR_NAME : S.teacher);
+  $('#launchHi').textContent = 'سلام، ' + (st ? SD.name : ROLE === 'manager' ? (MG.who ? MG.who.n : 'مدیر مدرسه') : ROLE === 'counselor' ? COUNSELOR_NAME : S.teacher);
   $('#launchSub').textContent = JWD[n.getDay()] + ' ' + fa(j[2]) + ' ' + MONTHS[j[1] - 1] + ' ' + fa(j[0]) + ' | ' + (st ? 'کلاس ' + SD.cls : ({ manager:'پنل مدیر', counselor:'پنل مشاور', teacher:'پنل دبیر' })[ROLE] || '');
 }
 function renderTiles() {
