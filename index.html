@@ -18,7 +18,7 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxzPr6P54uH4gV_rQrss
 // کلید دسترسی اختیاری (باید با ACCESS_KEY در Code.gs یکی باشد)
 const ACCESS_KEY = "";
 // نسخه‌ی برنامه — با هر به‌روزرسانی این عدد بالا می‌رود و در صفحه‌ی ورود و پایین صفحه نمایش داده می‌شود.
-const APP_VERSION = "1.33";
+const APP_VERSION = "1.36";
 // (اختیاری) لینک Google Sheet برای دکمه «باز کردن Google Sheet» در تب مدیر
 const SHEET_URL = "https://docs.google.com/spreadsheets/d/10i-IGQKyj078M6kJ7YhdAniuJInl6JemwVxAqs7FnrY/edit";
 const DEFAULT_MAX_SCORE = 20;
@@ -1838,6 +1838,54 @@ body:not(.in-mod) .lbl-ic{width:auto;height:auto;background:none;border:0;box-sh
 .qs-a .btn{min-height:0;padding:6px 10px;font-size:12.5px}
 a.btn.qs-tel{display:inline-flex;align-items:center;text-decoration:none;color:var(--present)}
 body.qs-on{overflow:hidden}
+/* ===== نسخه‌ی ۱٫۳۶: جدول ثبت نمره (کارتابل مدیر) ===== */
+.gb-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}
+.gb-k{border:1px solid var(--line);border-radius:12px;padding:8px 6px;background:var(--input);text-align:center}
+.gb-k b{display:block;font-size:17px;font-weight:800;color:var(--ink);line-height:1.5} .gb-k small{color:var(--muted);font-size:12px}
+.gb-k.ok b{color:var(--present)} .gb-k.z b{color:var(--late)}
+.gb-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:4px}
+.gb-bar .chip{height:38px;padding:0 14px;font-size:13px}
+#gbBody{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,440px),1fr));gap:10px;align-items:start;margin-top:10px}
+#gbBody>.empty{grid-column:1/-1}
+.gb-grp{border:1px solid var(--line);border-radius:14px;background:var(--card);overflow:hidden;min-width:0}
+.gb-grp>summary{display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px;padding:10px 12px;cursor:pointer;list-style:none;background:var(--input)}
+.gb-grp>summary::-webkit-details-marker{display:none}
+.gb-grp>summary::before{content:"▾";color:var(--muted);transition:transform .2s}
+.gb-grp:not([open])>summary::before{transform:rotate(90deg)}
+.gb-grp>summary b{font-size:15px;color:var(--ink)} .gb-grp>summary small{color:var(--muted);font-size:12px}
+.gb-pr{flex:1 0 100%;height:6px;border-radius:6px;background:var(--late-bg);overflow:hidden}
+.gb-pr i{display:block;height:100%;background:var(--present);border-radius:6px}
+.gb-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.gb{border-collapse:separate;border-spacing:0;width:100%;font-size:13px}
+.gb th,.gb td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:center;white-space:nowrap;background:var(--card)}
+.gb tbody tr:last-child>*{border-bottom:0}
+.gb thead th{font-weight:800;color:var(--ink);vertical-align:bottom;min-width:86px;border-bottom:2px solid var(--line)}
+.gb thead th small{display:block;font-weight:600;color:var(--muted);font-size:11px}
+.gb .cn{position:sticky;inset-inline-start:0;z-index:1;text-align:start;white-space:normal;min-width:118px;max-width:170px;font-weight:700;color:var(--ink);box-shadow:inset -1px 0 0 var(--line)}
+.gb tbody tr:hover>*{background:var(--input)}
+.gb-n{display:inline-flex;align-items:center;justify-content:center;min-width:36px;height:30px;padding:0 8px;border-radius:9px;font:inherit;font-weight:800;font-size:14px;border:1.5px solid transparent}
+.gb-n.z{background:var(--late-bg);color:var(--ink);border:1.5px dashed var(--late)}
+.gb-n.lo{background:var(--present-bg);color:var(--ink);border-color:var(--present)}
+.gb-n.hi{background:var(--present);color:var(--card);border-color:var(--present)}
+button.gb-n{cursor:pointer} button.gb-n:hover{box-shadow:0 0 0 2px var(--line)} button.gb-n:focus-visible{outline:none;box-shadow:var(--ring)}
+.gb-n.on{box-shadow:0 0 0 3px var(--primary)}
+.gb-na{color:var(--muted);opacity:.55;font-weight:700}
+.gb-lg{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;color:var(--muted);font-size:12px;margin-top:10px;line-height:1.8}
+.gb-lg .gb-n{min-width:24px;height:22px;font-size:12px;padding:0 6px}
+/* ===== نسخه‌ی ۱٫۳۵: مقایسه‌ی کلاس‌ها ===== */
+.kcmp-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;margin-top:8px}
+.kcmp{display:block;margin-inline-start:auto;font-family:inherit}
+.kcmp .g{stroke:var(--line);stroke-width:1} .kcmp .g.z{stroke:var(--muted)}
+.kcmp .ax{fill:var(--muted);font-size:11px;text-anchor:start}
+.kcmp .kb{cursor:pointer;outline:none}
+.kcmp .kb rect{fill:var(--primary);opacity:.85}
+.kcmp .kb.best rect{fill:var(--present);opacity:1} .kcmp .kb.worst rect{fill:var(--absent);opacity:1}
+.kcmp .kb:hover rect,.kcmp .kb:focus rect{opacity:1;stroke:var(--ink);stroke-width:1.5}
+.kcmp .v{fill:var(--ink);font-size:12px;font-weight:800;text-anchor:middle}
+.kcmp .mk{font-size:13px;text-anchor:middle}
+.kcmp .nm{fill:var(--ink);font-size:11.5px;font-weight:700;text-anchor:middle}
+.kcmp .kb.best .nm{fill:var(--present)} .kcmp .kb.worst .nm{fill:var(--absent)}
+.kcmp-lg{color:var(--muted);font-size:12px;line-height:1.8;margin-top:6px}
 /* ===== نسخه‌ی ۱٫۳۳: مدیران سامانه + رتبه ===== */
 .ad-row{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;padding:10px 12px;margin-top:6px;border:1px solid var(--line);border-radius:12px;background:var(--card);border-inline-start:4px solid var(--primary)}
 .ad-row.off{opacity:.7;border-inline-start-color:var(--line)}
@@ -2130,6 +2178,14 @@ body.qs-on{overflow:hidden}
   </section>
 
   <section id="p-inb" hidden>
+    <div class="card" id="gbCard" hidden>
+      <div class="lbl">📋 جدول ثبت نمره‌ی دروس</div>
+      <div class="now-sub" id="gbSub">عدد هر خانه = تعداد نوبت‌های ثبت نمره‌ی آن درس</div>
+      <div id="gbKpi" class="gb-kpis"></div>
+      <div id="gbBar" class="gb-bar" role="group" aria-label="نمایش دروس"><button type="button" class="chip on" data-z="0" aria-pressed="true">همه‌ی دروس</button><button type="button" class="chip" data-z="1" aria-pressed="false">فقط دروس بدون نمره</button></div>
+      <div id="gbBody"></div>
+      <div class="gb-lg"><span class="gb-n z">۰</span>بدون نمره <span class="gb-n lo">۱</span>یک یا دو نوبت <span class="gb-n hi">۳</span>سه نوبت و بیشتر <span class="gb-na">—</span>درس این کلاس نیست · برای دیدن نمره‌ها روی عدد بزنید.</div>
+    </div>
     <div class="card inb-pick-card">
       <div class="inb-pick"><select id="inbSel" aria-label="کلاس و درس"></select><button id="inbRef" class="btn" type="button" title="به‌روزرسانی" aria-label="به‌روزرسانی">🔄</button></div>
       <div id="inbChips" class="inb-chips" role="group" aria-label="وضعیت ثبت نمره"></div>
@@ -2459,6 +2515,11 @@ body.qs-on{overflow:hidden}
       </div>
       <div class="mg-sec" data-sec="kar" data-t="کارنامه‌ها" hidden>
       <div class="mg-sec-d">کارنامه‌ی هر دانش‌آموز به شکل کارنامه‌ی رسمی، و کارنامه‌ی کلی هر کلاس (همه‌ی دانش‌آموزان × همه‌ی دروس). فعلاً فقط ستون «مستمر نوبت اول» پر می‌شود: میانگین نمره‌های ثبت‌شده‌ی هر درس از ۱ مهر تا امروز، بدون آزمون پایانی و غیبت‌ها.</div>
+      <div class="card" id="kaCmpCard">
+        <div class="lbl" style="margin-bottom:4px">🏫 مقایسه‌ی کلاس‌ها</div>
+        <div class="now-sub" id="kaCmpSub">میانگین معدل مستمر نوبت اول هر کلاس (از ۲۰)</div>
+        <div id="kaCmp"></div>
+      </div>
       <div class="card" id="kaCard">
         <div class="lbl" style="margin-bottom:8px">📊 کارنامه‌ی کلی کلاس</div>
         <div class="mg-bar"><select id="kaCls" aria-label="کلاس"></select><button id="kaPrint" class="btn" type="button" disabled>🖨 چاپ</button><button id="kaCsv" class="btn" type="button" disabled>⬇️ خروجی Excel</button></div>
@@ -4450,20 +4511,73 @@ function refreshRestrict() {
   P.stream = S.stream; P.cls = S.cls; savePrefs(); paintStreams(); fillClasses(); loadClass();
 }
 async function loadInbox() {
-  inbPark(); const box = $('#inbBody'); if (!INB) busy(box, 4);   // کارت تقویم پیش از پاک شدن بدنه بیرون می‌رود
-  const r = await send({ action:'inbox', teacher:S.teacher.trim(), pin:S.pin.trim(), key:ACCESS_KEY });
-  if (r.net) { box.textContent = 'اینترنت در دسترس نیست.'; return; }
-  if (r.status !== 'ok') { box.textContent = r.message || 'بارگذاری نشد.'; return; }
-  INB = r.items; if (ISMGR) INB = INB.filter(x => inbGrCount(x) > 0);
+  inbPark(); const box = $('#inbBody'); if (!INB) { busy(box, 4); gbDraw('load'); }   // کارت تقویم پیش از پاک شدن بدنه بیرون می‌رود
+  const r = await send({ action:'inbox', teacher:ISMGR ? '' : S.teacher.trim(), pin:S.pin.trim(), key:ACCESS_KEY });   // پنل خود مدیر: همه‌ی کلاس‌ها؛ دبیر (یا «ورود به پنل دبیر»): فقط درس‌های همان دبیر
+  if (r.net) { box.textContent = 'اینترنت در دسترس نیست.'; gbDraw({ err:'اینترنت در دسترس نیست.' }); return; }
+  if (r.status !== 'ok') { box.textContent = r.message || 'بارگذاری نشد.'; gbDraw({ err:r.message }); return; }
+  INB = r.items; gbDraw(r.board); if (ISMGR) INB = INB.filter(x => inbGrCount(x) > 0);
   const sel = $('#inbSel'), cur = +sel.value || 0; sel.textContent = '';
   INB.forEach((x, i) => { const o = el('option', '', (inbGrCount(x) ? '✅ ' : '') + x.c + ' — ' + x.s); o.value = i; sel.append(o); }); sel.value = INB[cur] ? cur : 0; renderInb(); inbChips(); calLoad();
 }
+/* ======================= جدول ثبت نمره در کارتابل مدیر (نسخه‌ی ۱٫۳۶) =======================
+   هر پایه و رشته یک جدول: ستون = کلاس، ردیف = درس؛ عدد هر خانه = تعداد نوبت‌های ثبت نمره (هر آزمون، کوئیز یا فعالیت یک نوبت). شمارش در سرور (inbox ← board). */
+let GB_Z = false, GB = null;
+const gbShut = () => lsGet('sia_gb_shut', {});
+function gbDraw(b) {
+  const card = $('#gbCard'); if (!card) return; card.hidden = !ISMGR; if (!ISMGR) return;
+  const box = $('#gbBody'), kp = $('#gbKpi'); kp.textContent = '';
+  if (b === 'load') return busy(box, 3, 'در حال شمارش نمره‌های ثبت‌شده…');
+  box.textContent = '';
+  if (!b || b.err) { box.append(el('div', 'empty', (b && b.err) || 'جدول ثبت نمره بارگذاری نشد؛ دوباره 🔄 را بزنید.')); return; }
+  GB = b; $('#gbSub').textContent = 'عدد هر خانه = تعداد نوبت‌های ثبت نمره‌ی آن درس (هر آزمون، کوئیز یا فعالیت یک نوبت) — وضعیت تا ' + fa(b.today);
+  if (!b.list.length) { box.append(el('div', 'empty', 'هنوز کلاسی با دانش‌آموز و برنامه‌ی هفتگی ثبت نشده است.')); return; }
+  const t = b.tot, z = t.cells - t.done;
+  [[fa(t.done) + ' از ' + fa(t.cells), 'درس دارای نمره', 'ok'], [fa(z), 'درس بدون نمره', z ? 'z' : 'ok'], [fa(t.ex), 'نوبت ثبت نمره', '']]
+    .forEach(q => { const d = el('div', 'gb-k ' + q[2]); d.append(el('b', '', q[0]), el('small', '', q[1])); kp.append(d); });
+  document.querySelectorAll('#gbBar .chip').forEach(c => { const on = (c.dataset.z === '1') === GB_Z; c.classList.toggle('on', on); c.setAttribute('aria-pressed', String(on)); });
+  const shut = gbShut(); let shown = 0;
+  b.list.forEach(g => {
+    const rows = GB_Z ? g.rows.filter(r => r.v.some(v => v && !v.n)) : g.rows; if (!rows.length) return; shown++;
+    const all = [].concat(...g.rows.map(r => r.v.filter(Boolean))), dn = all.filter(v => v.n).length;
+    const d = el('details', 'gb-grp'), sm = el('summary'), pr = el('span', 'gb-pr'), bar = el('i');
+    d.open = GB_Z || !shut[g.g];
+    d.addEventListener('toggle', () => { if (GB_Z) return; const s = gbShut(); if (d.open) delete s[g.g]; else s[g.g] = 1; lsSet('sia_gb_shut', s); });
+    bar.style.width = (all.length ? Math.round(dn / all.length * 100) : 0) + '%'; pr.setAttribute('aria-hidden', 'true'); pr.append(bar);
+    sm.append(el('b', '', g.g), el('small', '', fa(g.cls.length) + ' کلاس · ' + fa(dn) + ' از ' + fa(all.length) + ' درس دارای نمره'), pr);
+    const wrap = el('div', 'gb-wrap'), tb = el('table', 'gb'), hr = el('tr'), h0 = el('th', 'cn', 'درس'); h0.scope = 'col'; hr.append(h0);
+    tb.setAttribute('aria-label', 'تعداد نوبت‌های ثبت نمره — ' + g.g);
+    g.cls.forEach(c => { const th = el('th'); th.scope = 'col'; th.append(el('span', '', c.c), el('small', '', fa(c.n) + ' دانش‌آموز')); hr.append(th); });
+    const th = el('thead'), tbd = el('tbody'); th.append(hr);
+    rows.forEach(r => {
+      const tr = el('tr'), h = el('th', 'cn', r.s); h.scope = 'row'; tr.append(h);
+      r.v.forEach((v, i) => {
+        const td = el('td'), c = g.cls[i].c; tr.append(td);
+        if (!v) { const na = el('span', 'gb-na', '—'); na.title = 'این درس در برنامه‌ی این کلاس نیست'; td.append(na); return; }
+        const lab = r.s + ' — ' + c + ': ' + (v.n ? fa(v.n) + ' نوبت ثبت نمره، آخرین ' + fa(v.l) : 'هنوز نمره‌ای ثبت نشده') + (v.t ? ' — دبیر: ' + v.t : '');
+        const n = el(v.n && v.x ? 'button' : 'span', 'gb-n ' + (!v.n ? 'z' : v.n >= 3 ? 'hi' : 'lo'), fa(v.n)); n.title = lab; n.setAttribute('aria-label', lab);
+        if (n.tagName === 'BUTTON') { n.type = 'button'; n.addEventListener('click', () => gbOpen(c, v.x, n)); }
+        td.append(n);
+      });
+      tbd.append(tr);
+    });
+    tb.append(th, tbd); wrap.append(tb); d.append(sm, wrap); box.append(d);
+  });
+  if (!shown) box.append(el('div', 'empty', 'همه‌ی درس‌ها دست‌کم یک نوبت نمره دارند ✓'));
+}
+function gbOpen(c, s, btn) {
+  const i = (INB || []).findIndex(x => normT(x.c) === normT(c) && normT(x.s) === normT(s));
+  if (i < 0) return toast('نمره‌های این درس در کارتابل نیست (دانش‌آموز فعالی نمره ندارد).');
+  $('#inbSel').value = i; renderInb();
+  document.querySelectorAll('#gbBody .gb-n.on').forEach(q => q.classList.remove('on')); btn.classList.add('on');
+  setTimeout(() => $('#inbBody').scrollIntoView({ behavior:'smooth', block:'start' }), 60);
+}
+document.querySelectorAll('#gbBar .chip').forEach(c => c.addEventListener('click', () => { GB_Z = c.dataset.z === '1'; gbDraw(GB); }));
 /* نشانگر درس‌های دارای نمره: ✓ سبز؛ تا وقتی دبیر آن را باز نکرده (یا نمره‌ی تازه آمده) چشمک می‌زند */
 const inbGrCount = x => (x.students || []).reduce((n, st) => n + (st.gr ? st.gr.length : 0), 0);
 const inbKey = x => normT(x.c) + '|' + normT(x.s), inbSeenKey = () => 'sia_inbseen_' + normT(S.teacher);
 function inbSeen(x) { const m = lsGet(inbSeenKey(), {}); m[inbKey(x)] = inbGrCount(x); lsSet(inbSeenKey(), m); }
 function inbChips() {
-  const box = $('#inbChips'); if (!box) return; box.textContent = ''; if (!INB || !INB.length) return;
+  const box = $('#inbChips'); if (!box) return; box.textContent = ''; if (!INB || !INB.length || ISMGR) return;   // مدیر: «جدول ثبت نمره» به‌جای تراشه‌ها (نسخه‌ی ۱٫۳۶)
   const seen = lsGet(inbSeenKey(), {}), cur = +$('#inbSel').value || 0;
   INB.forEach((x, i) => {
     const n = inbGrCount(x); if (!n) return;
@@ -5366,7 +5480,7 @@ function kaOpen() {
     $('#kaAll').addEventListener('click', () => KA && printK(KA, KA.rows.slice().sort((a, b) => a.n.localeCompare(b.n, 'fa'))));   // کارنامه‌های فردی به ترتیب الفبا (برای توزیع)
     $('#kaOnePr').addEventListener('click', () => { const i = $('#kaStu').value; if (KA && i !== '') printK(KA, [KA.rows[+i]]); });
   }
-  kaLoad();
+  kaLoad(); kaCmpLoad();
 }
 async function kaLoad() {
   const cls = $('#kaCls').value, box = $('#kaMat'), seq = kaLoad.n = (kaLoad.n || 0) + 1; KA = null; box.textContent = ''; kaStus();
@@ -5583,6 +5697,39 @@ async function adSave(o, btn) {
   if (btn) btn.disabled = true; const q = await send(Object.assign({ action:'admSave', pin:MG.pin, key:ACCESS_KEY }, o)); if (btn) btn.disabled = false;
   if (q.status !== 'ok') return toast(q.net ? 'اینترنت در دسترس نیست.' : q.message || 'ذخیره نشد.');
   SU.adm = q.list; AD.ed = null; adInit(); suHub(); toast('ذخیره شد ✓');
+}
+/* ======================= مقایسه‌ی کلاس‌ها (نسخه‌ی ۱٫۳۵) =======================
+   میانگین معدل مستمر نوبت اول هر کلاس از سرور (kAll)؛ ستونی از صفر تا ۲۰، بهترین کلاس اول (راست، سبز)، ضعیف‌ترین آخر (قرمز). */
+async function kaCmpLoad() {
+  const box = $('#kaCmp'); busy(box, 2, 'در حال مقایسه‌ی کلاس‌ها…');
+  const r = await send({ action:'kAll', pin:MG.pin, key:ACCESS_KEY }); box.textContent = '';
+  if (r.status !== 'ok') { box.append(el('div', 'empty', r.net ? 'اینترنت در دسترس نیست؛ دوباره تلاش کنید.' : r.message || 'دریافت نشد.')); return; }
+  $('#kaCmpSub').textContent = 'میانگین معدل مستمر نوبت اول هر کلاس (از ۲۰) — سال تحصیلی ' + fa(r.year) + '، تا ' + fa(r.today);
+  if (!r.list.length) { box.append(el('div', 'empty', 'هنوز برای هیچ کلاسی نمره‌ی مستمر ثبت نشده است.')); return; }
+  const sc = el('div', 'kcmp-scroll'); box.append(sc); sc.append(kCmpSvg(r.list, sc.clientWidth));
+  if (sc.scrollWidth > sc.clientWidth + 4) box.append(el('div', 'kcmp-lg', '↔ برای دیدن همه‌ی کلاس‌ها، نمودار را به چپ بکشید.'));
+  box.append(el('div', 'kcmp-lg', '🏆 سبز: بهترین کلاس   ·   ⚠ قرمز: ضعیف‌ترین کلاس   ·   برای دیدن کارنامه‌ی کلی هر کلاس، روی ستونش بزنید.'));
+  if (r.none.length) box.append(el('div', 'kcmp-lg', 'بدون نمره‌ی مستمر (در نمودار نیامده): ' + r.none.join('، ')));
+}
+function kCmpSvg(l, cw) {
+  const n = l.length, slot = Math.max(76, Math.min(130, ((cw || 300) - 44) / n)), bw = Math.round(Math.min(56, slot * 0.55)), axR = 34, padL = 10, W = Math.max(300, axR + padL + n * slot), H = 252, top = 40, bot = 196, y = v => bot - v / 20 * (bot - top);
+  const s = sv('svg', { viewBox:'0 0 ' + W + ' ' + H, width:W, height:H, class:'kcmp', role:'img',
+    'aria-label':'میانگین کلاس‌ها از بهترین به ضعیف‌ترین: ' + l.map(x => x.c + ' ' + f2(x.avg)).join('، ') });
+  [0, 5, 10, 15, 20].forEach(v => { s.append(sv('line', { x1:padL, x2:W - axR, y1:y(v), y2:y(v), class:v ? 'g' : 'g z' }), sv('text', { x:W - axR + 6, y:y(v) + 4, class:'ax' }, fa(v))); });
+  l.forEach((x, i) => {
+    const cx = W - axR - (i + 0.5) * slot, k = i === 0 ? 'best' : i === n - 1 ? 'worst' : 'mid', g = sv('g', { class:'kb ' + k, tabindex:'0', role:'button' });
+    g.append(sv('title', {}, x.c + ': ' + f2(x.avg) + ' — ' + fa(x.m) + ' از ' + fa(x.n) + ' دانش‌آموز دارای نمره'),
+      sv('rect', { x:cx - bw / 2, y:y(x.avg), width:bw, height:Math.max(1, bot - y(x.avg)), rx:6 }),
+      sv('text', { x:cx, y:y(x.avg) - 7, class:'v' }, f2(x.avg)));
+    if (k !== 'mid') g.append(sv('text', { x:cx, y:y(x.avg) - 24, class:'mk' }, k === 'best' ? '🏆' : '⚠'));
+    const w = x.c.split(/\s+/), nm = sv('text', { x:cx, y:bot + 17, class:'nm' });
+    if (w.length > 1) nm.append(sv('tspan', { x:cx, dy:0 }, w.slice(0, -1).join(' ')), sv('tspan', { x:cx, dy:15 }, w[w.length - 1])); else nm.textContent = x.c;
+    g.append(nm);
+    const go = () => { $('#kaCls').value = x.c; kaLoad(); setTimeout(() => $('#kaCard').scrollIntoView({ behavior:'smooth', block:'start' }), 60); };
+    g.addEventListener('click', go); g.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } });
+    s.append(g);
+  });
+  return s;
 }
 /* ======================= گزارش فشرده و هشدار حضور و غیاب ثبت‌نشده ======================= */
 const ATT_GRACE_MIN = 15;            // اگر تا ۱۵ دقیقه بعد از شروع زنگ حضور و غیاب ثبت نشود، هشدار می‌آید
@@ -6458,7 +6605,7 @@ function calInfo() {
 }
 async function calLoad() {
   const box = $('#calList'); if (!box) return; calInit(); calPerFill();
-  const r = await send({ action:'calList', teacher:S.teacher.trim(), pin:S.pin.trim(), key:ACCESS_KEY }); if (r.status !== 'ok') return; box.textContent = '';
+  const r = await send({ action:'calList', teacher:ISMGR ? '' : S.teacher.trim(), pin:S.pin.trim(), key:ACCESS_KEY }); if (r.status !== 'ok') return; box.textContent = '';
   const list = r.list.slice(0, 60);
   if (!list.length) return box.append(el('div', 'now-sub', 'هنوز آزمون یا تکلیفی ثبت نشده است.'));
   uniq(list.map(x => x.c)).forEach(c => {
