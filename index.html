@@ -1963,26 +1963,56 @@ button.gb-n{cursor:pointer} button.gb-n:hover{box-shadow:0 0 0 2px var(--line)} 
 .yr-ok b{color:var(--present);font-size:15px} .yr-ok a.btn{text-decoration:none;text-align:center}
 /* ===== نسخه‌ی ۱٫۳۸: اطلاعیه‌های صفحه‌ی ورود ===== */
 #mgNav .mg-nb[data-sec="ntc"]{--ic:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 11v3a1 1 0 001 1h2l5 4V6L7 10H5a1 1 0 00-1 1z'/%3E%3Cpath d='M16 9a4 4 0 010 6M18.5 6.5a8 8 0 010 11'/%3E%3C/svg%3E")}
-.g-ntc{margin-top:16px;display:grid;gap:12px}
-.g-ntc-h{text-align:center;color:#fff;font-weight:900;font-size:15px;text-shadow:0 2px 8px rgba(0,0,0,.45)}
-.g-ntc-it{padding:0!important;overflow:hidden;text-align:right;border-radius:20px;border:1px solid rgba(212,175,79,.55);box-shadow:0 14px 34px rgba(0,0,0,.28)}
-.g-ntc-it img{display:block;width:100%;max-height:300px;object-fit:cover;cursor:zoom-in;background:var(--input)}
-.g-ntc-b{padding:12px 16px 14px}
-.g-ntc-t{margin:0 0 4px;font-weight:900;font-size:15.5px;line-height:1.8}
-.g-ntc-x{white-space:pre-wrap;overflow-wrap:anywhere;line-height:2;font-size:14px}
-.g-ntc-d{margin-top:6px;font-size:11.5px;opacity:.65}
-.ntc-lb{position:fixed;inset:0;z-index:500;display:grid;place-items:center;padding:14px;background:rgba(5,12,26,.88);cursor:zoom-out}
+[data-lv]{--a:#D4AF4F;--b1:rgba(255,255,255,.17);--b2:rgba(255,255,255,.06);--bd:rgba(212,175,79,.55);--glow:rgba(212,175,79,.35)}
+[data-lv="urgent"]{--a:#FF5A5F;--b1:rgba(226,40,48,.46);--b2:rgba(96,12,20,.62);--bd:rgba(255,120,124,.7);--glow:rgba(255,90,95,.55)}
+[data-lv="important"]{--a:#F5B731;--b1:rgba(245,183,49,.34);--b2:rgba(110,72,4,.55);--bd:rgba(245,183,49,.65);--glow:rgba(245,183,49,.45)}
+[data-lv="event"]{--a:#5AA9FF;--b1:rgba(59,130,246,.36);--b2:rgba(16,44,104,.6);--bd:rgba(110,180,255,.6);--glow:rgba(90,169,255,.45)}
+[data-lv="good"]{--a:#3DDC97;--b1:rgba(16,185,129,.34);--b2:rgba(5,70,52,.6);--bd:rgba(80,230,160,.6);--glow:rgba(61,220,151,.45)}
+.g-ntc{margin-top:18px;display:grid;gap:14px}
+.g-ntc-h{display:flex;align-items:center;gap:10px;color:#fff;font-weight:900;font-size:15px;text-shadow:0 2px 8px rgba(0,0,0,.45)}
+.g-ntc-h::before,.g-ntc-h::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent)}
+.ntc-card{position:relative;overflow:hidden;border-radius:22px;color:#fff;text-align:right;background:linear-gradient(155deg,var(--b1),var(--b2));border:1px solid var(--bd);box-shadow:0 16px 38px -14px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.18);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);animation:ntcIn .55s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i,0)*90ms)}
+.ntc-card.nm{animation:none}
+.ntc-card::before{content:"";position:absolute;inset-block:0;inset-inline-start:0;width:6px;background:linear-gradient(var(--a),transparent 92%)}
+.ntc-card[data-lv="urgent"]{animation:ntcIn .55s cubic-bezier(.2,.8,.2,1) both,ntcPulse 2.4s ease-in-out 1s infinite;animation-delay:calc(var(--i,0)*90ms),1s}
+.ntc-card[data-lv="urgent"].nm{animation:ntcPulse 2.4s ease-in-out infinite}
+.ntc-wm{position:absolute;left:-14px;bottom:-26px;font-size:128px;line-height:1;opacity:.11;transform:rotate(-14deg);pointer-events:none;user-select:none}
+.ntc-hero{position:relative;aspect-ratio:16/9;max-height:260px;overflow:hidden;cursor:zoom-in;background:rgba(255,255,255,.08)}
+.ntc-hero img{display:block;width:100%;height:100%;object-fit:cover}
+.ntc-hero::after{content:"";position:absolute;inset:auto 0 0 0;height:62%;background:linear-gradient(transparent,rgba(8,16,34,.9))}
+.ntc-hero.ld{cursor:default;background:linear-gradient(110deg,rgba(255,255,255,.07) 30%,rgba(255,255,255,.18) 50%,rgba(255,255,255,.07) 70%);background-size:220% 100%;animation:ntcSh 1.4s linear infinite}
+.ntc-body{position:relative;padding:14px 18px 16px 16px}
+.ntc-hero+.ntc-body{margin-top:-40px;z-index:1}
+.ntc-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+.ntc-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 13px;border-radius:999px;background:var(--a);color:#0E1A30;font-weight:900;font-size:12.5px;box-shadow:0 0 0 4px var(--glow)}
+.ntc-date{font-size:11.5px;opacity:.78;white-space:nowrap}
+.ntc-t{margin:0 0 6px;font-size:17.5px;font-weight:900;line-height:1.75;text-shadow:0 2px 10px rgba(0,0,0,.35)}
+.ntc-x{white-space:pre-wrap;overflow-wrap:anywhere;line-height:2.05;font-size:14.2px;color:rgba(255,255,255,.93)}
+.ntc-foot{margin-top:10px;display:inline-block;font-size:12px;font-weight:800;color:var(--a)}
+@keyframes ntcIn{from{opacity:0;transform:translateY(16px) scale(.985)}to{opacity:1;transform:none}}
+@keyframes ntcPulse{0%,100%{box-shadow:0 16px 38px -14px rgba(0,0,0,.6),0 0 0 0 var(--glow)}50%{box-shadow:0 16px 38px -14px rgba(0,0,0,.6),0 0 0 9px rgba(255,90,95,0)}}
+@keyframes ntcSh{to{background-position:-220% 0}}
+@media (prefers-reduced-motion:reduce){.ntc-card,.ntc-card[data-lv="urgent"],.ntc-hero.ld{animation:none!important}}
+.ntc-lb{position:fixed;inset:0;z-index:500;display:grid;place-items:center;padding:14px;background:rgba(5,12,26,.9);cursor:zoom-out}
 .ntc-lb img{max-width:100%;max-height:92vh;border-radius:12px;background:#fff;object-fit:contain}
 .ntc-lb-x{position:absolute;top:calc(12px + env(safe-area-inset-top,0px));left:12px}
+.ntc-lvs{display:grid;grid-template-columns:repeat(auto-fit,minmax(92px,1fr));gap:8px;margin-top:4px}
+.ntc-lv{display:flex;flex-direction:column;align-items:center;gap:2px;padding:10px 6px;border-radius:14px;border:2px solid var(--line);background:var(--input);color:inherit;font:inherit;font-weight:800;font-size:13px;cursor:pointer;transition:transform .15s,border-color .15s,box-shadow .15s}
+.ntc-lv i{font-style:normal;font-size:22px;line-height:1.2}
+.ntc-lv:active{transform:scale(.96)}
+.ntc-lv.on{border-color:var(--a);box-shadow:0 0 0 3px var(--glow),inset 0 0 0 1px var(--a)}
+.ntc-stage{margin-top:12px;padding:14px;border-radius:18px;background:radial-gradient(500px 300px at 90% -10%,rgba(226,193,106,.18),transparent 60%),linear-gradient(160deg,#0E1F3A,#1B3763 60%,#24497F)}
+.ntc-stage .cap{margin:0 0 10px;color:rgba(255,255,255,.78);font-size:12px;text-align:center}
 #ntcB{width:100%;min-height:120px;resize:vertical;line-height:1.9;font:inherit;padding:10px 12px;border-radius:14px;border:1.5px solid var(--line);background:var(--input);color:inherit;box-sizing:border-box}
 .ntc-on{display:flex;align-items:center;gap:8px;margin:10px 0;font-weight:700;cursor:pointer}
 .ntc-on input{width:20px;height:20px}
 .ntc-pv{width:100%;max-height:220px;object-fit:cover;border-radius:12px}
-.ntc-row{display:grid;gap:8px;padding:12px;margin-top:10px;border:1.5px solid var(--line);border-radius:16px}
+.ntc-row{display:grid;gap:8px;padding:12px;margin-top:10px;border:1.5px solid var(--line);border-inline-start:5px solid var(--a);border-radius:16px}
 .ntc-row.off{opacity:.62}
 .ntc-row img{width:100%;max-height:160px;object-fit:cover;border-radius:10px}
 .ntc-row b{line-height:1.8}
 .ntc-row .ntc-sn{white-space:pre-wrap;overflow-wrap:anywhere;font-size:13px;line-height:1.9;opacity:.85}
+.ntc-row .ntc-badge{color:#0E1A30;box-shadow:none;width:fit-content}
 .ntc-acts{display:flex;flex-wrap:wrap;gap:8px}
 .ntc-acts .btn{flex:1 1 auto}
 .ntc-chip{display:inline-block;padding:2px 10px;border-radius:999px;font-size:11.5px;font-weight:800;background:var(--input)}
@@ -2589,9 +2619,10 @@ button.gb-n{cursor:pointer} button.gb-n:hover{box-shadow:0 0 0 2px var(--line)} 
       </div>
       </div>
       <div class="mg-sec" data-sec="ntc" data-t="اطلاعیه‌ها" hidden>
-      <div class="mg-sec-d">اطلاعیه‌ی متنی یا تصویری (مثلاً تعطیلی، زمان آزمون، جلسه‌ی اولیا) که پیش از ورود، در صفحه‌ی ورود سامانه برای همه دیده می‌شود. محتوا عمومی است؛ نام و اطلاعات شخصی دانش‌آموزان را در آن ننویسید.</div>
+      <div class="mg-sec-d">اطلاعیه‌ی متنی یا تصویری که پیش از ورود، در صفحه‌ی ورود سامانه برای همه دیده می‌شود. سطح اهمیت رنگ و حال‌وهوای کارت را تعیین می‌کند و اطلاعیه‌های مهم‌تر بالاتر می‌آیند. محتوا عمومی است؛ نام و اطلاعات شخصی دانش‌آموزان را در آن ننویسید.</div>
       <div class="card" id="ntcFormCard">
         <div class="lbl" id="ntcFormT" style="margin-bottom:8px">📢 اطلاعیه‌ی تازه</div>
+        <div class="field"><label>اهمیت اطلاعیه</label><div class="ntc-lvs" id="ntcLvs" role="radiogroup" aria-label="اهمیت اطلاعیه"></div></div>
         <div class="field"><label for="ntcT">عنوان (اختیاری)</label><input id="ntcT" type="text" maxlength="120" autocomplete="off" placeholder="مثلاً: تعطیلی مدرسه در روز شنبه"></div>
         <div class="field"><label for="ntcB">متن اطلاعیه</label><textarea id="ntcB" rows="5" maxlength="1500" placeholder="متن اطلاعیه را اینجا بنویسید…"></textarea><div class="now-sub" id="ntcCnt" style="margin-top:4px"></div></div>
         <div class="img-it" style="margin-top:6px">
@@ -2600,8 +2631,10 @@ button.gb-n{cursor:pointer} button.gb-n:hover{box-shadow:0 0 0 2px var(--line)} 
           <label class="btn img-up">📤 انتخاب تصویر<input type="file" id="ntcF" accept="image/*" hidden></label>
           <button class="btn" id="ntcImgDel" type="button" hidden>حذف تصویر</button>
         </div>
+        <div class="field" style="margin-top:10px"><label for="ntcX">نمایش تا تاریخ (اختیاری)</label><input id="ntcX" type="text" inputmode="numeric" maxlength="10" autocomplete="off" placeholder="۱۴۰۵/۰۸/۲۰" style="direction:ltr;text-align:center"><div class="now-sub" style="margin-top:4px">پس از این تاریخ، اطلاعیه خودکار از صفحه‌ی ورود برداشته می‌شود. خالی = تا زمانی که خودتان پنهان یا حذف کنید.</div></div>
         <label class="ntc-on"><input type="checkbox" id="ntcOn" checked> نمایش در صفحه‌ی ورود</label>
-        <button id="ntcSave" class="send" type="button">📢 انتشار اطلاعیه</button>
+        <div class="ntc-stage"><p class="cap">پیش‌نمایش زنده — همین‌طور در صفحه‌ی ورود دیده می‌شود</p><div id="ntcPrev"></div></div>
+        <button id="ntcSave" class="send" type="button" style="margin-top:12px">📢 انتشار اطلاعیه</button>
         <button id="ntcCancel" class="btn" type="button" hidden style="width:100%;margin-top:8px">انصراف از ویرایش</button>
       </div>
       <div class="card" id="ntcListCard">
@@ -2974,28 +3007,39 @@ async function imgDel(k) {
   const r = await suSend({ action:'setImg', k:k, data:'' }); if (!r) return;
   lsSet('sia_img_' + k, null); imgApply(); toast((k === 'logo' ? 'لوگو' : 'سربرگ') + ' به حالت پیش‌فرض برگشت');
 }
-/* ---------- نسخه‌ی ۱٫۳۸: اطلاعیه‌ی متنی و تصویری صفحه‌ی ورود ---------- */
-const NTC_K = 'sia_ntc_v1', NTC_IMG = {}, NTC_MAXCH = 440000;
-let NTC_PUB = lsGet(NTC_K, []), NTC_BUSY = false, NTC_ML = [], NTC_MAX = 8, NTC_ED = null, NTC_NEW, NTC_CUR = '';
+/* ---------- نسخه‌ی ۱٫۳۸: اطلاعیه‌ی متنی و تصویری صفحه‌ی ورود (سطح اهمیت، پیش‌نمایش زنده، تاریخ پایان) ---------- */
+const NTC_K = 'sia_ntc_v1', NTC_IMG = {}, NTC_MAXCH = 440000, NTC_SEEN = {};
+const NTC_LV = { urgent:{ t:'فوری', i:'🚨' }, important:{ t:'مهم', i:'⚠️' }, event:{ t:'رویداد', i:'📅' }, good:{ t:'خبر خوش', i:'🎉' }, normal:{ t:'اطلاعیه', i:'📢' } };
+let NTC_PUB = lsGet(NTC_K, []), NTC_BUSY = false, NTC_ML = [], NTC_MAX = 8, NTC_ED = null, NTC_NEW, NTC_CUR = '', NTC_SEL = 'normal';
+const ntcLv = k => NTC_LV[k] ? k : 'normal';
+function ntcToday() { try { const j = jOf(new Date()); return j[0] + '/' + pad(j[1]) + '/' + pad(j[2]); } catch (e) { return ''; } }
 function ntcZoom(src, alt) {
   const o = el('div', 'ntc-lb'), g = el('img'), x = el('button', 'btn ntc-lb-x', '✕');
   g.src = src; g.alt = alt || ''; x.type = 'button'; x.setAttribute('aria-label', 'بستن');
   const off = () => { o.remove(); document.removeEventListener('keydown', esc); }, esc = e => { if (e.key === 'Escape') off(); };
   o.addEventListener('click', off); document.addEventListener('keydown', esc); o.append(g, x); document.body.append(o);
 }
+function ntcCard(n, src, idx, noAnim) {      // کارت اطلاعیه؛ هم در صفحه‌ی ورود و هم در پیش‌نمایش مدیر
+  const lv = ntcLv(n.lv), M = NTC_LV[lv], c = el('article', 'ntc-card' + (noAnim ? ' nm' : ''));
+  c.dataset.lv = lv; c.style.setProperty('--i', idx || 0);
+  c.append(el('span', 'ntc-wm', M.i));
+  if (src) { const h = el('div', 'ntc-hero'), g = el('img'); g.alt = n.t || 'تصویر اطلاعیه'; g.src = src; h.append(g); h.addEventListener('click', () => ntcZoom(src, g.alt)); c.append(h); }
+  else if (n.iv) c.append(el('div', 'ntc-hero ld'));
+  const b = el('div', 'ntc-body'), top = el('div', 'ntc-top');
+  top.append(el('span', 'ntc-badge', M.i + ' ' + M.t)); if (n.d) top.append(el('span', 'ntc-date', fa(n.d)));
+  b.append(top);
+  if (n.t) b.append(el('h3', 'ntc-t', n.t));
+  if (n.b) b.append(el('div', 'ntc-x', n.b));
+  if (n.x) b.append(el('div', 'ntc-foot', '⏳ تا ' + fa(n.x)));
+  c.append(b); return c;
+}
 function ntcGateRender() {
   const box = $('#gNotices'); if (!box) return; box.textContent = '';
-  const l = Array.isArray(NTC_PUB) ? NTC_PUB : []; box.hidden = !l.length; if (!l.length) return;
-  box.append(el('div', 'g-ntc-h', '📢 اطلاعیه‌ها'));
-  l.forEach(n => {
-    const c = el('article', 'card g-ntc-it'), im = NTC_IMG[n.id] || lsGet('sia_ntci_' + n.id, null);
-    if (n.iv && im && im.d) { const g = el('img'); g.alt = n.t || 'تصویر اطلاعیه'; g.src = im.d; g.addEventListener('click', () => ntcZoom(im.d, g.alt)); c.append(g); }
-    const b = el('div', 'g-ntc-b');
-    if (n.t) b.append(el('h3', 'g-ntc-t', n.t));
-    if (n.b) b.append(el('div', 'g-ntc-x', n.b));
-    if (n.d) b.append(el('div', 'g-ntc-d', 'تاریخ درج: ' + fa(n.d)));
-    c.append(b); box.append(c);
-  });
+  const td = ntcToday(), l = (Array.isArray(NTC_PUB) ? NTC_PUB : []).filter(n => !(n.x && td && n.x < td));
+  box.hidden = !l.length; if (!l.length) return;
+  const h = el('div', 'g-ntc-h'); h.append(el('span', '', '📢 اطلاعیه‌های مدرسه')); box.append(h);
+  l.forEach((n, i) => { const im = NTC_IMG[n.id] || lsGet('sia_ntci_' + n.id, null), seen = !!NTC_SEEN[n.id]; NTC_SEEN[n.id] = 1;
+    box.append(ntcCard(n, n.iv && im && im.d ? im.d : '', i, seen)); });
 }
 async function ntcSync(list) {        // فهرست عمومی از roster؛ تصویر هر اطلاعیه فقط وقتی نسخه‌اش عوض شده دوباره گرفته می‌شود
   if (!Array.isArray(list)) return;
@@ -3018,30 +3062,45 @@ async function ntcSync(list) {        // فهرست عمومی از roster؛ ت�
 ntcGateRender();
 /* بخش مدیر */
 async function ntcShrink(file) { for (const m of [1100, 900, 720, 560]) { const d = await imgShrink(file, m, false); if (d.length <= NTC_MAXCH) return d; } return null; }
-function ntcPv(src) { const p = $('#ntcPv'); p.hidden = !src; p.src = src || ''; $('#ntcImgDel').hidden = !src; }
+function ntcPv(src) { const p = $('#ntcPv'); p.hidden = !src; p.src = src || ''; $('#ntcImgDel').hidden = !src; ntcPrev(); }
 function ntcCount() { const n = ($('#ntcB').value || '').length; $('#ntcCnt').textContent = fa(n) + ' از ' + fa(1500) + ' نویسه'; }
+function ntcPrev() {                  // پیش‌نمایش زنده با همان کارتِ صفحه‌ی ورود
+  const box = $('#ntcPrev'); if (!box) return; box.textContent = '';
+  const t = $('#ntcT').value.trim(), b = $('#ntcB').value.trim(), src = NTC_NEW !== undefined ? NTC_NEW : NTC_CUR, x = en($('#ntcX').value.trim());
+  if (!t && !b && !src) { box.append(el('div', 'empty', 'با نوشتن عنوان یا متن، اینجا پیش‌نمایش می‌بینید.')); box.firstChild.style.color = 'rgba(255,255,255,.7)'; return; }
+  box.append(ntcCard({ t:t, b:b, lv:NTC_SEL, d:ntcToday(), x:/^\d{4}[\/\-.]\d{1,2}[\/\-.]\d{1,2}$/.test(x) ? x.replace(/[-.]/g, '/') : '' }, src, 0, true));
+}
+function ntcLvPaint() { $$('#ntcLvs .ntc-lv').forEach(b => { const on = b.dataset.lv === NTC_SEL; b.classList.toggle('on', on); b.setAttribute('aria-checked', String(on)); }); }
+function ntcLvInit() {
+  const box = $('#ntcLvs'); if (box.children.length) return;
+  Object.keys(NTC_LV).forEach(k => { const b = el('button', 'ntc-lv'); b.type = 'button'; b.dataset.lv = k; b.setAttribute('role', 'radio');
+    b.append(el('i', '', NTC_LV[k].i), document.createTextNode(NTC_LV[k].t));
+    b.addEventListener('click', () => { NTC_SEL = k; ntcLvPaint(); ntcPrev(); }); box.append(b); });
+}
 function ntcForm(n) {
-  NTC_ED = n ? n.id : null; NTC_NEW = undefined; NTC_CUR = '';
+  NTC_ED = n ? n.id : null; NTC_NEW = undefined; NTC_CUR = ''; NTC_SEL = n ? ntcLv(n.lv) : 'normal'; ntcLvInit(); ntcLvPaint();
   $('#ntcFormT').textContent = n ? '✏️ ویرایش اطلاعیه' : '📢 اطلاعیه‌ی تازه';
-  $('#ntcT').value = n ? (n.t || '') : ''; $('#ntcB').value = n ? (n.b || '') : ''; $('#ntcOn').checked = n ? !!n.on : true;
+  $('#ntcT').value = n ? (n.t || '') : ''; $('#ntcB').value = n ? (n.b || '') : ''; $('#ntcOn').checked = n ? !!n.on : true; $('#ntcX').value = n && n.x ? fa(n.x) : '';
   $('#ntcSave').textContent = n ? '💾 ذخیره‌ی تغییرات' : '📢 انتشار اطلاعیه'; $('#ntcCancel').hidden = !n; $('#ntcF').value = '';
   ntcPv(''); ntcCount();
   if (n && n.iv) ntcImgFor(n).then(d => { if (NTC_ED === n.id && NTC_NEW === undefined) { NTC_CUR = d; ntcPv(d); } });
 }
 const NTC_MI = {};
-function ntcImgFor(n) {               // پیش‌نمایش تصویر برای مدیر (حتی اطلاعیه‌ی غیرفعال)
+function ntcImgFor(n) {               // تصویر برای مدیر (حتی اطلاعیه‌ی پنهان)
   const k = n.id + ':' + n.iv; if (!NTC_MI[k]) NTC_MI[k] = send({ action:'ntcImg', pin:MG.pin, key:ACCESS_KEY, id:n.id }).then(r => r.status === 'ok' ? (r.data || '') : '').catch(() => '').then(d => { if (!d) delete NTC_MI[k]; return d; });
   return NTC_MI[k];
 }
 function ntcListPaint() {
   const box = $('#ntcList'); box.textContent = ''; $('#ntcCnt2').textContent = '(' + fa(NTC_ML.length) + ' از ' + fa(NTC_MAX) + ')';
   if (!NTC_ML.length) { box.append(el('div', 'empty', 'هنوز اطلاعیه‌ای درج نشده است.')); return; }
+  const td = ntcToday();
   NTC_ML.forEach(n => {
-    const r = el('div', 'ntc-row' + (n.on ? '' : ' off'));
+    const lv = ntcLv(n.lv), M = NTC_LV[lv], exp = !!(n.x && td && n.x < td), r = el('div', 'ntc-row' + (n.on && !exp ? '' : ' off')); r.dataset.lv = lv;
     if (n.iv) { const g = el('img'); g.alt = ''; g.hidden = true; r.append(g); ntcImgFor(n).then(d => { if (d) { g.src = d; g.hidden = false; } }); }
+    r.append(el('span', 'ntc-badge', M.i + ' ' + M.t));
     r.append(el('b', '', n.t || (n.b || '').slice(0, 60) || 'اطلاعیه‌ی تصویری'));
     if (n.t && n.b) r.append(el('div', 'ntc-sn', n.b.length > 180 ? n.b.slice(0, 180) + '…' : n.b));
-    const meta = el('div', 'now-sub'); meta.append(el('span', 'ntc-chip', n.on ? '✅ در صفحه‌ی ورود نمایش داده می‌شود' : '⏸ پنهان'), document.createTextNode(' · ' + fa(n.d || '')));
+    const meta = el('div', 'now-sub'); meta.append(el('span', 'ntc-chip', exp ? '⌛ تاریخ نمایش گذشته' : n.on ? '✅ در صفحه‌ی ورود نمایش داده می‌شود' : '⏸ پنهان'), document.createTextNode(' · درج: ' + fa(n.d || '') + (n.x ? ' · تا ' + fa(n.x) : '')));
     r.append(meta);
     const a = el('div', 'ntc-acts'), mk = (t, fn) => { const b = el('button', 'btn', t); b.type = 'button'; b.addEventListener('click', fn); a.append(b); return b; };
     mk('✏️ ویرایش', () => { ntcForm(n); $('#ntcFormCard').scrollIntoView({ behavior:'smooth', block:'start' }); });
@@ -3055,7 +3114,8 @@ async function ntcOpen() {
   if (!NTC_ED) ntcForm(null);
   const r = await suSend({ action:'ntcList' }); if (!r) return; NTC_ML = r.list || []; NTC_MAX = r.max || 8; ntcListPaint();
 }
-$('#ntcB').addEventListener('input', ntcCount);
+$('#ntcB').addEventListener('input', () => { ntcCount(); ntcPrev(); });
+$('#ntcT').addEventListener('input', ntcPrev); $('#ntcX').addEventListener('input', ntcPrev);
 $('#ntcF').addEventListener('change', async e => {
   const f = e.target.files && e.target.files[0]; if (!f) return;
   if (!/^image\//.test(f.type)) return toast('فقط فایل تصویر (JPG، PNG یا WebP) را انتخاب کنید.');
@@ -3069,7 +3129,7 @@ $('#ntcCancel').addEventListener('click', () => ntcForm(null));
 $('#ntcSave').addEventListener('click', async () => {
   const t = $('#ntcT').value.trim(), b = $('#ntcB').value.trim(), hasImg = NTC_NEW ? true : (NTC_NEW === undefined && !!NTC_CUR);
   if (!t && !b && !hasImg) return toast('عنوان، متن یا تصویر اطلاعیه را وارد کنید.');
-  const o = { action:'ntcSave', id:NTC_ED || '', t:t, b:b, on:$('#ntcOn').checked };
+  const o = { action:'ntcSave', id:NTC_ED || '', t:t, b:b, on:$('#ntcOn').checked, lv:NTC_SEL, x:en($('#ntcX').value.trim()) };
   if (NTC_NEW !== undefined) o.img = NTC_NEW;
   const r = await suSend(o, $('#ntcSave')); if (!r) return;
   NTC_ML = r.list || NTC_ML; const edit = !!NTC_ED; ntcForm(null); ntcListPaint(); loadRoster();
