@@ -2032,6 +2032,47 @@ button.gb-n{cursor:pointer} button.gb-n:hover{box-shadow:0 0 0 2px var(--line)} 
 .ed-r input.bad{border-color:#e5484d}
 .ed-r label{display:flex;align-items:center;gap:4px;font-size:12.5px;white-space:nowrap}
 .ed-r.ch{background:rgba(245,183,49,.12);border-radius:10px}
+/* ===== نسخه‌ی ۱٫۳۸: هویت بصری «آسمان مدرسه و ستاره‌ی خاتم» =====
+   ۱) سربرگ ماژول‌ها یک آسمانِ زنده است که با ساعت روز عوض می‌شود (سپیده، روز، غروب، شب) و ستاره‌ی خاتم در آن آرام می‌چرخد.
+   ۲) هر ماژول یک رنگِ هویتی (--tc) دارد که روی نگین آیکن، تابش گوشه‌ی کاشی، نوار پایین کاشی و نوار بالای ماژول باز دیده می‌شود.
+   ۳) صفحه‌ی ورود هم همان ستاره را به‌صورت نقش کم‌رنگ دارد. همه‌ی حرکت‌ها با «کاهش حرکت» خاموش می‌شوند. */
+:root{--khatam:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='none' stroke='%23FFFFFF' stroke-width='1.3' stroke-linejoin='round'%3E%3Crect x='19' y='19' width='62' height='62'/%3E%3Crect x='19' y='19' width='62' height='62' transform='rotate(45 50 50)'/%3E%3Ccircle cx='50' cy='50' r='15'/%3E%3Ccircle cx='50' cy='50' r='6'/%3E%3Cpath d='M50 6v88M6 50h88' stroke-opacity='.35'/%3E%3C/g%3E%3C/svg%3E");--khatam-g:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='none' stroke='%23C9A13F' stroke-width='1.3' stroke-linejoin='round'%3E%3Crect x='19' y='19' width='62' height='62'/%3E%3Crect x='19' y='19' width='62' height='62' transform='rotate(45 50 50)'/%3E%3Ccircle cx='50' cy='50' r='15'/%3E%3Ccircle cx='50' cy='50' r='6'/%3E%3Cpath d='M50 6v88M6 50h88' stroke-opacity='.35'/%3E%3C/g%3E%3C/svg%3E");--tc:#4C8DF6;
+  --stars:radial-gradient(1.6px 1.6px at 12% 26%,#fff,transparent),radial-gradient(1.2px 1.2px at 31% 72%,rgba(255,255,255,.85),transparent),radial-gradient(1.8px 1.8px at 58% 18%,#fff,transparent),radial-gradient(1.2px 1.2px at 74% 64%,rgba(255,255,255,.8),transparent),radial-gradient(1.5px 1.5px at 90% 30%,#fff,transparent),radial-gradient(1px 1px at 46% 46%,rgba(255,255,255,.7),transparent)}
+.launch-hd{position:relative;overflow:hidden;color:#fff;border:0;padding:18px 18px;min-height:98px;background:var(--stars),var(--sky,linear-gradient(160deg,#060E22,#12264F 60%,#1E3D6E));
+  box-shadow:0 24px 44px -24px rgba(8,20,48,.75),inset 0 1px 0 rgba(255,255,255,.28)}
+.launch-hd[data-sky="dawn"]{--sky:linear-gradient(160deg,#27407A 0%,#8A5A9C 50%,#F2A65A 100%);--orb:#FFE2A0}
+.launch-hd[data-sky="day"]{--sky:linear-gradient(160deg,#1E5BB8 0%,#3E8BE0 56%,#8EC5F5 100%);--orb:#FFF3B8;background:var(--sky)}
+.launch-hd[data-sky="dusk"]{--sky:linear-gradient(160deg,#1C2A5E 0%,#6B3F8F 52%,#E5707A 100%);--orb:#FFD0A0}
+.launch-hd[data-sky="night"]{--orb:#DDE8FF}
+.launch-hd::before{content:"";position:absolute;z-index:0;inset-block:-55% -55%;inset-inline-end:-12%;width:300px;background:var(--khatam) center/contain no-repeat;opacity:.17;animation:khSpin 120s linear infinite;pointer-events:none}
+.launch-hd::after{content:"";position:absolute;z-index:0;left:-46px;top:-58px;width:210px;height:210px;border-radius:50%;background:radial-gradient(circle,var(--orb,#DDE8FF) 0%,rgba(255,255,255,0) 66%);opacity:.5;pointer-events:none}
+.launch-hd>*{position:relative;z-index:1}
+.launch-hd img{box-shadow:0 0 0 3px rgba(255,255,255,.55),0 0 0 7px rgba(255,255,255,.16),0 8px 18px rgba(4,12,30,.45)}
+.launch-who b{color:#fff;font-size:19px;text-shadow:0 2px 10px rgba(4,12,30,.5)}
+.launch-who small{color:rgba(255,255,255,.86);font-size:12.5px;margin-top:4px}
+.launch-hd .tile-edit{color:#fff;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.4);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);box-shadow:none}
+.launch-sec{display:flex;align-items:center;gap:10px;margin:4px 6px 14px;font-size:13.5px;font-weight:900;color:var(--muted)}
+.launch-sec::before,.launch-sec::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--line) 70%)}
+.launch-sec::after{transform:scaleX(-1)}
+.launch-sec i{width:20px;height:20px;background:var(--khatam-g) center/contain no-repeat}
+.tile{--tc:#4C8DF6;animation:tileIn .55s cubic-bezier(.2,.8,.2,1) backwards;animation-delay:calc(var(--i,0)*50ms)}
+.tile::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:radial-gradient(150px 120px at 100% 0%,color-mix(in srgb,var(--tc) 30%,transparent),transparent 72%);transition:opacity .3s,transform .35s;transform-origin:100% 0}
+.tile::after{content:"";position:absolute;inset-inline:16px;bottom:0;height:4px;border-radius:4px 4px 0 0;pointer-events:none;background:linear-gradient(90deg,var(--tc),color-mix(in srgb,var(--tc) 35%,#fff));transform:scaleX(.26);transform-origin:100% 50%;transition:transform .3s cubic-bezier(.2,.8,.2,1)}
+.tile:hover::before{transform:scale(1.25)}
+.tile:hover::after,.tile:focus-visible::after{transform:scaleX(1)}
+.tile>.ti-ic,.tile>.ti-t,.tile>.ti-s{position:relative}
+.tile .ti-ic{color:#fff;background:linear-gradient(145deg,color-mix(in srgb,var(--tc) 70%,#fff),var(--tc) 70%)}
+.tile .ti-ic::after{content:"";position:absolute;inset:-5px;border-radius:inherit;border:1.5px solid color-mix(in srgb,var(--tc) 38%,transparent);pointer-events:none}
+.tiles.edit .tile{animation:none}
+.tiles.edit .tile::after{transform:scaleX(1)}
+.mod-bar::before{content:"";position:absolute;inset:0 0 auto 0;height:4px;border-radius:18px 18px 0 0;background:linear-gradient(90deg,var(--tc),color-mix(in srgb,var(--tc) 30%,#fff));pointer-events:none}
+.mod-t .ti-ic{color:#fff;background:linear-gradient(145deg,color-mix(in srgb,var(--tc) 70%,#fff),var(--tc) 70%)}
+body.in-mod .mg-sec-d{border-inline-start-color:var(--tc)}
+.gate::before{content:"";position:fixed;z-index:0;inset:auto auto -24vmin -22vmin;width:84vmin;height:84vmin;background:var(--khatam) center/contain no-repeat;opacity:.07;animation:khSpin 180s linear infinite;pointer-events:none}
+.gate-wrap{position:relative;z-index:1}
+@keyframes khSpin{to{transform:rotate(360deg)}}
+@keyframes tileIn{from{opacity:0;transform:translateY(16px) scale(.96)}}
+@media (prefers-reduced-motion:reduce){.launch-hd::before,.gate::before{animation:none}.tile{animation:none}.tile::before,.tile::after{transition:none}}
 </style>
 </head>
 <body>
@@ -2104,6 +2145,7 @@ button.gb-n{cursor:pointer} button.gb-n:hover{box-shadow:0 0 0 2px var(--line)} 
       <button id="tileEdit" class="btn tile-edit" type="button" hidden>✥ چیدمان ماژول‌ها</button></div>
     <div id="tileHint" class="now-sub tile-hint" hidden>کاشی‌ها را با ⠿ بکشید یا با ▲ ▼ جابجا کنید و در پایان «✓ پایان چیدمان» را بزنید. <button id="tileReset" class="link-btn" type="button">بازگشت به ترتیب پیش‌فرض</button></div>
     <div id="grDueL" class="gd-host" hidden></div>
+    <div class="launch-sec" aria-hidden="true"><i></i><span>ماژول‌های شما</span><i></i></div>
     <div id="tiles" class="tiles" role="list"></div>
     <div id="honorLaunch" class="launch-honor"></div>
     <div class="tmw-host" id="tmLaunch"></div>
@@ -9091,16 +9133,22 @@ function modKeys() {
   }
   return ['att', 'gr', 'sch', 'inb', 'cns', 'dis', 'stf'];
 }
+const TACC = { att:'#22A06B', gr:'#E0A526', sch:'#4C8DF6', inb:'#8B6CF0', cns:'#1BB5C4', dis:'#E5576B', stf:'#E58A2B', 'm:today':'#4C8DF6', 'm:cal':'#8B6CF0', 'm:stu':'#22A06B', 'm:setup':'#E0A526', 'm:set':'#6B7A99', 'm:ntc':'#E5576B', 'm:pta':'#1BB5C4', 'm:rep':'#E58A2B', 'm:dis':'#E5576B', 'm:tch':'#4C8DF6', 'm:sys':'#6B7A99', 'm:pw':'#E0A526', 'm:blk':'#6B7A99' };
+const TPAL = ['#4C8DF6', '#22A06B', '#E0A526', '#8B6CF0', '#1BB5C4', '#E5576B', '#E58A2B', '#6B7A99'];
+const accentOf = k => TACC[k] || TPAL[[...String(k)].reduce((a, c) => a + c.charCodeAt(0), 0) % TPAL.length];      // رنگ هویتیِ هر ماژول
+function skyOf(h) {                   // آسمان و سلامِ متناسب با ساعت روز
+  return { sky:h < 5 ? 'night' : h < 9 ? 'dawn' : h < 16 ? 'day' : h < 19 ? 'dusk' : 'night', gr:h < 5 ? 'شب بخیر' : h < 12 ? 'صبح بخیر' : h < 16 ? 'ظهر بخیر' : h < 19 ? 'عصر بخیر' : 'شب بخیر' };
+}
 function launchHead() {
-  const n = new Date(), j = jOf(n), st = ROLE === 'student' && SD;
-  $('#launchHi').textContent = 'سلام، ' + (st ? SD.name : ROLE === 'manager' ? (MG.who ? MG.who.n : 'مدیر مدرسه') : ROLE === 'counselor' ? COUNSELOR_NAME : S.teacher);
+  const n = new Date(), j = jOf(n), st = ROLE === 'student' && SD, sk = skyOf(n.getHours()); $('.launch-hd').dataset.sky = sk.sky;
+  $('#launchHi').textContent = sk.gr + '، ' + (st ? SD.name : ROLE === 'manager' ? (MG.who ? MG.who.n : 'مدیر مدرسه') : ROLE === 'counselor' ? COUNSELOR_NAME : S.teacher);
   $('#launchSub').textContent = JWD[n.getDay()] + ' ' + fa(j[2]) + ' ' + MONTHS[j[1] - 1] + ' ' + fa(j[0]) + ' | ' + (st ? 'کلاس ' + SD.cls : ({ manager:'پنل مدیر', counselor:'پنل مشاور', teacher:'پنل دبیر' })[ROLE] || '');
 }
 function renderTiles() {
   const g = $('#tiles'); if (!g) return; g.textContent = ''; g.classList.toggle('edit', TEDIT);
   const lock = ROLE === 'student' && SD && stuLocked(), keys = lock ? ['s:prof'].concat(modKeys()) : modKeys();
-  keys.forEach(k => {
-    const off = lock && k !== 's:prof', t = el(TEDIT ? 'div' : 'button', 'tile' + (off ? ' off' : '')); t.dataset.k = k; t.setAttribute('role', 'listitem');
+  keys.forEach((k, ix) => {
+    const off = lock && k !== 's:prof', t = el(TEDIT ? 'div' : 'button', 'tile' + (off ? ' off' : '')); t.dataset.k = k; t.setAttribute('role', 'listitem'); t.style.setProperty('--tc', accentOf(k)); t.style.setProperty('--i', ix);
     if (!TEDIT) { t.type = 'button'; t.disabled = off; t.addEventListener('click', () => openMod(k)); }
     const ic = el('span', 'ti-ic tone-' + (TTONE[k] || 'n')); ic.innerHTML = tSvg(k);
     const dot = el('i', 'ti-dot'); dot.hidden = true;
@@ -9157,7 +9205,7 @@ function modHead(k) {
   $('#modRef').hidden = !(ROLE === 'manager' && k.indexOf('m:') === 0);
 }
 function modShow(k) {
-  const was = LAUNCH_ON; LAUNCH_ON = false; MOD = k; TEDIT = false;
+  const was = LAUNCH_ON; LAUNCH_ON = false; MOD = k; TEDIT = false; document.body.style.setProperty('--tc', accentOf(k));
   $('#launch').hidden = true; $('#modBar').hidden = false; document.body.classList.add('in-mod'); modHead(k);
   if (was) { try { history.pushState({ mod:k }, ''); } catch (e) {} window.scrollTo({ top:0 }); }
 }
