@@ -2377,10 +2377,10 @@ body.in-mod .mg-sec-d{border-inline-start-color:var(--tc)}
         <div class="lbl" style="margin-bottom:4px">✏️ ویرایش نمره‌های ثبت‌شده</div>
         <div class="now-sub" style="margin-bottom:8px">نمره‌ها را به تفکیک کلاس، درس و دبیر پیدا کنید و مستقیم ویرایش کنید. هر تغییر در «سابقه‌ی تغییرات» ثبت می‌شود. «غایب» بدون غیبت موجه در روز برگزاری آزمون (طبق تقویم آموزشی)، در معدل و کارنامه صفر حساب می‌شود؛ ثبت یا حذف غیبت موجهِ آن روز، خودکار روی معدل اثر می‌گذارد.</div>
         <div class="grid2">
-          <div class="field"><label for="edCls">کلاس</label><select id="edCls"></select></div>
-          <div class="field"><label for="edCourse">درس</label><select id="edCourse"></select></div>
+          <div class="field"><label for="gedCls">کلاس</label><select id="gedCls"></select></div>
+          <div class="field"><label for="gedCourse">درس</label><select id="gedCourse"></select></div>
         </div>
-        <div class="field"><label for="edTe">دبیر</label><select id="edTe"></select></div>
+        <div class="field"><label for="gedTe">دبیر</label><select id="gedTe"></select></div>
         <div id="edSum" class="now-sub"></div>
       </div>
       <div id="edList"></div>
@@ -2942,7 +2942,8 @@ body.in-mod .mg-sec-d{border-inline-start-color:var(--tc)}
       </div>
       <div class="card" id="edCard">
         <div class="lbl" style="margin-bottom:8px">ویرایش برنامه هفتگی</div>
-        <div class="field"><select id="edCls" aria-label="کلاس"></select></div>
+        <div class="field"><label for="edCls">۱. کلاس را انتخاب کنید</label><select id="edCls"></select><div class="now-sub" id="edClsInfo" style="margin-top:6px"></div></div>
+        <div class="lbl" style="margin:10px 0 6px">۲. روز را انتخاب و زنگ‌ها را بچینید</div>
         <div id="edDays" class="days"></div>
         <div id="edRows"></div><datalist id="edCourseL"></datalist>
         <button id="edSave" class="send" type="button">ذخیره برنامه این کلاس</button>
@@ -3322,19 +3323,19 @@ function edFill(sel, items, first, cur) {
   items.forEach(t => { const o = el('option', '', t); o.value = t; sel.append(o); }); sel.value = items.includes(cur) ? cur : '';
 }
 function edOpts() {            // کلاس ← درس ← دبیر: هر لیست فقط گزینه‌های سازگار با انتخاب‌های قبلی را دارد
-  const c = $('#edCls').value, s = $('#edCourse').value, srt = a => uniq(a).sort((x, y) => x.localeCompare(y, 'fa'));
+  const c = $('#gedCls').value, s = $('#gedCourse').value, srt = a => uniq(a).sort((x, y) => x.localeCompare(y, 'fa'));
   const O = GED.opts.filter(x => !c || x.c === c), O2 = O.filter(x => !s || x.s === s);
-  edFill($('#edCls'), srt(GED.opts.map(x => x.c)), 'همه‌ی کلاس‌ها', c);
-  edFill($('#edCourse'), srt(O.map(x => x.s)), 'همه‌ی درس‌ها', s);
-  edFill($('#edTe'), srt(O2.map(x => x.te).filter(Boolean)), 'همه‌ی دبیران', $('#edTe').value);
+  edFill($('#gedCls'), srt(GED.opts.map(x => x.c)), 'همه‌ی کلاس‌ها', c);
+  edFill($('#gedCourse'), srt(O.map(x => x.s)), 'همه‌ی درس‌ها', s);
+  edFill($('#gedTe'), srt(O2.map(x => x.te).filter(Boolean)), 'همه‌ی دبیران', $('#gedTe').value);
 }
 async function edLoad(keep) {
   if (ROLE !== 'manager' || !MG.pin || GED.busy) return; GED.busy = true; const box = $('#edList'); if (!keep) busy(box, 3);
-  const r = await send({ action:'grBrowse', pin:MG.pin, key:ACCESS_KEY, cls:$('#edCls').value, course:$('#edCourse').value, te:$('#edTe').value }); GED.busy = false;
+  const r = await send({ action:'grBrowse', pin:MG.pin, key:ACCESS_KEY, cls:$('#gedCls').value, course:$('#gedCourse').value, te:$('#gedTe').value }); GED.busy = false;
   if (r.net) { box.textContent = ''; return box.append(el('div', 'empty', 'اینترنت در دسترس نیست.')); }
   if (r.status !== 'ok') { box.textContent = ''; return box.append(el('div', 'empty', r.message || 'بارگذاری نشد.')); }
   GED.opts = r.opts || []; GED.list = r.list || []; GED.total = r.total || 0;
-  const c = $('#edCls').value, s = $('#edCourse').value, t = $('#edTe').value; edOpts(); $('#edCls').value = c; $('#edCourse').value = GED.opts.some(x => x.s === s) ? s : ''; $('#edTe').value = t;
+  const c = $('#gedCls').value, s = $('#gedCourse').value, t = $('#gedTe').value; edOpts(); $('#gedCls').value = c; $('#gedCourse').value = GED.opts.some(x => x.s === s) ? s : ''; $('#gedTe').value = t;
   edPaint();
 }
 function edPaint() {
@@ -3375,7 +3376,7 @@ function edPaint() {
   });
 }
 const edNum = t => { const v = String(toEn(String(t))).trim().replace(/[٫,،]/g, '.'); if (v === '') return null; const n = Number(v); return isFinite(n) ? Math.round(n * 100) / 100 : null; };
-['edCls', 'edCourse', 'edTe'].forEach(id => $('#' + id).addEventListener('change', () => { if (id === 'edCls') { $('#edCourse').value = ''; $('#edTe').value = ''; } else if (id === 'edCourse') $('#edTe').value = ''; edLoad(); }));
+['gedCls', 'gedCourse', 'gedTe'].forEach(id => $('#' + id).addEventListener('change', () => { if (id === 'gedCls') { $('#gedCourse').value = ''; $('#gedTe').value = ''; } else if (id === 'gedCourse') $('#gedTe').value = ''; edLoad(); }));
 /* ---------- نسخه‌ی ۱٫۳۸: نمره‌ی انضباط از ۲۰ ---------- */
 const dscCls = v => v >= 18 ? 'dsc-hi' : v >= 15 ? 'dsc-mid' : 'dsc-lo';
 function dscTermEl(t) {               // کارت یک نوبت: نمره، نوار و علتِ کسرها
@@ -3391,6 +3392,17 @@ function dscStuEl(D) {
   const c = el('div', 'card'); c.append(el('div', 'lbl', '🧭 نمره‌ی انضباط من'));
   (D || []).forEach(t => c.append(dscTermEl(t)));
   c.append(el('div', 'now-sub', 'پایه‌ی نمره ۲۰ است. هر غیبت غیرموجه ۰٫۲۵، هر دو تأخیر ۰٫۲۵ و هر مورد انضباطی ۰٫۲۵ از آن کم می‌کند. غیبت موجه کسر ندارد.')); return c;
+}
+function dsrEl(list) {                // موارد انضباطی، تشویق و پرورشیِ ثبت‌شده برای دانش‌آموز (فقط خواندنی)
+  const c = el('div', 'card'), n = (list || []).filter(x => x.k === 'انضباطی').length; c.append(el('div', 'lbl', '⚖️ پرونده‌ی رفتاری من'));
+  c.append(el('div', 'now-sub', fa(n) + ' مورد انضباطی' + (n ? ' (هر مورد ۰٫۲۵ از نمره‌ی انضباط کم می‌کند)' : '') + ' | ' + fa((list || []).filter(x => x.k === 'تشویق').length) + ' تشویق | ' + fa((list || []).filter(x => x.k === 'پرورشی').length) + ' فعالیت پرورشی'));
+  if (!(list || []).length) { c.append(el('div', 'empty', 'موردی ثبت نشده است. همین‌طور ادامه بده 🌟')); return c; }
+  list.forEach(x => {
+    const d = el('div', 'ds-it k-' + (DS_COL[x.k] || 'neg')), h = el('div', 'ds-h'), tg = el('span', 'ds-tags'); h.append(el('span', 'ds-tt', (DS_ICON[x.k] || '') + ' ' + x.c));
+    tg.append(el('span', 'ds-tag k-' + (DS_COL[x.k] || 'neg'), x.k)); const si = ['سبک', 'متوسط', 'شدید'].indexOf(x.sv); if (x.sv) tg.append(el('span', 'ds-tag sev' + si, x.sv)); h.append(tg); d.append(h, el('div', 'ds-meta', 'تاریخ ' + fa(x.d)));
+    if (x.ds) d.append(el('div', 'ds-desc', x.ds)); c.append(d);
+  });
+  c.append(el('div', 'now-sub', 'اگر در موردی اشتباه یا ابهام وجود دارد، با مدیر یا مشاور مدرسه صحبت کن.')); return c;
 }
 let DSC_INIT = false;
 async function dscLoad() {
@@ -4160,6 +4172,7 @@ function edInit() {
 const edCell = k => ED.cells[k] || (ED.cells[k] = { alt:false, all:{ s:'', t:'' }, m:{ s:'', t:'' }, a:{ s:'', t:'' } });
 function edLoadCls() {
   ED.cells = {};
+  { const n = SCH.filter(r => r[0] === ED.cls).length, i = $('#edClsInfo'); if (i) i.textContent = ED.cls ? 'در حال ویرایش برنامه‌ی کلاس «' + ED.cls + '» — ' + fa(n) + ' زنگ ثبت‌شده' : 'هنوز کلاسی ساخته نشده است؛ ابتدا در مرحله‌ی «کلاس‌ها» کلاس بسازید.'; const sb = $('#edSave'); if (sb) sb.textContent = ED.cls ? '💾 ذخیره‌ی برنامه‌ی کلاس ' + ED.cls : 'ذخیره برنامه این کلاس'; }
   SCH.filter(r => r[0] === ED.cls).forEach(r => {
     const c = edCell(r[1] + '-' + r[2]), v = r[5] === 'صبح' ? c.m : r[5] === 'ظهر' ? c.a : c.all;
     if (r[5]) c.alt = true; v.s = r[3]; v.t = r[4];
@@ -4709,7 +4722,7 @@ function stuAtt(box) {
   const a = SD.att, c = el('div', 'card'), g = el('div'); c.append(el('div', 'lbl', 'وضعیت حضور و غیاب'));
   g.style.cssText = 'display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:10px 0';
   [['کل جلسات', a.sessions], ['حاضر', a.present], ['غایب', a.absent], ['تأخیر', a.late], ['غیبت موجه', a.excused]].forEach(q => { const d = el('div', 'dir-it'); d.style.padding = '10px 14px'; d.append(el('div', 'now-sub', q[0]), el('div', 'now-t', fa(q[1]))); g.append(d); });
-  c.append(g, SD.list.length ? tbl(['تاریخ', 'درس', 'وضعیت'], SD.list.map(x => [x.d, x.c, x.s])) : el('div', 'empty', 'غیبت یا تأخیری ثبت نشده است.')); if (SD.dsc) box.append(dscStuEl(SD.dsc)); box.append(c);
+  c.append(g, SD.list.length ? tbl(['تاریخ', 'درس', 'وضعیت'], SD.list.map(x => [x.d, x.c, x.s])) : el('div', 'empty', 'غیبت یا تأخیری ثبت نشده است.')); if (SD.dsc) box.append(dscStuEl(SD.dsc)); if (SD.dsr) box.append(dsrEl(SD.dsr)); box.append(c);
 }
 function stuAvg(box) {
   const mk = (title, me, cl) => { const w = el('div'); w.style.marginBottom = '14px'; w.append(el('div', 'now-t', title));
@@ -6970,7 +6983,7 @@ async function pfLoad() {
   const r = await send({ action:'studentFull', pin:MG.pin, cls:cls, name:name, key:ACCESS_KEY });
   if (r.net) { box.textContent = 'اینترنت در دسترس نیست.'; return; }
   if (r.status !== 'ok') { box.textContent = r.message || 'بارگذاری نشد.'; return; }
-  PF = r; pfRender(); pfBeh(); pfAct();
+  PF = r; pfRender(); pfBeh(); pfAct(); pfDis();
 }
 function bars3(title, a) {
   const w = el('div'); w.style.marginBottom = '12px'; w.append(el('div', 'now-t', title));
@@ -8126,6 +8139,34 @@ function courseMemClean() {          // نام دروس غیررسمی از حا
   const pc = keep(P.courses); if (pc.length !== (P.courses || []).length) { P.courses = pc; savePrefs(); fillDatalist('courseList', pc); }
   lsSet('sia_rost_c', keep(lsGet('sia_rost_c', [])));
 }
+/* ---------- نسخه‌ی ۱٫۳۸: مدیریت موارد انضباطی دانش‌آموز در پروفایل او (مدیر) ---------- */
+async function dsEnsure() {            // بارگذاری تنظیمات بخش انضباطی بدون نیاز به باز کردن همان بخش
+  const key = ROLE + '|' + S.teacher; if (DIS.meta && DIS.key === key && Date.now() - DIS.mt < 300000) return true;
+  const r = await dsCall('disMeta'); if (r.status !== 'ok') return false;
+  DIS.meta = r; DIS.mt = Date.now(); DIS.key = key; if (!Object.keys(DIS.f).length) dsFresh(); return true;
+}
+async function pfDis() {
+  const box = el('div', 'card'), cls = PF.cls, name = PF.name, P = { inc:false }; box.append(el('div', 'lbl', '⚖️ موارد انضباطی، تشویق و پرورشی'));
+  $('#pfBody').append(box);
+  if (PF.dsc) { const sc = el('div'); PF.dsc.forEach(t => sc.append(dscTermEl(t))); box.append(sc); }
+  const sum = el('div', 'now-sub'), lst = el('div'), ab = el('div', 'ds-acts'), l = el('label', 'sms-opt'), ci = el('input');
+  ci.type = 'checkbox'; l.append(ci, document.createTextNode(' نمایش ابطال‌شده‌ها')); sum.style.margin = '10px 0 4px';
+  const nb = el('button', 'btn', '➕ ثبت مورد تازه'), fb = el('button', 'btn', '🗂 پرونده‌ی کامل (اقدام‌ها و تماس با خانواده)'); nb.type = fb.type = 'button';
+  const go = () => mgGo('disMgCard');
+  nb.addEventListener('click', () => { DIS.edit = null; DIS.ent = 'rec'; dsFresh(); DIS.sel = { cls:cls, name:name }; DIS.view = 'new'; go(); });
+  fb.addEventListener('click', () => { DIS.edit = null; DIS.pf.cls = cls; DIS.pf.name = name; DIS.view = 'file'; go(); });
+  ab.append(nb, fb); box.append(sum, lst, l, ab);
+  if (!(await dsEnsure())) { lst.append(el('div', 'empty', 'بخش انضباطی بارگذاری نشد؛ نسخه‌ی Code.gs را به‌روز کنید.')); return; }
+  const ld = async () => {
+    lst.textContent = ''; lst.append(skel(2)); const r = await dsCall('disList', { e:'rec', cls:cls, name:name, inc:P.inc }); lst.textContent = '';
+    if (r.status !== 'ok') { lst.append(el('div', 'empty', dsFail(r))); return; }
+    const act = r.list.filter(x => !x.vd), n = k => act.filter(x => x.kind === k).length;
+    sum.textContent = fa(n('انضباطی')) + ' مورد انضباطی (کسر ' + f2(n('انضباطی') * 0.25) + ' نمره) | ' + fa(n('تشویق')) + ' تشویق | ' + fa(n('پرورشی')) + ' پرورشی';
+    if (!r.list.length) lst.append(el('div', 'empty', 'موردی ثبت نشده است.'));
+    r.list.forEach(x => lst.append(dsItem(x, { noStu:true, reload:ld, goto:go })));
+  };
+  ci.addEventListener('change', () => { P.inc = ci.checked; ld(); }); ld();
+}
 async function pfBeh() {
   const box = el('div', 'card'), lst = el('div'), inp = el('input'), kind = el('select'), add = el('button', 'btn', 'ثبت یادداشت'); box.append(el('div', 'lbl', 'یادداشت‌های رفتاری و تربیتی'), lst);
   inp.type = 'text'; inp.maxLength = 300; inp.placeholder = 'یادداشت جدید'; add.type = 'button'; ['مثبت', 'منفی', 'مشاوره'].forEach(k => { const o = el('option', '', k); o.value = k; kind.append(o); });
@@ -8979,7 +9020,7 @@ function dsItem(x, o) {
   if (E === 'fam' && !x.vd && x.can && dsIsOpen(x)) { const b = el('button', 'btn', '✅ ثبت نتیجه‌ی تماس'); b.type = 'button'; b.addEventListener('click', () => dsEdit(x, true)); ac.append(b); }
   if (x.can && !x.vd) {
     const e = el('button', 'btn', '✏️ ویرایش'), v = el('button', 'btn', '⛔ ابطال'); e.type = v.type = 'button';
-    e.addEventListener('click', () => dsEdit(x)); v.addEventListener('click', () => dsVoid(x, o.reload)); ac.append(e, v);
+    e.addEventListener('click', () => { dsEdit(x); o.goto && o.goto(); }); v.addEventListener('click', () => dsVoid(x, o.reload)); ac.append(e, v);
   }
   if (x.vd && dsMgr()) { const b = el('button', 'btn', '↩️ بازگردانی'); b.type = 'button'; b.addEventListener('click', () => dsRestore(x, o.reload)); ac.append(b); }
   if (ac.children.length) d.append(ac);
