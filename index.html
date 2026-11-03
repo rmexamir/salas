@@ -2128,6 +2128,8 @@ body.in-mod .mg-sec-d{border-inline-start-color:var(--tc)}
 .lv-wk .t i{background:#2a78d6}.lv-wk .h i{background:#eb6834}
 .lv-ft{display:flex;align-items:center;justify-content:space-between;color:var(--muted);font-size:12px;margin:4px 2px 0}
 @media (prefers-reduced-motion:reduce){.lv-dot,.lv-hero::before{animation:none}}
+#mcCourse.auto{border-color:var(--present);box-shadow:0 0 0 3px rgba(12,163,12,.14);font-weight:800}
+#mcCrsInfo.ok{color:var(--present)}#mcCrsInfo.warn{color:var(--late)}
 </style>
 </head>
 <body>
@@ -2579,10 +2581,11 @@ body.in-mod .mg-sec-d{border-inline-start-color:var(--tc)}
       <div class="mg-sec-d">ثبت و مدیریت آزمون و تکلیف همه‌ی کلاس‌ها؛ هر کلاس یک ستون، مرتب بر اساس تاریخ برگزاری. دانش‌آموزان همین تقویم را می‌بینند.</div>
       <div class="card" id="mcAddCard">
         <div class="lbl" style="margin-bottom:8px">ثبت در تقویم آموزشی</div>
-        <div class="mg-bar"><select id="mcCls" aria-label="کلاس"></select><input id="mcCourse" type="text" list="mcCourseL" autocomplete="off" placeholder="درس" aria-label="درس"><datalist id="mcCourseL"></datalist></div>
+        <div class="mg-bar"><select id="mcGr" aria-label="پایه"></select><select id="mcCls" aria-label="کلاس"></select></div>
         <div class="mg-bar jp"><select id="mcD" aria-label="روز"></select><select id="mcM" aria-label="ماه"></select><select id="mcY" aria-label="سال"></select></div>
         <div class="mg-bar"><select id="mcPer" aria-label="زنگ برگزاری"></select><select id="mcKind" aria-label="نوع"><option>آزمون</option><option>تکلیف</option></select></div>
         <div id="mcInfo" class="now-sub" style="margin-bottom:8px"></div>
+        <div class="field"><label for="mcCourse">📘 درس این زنگ (خودکار از برنامه‌ی هفتگی)</label><input id="mcCourse" type="text" list="mcCourseL" autocomplete="off" placeholder="درس" aria-label="درس"><datalist id="mcCourseL"></datalist><div id="mcCrsInfo" class="now-sub" style="margin-top:4px"></div></div>
         <div class="field"><input id="mcTitle" type="text" maxlength="80" placeholder="عنوان (مثلاً فصل ۲)" aria-label="عنوان"></div>
         <button id="mcAdd" class="send" type="button">ثبت در تقویم آموزشی</button>
       </div>
@@ -8814,48 +8817,57 @@ function abEdit(o, ds) {          // ویرایش (یا ثبت) حضور و غی
   bt.append(save, no); sh.append(ul, hint, bt); $('#modal').hidden = false;
 }
 /* ======================= مدیر: تقویم آموزشی همه‌ی کلاس‌ها (۶ ستون، مرتب بر اساس تاریخ برگزاری) ======================= */
-const MC = { list:[], init:false, pk:null, kind:'', show:'future', up:false };
+const MC = { list:[], init:false, pk:null, kind:'', show:'future', up:false, cu:false };
 const grRank = c => { const t = normT(c); return /دوازدهم/.test(t) ? 12 : /یازدهم/.test(t) ? 11 : /دهم/.test(t) ? 10 : 99; };   // دهم ← یازدهم ← دوازدهم
 const mcClasses = () => uniq(allClasses().concat(SCH.map(r => r[0])).concat(MC.list.map(x => x.c))).sort((a, b) => grRank(a) - grRank(b) || a.localeCompare(b, 'fa'));
+function mcGrFill() {              // پایه ← کلاس ← روز ← زنگ ← درس (خودکار)
+  const sel = $('#mcGr'), cur = sel.value, gs = uniq(mcClasses().map(gradeOfCls).filter(Boolean)); sel.textContent = '';
+  [['', 'همه‌ی پایه‌ها']].concat(gs.map(g => [g, 'پایه‌ی ' + g])).forEach(q => { const o = el('option', '', q[1]); o.value = q[0]; sel.append(o); }); sel.value = gs.includes(cur) ? cur : '';
+}
 function mcClsFill() {
-  const sel = $('#mcCls'), cur = sel.value; sel.textContent = '';
-  mcClasses().forEach(c => { const o = el('option', '', c); o.value = c; sel.append(o); });
-  sel.value = mcClasses().includes(cur) ? cur : (mcClasses()[0] || ''); mcCourseFill();
+  const gr = $('#mcGr') ? $('#mcGr').value : '', sel = $('#mcCls'), cur = sel.value, all = mcClasses().filter(c => !gr || gradeOfCls(c) === gr); sel.textContent = '';
+  all.forEach(c => { const o = el('option', '', c); o.value = c; sel.append(o); });
+  sel.value = all.includes(cur) ? cur : (all[0] || ''); mcPerFill();
 }
-function mcCourseFill() {
-  const c = $('#mcCls').value, dl = $('#mcCourseL'), inp = $('#mcCourse'); dl.textContent = '';
-  const cs = uniq(SCH.filter(r => r[0] === c).map(r => r[3]).filter(Boolean)); cs.forEach(x => { const o = el('option'); o.value = x; dl.append(o); });
-  if (!inp.value.trim() || (cs.length && !cs.some(x => normT(x) === normT(inp.value)))) inp.value = cs[0] || inp.value; mcPerFill();
+function mcCourseFill() { mcPerFill(); }
+function mcDay() { if (!MC.pk) return null; const q = jParse(MC.pk.get()); if (!q) return null; const d = jGreg(q[0], q[1], q[2]); return { d:d, fri:d.getDay() === 5, day:(d.getDay() + 1) % 7, sh:d.getDay() === 5 ? null : SH_FA[shiftOfDate(d)] }; }
+const mcRows = (c, D, per) => D && !D.fri ? SCH.filter(r => r[0] === c && r[1] === D.day && r[2] === per && (!r[5] || r[5] === D.sh)) : [];
+function mcPerFill() {             // زنگ‌ها با نام درسِ هر زنگ؛ پیش‌فرض: اولین زنگی که این کلاس در آن روز درس دارد
+  const D = mcDay(); if (!D) return; const sel = $('#mcPer'), cur = sel.value, c = $('#mcCls').value; sel.textContent = ''; perOpts(sel, D.d);
+  let first = 0; Array.from(sel.options).forEach(o => { const cs = uniq(mcRows(c, D, +o.value).map(r => r[3]).filter(Boolean)); o.textContent += ' — ' + (cs.length ? cs.join('، ') : 'بدون درس'); if (cs.length && !first) first = +o.value; });
+  sel.value = String(MC.up && cur ? cur : (first || cur || 1)); mcSlot();
 }
-function mcPerFill() {
-  if (!MC.pk) return; const q = jParse(MC.pk.get()); if (!q) return;
-  const d = jGreg(q[0], q[1], q[2]), sel = $('#mcPer'), cur = sel.value, sh = d.getDay() === 5 ? null : shiftOfDate(d); sel.textContent = '';
-  perOpts(sel, d);
-  let pre = 0; if (sh) { const day = (d.getDay() + 1) % 7, c = $('#mcCls').value, s0 = $('#mcCourse').value; const r = SCH.find(x => x[0] === c && normT(x[3]) === normT(s0) && x[1] === day && (!x[5] || x[5] === SH_FA[sh])); if (r) pre = r[2]; }
-  sel.value = String(MC.up && cur ? cur : (pre || cur || 1)); mcInfo();
+function mcSlot() {                // نام درس از برنامه‌ی هفتگی (کلاس + روز هفته + زنگ)
+  const D = mcDay(), c = $('#mcCls').value, per = +$('#mcPer').value || 1, inp = $('#mcCourse'), dl = $('#mcCourseL'), inf = $('#mcCrsInfo'); dl.textContent = '';
+  const rows = mcRows(c, D, per), cs = uniq(rows.map(r => r[3]).filter(Boolean));
+  uniq(SCH.filter(r => r[0] === c).map(r => r[3]).filter(Boolean)).forEach(x => { const o = el('option'); o.value = x; dl.append(o); });
+  if (cs.length) { if (!MC.cu || !cs.some(x => normT(x) === normT(inp.value))) { inp.value = cs[0]; MC.cu = false; } inp.classList.add('auto'); inf.className = 'now-sub ok'; inf.textContent = '✅ ' + cs.join('، ') + ' — دبیر: ' + uniq(rows.map(r => r[4]).filter(Boolean)).join('، '); }
+  else { if (!MC.cu) inp.value = ''; inp.classList.remove('auto'); inf.className = 'now-sub warn'; inf.textContent = D && D.fri ? '' : '⚠️ در برنامه‌ی هفتگی، این کلاس در این روز و زنگ درسی ندارد؛ زنگ دیگری انتخاب کنید یا نام درس را بنویسید.'; }
+  mcInfo();
 }
 function mcInfo() {
-  if (!MC.pk) return; const q = jParse(MC.pk.get()); if (!q) return; const d = jGreg(q[0], q[1], q[2]), per = +$('#mcPer').value || 1;
-  $('#mcInfo').textContent = d.getDay() === 5 ? '⚠️ جمعه تعطیل است؛ روز دیگری انتخاب کنید.' : JWD[d.getDay()] + ' ' + fa(MC.pk.get()) + ' | شیفت ' + SH_FA[shiftOfDate(d)] + ' | ' + $('#mcKind').value + ' در زنگ ' + fa(per) + ': ' + SHIFT_TIMES[shiftOfDate(d)][per - 1];
+  const D = mcDay(); if (!D) return; const per = +$('#mcPer').value || 1;
+  $('#mcInfo').textContent = D.fri ? '⚠️ جمعه تعطیل است؛ روز دیگری انتخاب کنید.' : JWD[D.d.getDay()] + ' ' + fa(MC.pk.get()) + ' | شیفت ' + D.sh + ' | ' + $('#mcKind').value + ' در زنگ ' + fa(per) + ': ' + SHIFT_TIMES[shiftOfDate(D.d)][per - 1];
 }
 async function mcInit() {
   if (!$('#mcBoard')) return;
   if (!MC.init) {
     MC.init = true;
-    MC.pk = jPicker($('#mcD'), $('#mcM'), $('#mcY'), () => { MC.up = false; mcPerFill(); });
-    $('#mcCls').addEventListener('change', () => { MC.up = false; $('#mcCourse').value = ''; mcCourseFill(); });
-    $('#mcCourse').addEventListener('input', () => { MC.up = false; mcPerFill(); });
-    $('#mcPer').addEventListener('change', () => { MC.up = true; mcInfo(); }); $('#mcKind').addEventListener('change', mcInfo);
+    MC.pk = jPicker($('#mcD'), $('#mcM'), $('#mcY'), () => { MC.up = false; MC.cu = false; mcPerFill(); });
+    $('#mcGr').addEventListener('change', () => { MC.up = false; MC.cu = false; mcClsFill(); });
+    $('#mcCls').addEventListener('change', () => { MC.up = false; MC.cu = false; mcPerFill(); });
+    $('#mcCourse').addEventListener('input', () => { MC.cu = true; $('#mcCourse').classList.remove('auto'); const i = $('#mcCrsInfo'); i.className = 'now-sub'; i.textContent = ''; });
+    $('#mcPer').addEventListener('change', () => { MC.up = true; MC.cu = false; mcSlot(); }); $('#mcKind').addEventListener('change', mcInfo);
     $('#mcShow').addEventListener('change', () => { MC.show = $('#mcShow').value; mcRender(); });
     $('#mcFk').addEventListener('change', () => { MC.kind = $('#mcFk').value; mcRender(); });
     $('#mcAdd').addEventListener('click', mcAdd); $('#mcRef').addEventListener('click', mcLoad);
   }
-  mcClsFill(); await mcLoad();
+  mcGrFill(); mcClsFill(); await mcLoad();
 }
 async function mcLoad() {
   const r = await send({ action:'calList', teacher:'', pin:MG.pin, key:ACCESS_KEY });
   if (r.status !== 'ok') { const b = $('#mcBoard'); b.textContent = ''; b.append(el('div', 'empty', r.message || 'بارگذاری تقویم ممکن نشد.')); return; }
-  MC.list = r.list || []; mcClsFill(); mcRender();
+  MC.list = r.list || []; mcGrFill(); mcClsFill(); mcRender();
 }
 function mcRender() {
   const box = $('#mcBoard'); box.textContent = ''; const today = abToday(), cls = mcClasses();
@@ -8898,7 +8910,7 @@ async function calDecide(x, ok) {
 }
 async function mcAdd() {
   const c = $('#mcCls').value, s0 = $('#mcCourse').value.trim(), title = $('#mcTitle').value.trim();
-  if (!c) return toast('کلاس را انتخاب کنید'); if (!s0) return toast('نام درس را بنویسید'); if (!title) return toast('عنوان را بنویسید (مثلاً فصل ۲)');
+  if (!c) return toast('کلاس را انتخاب کنید'); if (!s0) return toast('برای این زنگ درسی در برنامه‌ی هفتگی نیست؛ زنگ دیگری انتخاب کنید یا نام درس را بنویسید'); if (!title) return toast('عنوان را بنویسید (مثلاً فصل ۲)');
   const q = jParse(MC.pk.get()); if (jGreg(q[0], q[1], q[2]).getDay() === 5) return toast('جمعه تعطیل است؛ روز دیگری انتخاب کنید');
   const b = $('#mcAdd'); b.disabled = true;
   const base = { action:'calAdd', teacher:'مدیر', pin:MG.pin, cls:c, course:s0, date:MC.pk.get(), period:+$('#mcPer').value || 1, kind:$('#mcKind').value, title:title, key:ACCESS_KEY };
