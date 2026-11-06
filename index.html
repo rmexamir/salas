@@ -2935,6 +2935,13 @@ body[data-mod="s:dsc"] .dsc-t{border-radius:16px}
         <div class="su-add" style="margin-top:8px"><input id="miNew" type="text" maxlength="40" autocomplete="off" aria-label="نام مؤسسه‌ی تازه" placeholder="نام مؤسسه‌ی تازه، مثلاً سنجش"><button id="miAdd" class="btn" type="button">➕ افزودن</button></div>
         <div class="mg-bar" style="margin-top:10px"><button id="miSave" class="send" type="button" disabled>💾 ذخیره‌ی فهرست</button><button id="miDef" class="btn" type="button">↺ فهرست پیش‌فرض</button></div>
       </div>
+      <div class="card" id="gateCard">
+        <div class="lbl" style="margin-bottom:8px">🔒 قفل آزمون‌های آزمایشی</div>
+        <div class="now-sub" style="margin-bottom:10px">اگر دانش‌آموزی تا پایان روز مهلت، نتیجه‌ی آزمون‌های آزمایشی آن هفته را ثبت نکرده باشد، از روز بعد فقط بخش «آزمون‌های آزمایشی» در پنلش باز است و بقیه‌ی بخش‌ها بسته می‌شود. به محض ثبت نتیجه‌ها، بقیه‌ی بخش‌ها خودکار باز می‌شود. ثبت «شرکت نکرده» هم به‌عنوان تکمیل حساب می‌شود. آزمون‌هایی که مهلتشان قبل از روشن شدن قفل گذشته، قفل نمی‌کنند.</div>
+        <label style="display:flex;gap:8px;align-items:center;margin-bottom:10px"><input id="gateOn" type="checkbox"><b>قفل خودکار فعال باشد</b></label>
+        <div class="field"><label for="gateWd">مهلت ثبت نتیجه در هر هفته (تا پایان این روز)</label><select id="gateWd"><option value="0">شنبه</option><option value="1">یکشنبه</option><option value="2">دوشنبه</option><option value="3">سه‌شنبه</option><option value="4">چهارشنبه</option><option value="5">پنجشنبه</option><option value="6">جمعه</option></select></div>
+        <div class="mg-bar" style="margin-top:10px"><button id="gateSave" class="send" type="button" disabled>💾 ذخیره‌ی تنظیم قفل</button></div>
+      </div>
       <div class="card" id="kfCard">
         <div class="lbl" style="margin-bottom:8px">۹. مشخصات کارنامه</div>
         <div class="now-sub" style="margin-bottom:10px">در سربرگ و پایین کارنامه‌ی دانش‌آموزان چاپ می‌شود. کد هر درس در ستون «کد درس» کارنامه می‌آید (خالی = بدون کد).</div>
@@ -4865,7 +4872,7 @@ function applyRole() {
   startPolls();
   try { $('#gmEd').hidden = !mgr; $('.gm-tabs').classList.toggle('gm4', mgr); if (!mgr && AC.m === 'ed') gmSet('gr'); } catch (e) {}   // تب «ویرایش نمرات» فقط برای مدیر
   if (ROLE && ROLE !== 'student') loadRoster();                  // نام دانش‌آموزان بعد از ورود کادر مدرسه
-  if (ROLE) { MODS_OK = true; if (st && stuLocked()) openMod('s:prof'); else showLauncher(); }   // بعد از ورود: صفحه‌ی ماژول‌ها
+  if (ROLE) { MODS_OK = true; if (st && stuLocked()) openMod('s:prof'); else if (st && mockLocked()) openMod('s:mock'); else showLauncher(); }   // بعد از ورود: صفحه‌ی ماژول‌ها
   else { LAUNCH_ON = false; MOD = null; TEDIT = false; $('#launch').hidden = true; $('#modBar').hidden = true; document.body.classList.remove('in-mod'); }
 }
 $('#gGo').addEventListener('click', async () => {
@@ -4923,6 +4930,9 @@ function tbl(head, rows) {
 }
 /* تکمیل اطلاعات توسط دانش‌آموز؛ تا کامل نشود فقط همین بخش باز است */
 const stuLocked = () => !!(SD && !SD.viewAs && SD.prof && SD.prof.miss && SD.prof.miss.length);
+/* قفل آزمون‌های آزمایشی (نسخه‌ی ۱٫۴۲): دانش‌آموز از مهلت گذشته و نتیجه‌ی آزمونش ثبت نشده؛ فقط بخش آزمون‌های آزمایشی باز است */
+const mockLocked = () => !!(SD && !SD.viewAs && SD.mockGate && SD.mockGate.due && SD.mockGate.due.length);
+function mockLockCard() { const c = el('div', 'card'); c.append(el('div', 'lbl', '🔒 مهلت آزمون آزمایشی گذشته است'), el('div', 'now-sub', 'نتیجه‌ی این آزمون‌ها هنوز ثبت نشده: ' + SD.mockGate.due.map(x => x.t).join('، ') + '. تا ثبت آن‌ها بقیه‌ی بخش‌ها بسته است. «شرکت نکرده» هم به‌عنوان ثبت حساب می‌شود.')); return c; }
 function stuProf(box) {
   const P = SD.prof || {}, c = el('div', 'card'); c.append(el('div', 'lbl', 'تکمیل اطلاعات'));
   const n = el('div', 'dir-miss', 'برای استفاده از بخش‌های برنامه، ابتدا اطلاعات زیر را کامل کن. این اطلاعات فقط برای تماس مدرسه با خانواده است.'); c.append(n);
@@ -4960,7 +4970,7 @@ function remList() {
 function stuBanner() {
   let b = $('#stuRem'); const l = SD ? remList() : [], today = plJ(new Date()), dis = lsGet('sia_remx_' + (SD && SD.nid), '');
   if (!b) { b = el('div', 'stu-rem'); b.id = 'stuRem'; const nv = $('#stuNav'); nv.parentNode.insertBefore(b, nv); }
-  b.textContent = ''; b.hidden = !l.length || dis === today || stuLocked(); if (b.hidden) return;
+  b.textContent = ''; b.hidden = !l.length || dis === today || stuLocked() || mockLocked(); if (b.hidden) return;
   l.slice(0, 3).forEach(x => b.append(el('div', 'stu-rem-i' + (x.dd === 0 ? ' hot' : ''), '🔔 ' + x.text)));
   const x = el('button', 'stu-rem-x', '✕'); x.type = 'button'; x.setAttribute('aria-label', 'بستن یادآور'); x.addEventListener('click', () => { lsSet('sia_remx_' + SD.nid, today); b.hidden = true; }); b.append(x);
 }
@@ -5034,8 +5044,9 @@ function stuVis(box) {
 }
 function stuNav(k) {
   if (stuLocked()) k = 'prof';           // تا تکمیل اطلاعات، سایر منوها بسته است
+  else if (mockLocked()) k = 'mock';     // قفل آزمون‌های آزمایشی: فقط همین بخش باز است
   STU_K = k; modAfter('s:' + k); const nv = $('#stuNav'); nv.textContent = '';
-  (stuLocked() ? [['prof', '📝 تکمیل اطلاعات']] : []).concat([['dash', '📊 وضعیت من'], ['sch', 'برنامه هفتگی'], ['plan', '📖 برنامه مطالعه'], ['qz', '📝 آزمونک‌ها'], ['kar', 'کارنامه'], ['act', '⭐ فعالیت و تکالیف'], ['att', 'حضور و غیاب'], ['dsc', '⚖️ انضباط من'], ['avg', 'میانگین کلاس'], ['mock', 'آزمون‌های آزمایشی'], ['cal', 'تقویم آزمون و تکلیف'], ['leave', 'درخواست مرخصی'], ['vis', '👪 مراجعه‌ی اولیا'], ['don', '💚 کمک به مدرسه']].map(q => stuLocked() ? [q[0], '🔒 ' + q[1], 1] : q)).forEach(q => { const b = el('button', 'chip' + (k === q[0] ? ' on' : ''), q[1]); b.type = 'button'; b.dataset.k = q[0]; if (q[2]) { b.disabled = true; b.style.opacity = '.5'; } b.addEventListener('click', () => stuNav(q[0])); nv.append(b); }); qzBadge();
+  (stuLocked() ? [['prof', '📝 تکمیل اطلاعات']] : []).concat([['dash', '📊 وضعیت من'], ['sch', 'برنامه هفتگی'], ['plan', '📖 برنامه مطالعه'], ['qz', '📝 آزمونک‌ها'], ['kar', 'کارنامه'], ['act', '⭐ فعالیت و تکالیف'], ['att', 'حضور و غیاب'], ['dsc', '⚖️ انضباط من'], ['avg', 'میانگین کلاس'], ['mock', 'آزمون‌های آزمایشی'], ['cal', 'تقویم آزمون و تکلیف'], ['leave', 'درخواست مرخصی'], ['vis', '👪 مراجعه‌ی اولیا'], ['don', '💚 کمک به مدرسه']].map(q => stuLocked() || (mockLocked() && q[0] !== 'mock') ? [q[0], '🔒 ' + q[1], 1] : q)).forEach(q => { const b = el('button', 'chip' + (k === q[0] ? ' on' : ''), q[1]); b.type = 'button'; b.dataset.k = q[0]; if (q[2]) { b.disabled = true; b.style.opacity = '.5'; } b.addEventListener('click', () => stuNav(q[0])); nv.append(b); }); qzBadge();
   stuBanner(); remNotify();
   const sch = k === 'sch'; $('#p-sch').hidden = !sch; $('#stuBody').hidden = sch;
   if (sch) { Z.who = 'c:' + SD.cls; renderSch(); return; }
@@ -5134,6 +5145,22 @@ async function miSave() {
 $('#miAdd').addEventListener('click', miAdd); $('#miNew').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); miAdd(); } });
 $('#miSave').addEventListener('click', miSave);
 $('#miDef').addEventListener('click', () => { MI = MI_DEF.slice(); miRender(); });
+/* ---------- قفل آزمون‌های آزمایشی: تنظیم مدیر (نسخه‌ی ۱٫۴۲) ---------- */
+const GATE_WD = ['شنبه', 'یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنجشنبه', 'جمعه'];
+const gateCur = () => (SU && SU.mockGate) || { on:false, wd:5 };
+function gateInit() { const g = gateCur(); if (!$('#gateOn')) return; $('#gateOn').checked = !!g.on; $('#gateWd').value = String(g.wd == null ? 5 : g.wd); gateMark(); }
+function gateMark() {
+  const g = gateCur(), on = $('#gateOn'), wd = $('#gateWd'), b = $('#gateSave'); if (!on || !wd || !b) return;
+  wd.disabled = !on.checked;
+  b.disabled = on.checked === !!g.on && (!on.checked || Number(wd.value) === Number(g.wd == null ? 5 : g.wd));
+}
+async function gateSave() {
+  const on = $('#gateOn').checked, wd = Number($('#gateWd').value);
+  const r = await suSend({ action:'setMockGate', on:on, wd:wd }, $('#gateSave')); if (!r) return;
+  SU = SU || {}; SU.mockGate = r.mockGate; gateInit(); suHub();
+  toast(on ? 'قفل آزمون‌های آزمایشی روشن شد؛ از فردای مهلت هر «' + GATE_WD[wd] + '» اعمال می‌شود ✓' : 'قفل آزمون‌های آزمایشی خاموش شد ✓');
+}
+$('#gateOn').addEventListener('change', gateMark); $('#gateWd').addEventListener('change', gateMark); $('#gateSave').addEventListener('click', gateSave);
 /* ======================= کمک به مدرسه (نسخه‌ی ۱٫۲۹) — مبلغ به تومان؛ همه‌ی بررسی‌ها در سرور ======================= */
 var DON_P = 0;                       // تعداد واریزهای در انتظار بررسی (var: پیش از اجرای این خط هم در دسترس است)
 const DON_WHO = ['پدر', 'مادر', 'خود دانش‌آموز', 'سایر'], DON_ST = { p:'در انتظار بررسی', ok:'تأیید شده', no:'رد شده' };
@@ -7173,6 +7200,7 @@ function maBody(a) {                 // نمایش تحلیل وضعیت (محا
 function stuMock(box) {
   const g = /انسانی/.test(SD.stream) ? 'hum' : /تجربی/.test(SD.stream) ? 'exp' : '', c = el('div', 'card'); c.append(el('div', 'lbl', '📝 ثبت نتیجه‌ی آزمون آزمایشی'));
   const exs = (SD.mockEx || []).filter(x => x.a <= en(dateStr())).reverse(), done = new Set((SD.mocks || []).map(x => x.x));
+  if (mockLocked()) box.append(mockLockCard());
   box.append(mockStrip(exs, done));
   if (SD.mockAna) { const a = el('div', 'card'); a.append(el('div', 'lbl', '🧠 تحلیل هوشمند وضعیت تو'), maBody(SD.mockAna)); box.append(a); }
   if (!exs.length) { c.append(el('div', 'empty', 'هنوز آزمونی برگزار نشده است؛ بعد از اولین آزمون، نتیجه را همین‌جا ثبت کن.')); box.append(c, mockHist()); return; }
@@ -7190,7 +7218,9 @@ function stuMock(box) {
     go.disabled = false; if (r.net) return fail('اینترنت در دسترس نیست.');
     if (r.status === 'duplicate') return showModal({ icon:'warn', title:'قبلاً ثبت کرده‌ای', msg:r.message, buttons:[{ text:'انصراف', primary:true }, { text:'جایگزین کن', onClick:() => { go.disabled = true; submit(true); } }] });
     if (r.status !== 'ok') return fail(r.message || 'ثبت نشد.');
-    SD.mocks = r.mocks; if (r.mockEx) SD.mockEx = r.mockEx; if (r.mockInst) SD.mockInst = r.mockInst; SD.mockAna = r.mockAna || null; toast('نتیجه‌ی آزمون ثبت شد ✓'); stuNav('mock');
+    const wasLocked = mockLocked(); SD.mocks = r.mocks; if (r.mockEx) SD.mockEx = r.mockEx; if (r.mockInst) SD.mockInst = r.mockInst; SD.mockAna = r.mockAna || null; if (r.mockGate) SD.mockGate = r.mockGate;
+    if (wasLocked && !mockLocked()) { toast('همه‌ی آزمون‌های عقب‌افتاده ثبت شد؛ بقیه‌ی بخش‌ها باز شد ✓'); showLauncher(); return; }
+    toast('نتیجه‌ی آزمون ثبت شد ✓'); stuNav('mock');
   };
   go.addEventListener('click', async () => {
     msg.hidden = true; go.disabled = true; const q = F.read(); if (q.err) return fail(q.err);
@@ -8154,7 +8184,7 @@ async function suOpen() {
   suClsPreview(); suClsList(); suTeachers(); suPwInit(); zcInit(); suHub();
   const r = await send({ action:'setupInfo', pin:MG.pin, key:ACCESS_KEY }); if (r.status === 'ok') { SU = r; setSchoolName(r.school); $('#suName').value = SCHOOL_NAME; }
   await loadDir();
-  suTeachers(); suPwInit(); suHub(); kfInit(); adInit();
+  suTeachers(); suPwInit(); suHub(); kfInit(); adInit(); gateInit();
 }
 async function suSoft() {             // فقط وضعیت راه‌اندازی و فهرست‌های همین بخش
   const r = await send({ action:'setupInfo', pin:MG.pin, key:ACCESS_KEY }); if (r.status === 'ok') SU = r;
@@ -9743,7 +9773,7 @@ function tileKeys() {                 // کلیدهای کاشی: عضوهای �
 }
 function grpLast(g) { const l = lsGet('sia_grp_' + g, ''), ok = MGRP[g].tabs.map(t => t[1]).filter(k => modKeys().includes(k)); return ok.includes(l) ? l : ok[0]; }
 function grpBar(k) {                  // نوار زبانه‌های گروهِ ماژول جاری
-  const nav = document.getElementById('modTabs'); if (!nav) return; const g = gOf(k), av = modKeys();
+  const nav = document.getElementById('modTabs'); if (!nav) return; const g = gOf(k), av = ROLE === 'student' && SD && mockLocked() && !stuLocked() ? ['s:mock'] : modKeys();
   const tabs = g ? MGRP[g].tabs.filter(t => av.includes(t[1])) : [];
   nav.hidden = tabs.length < 2; nav.textContent = ''; if (nav.hidden) return;
   tabs.forEach(([t, m]) => { const b = el('button', 'mod-tab' + (m === k ? ' on' : ''), t); b.type = 'button'; b.setAttribute('role', 'tab'); b.setAttribute('aria-selected', String(m === k)); b.dataset.k = m;
@@ -9764,9 +9794,9 @@ function launchHead() {
 }
 function renderTiles() {
   const g = $('#tiles'); if (!g) return; g.textContent = ''; g.classList.toggle('edit', TEDIT);
-  const lock = ROLE === 'student' && SD && stuLocked(), keys = lock ? ['s:prof'].concat(tileKeys()) : tileKeys(), tl = [];
+  const lock = ROLE === 'student' && SD && stuLocked(), mlock = ROLE === 'student' && SD && !lock && mockLocked(), keys = lock ? ['s:prof'].concat(tileKeys()) : tileKeys(), tl = [];
   keys.forEach((k, ix) => {
-    const off = lock && k !== 's:prof', t = el(TEDIT ? 'div' : 'button', 'tile' + (off ? ' off' : '')); t.dataset.k = k; t.setAttribute('role', 'listitem'); t.style.setProperty('--tc', accentOf(k)); t.style.setProperty('--i', ix);
+    const off = (lock && k !== 's:prof') || (mlock && k !== 'g:sexm'), t = el(TEDIT ? 'div' : 'button', 'tile' + (off ? ' off' : '')); t.dataset.k = k; t.setAttribute('role', 'listitem'); t.style.setProperty('--tc', accentOf(k)); t.style.setProperty('--i', ix);
     if (MGRP[k]) t.dataset.m = MGRP[k].tabs.map(x => x[1]).join(' ');      // نسخه‌ی ۱٫۴۱: عضوهای گروه
     if (!TEDIT) { t.type = 'button'; t.disabled = off; t.addEventListener('click', () => openMod(k)); }
     const ic = el('span', 'ti-ic tone-' + (TTONE[k] || 'n')); ic.innerHTML = tSvg(k);
@@ -9841,6 +9871,7 @@ function showLauncher() {
 }
 function openMod(k) {
   if (TEDIT) return;
+  if (ROLE === 'student' && SD && mockLocked() && !stuLocked()) k = 's:mock';   // قفل آزمون‌های آزمایشی: هر بخش دیگر به همین بخش برمی‌گردد
   if (MGRP[k]) { const m = grpLast(k); if (m) openMod(m); return; }       // نسخه‌ی ۱٫۴۱: کاشی گروه ← آخرین زبانه
   if (k.indexOf('s:') === 0) { $('#p-stu').hidden = false; modShow(k); stuNav(k.slice(2)); return; }
   modShow(k);
@@ -10127,7 +10158,7 @@ var BN = { teacher:[['خانه', 'home', ''], ['حضور', 'clip', 'att'], ['ن�
   student:[['خانه', 'home', ''], ['وضعیت', 'chart', 's:dash'], ['نمره', 'doc', 'g:skar'], ['برنامه', 'cal', 'g:ssch'], ['آزمون', 'pen', 'g:sexm']] };
 function bnPaint() {
   const nav = document.getElementById('botNav'); if (!nav) return;
-  const set = !BN ? null : ROLE === 'student' && SD && !stuLocked() ? BN.student : ROLE === 'teacher' ? BN.teacher : null, on = !!set && MODS_OK;
+  const set = !BN ? null : ROLE === 'student' && SD && !stuLocked() && !mockLocked() ? BN.student : ROLE === 'teacher' ? BN.teacher : null, on = !!set && MODS_OK;
   nav.hidden = !on; document.body.classList.toggle('has-bn', on); if (!on) { nav.textContent = ''; return; }
   const sig = ROLE + '|' + (MOD || ''); if (nav.dataset.sig === sig) return; nav.dataset.sig = sig; nav.textContent = '';
   set.forEach(([t, ic, k]) => {
