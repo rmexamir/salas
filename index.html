@@ -5057,7 +5057,7 @@ function stuKar(box) {
   if (SD.card && SD.card.rows && SD.card.rows[0]) c1.append(kWrap(kCardEl(SD.card, SD.card.rows[0], kNarrow())));
   else c1.append(SD.courses.length ? tbl(['درس', 'واحد', 'میانگین شما', 'میانگین کلاس'], SD.courses.map(x => [x.c, uTx(x.u), f2(x.me), f2(x.cls)]).concat([['معدل نمره‌ها (وزنی، بدون انضباط)', uSum(SD.courses), f2(SD.overall.me), f2(SD.overall.cls)]])) : el('div', 'empty', 'هنوز نمره‌ای ثبت نشده است.'));
   c2.append(SD.grades.length ? tbl(['تاریخ', 'درس', 'آزمون', 'نمره', 'از ۲۰', 'میانگین کلاس'], SD.grades.slice().reverse().map(g => [g.d, g.c, g.e, g.a ? gAbsTx(g) : fa(g.s) + ' از ' + fa(g.m), g.a && !g.z ? '—' : f2(g.n), f2(g.ca)])) : el('div', 'empty', '—'));
-  if (SD.grades.some(g => g.z)) c2.append(el('div', 'gz-note', 'غیبت غیرموجه در آزمونِ تقویم آموزشی با نمره‌ی صفر در میانگین و کارنامه حساب می‌شود. اگر غیبت شما در روز برگزاری آزمون موجه بوده، مدرک را به مدرسه ارائه کنید تا غیبت موجه ثبت شود.'));
+  if (SD.grades.some(g => g.z)) c2.append(el('div', 'gz-note', 'غیبت غیرموجه در هر ارزیابی با نمره‌ی صفر در میانگین و کارنامه حساب می‌شود. اگر غیبت شما در روز برگزاری آزمون موجه بوده، مدرک را به مدرسه ارائه کنید تا غیبت موجه ثبت شود.'));
   const bc = el('div', 'card'), c3 = el('div', 'card'), pr = el('button', 'btn', 'چاپ یا ذخیره‌ی کارنامه (PDF)');
   bc.append(el('div', 'lbl', 'نشان‌های شما'));
   if (SD.badges && SD.badges.length) SD.badges.forEach(b => { const d = el('div', 'dir-it'); d.style.padding = '10px 14px'; const cb = el('button', 'btn', '🏅 گواهی چاپی'); cb.type = 'button'; cb.style.marginTop = '8px'; cb.addEventListener('click', () => printCert(b)); d.append(el('div', 'now-t', b.i + ' ' + b.t), el('div', 'now-sub', b.d), cb); bc.append(d); });
