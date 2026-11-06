@@ -18,7 +18,7 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxzPr6P54uH4gV_rQrss
 // کلید دسترسی اختیاری (باید با ACCESS_KEY در Code.gs یکی باشد)
 const ACCESS_KEY = "";
 // نسخه‌ی برنامه — با هر به‌روزرسانی این عدد بالا می‌رود و در صفحه‌ی ورود و پایین صفحه نمایش داده می‌شود.
-const APP_VERSION = "1.40";
+const APP_VERSION = "1.41";
 // (اختیاری) لینک Google Sheet برای دکمه «باز کردن Google Sheet» در تب مدیر
 const SHEET_URL = "https://docs.google.com/spreadsheets/d/10i-IGQKyj078M6kJ7YhdAniuJInl6JemwVxAqs7FnrY/edit";
 const DEFAULT_MAX_SCORE = 20;
@@ -2297,6 +2297,45 @@ body.has-bn .toast{bottom:calc(150px + env(safe-area-inset-bottom,0px))}
 .psms-s{white-space:pre-wrap;padding:10px 12px;border-radius:12px;background:var(--bg);border:1px dashed var(--line);font-size:13px;line-height:1.9;margin:8px 0}
 .lvp h1{font-size:18px;margin:0 0 4px}.lvp h2{font-size:14.5px;margin:14px 0 6px}.lvp table{width:100%;border-collapse:collapse;font-size:12px}
 .lvp th,.lvp td{border:1px solid #999;padding:3px 6px;text-align:center}.lvp td.l{text-align:right}.lvp ul{margin:0;padding-inline-start:18px}
+/* ===== نسخه‌ی ۱٫۴۱: پنل‌های یکپارچه و ماژول‌های شکیل ===== */
+.mod-bar{flex-wrap:wrap;row-gap:8px}
+.mod-t{gap:12px}
+.mod-tt{min-width:0;display:flex;flex-direction:column;gap:1px}
+.mod-tt b{font-size:16.5px;font-weight:900;line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mod-tt small{font-size:12px;font-weight:600;color:var(--muted);line-height:1.5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mod-tt small:empty{display:none}
+.mod-tabs:not([hidden]){flex:1 1 100%;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:6px 2px 2px;margin:2px -2px 0;border-top:1px solid var(--line)}
+.mod-tabs::-webkit-scrollbar{display:none}
+.mod-tab{position:relative;flex:none;min-height:40px;padding:0 15px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-size:13.5px;font-weight:800;cursor:pointer;white-space:nowrap}
+.mod-tab:hover{border-color:color-mix(in srgb,var(--tc) 55%,var(--line))}
+.mod-tab.on{background:var(--tc);border-color:var(--tc);color:#fff;box-shadow:0 6px 14px -8px var(--tc)}
+.mod-tab:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.mod-tab.dot::after{content:"";position:absolute;top:6px;inset-inline-end:6px;width:8px;height:8px;border-radius:50%;background:var(--absent);box-shadow:0 0 0 2px var(--card)}
+/* فهرست پنل‌های داخل ماژول: ردیف جمع‌وجورِ قابل‌پیمایش به‌جای کاشی‌های بزرگ شماره‌دار */
+.sub-tiles{display:flex!important;gap:8px;overflow-x:auto;scrollbar-width:none;margin:0 0 14px;padding:2px}
+.sub-tiles::-webkit-scrollbar{display:none}
+.sub-tile{flex:none;min-height:40px!important;padding:6px 12px 6px 14px!important;border-radius:999px!important;gap:8px!important;font-size:12.5px!important;box-shadow:none!important}
+.sub-tile:hover{transform:none!important;border-color:color-mix(in srgb,var(--tc) 55%,var(--line))}
+.sub-tile i{width:24px!important;height:24px!important;border-radius:50%!important;font-size:11.5px!important}
+.sub-tile span{-webkit-line-clamp:1!important;white-space:nowrap}
+@media (max-width:699px){.sub-tile:last-child:nth-child(odd){grid-column:auto}}
+/* توضیح ماژول: یادداشت سبک */
+body.in-mod .mg-sec-d{padding:10px 14px!important;border-radius:14px!important;background:color-mix(in srgb,var(--tc) 6%,var(--card))!important;border:1px solid color-mix(in srgb,var(--tc) 22%,var(--line))!important;border-inline-start-width:1px!important;font-size:12.5px;color:var(--muted)}
+/* دستگیره‌ی جابجایی پنل: کم‌رنگ تا وقتی لازم شود */
+body.in-mod .dg-h{opacity:.45;border-style:solid!important;border-color:transparent!important;background:transparent!important;box-shadow:none!important}
+body.in-mod .card:hover>.dg-h,body.in-mod .dg-h:focus-visible{opacity:1;border-color:var(--line)!important}
+/* کارت‌ها و جدول‌ها */
+body.in-mod .card{border-radius:20px}
+body.in-mod .card>.lbl:first-child,body.in-mod .card>.dg-h:first-child+.lbl{font-size:15.5px}
+.mg-wrap{border:1px solid var(--line);border-radius:14px;overflow:auto;max-height:70vh}
+.mg-tbl{border-collapse:separate;border-spacing:0;width:100%}
+.mg-tbl thead th{position:sticky;top:0;z-index:1;background:color-mix(in srgb,var(--tc) 9%,var(--card));font-weight:800;font-size:12.5px;white-space:nowrap}
+.mg-tbl tbody tr:nth-child(even) td{background:color-mix(in srgb,var(--ink) 3%,var(--card))}
+.mg-tbl td,.mg-tbl th{border-bottom:1px solid var(--line)}
+.mg-tbl tbody tr:last-child td{border-bottom:0}
+/* «انضباط من» */
+body[data-mod="s:dsc"] .dsc-t{border-radius:16px}
+@media (prefers-reduced-motion:reduce){.mod-tab{transition:none}}
 </style>
 </head>
 <body>
@@ -2380,7 +2419,7 @@ body.has-bn .toast{bottom:calc(150px + env(safe-area-inset-bottom,0px))}
     <div id="honorLaunch" class="launch-honor"></div>
     <div class="tmw-host" id="tmLaunch"></div>
   </section>
-  <div id="modBar" class="mod-bar" hidden><button id="modHome" class="btn mod-home" type="button" aria-label="بازگشت به صفحه‌ی ماژول‌ها">🏠 خانه</button><div class="mod-t"><span id="modIc" class="ti-ic"></span><b id="modTitle"></b></div><button id="modRef" class="btn" type="button" hidden aria-label="بازخوانی" title="بازخوانی">🔄</button></div>
+  <div id="modBar" class="mod-bar" hidden><button id="modHome" class="btn mod-home" type="button" aria-label="بازگشت به صفحه‌ی ماژول‌ها">🏠 خانه</button><div class="mod-t"><span id="modIc" class="ti-ic"></span><span class="mod-tt"><b id="modTitle"></b><small id="modSub"></small></span></div><button id="modRef" class="btn" type="button" hidden aria-label="بازخوانی" title="بازخوانی">🔄</button><nav id="modTabs" class="mod-tabs" role="tablist" aria-label="بخش‌های این ماژول" hidden></nav></div>
   <div id="quote" class="quote" role="note">
     <span class="q-ic" aria-hidden="true">✨</span>
     <div aria-hidden="true"><div class="q-lbl">پیام امروز</div><p id="qText" class="q-tx"></p></div>
@@ -3690,7 +3729,7 @@ function dscInit() {
 const LIVE = { t1:0, t2:0, data:null, busy:false };
 const LV_WD = ['یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنجشنبه', 'جمعه', 'شنبه'], LV_IC = { abs:'🚨', tch:'👩‍🏫', exam:'📅', low:'📉', dis:'⚖️', pend:'📝' };
 function liveClock() { const e = $('#lvClk'); if (!e) return; const n = new Date(); e.textContent = fa(pad(n.getHours()) + ':' + pad(n.getMinutes()) + ':' + pad(n.getSeconds())); }
-function liveVisible() { const sec = document.querySelector('.mg-sec[data-sec="live"]'); return !!sec && !sec.hidden && !document.hidden && !$('#mgBody').hidden; }
+function liveVisible() { const sec = document.querySelector('.mg-sec[data-sec="live"]'); return !!sec && !sec.hidden && !document.hidden && !$('#mgBody').hidden && !!sec.offsetParent; }
 function liveStop() { clearInterval(LIVE.t1); clearInterval(LIVE.t2); LIVE.t1 = LIVE.t2 = 0; }
 function liveOpen() {
   liveStop(); if (!LIVE.data) busy($('#liveBox'), 4); else liveRender(LIVE.data, false);
@@ -4810,7 +4849,7 @@ function applyRole() {
   const tb = document.querySelector('.tabs'); tb.hidden = st; tb.style.gridTemplateColumns = 'repeat(' + vis.length + ',1fr)';
   $$('.tab').forEach(b => { b.hidden = !vis.includes(b.dataset.tab); });
   $('#schWho').closest('.field').hidden = st; $('#nowLbl').textContent = st ? 'زنگ فعلی کلاس شما' : 'زنگ فعلی — همه‌ی کلاس‌ها';
-  $('#whoName').textContent = st && SD ? SD.name + ' | ' + SD.cls : mgr ? (MG.who ? MG.who.n + ' — ' + MG.who.r : 'مدیر مدرسه') : cn ? 'مشاور: ' + COUNSELOR_NAME : ROLE === 'teacher' ? 'دبیر: ' + S.teacher : '';
+  $('#whoName').textContent = st && SD ? SD.name + ' | ' + SD.cls : mgr ? (MG.who ? MG.who.n + ' — ' + MG.who.r : 'مدیر مدرسه') : cn ? (COUNSELOR_NAME ? 'مشاور: ' + COUNSELOR_NAME : 'مشاور مدرسه') : ROLE === 'teacher' ? 'دبیر: ' + S.teacher : '';
   abPaint(); bnPaint(); ctxPaint(true);   // نسخه‌ی ۱٫۳۸
   $('#cnsC').hidden = !cn; $('#cnsT').hidden = ROLE !== 'teacher';
   if (st && SD) {
@@ -4996,11 +5035,11 @@ function stuVis(box) {
 function stuNav(k) {
   if (stuLocked()) k = 'prof';           // تا تکمیل اطلاعات، سایر منوها بسته است
   STU_K = k; modAfter('s:' + k); const nv = $('#stuNav'); nv.textContent = '';
-  (stuLocked() ? [['prof', '📝 تکمیل اطلاعات']] : []).concat([['dash', '📊 وضعیت من'], ['sch', 'برنامه هفتگی'], ['plan', '📖 برنامه مطالعه'], ['qz', '📝 آزمونک‌ها'], ['kar', 'کارنامه'], ['act', '⭐ فعالیت و تکالیف'], ['att', 'حضور و غیاب'], ['avg', 'میانگین کلاس'], ['mock', 'آزمون‌های آزمایشی'], ['cal', 'تقویم آزمون و تکلیف'], ['leave', 'درخواست مرخصی'], ['vis', '👪 مراجعه‌ی اولیا'], ['don', '💚 کمک به مدرسه']].map(q => stuLocked() ? [q[0], '🔒 ' + q[1], 1] : q)).forEach(q => { const b = el('button', 'chip' + (k === q[0] ? ' on' : ''), q[1]); b.type = 'button'; b.dataset.k = q[0]; if (q[2]) { b.disabled = true; b.style.opacity = '.5'; } b.addEventListener('click', () => stuNav(q[0])); nv.append(b); }); qzBadge();
+  (stuLocked() ? [['prof', '📝 تکمیل اطلاعات']] : []).concat([['dash', '📊 وضعیت من'], ['sch', 'برنامه هفتگی'], ['plan', '📖 برنامه مطالعه'], ['qz', '📝 آزمونک‌ها'], ['kar', 'کارنامه'], ['act', '⭐ فعالیت و تکالیف'], ['att', 'حضور و غیاب'], ['dsc', '⚖️ انضباط من'], ['avg', 'میانگین کلاس'], ['mock', 'آزمون‌های آزمایشی'], ['cal', 'تقویم آزمون و تکلیف'], ['leave', 'درخواست مرخصی'], ['vis', '👪 مراجعه‌ی اولیا'], ['don', '💚 کمک به مدرسه']].map(q => stuLocked() ? [q[0], '🔒 ' + q[1], 1] : q)).forEach(q => { const b = el('button', 'chip' + (k === q[0] ? ' on' : ''), q[1]); b.type = 'button'; b.dataset.k = q[0]; if (q[2]) { b.disabled = true; b.style.opacity = '.5'; } b.addEventListener('click', () => stuNav(q[0])); nv.append(b); }); qzBadge();
   stuBanner(); remNotify();
   const sch = k === 'sch'; $('#p-sch').hidden = !sch; $('#stuBody').hidden = sch;
   if (sch) { Z.who = 'c:' + SD.cls; renderSch(); return; }
-  const box = $('#stuBody'); box.textContent = ''; ({ dash:stuDash, vis:stuVis, prof:stuProf, plan:stuPlan, qz:stuQz, kar:stuKar, act:stuAct, att:stuAtt, avg:stuAvg, mock:stuMock, cal:stuCal, leave:stuLeave, don:stuDon })[k](box);
+  const box = $('#stuBody'); box.textContent = ''; ({ dash:stuDash, vis:stuVis, prof:stuProf, plan:stuPlan, qz:stuQz, kar:stuKar, act:stuAct, att:stuAtt, dsc:stuDsc, avg:stuAvg, mock:stuMock, cal:stuCal, leave:stuLeave, don:stuDon })[k](box);
 }
 function stuKar(box) {
   const c1 = el('div', 'card'), c2 = el('div', 'card'); c1.append(el('div', 'lbl', SD.card && SD.card.rows ? 'کارنامه — مستمر نوبت اول تا امروز' : 'کارنامه — میانگین هر درس (از ۲۰)')); c2.append(el('div', 'lbl', 'نمره‌های هر آزمون'));
@@ -5024,7 +5063,11 @@ function stuAtt(box) {
   const a = SD.att, c = el('div', 'card'), g = el('div'); c.append(el('div', 'lbl', 'وضعیت حضور و غیاب'));
   g.style.cssText = 'display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:10px 0';
   [['کل جلسات', a.sessions], ['حاضر', a.present], ['غایب', a.absent], ['تأخیر', a.late], ['غیبت موجه', a.excused]].forEach(q => { const d = el('div', 'dir-it'); d.style.padding = '10px 14px'; d.append(el('div', 'now-sub', q[0]), el('div', 'now-t', fa(q[1]))); g.append(d); });
-  c.append(g, SD.list.length ? tbl(['تاریخ', 'درس', 'وضعیت'], SD.list.map(x => [x.d, x.c, x.s])) : el('div', 'empty', 'غیبت یا تأخیری ثبت نشده است.')); if (SD.dsc) box.append(dscStuEl(SD.dsc)); if (SD.dsr) box.append(dsrEl(SD.dsr)); box.append(c);
+  c.append(g, SD.list.length ? tbl(['تاریخ', 'درس', 'وضعیت'], SD.list.map(x => [x.d, x.c, x.s])) : el('div', 'empty', 'غیبت یا تأخیری ثبت نشده است.')); box.append(c);
+}
+function stuDsc(box) {               // نسخه‌ی ۱٫۴۱: «انضباط من» — نمره‌ی انضباط، پرونده‌ی رفتاری و درخواست بررسی
+  if (SD.dsc) box.append(dscStuEl(SD.dsc));
+  box.append(dsrEl(SD.dsr || []));
 }
 function stuAvg(box) {
   const mk = (title, me, cl) => { const w = el('div'); w.style.marginBottom = '14px'; w.append(el('div', 'now-t', title));
@@ -5334,7 +5377,7 @@ function setOpen() {
   const fd = lb => { const f = el('div', 'field'), i = el('input'); i.type = 'password'; i.autocomplete = 'new-password'; f.append(el('label', '', lb), i); c.append(f); return i; };
   const cur = fd('رمز فعلی'), nw = fd('رمز جدید (دست‌کم ۶ نویسه)'), rp = fd('تکرار رمز جدید');
   const ok = el('button', 'send', 'ذخیره‌ی رمز جدید'); ok.type = 'button'; c.append(ok);
-  c.append(el('div', 'now-sub', 'رمز را جایی امن یادداشت کنید. اگر فراموش شد، تابع resetManagerPin را از ویرایشگر Apps Script اجرا کنید تا رمز به مقدار اولیه‌ی فایل Code.gs برگردد.'), el('div', 'now-sub', 'نگارش برنامه: ' + fa(APP_VERSION)));
+  c.append(el('div', 'now-sub', 'رمز را جایی امن یادداشت کنید. اگر فراموش شد: در Apps Script ← Project Settings ← Script Properties ویژگی MANAGER_PIN را با رمز تازه بسازید و تابع resetManagerPin را از ویرایشگر اجرا کنید.'), el('div', 'now-sub', 'نگارش برنامه: ' + fa(APP_VERSION)));
   ok.addEventListener('click', async () => {
     if (!cur.value) { toast('رمز فعلی را بنویسید.'); return; } if (nw.value.length < 6) { toast('رمز جدید باید دست‌کم ۶ نویسه باشد.'); return; } if (nw.value !== rp.value) { toast('تکرار رمز با رمز جدید یکی نیست.'); return; }
     ok.disabled = true; const r = await send({ action:'mgPinChange', pin:cur.value.trim(), newPin:nw.value.trim(), key:ACCESS_KEY }); ok.disabled = false;
@@ -8488,7 +8531,7 @@ if (!SMS_ENABLED) $('#smsOpt').hidden = true;
 else { $('#smsOn').checked = !!P.sms; $('#smsOn').addEventListener('change', e => { P.sms = e.target.checked; savePrefs(); }); }
 
 /* ======================= نسخه ۴: تقویم شمسی، ساعت و پیام، مشاوره، حضور همکاران ======================= */
-let COUNSELOR_NAME = 'بصیر کریمی';               // مقدار اولیه؛ نام تنظیم‌شده در «راه‌اندازی مدرسه» از سرور می‌آید
+let COUNSELOR_NAME = '';   // نسخه‌ی ۱٫۴۱: نام مشاور در کد نیست؛ از «راه‌اندازی مدرسه» و سرور می‌آید
 let CPIN = '', CNSL = [], CNSMG = [], POLL = null;
 
 /* ---------- تاریخ شمسی ---------- */
@@ -9629,6 +9672,7 @@ const TIC = {
   'm:pta':'<circle cx="8" cy="7" r="3"/><circle cx="16" cy="7" r="3"/><path d="M2 20c0-3 2.7-5.5 6-5.5s6 2.5 6 5.5M10 20c0-3 2.7-5.5 6-5.5s6 2.5 6 5.5"/>',
   'm:rep':'<path d="M4 20h16"/><rect x="6" y="11" width="3" height="7" rx="1"/><rect x="11" y="6" width="3" height="12" rx="1"/><rect x="16" y="13" width="3" height="5" rx="1"/>',
   'm:dis':'<path d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6z"/><path d="M12 8v5M12 16h.01"/>',
+  's:dsc':'<path d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6z"/><path d="M9 12l2 2 4-4"/>',
   'm:tch':'<rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20l4-4 4 4"/><path d="M7 9h7"/>',
   'm:pw':'<circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M17 6l3 3M15 8l2 2"/>',
   'm:blk':'<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4M12 15v2"/>',
@@ -9649,44 +9693,81 @@ const TIC = {
 };
 TIC['s:sch'] = TIC.sch; TIC['s:cal'] = TIC['m:cal']; TIC['s:att'] = TIC.att;
 const TTONE = { att:'p', gr:'g', sch:'b', inb:'n', cns:'b', dis:'n', stf:'g', 'm:today':'n', 'm:cal':'b', 'm:stu':'p', 'm:setup':'g', 'm:set':'n', 'm:ntc':'g', 'm:live':'b', 'm:pta':'b', 'm:rep':'g', 'm:dis':'n', 'm:tch':'b', 'm:sys':'n', 'm:pw':'g', 'm:blk':'n',
-  's:prof':'g', 's:dash':'n', 's:sch':'b', 's:plan':'p', 's:qz':'g', 's:kar':'n', 's:act':'g', 's:att':'p', 's:avg':'b', 's:mock':'g', 's:cal':'b', 's:leave':'n', 's:vis':'p', 's:don':'p', 'm:don':'p', 'm:kar':'b' };
+  's:prof':'g', 's:dash':'n', 's:sch':'b', 's:plan':'p', 's:qz':'g', 's:kar':'n', 's:act':'g', 's:att':'p', 's:dsc':'n', 's:avg':'b', 's:mock':'g', 's:cal':'b', 's:leave':'n', 's:vis':'p', 's:don':'p', 'm:don':'p', 'm:kar':'b' };
 const TTITLE = { att:'حضور و غیاب', gr:'ثبت نمرات', sch:'برنامه هفتگی', inb:'کارتابل', cns:'مشاوره', dis:'انضباطی', stf:'ورود و خروج',
-  's:prof':'تکمیل اطلاعات', 's:dash':'وضعیت من', 's:sch':'برنامه هفتگی', 's:plan':'برنامه مطالعه', 's:qz':'آزمونک‌ها', 's:kar':'کارنامه', 's:act':'فعالیت و تکالیف', 's:att':'حضور و غیاب', 's:avg':'میانگین کلاس',
+  's:prof':'تکمیل اطلاعات', 's:dash':'وضعیت من', 's:sch':'برنامه هفتگی', 's:plan':'برنامه مطالعه', 's:qz':'آزمونک‌ها', 's:kar':'کارنامه', 's:act':'فعالیت و تکالیف', 's:att':'حضور و غیاب', 's:dsc':'انضباط من', 's:avg':'میانگین کلاس',
   's:mock':'آزمون‌های آزمایشی', 's:cal':'تقویم آزمون و تکلیف', 's:leave':'درخواست مرخصی', 's:vis':'مراجعه‌ی اولیا', 's:don':'کمک به مدرسه' };
 const TDESC = { att:'غایبین و تأخیر هر زنگ', gr:'نمره‌ی آزمون‌ها و فعالیت‌ها', sch:'برنامه‌ی هفتگی و زنگ جاری', inb:'کلاس‌ها، تحلیل آزمون و تقویم', cns:'درخواست و پیگیری مشاوره', dis:'موارد انضباطی و تشویقی',
   stf:'ورود، خروج و مرخصی', 'm:today':'غایبین، هشدارها و میز کار', 'm:cal':'آزمون‌ها و تکالیف همه‌ی کلاس‌ها', 'm:stu':'پرونده، مشاوره، آزمون آزمایشی', 'm:setup':'کلاس‌ها، دانش‌آموزان، دبیران، زنگ‌ها',
   'm:set':'لوگو و سربرگ مدرسه', 'm:ntc':'اطلاعیه‌ی متنی و تصویری صفحه‌ی ورود', 'm:live':'وضعیت زنده‌ی مدرسه با یک نگاه', 'm:pw':'رمز مدیر، کد دبیران، رمز دانش‌آموزان', 'm:blk':'بستن موقت ورود به علت خاص', 'm:don':'کمک‌های اولیا (تومان)', 'm:kar':'کارنامه‌ی فردی و کلی هر کلاس', 'm:pta':'جلسات و حضور اولیا', 'm:rep':'گزارش‌ها، نمودارها و آمار', 'm:dis':'پرونده‌ی انضباطی و پرورشی', 'm:tch':'مرخصی، عدم حضور و برنامه‌ی دبیران', 'm:sys':'بانک اطلاعات و سامانه',
   's:prof':'پیش از همه، این بخش را کامل کن', 's:dash':'معدل، رتبه و نشان‌ها', 's:sch':'کلاس‌های هر روز', 's:plan':'برنامه‌ی روزانه‌ی درس خواندن', 's:qz':'آزمون‌های آنلاین کلاس', 's:kar':'کارنامه‌ی نوبت اول و نمره‌ی آزمون‌ها', 's:act':'مثبت، منفی و تکالیف هر درس',
-  's:att':'غیبت‌ها و تأخیرهای من', 's:avg':'مقایسه با میانگین کلاس', 's:mock':'تراز و رتبه‌ی آزمون‌ها', 's:cal':'آزمون‌ها و تکالیف پیش رو', 's:leave':'درخواست مرخصی از مدرسه', 's:vis':'نوبت مراجعه‌ی اولیا', 's:don':'شماره‌ی حساب مدرسه و ثبت واریز' };
+  's:att':'غیبت‌ها و تأخیرهای من', 's:dsc':'نمره‌ی انضباط، پرونده و درخواست بررسی', 's:avg':'مقایسه با میانگین کلاس', 's:mock':'تراز و رتبه‌ی آزمون‌ها', 's:cal':'آزمون‌ها و تکالیف پیش رو', 's:leave':'درخواست مرخصی از مدرسه', 's:vis':'نوبت مراجعه‌ی اولیا', 's:don':'شماره‌ی حساب مدرسه و ثبت واریز' };
 document.body.classList.add('mods');   // نشانه‌ی حالت ماژول‌ها روی body
 const tSvg = k => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (TIC[k] || TIC.inb) + '</svg>';
-function modTitle(k) { if (k.indexOf('m:') === 0) { const x = document.querySelector('#mgBody .mg-sec[data-sec="' + k.slice(2) + '"]'); return x ? x.dataset.t : ''; } return TTITLE[k] || k; }
+function modTitle(k) { if (MGRP[k]) return MGRP[k].t; if (k.indexOf('m:') === 0) { const x = document.querySelector('#mgBody .mg-sec[data-sec="' + k.slice(2) + '"]'); return x ? x.dataset.t : ''; } return TTITLE[k] || k; }
 function modKeys() {
-  if (ROLE === 'student') return ['s:dash', 's:sch', 's:plan', 's:qz', 's:kar', 's:act', 's:att', 's:avg', 's:mock', 's:cal', 's:leave', 's:vis', 's:don'];
+  if (ROLE === 'student') return ['s:dash', 's:sch', 's:plan', 's:qz', 's:kar', 's:act', 's:att', 's:dsc', 's:avg', 's:mock', 's:cal', 's:leave', 's:vis', 's:don'];
   if (ROLE === 'counselor') return ['cns', 'sch'];
   if (ROLE === 'manager') {
     const def = ['m:live', 'm:today', 'att', 'gr', 'm:stu', 'm:kar', 'm:cal', 'm:ntc', 'sch', 'inb', 'm:tch', 'm:dis', 'm:pta', 'm:rep', 'm:setup', 'm:sys', 'm:pw', 'm:blk', 'm:don', 'm:set'];
-    const all = def.concat($$('#mgBody .mg-sec').map(x => 'm:' + x.dataset.sec).filter(k => !def.includes(k))), o = TILES_ORD.filter(k => all.includes(k));
+    const all = def.concat($$('#mgBody .mg-sec').map(x => 'm:' + x.dataset.sec).filter(k => !def.includes(k))), o = [];
+    TILES_ORD.forEach(k => (MGRP[k] ? MGRP[k].tabs.map(t => t[1]) : [k]).forEach(m => { if (all.includes(m) && !o.includes(m)) o.push(m); }));   // نسخه‌ی ۱٫۴۱: گروه ← عضوها
     return o.concat(all.filter(k => !o.includes(k)));
   }
   return ['att', 'gr', 'sch', 'inb', 'cns', 'dis', 'stf'];
 }
+/* ---------- نسخه‌ی ۱٫۴۱: ماژول‌های هم‌پوشان در یک پنل با زبانه ----------
+   هر گروه یک کاشی دارد؛ با باز شدن، آخرین زبانه‌ی استفاده‌شده (یا اولی) باز می‌شود و نوار زبانه‌ها زیر سربرگ ماژول می‌آید.
+   ماژول‌های عضو همان ماژول‌های قبلی‌اند (کلید و رفتارشان عوض نشده)؛ فقط کاشی و سربرگ مشترک دارند. */
+const MGRP = {
+  'g:live':{ t:'کنترل‌روم و امروز', d:'وضعیت زنده، غایبین، هشدارها و میز کار', ic:'m:live', tabs:[['کنترل‌روم', 'm:live'], ['میز کار امروز', 'm:today']] },
+  'g:plan':{ t:'برنامه و تقویم', d:'برنامه‌ی هفتگی و آزمون‌ها و تکالیف همه‌ی کلاس‌ها', ic:'m:cal', tabs:[['برنامه‌ی هفتگی', 'sch'], ['تقویم آموزشی', 'm:cal']] },
+  'g:rep':{ t:'کارنامه و گزارش', d:'کارنامه‌ی فردی و کلاسی، گزارش‌ها و آمار', ic:'m:kar', tabs:[['کارنامه‌ها', 'm:kar'], ['گزارش‌ها و آمار', 'm:rep']] },
+  'g:com':{ t:'اولیا و اطلاع‌رسانی', d:'جلسات و پیامک اولیا، اطلاعیه‌ی ورود و کمک به مدرسه', ic:'m:pta', tabs:[['جلسات و پیامک اولیا', 'm:pta'], ['اطلاعیه‌ی ورود', 'm:ntc'], ['کمک به مدرسه', 'm:don']] },
+  'g:set':{ t:'تنظیمات و سامانه', d:'راه‌اندازی، رمزها، بستن ورود، ظاهر و سابقه', ic:'m:setup', tabs:[['راه‌اندازی', 'm:setup'], ['رمزها', 'm:pw'], ['بستن ورود', 'm:blk'], ['لوگو و سربرگ', 'm:set'], ['سامانه و سابقه', 'm:sys']] },
+  'g:skar':{ t:'نمره و کارنامه', d:'کارنامه، مقایسه با کلاس، فعالیت و تکالیف', ic:'s:kar', tabs:[['کارنامه', 's:kar'], ['مقایسه با کلاس', 's:avg'], ['فعالیت و تکالیف', 's:act']] },
+  'g:sexm':{ t:'آزمون‌ها', d:'آزمونک‌های آنلاین و آزمون‌های آزمایشی', ic:'s:qz', tabs:[['آزمونک‌ها', 's:qz'], ['آزمون‌های آزمایشی', 's:mock']] },
+  'g:ssch':{ t:'برنامه و تقویم', d:'برنامه‌ی هفتگی، آزمون و تکلیف پیش رو، برنامه‌ی مطالعه', ic:'s:sch', tabs:[['برنامه‌ی هفتگی', 's:sch'], ['آزمون و تکلیف', 's:cal'], ['برنامه‌ی مطالعه', 's:plan']] },
+  'g:satt':{ t:'حضور و مرخصی', d:'غیبت و تأخیر و درخواست مرخصی', ic:'s:att', tabs:[['غیبت و تأخیر', 's:att'], ['درخواست مرخصی', 's:leave']] },
+  'g:sfam':{ t:'خانواده و مدرسه', d:'نوبت مراجعه‌ی اولیا و کمک به مدرسه', ic:'s:vis', tabs:[['مراجعه‌ی اولیا', 's:vis'], ['کمک به مدرسه', 's:don']] }
+};
+const GOF = {}; Object.keys(MGRP).forEach(g => MGRP[g].tabs.forEach(t => { GOF[t[1]] = g; }));
+const SGRP_ = ['g:skar', 'g:sexm', 'g:ssch', 'g:satt', 'g:sfam'], gOf = k => { const g = GOF[k]; return g && (ROLE === 'student' ? SGRP_.includes(g) : ROLE === 'manager' && !SGRP_.includes(g)) ? g : ''; };   // گروه فقط برای نقش خودش (برنامه‌ی هفتگی دبیر گروه ندارد)
+const GDEF = { manager:['g:live', 'att', 'gr', 'inb', 'g:plan', 'm:stu', 'g:rep', 'm:dis', 'm:tch', 'g:com', 'g:set'], student:['s:dash', 'g:skar', 'g:sexm', 'g:ssch', 'g:satt', 's:dsc', 'g:sfam'] };
+function tileKeys() {                 // کلیدهای کاشی: عضوهای هر گروه یک کاشی می‌شوند (ترتیب: چیدمان دلخواه مدیر، وگرنه پیش‌فرض گروه‌ها)
+  const mem = modKeys(), live = [], seen = {};
+  mem.forEach(k => { const g = gOf(k) || k; if (!seen[g]) { seen[g] = 1; live.push(g); } });
+  const mo = ROLE === 'manager' && !VIEWAS, cus = mo && TILES_ORD && TILES_ORD.length;
+  if (cus) return live;               // modKeys ترتیب دلخواه را (با کلید قدیمی یا گروه) اعمال کرده است
+  const d = (GDEF[ROLE] || []).filter(k => seen[k]); return d.concat(live.filter(k => !d.includes(k)));
+}
+function grpLast(g) { const l = lsGet('sia_grp_' + g, ''), ok = MGRP[g].tabs.map(t => t[1]).filter(k => modKeys().includes(k)); return ok.includes(l) ? l : ok[0]; }
+function grpBar(k) {                  // نوار زبانه‌های گروهِ ماژول جاری
+  const nav = document.getElementById('modTabs'); if (!nav) return; const g = gOf(k), av = modKeys();
+  const tabs = g ? MGRP[g].tabs.filter(t => av.includes(t[1])) : [];
+  nav.hidden = tabs.length < 2; nav.textContent = ''; if (nav.hidden) return;
+  tabs.forEach(([t, m]) => { const b = el('button', 'mod-tab' + (m === k ? ' on' : ''), t); b.type = 'button'; b.setAttribute('role', 'tab'); b.setAttribute('aria-selected', String(m === k)); b.dataset.k = m;
+    b.addEventListener('click', () => { lsSet('sia_grp_' + g, m); if (MOD !== m) { openMod(m); window.scrollTo({ top:0 }); } }); nav.append(b); });   // فقط انتخاب کاربر به خاطر سپرده می‌شود
+  const on = nav.querySelector('.on'); if (on && on.scrollIntoView) on.scrollIntoView({ block:'nearest', inline:'center' });
+}
 const TACC = { att:'#22A06B', gr:'#E0A526', sch:'#4C8DF6', inb:'#8B6CF0', cns:'#1BB5C4', dis:'#E5576B', stf:'#E58A2B', 'm:today':'#4C8DF6', 'm:cal':'#8B6CF0', 'm:stu':'#22A06B', 'm:setup':'#E0A526', 'm:set':'#6B7A99', 'm:ntc':'#E5576B', 'm:live':'#2A78D6', 'm:pta':'#1BB5C4', 'm:rep':'#E58A2B', 'm:dis':'#E5576B', 'm:tch':'#4C8DF6', 'm:sys':'#6B7A99', 'm:pw':'#E0A526', 'm:blk':'#6B7A99' };
 const TPAL = ['#4C8DF6', '#22A06B', '#E0A526', '#8B6CF0', '#1BB5C4', '#E5576B', '#E58A2B', '#6B7A99'];
+Object.keys(MGRP).forEach(g => { const i = MGRP[g].ic; TIC[g] = TIC[i]; TDESC[g] = MGRP[g].d; TTONE[g] = TTONE[i]; if (TACC[i]) TACC[g] = TACC[i]; });
 const accentOf = k => TACC[k] || TPAL[[...String(k)].reduce((a, c) => a + c.charCodeAt(0), 0) % TPAL.length];      // رنگ هویتیِ هر ماژول
 function skyOf(h) {                   // آسمان و سلامِ متناسب با ساعت روز
   return { sky:h < 5 ? 'night' : h < 9 ? 'dawn' : h < 16 ? 'day' : h < 19 ? 'dusk' : 'night', gr:h < 5 ? 'شب بخیر' : h < 12 ? 'صبح بخیر' : h < 16 ? 'ظهر بخیر' : h < 19 ? 'عصر بخیر' : 'شب بخیر' };
 }
 function launchHead() {
   const n = new Date(), j = jOf(n), st = ROLE === 'student' && SD, sk = skyOf(n.getHours()); $('.launch-hd').dataset.sky = sk.sky;
-  $('#launchHi').textContent = sk.gr + '، ' + (st ? SD.name : ROLE === 'manager' ? (MG.who ? MG.who.n : 'مدیر مدرسه') : ROLE === 'counselor' ? COUNSELOR_NAME : S.teacher);
+  $('#launchHi').textContent = sk.gr + '، ' + (st ? SD.name : ROLE === 'manager' ? (MG.who ? MG.who.n : 'مدیر مدرسه') : ROLE === 'counselor' ? (COUNSELOR_NAME || 'مشاور مدرسه') : S.teacher);
   $('#launchSub').textContent = JWD[n.getDay()] + ' ' + fa(j[2]) + ' ' + MONTHS[j[1] - 1] + ' ' + fa(j[0]) + ' | ' + (st ? 'کلاس ' + SD.cls : ({ manager:'پنل مدیر', counselor:'پنل مشاور', teacher:'پنل دبیر' })[ROLE] || '');
 }
 function renderTiles() {
   const g = $('#tiles'); if (!g) return; g.textContent = ''; g.classList.toggle('edit', TEDIT);
-  const lock = ROLE === 'student' && SD && stuLocked(), keys = lock ? ['s:prof'].concat(modKeys()) : modKeys(), tl = [];
+  const lock = ROLE === 'student' && SD && stuLocked(), keys = lock ? ['s:prof'].concat(tileKeys()) : tileKeys(), tl = [];
   keys.forEach((k, ix) => {
     const off = lock && k !== 's:prof', t = el(TEDIT ? 'div' : 'button', 'tile' + (off ? ' off' : '')); t.dataset.k = k; t.setAttribute('role', 'listitem'); t.style.setProperty('--tc', accentOf(k)); t.style.setProperty('--i', ix);
+    if (MGRP[k]) t.dataset.m = MGRP[k].tabs.map(x => x[1]).join(' ');      // نسخه‌ی ۱٫۴۱: عضوهای گروه
     if (!TEDIT) { t.type = 'button'; t.disabled = off; t.addEventListener('click', () => openMod(k)); }
     const ic = el('span', 'ti-ic tone-' + (TTONE[k] || 'n')); ic.innerHTML = tSvg(k);
     const dot = el('i', 'ti-dot'); dot.hidden = true;
@@ -9733,6 +9814,8 @@ function paintDots() {                 // نشانگرهای زبانه‌ها �
   $$('#mgNav .mg-nb').forEach(b => { if (b.classList.contains('dot')) on['m:' + b.dataset.sec] = 1; });
   if (on.mg && !Object.keys(on).some(k => k.indexOf('m:') === 0)) on['m:today'] = 1;
   const q = document.querySelector('#stuNav [data-k="qz"]'), m = q && /\(([۰-۹0-9]+)\)/.exec(q.textContent); if (m) on['s:qz'] = +en(m[1]);
+  Object.keys(on).forEach(k => { const g = gOf(k); if (g) on[g] = (+on[g] || 0) + (+on[k] || 1); });      // نسخه‌ی ۱٫۴۱: هشدار عضو روی کاشی گروه
+  $$('#modTabs .mod-tab').forEach(b => b.classList.toggle('dot', !!on[b.dataset.k]));
   $$('#tiles .tile').forEach(t => { const v = TEDIT ? 0 : on[t.dataset.k], d = t.querySelector('.ti-dot'); if (!d) return; d.hidden = !v; d.textContent = v > 1 ? fa(v) : ''; t.classList.toggle('has-dot', !!v); });
 }
 { let tm; const later = () => { clearTimeout(tm); tm = setTimeout(paintDots, 60); }, mo = new MutationObserver(later);
@@ -9740,7 +9823,9 @@ function paintDots() {                 // نشانگرهای زبانه‌ها �
 function modHead(k) {
   document.body.dataset.mod = k; document.body.dataset.tone = TTONE[k] || 'n';     // رنگ و سربرگ پنل‌های داخل ماژول
   document.body.style.setProperty('--mod-ic', 'url("data:image/svg+xml,' + encodeURIComponent(tSvg(k).replace('stroke="currentColor"', 'stroke="white" xmlns="http://www.w3.org/2000/svg"').replace('stroke-width="2"', 'stroke-width="2.2"')) + '")');
-  $('#modTitle').textContent = modTitle(k); const ic = $('#modIc'); ic.className = 'ti-ic tone-' + (TTONE[k] || 'n'); ic.innerHTML = tSvg(k);
+  const g = gOf(k), hk = g || k;          // نسخه‌ی ۱٫۴۱: عضو گروه ← عنوان، آیکون و رنگ گروه + زبانه‌ها
+  $('#modTitle').textContent = modTitle(hk); const ic = $('#modIc'); ic.className = 'ti-ic tone-' + (TTONE[hk] || 'n'); ic.innerHTML = tSvg(hk);
+  const sb = $('#modSub'); if (sb) sb.textContent = TDESC[hk] || ''; document.body.style.setProperty('--tc', accentOf(hk)); grpBar(k);
   $('#modRef').hidden = !(ROLE === 'manager' && k.indexOf('m:') === 0);
 }
 function modShow(k) {
@@ -9756,6 +9841,7 @@ function showLauncher() {
 }
 function openMod(k) {
   if (TEDIT) return;
+  if (MGRP[k]) { const m = grpLast(k); if (m) openMod(m); return; }       // نسخه‌ی ۱٫۴۱: کاشی گروه ← آخرین زبانه
   if (k.indexOf('s:') === 0) { $('#p-stu').hidden = false; modShow(k); stuNav(k.slice(2)); return; }
   modShow(k);
   if (k.indexOf('m:') === 0) { setTab('mg'); mgShow(k.slice(2)); } else setTab(k);
@@ -9966,10 +10052,9 @@ function lkDraw() {                    // پیش از دریافت گزارش م
     box.append(b);
   });
 }
-var TGRP = {
-  manager:[['کارهای روزانه', ['m:live', 'm:today', 'att', 'inb', 'sch', 'm:cal']], ['آموزش و نمره', ['gr', 'm:kar', 'm:stu', 'm:rep']], ['کادر، اولیا، اطلاعیه و انضباط', ['m:tch', 'm:pta', 'm:ntc', 'm:dis', 'm:don']],
-    ['تنظیمات سامانه', ['m:setup', 'm:sys', 'm:pw', 'm:blk', 'm:set']]],
-  student:[['درس و نمره', ['s:prof', 's:dash', 's:kar', 's:act', 's:avg', 's:qz', 's:mock']], ['برنامه و تقویم', ['s:sch', 's:plan', 's:cal']], ['مدرسه و خانواده', ['s:att', 's:leave', 's:vis', 's:don']]]
+var TGRP = {                          // نسخه‌ی ۱٫۴۱: کاشی‌های یکپارچه
+  manager:[['کارهای روزانه', ['g:live', 'att', 'gr', 'inb', 'g:plan']], ['دانش‌آموزان و آموزش', ['m:stu', 'g:rep', 'm:dis']], ['کادر، اولیا و سامانه', ['m:tch', 'g:com', 'g:set']]],
+  student:[['درس و نمره', ['s:prof', 's:dash', 'g:skar', 'g:sexm']], ['برنامه، حضور و انضباط', ['g:ssch', 'g:satt', 's:dsc', 'g:sfam']]]
 };
 function tilesGroup(g, tiles) {       // کاشی‌های ساخته‌شده ← بخش‌های عنوان‌دار (در حالت چیدمان، فهرست ساده)
   const mo = ROLE === 'manager' && !VIEWAS, gr = !TEDIT && TGRP && !(mo && TILES_ORD && TILES_ORD.length) && TGRP[mo ? 'manager' : ROLE];   // چیدمان دلخواه مدیر بر گروه‌بندی پیش‌فرض مقدم است
@@ -10039,16 +10124,16 @@ function eyeInit() {
 
 /* ---------- ۸) نوار ناوبری پایین (دبیر و دانش‌آموز) ---------- */
 var BN = { teacher:[['خانه', 'home', ''], ['حضور', 'clip', 'att'], ['نمره', 'pen', 'gr'], ['کارتابل', 'inbox', 'inb'], ['برنامه', 'cal', 'sch']],
-  student:[['خانه', 'home', ''], ['وضعیت', 'chart', 's:dash'], ['کارنامه', 'doc', 's:kar'], ['تقویم', 'cal', 's:cal'], ['آزمونک', 'pen', 's:qz']] };
+  student:[['خانه', 'home', ''], ['وضعیت', 'chart', 's:dash'], ['نمره', 'doc', 'g:skar'], ['برنامه', 'cal', 'g:ssch'], ['آزمون', 'pen', 'g:sexm']] };
 function bnPaint() {
   const nav = document.getElementById('botNav'); if (!nav) return;
   const set = !BN ? null : ROLE === 'student' && SD && !stuLocked() ? BN.student : ROLE === 'teacher' ? BN.teacher : null, on = !!set && MODS_OK;
   nav.hidden = !on; document.body.classList.toggle('has-bn', on); if (!on) { nav.textContent = ''; return; }
   const sig = ROLE + '|' + (MOD || ''); if (nav.dataset.sig === sig) return; nav.dataset.sig = sig; nav.textContent = '';
   set.forEach(([t, ic, k]) => {
-    const cur = k ? MOD === k : !MOD, b = el('button', 'bn-b' + (cur ? ' on' : '')); b.type = 'button'; if (cur) b.setAttribute('aria-current', 'page');
+    const cur = k ? MOD === k || gOf(MOD || '') === k : !MOD, b = el('button', 'bn-b' + (cur ? ' on' : '')); b.type = 'button'; if (cur) b.setAttribute('aria-current', 'page');
     const s = el('span', 'bn-i'); s.innerHTML = icoSvg(ic, 2); b.append(s, el('span', 'bn-t', t));
-    b.addEventListener('click', () => { if (!k) { if (MOD) document.getElementById('modHome').click(); } else if (MOD !== k) { if (MOD) showLauncher(); openMod(k); window.scrollTo({ top:0 }); } });
+    b.addEventListener('click', () => { if (!k) { if (MOD) document.getElementById('modHome').click(); } else if (!cur) { if (MOD) showLauncher(); openMod(k); window.scrollTo({ top:0 }); } });
     nav.append(b);
   });
 }
