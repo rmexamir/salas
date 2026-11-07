@@ -18,7 +18,7 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxzPr6P54uH4gV_rQrss
 // کلید دسترسی اختیاری (باید با ACCESS_KEY در Code.gs یکی باشد)
 const ACCESS_KEY = "";
 // نسخه‌ی برنامه — با هر به‌روزرسانی این عدد بالا می‌رود و در صفحه‌ی ورود و پایین صفحه نمایش داده می‌شود.
-const APP_VERSION = "1.42";
+const APP_VERSION = "1.43";
 let SOFF = []; // روزهای تعطیل دستی از سرور (مدیر ثبت می‌کند)
 // (اختیاری) لینک Google Sheet برای دکمه «باز کردن Google Sheet» در تب مدیر
 const SHEET_URL = "https://docs.google.com/spreadsheets/d/10i-IGQKyj078M6kJ7YhdAniuJInl6JemwVxAqs7FnrY/edit";
@@ -2351,6 +2351,16 @@ body.in-mod .card>.lbl:first-child,body.in-mod .card>.dg-h:first-child+.lbl{font
 /* «انضباط من» */
 body[data-mod="s:dsc"] .dsc-t{border-radius:16px}
 @media (prefers-reduced-motion:reduce){.mod-tab{transition:none}}
+/* هشدار مهلت آزمون آزمایشی (نسخه‌ی ۱٫۴۳) */
+.mgw-slot:empty{display:none}
+.mgw{margin:0 0 12px;padding:14px 16px;border-radius:16px;border:1.5px solid var(--late);background:var(--late-bg);color:var(--ink)}
+.mgw.hot,.mgw.lock{border:1.5px solid var(--absent)!important;background:var(--absent-bg)!important}
+.mgw.cnt:not(.hot){border-color:var(--late)!important;background:var(--late-bg)!important}
+.mgw-h{font-weight:800;font-size:15px;margin-bottom:6px}
+.mgw-t{display:block;font-size:30px;font-weight:800;line-height:1.3;letter-spacing:.5px;color:var(--late);font-variant-numeric:tabular-nums;margin:2px 0 6px}
+.mgw.hot .mgw-t{color:var(--absent)}
+.mgw-p{font-size:13.5px;line-height:1.9;color:var(--ink)}
+.mgw-b{margin-top:10px;min-height:44px;padding:0 18px;border:0;border-radius:12px;background:var(--primary);color:var(--on-primary);font:inherit;font-weight:800;cursor:pointer}
 </style>
 </head>
 <body>
@@ -2426,6 +2436,7 @@ body[data-mod="s:dsc"] .dsc-t{border-radius:16px}
   <section id="launch" class="launch" hidden aria-label="ماژول‌ها">
     <div class="launch-hd"><img id="launchLogo" alt="" hidden><div class="launch-who"><b id="launchHi"></b><small id="launchSub"></small></div>
       <button id="tileEdit" class="btn tile-edit" type="button" hidden>✥ چیدمان ماژول‌ها</button></div>
+    <div id="mgwL" class="mgw-slot" role="status"></div>
     <div id="lkKpi" class="lk-kpi" hidden aria-label="امروز در یک نگاه"></div>
     <div id="tileHint" class="now-sub tile-hint" hidden>کاشی‌ها را با ⠿ بکشید یا با ▲ ▼ جابجا کنید و در پایان «✓ پایان چیدمان» را بزنید. <button id="tileReset" class="link-btn" type="button">بازگشت به ترتیب پیش‌فرض</button></div>
     <div id="grDueL" class="gd-host" hidden></div>
@@ -4977,7 +4988,39 @@ async function mockGateCheck_() {
 }
 setInterval(mockGateCheck_, 30000);
 document.addEventListener('visibilitychange', () => { if (!document.hidden) mockGateCheck_(); });
-function mockLockCard() { const c = el('div', 'card'); c.append(el('div', 'lbl', '🔒 مهلت آزمون آزمایشی گذشته است'), el('div', 'now-sub', 'نتیجه‌ی این آزمون‌ها هنوز ثبت نشده: ' + SD.mockGate.due.map(x => x.t).join('، ') + '. تا ثبت همه‌ی آن‌ها (با بارگذاری کارنامه یا انتخاب «هیچکدام») بقیه‌ی بخش‌ها بسته است.')); return c; }
+/* هشدار مهلت آزمون آزمایشی (نسخه‌ی ۱٫۴۳): تا مهلت، شمارش معکوس؛ بعد از مهلت، راهنمای قفل بودن سامانه — در صفحه‌ی اصلی و «وضعیت من» */
+function mgwState_() {
+  if (ROLE !== 'student' || !SD) return null;
+  if (mockLocked()) return { k:'L', due:SD.mockGate.due };
+  const g = SD.mockGate; if (!g || !g.on || !g.dl) return null;
+  const dlMs = mockDeadlineMs_(g.dl); if (!dlMs) return null;
+  const today = en(dateStr()), dd = String(g.dl).slice(0, 10), done = new Set((SD.mocks || []).map(x => x.x));
+  const due = (SD.mockEx || []).filter(x => x.a <= today && x.b <= dd && !done.has(x.id)).map(x => ({ id:x.id, t:x.t }));
+  return due.length ? { k:'C', due:due, dlMs:dlMs, dl:g.dl } : null;
+}
+function mgwFmt_(ms) {
+  let t = Math.max(0, Math.floor(ms / 1000)); const d = Math.floor(t / 86400); t %= 86400; const p = n => String(n).padStart(2, '0');
+  return (d ? fa(d) + ' روز و ' : '') + '⁦' + fa(p(Math.floor(t / 3600)) + ':' + p(Math.floor(t % 3600 / 60)) + ':' + p(t % 60)) + '⁩';
+}
+function mgwBuild_(st, noBtn) {
+  const lock = st.k === 'L', c = el('section', 'card mgw ' + (lock ? 'lock' : 'cnt')), names = st.due.map(x => x.t).join('، ');
+  if (lock) c.append(el('div', 'mgw-h', '🔒 سامانه‌ی شما قفل شده است'), el('div', 'mgw-p', 'سامانه‌ی شما به دلیل عدم بارگذاری آزمون آزمایشی قفل شده است و با بارگذاری بقیه‌ی قسمت‌ها باز می‌گردد. آزمون‌های ثبت‌نشده: ' + names + '. برای باز شدن، کارنامه را بارگذاری کن یا «هیچکدام» را انتخاب کن.'));
+  else c.append(el('div', 'mgw-h', '⏰ هشدار: مهلت بارگذاری آزمون آزمایشی'), el('span', 'mgw-t'), el('div', 'mgw-p', 'تا ' + fa(st.dl) + ' فرصت داری نتیجه‌ی آزمون ' + names + ' را بارگذاری کنی؛ بعد از آن سامانه‌ی تو قفل می‌شود و فقط بخش آزمون‌های آزمایشی باز می‌ماند.'));
+  if (!noBtn) { const b = el('button', 'mgw-b', '📝 رفتن به بارگذاری آزمون'); b.type = 'button'; b.addEventListener('click', () => openMod('s:mock')); c.append(b); }
+  return c;
+}
+let MGW_LAST = 0;
+function mgwPaint() {
+  const st = mgwState_(), key = st ? st.k + '|' + st.due.map(x => x.id).join(',') : '';
+  document.querySelectorAll('.mgw-slot').forEach(sl => {
+    if (!st) { sl.textContent = ''; sl.dataset.s = ''; return; }
+    if (sl.dataset.s !== key || !sl.firstChild) { sl.textContent = ''; sl.append(mgwBuild_(st)); sl.dataset.s = key; }
+    const t = sl.querySelector('.mgw-t'); if (t) { const ms = st.dlMs - Date.now(); t.textContent = ms > 0 ? mgwFmt_(ms) : 'زمان تمام شد…'; sl.firstChild.classList.toggle('hot', ms < 864e5); }
+  });
+  if (st && st.k === 'C' && st.dlMs <= Date.now() && Date.now() - MGW_LAST > 10000) { MGW_LAST = Date.now(); mockGateCheck_(); }   // مهلت رسید ← وضعیت از سرور خوانده شود و قفل اعمال شود
+}
+setInterval(mgwPaint, 1000);
+function mockLockCard() { return mgwBuild_({ k:'L', due:SD.mockGate.due }, true); }
 function stuProf(box) {
   const P = SD.prof || {}, c = el('div', 'card'); c.append(el('div', 'lbl', 'تکمیل اطلاعات'));
   const n = el('div', 'dir-miss', 'برای استفاده از بخش‌های برنامه، ابتدا اطلاعات زیر را کامل کن. این اطلاعات فقط برای تماس مدرسه با خانواده است.'); c.append(n);
@@ -5031,6 +5074,7 @@ function remNotify() {          // اعلان مرورگر: هر یادآور د
 }
 document.addEventListener('visibilitychange', () => { if (!document.hidden && ROLE === 'student') { stuBanner(); remNotify(); } });
 function stuDash(box) {
+  box.append(el('div', 'mgw-slot')); mgwPaint();
   const A = SD.att || {}, tot = A.sessions || 0, rate = tot ? Math.round((A.present || 0) / tot * 100) : null, avg = SD.overall ? SD.overall.me : null, clsAvg = SD.overall ? SD.overall.cls : null;
   const UC = {}; (SD.courses || []).forEach(x => { UC[x.c] = x.u || 1; });   // روند ماهانه هم وزنی بر اساس واحد درس
   const by = {}; (SD.grades || []).filter(g => g.n != null && (!g.a || g.z)).forEach(g => { const m = en(String(g.d)).slice(0, 7); (by[m] = by[m] || []).push([g.n, UC[g.c] || 1]); });
@@ -9911,6 +9955,7 @@ function launchHead() {
   const n = new Date(), j = jOf(n), st = ROLE === 'student' && SD, sk = skyOf(n.getHours()); $('.launch-hd').dataset.sky = sk.sky;
   $('#launchHi').textContent = sk.gr + '، ' + (st ? SD.name : ROLE === 'manager' ? (MG.who ? MG.who.n : 'مدیر مدرسه') : ROLE === 'counselor' ? (COUNSELOR_NAME || 'مشاور مدرسه') : S.teacher);
   $('#launchSub').textContent = JWD[n.getDay()] + ' ' + fa(j[2]) + ' ' + MONTHS[j[1] - 1] + ' ' + fa(j[0]) + ' | ' + (st ? 'کلاس ' + SD.cls : ({ manager:'پنل مدیر', counselor:'پنل مشاور', teacher:'پنل دبیر' })[ROLE] || '');
+  mgwPaint();
 }
 function renderTiles() {
   const g = $('#tiles'); if (!g) return; g.textContent = ''; g.classList.toggle('edit', TEDIT);
