@@ -19,6 +19,7 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxzPr6P54uH4gV_rQrss
 const ACCESS_KEY = "";
 // نسخه‌ی برنامه — با هر به‌روزرسانی این عدد بالا می‌رود و در صفحه‌ی ورود و پایین صفحه نمایش داده می‌شود.
 const APP_VERSION = "1.42";
+let SOFF = []; // روزهای تعطیل دستی از سرور (مدیر ثبت می‌کند)
 // (اختیاری) لینک Google Sheet برای دکمه «باز کردن Google Sheet» در تب مدیر
 const SHEET_URL = "https://docs.google.com/spreadsheets/d/10i-IGQKyj078M6kJ7YhdAniuJInl6JemwVxAqs7FnrY/edit";
 const DEFAULT_MAX_SCORE = 20;
@@ -2939,14 +2940,15 @@ body[data-mod="s:dsc"] .dsc-t{border-radius:16px}
       </div>
       <div class="card" id="gateCard">
         <div class="lbl" style="margin-bottom:8px">🔒 قفل آزمون‌های آزمایشی</div>
-        <div class="now-sub" style="margin-bottom:10px">اگر دانش‌آموزی تا پایان روز مهلت، نتیجه‌ی آزمون‌های آزمایشی آن هفته را ثبت نکرده باشد، از روز بعد فقط بخش «آزمون‌های آزمایشی» در پنلش باز است و بقیه‌ی بخش‌ها بسته می‌شود. به محض ثبت نتیجه‌ها، بقیه‌ی بخش‌ها خودکار باز می‌شود. ثبت «هیچکدام» هم به‌عنوان تکمیل حساب می‌شود. مهلت = چند روز مدرسه‌ای پس از پایان آزمون؛ پنجشنبه، جمعه و تعطیلات ثبت‌شده در کارت «روزهای تعطیل مدرسه» حساب نمی‌شوند. آزمون‌هایی که مهلتشان قبل از روشن شدن قفل گذشته، قفل نمی‌کنند.</div>
+        <div class="now-sub" style="margin-bottom:10px">از تاریخ و ساعت مهلتی که مشخص می‌کنید، دانش‌آموزانی که آزمون‌های آزمایشی برگزارشده را ثبت نکرده‌اند (حتی با گزینه‌ی «هیچکدام») فقط بخش «آزمون‌های آزمایشی» را می‌بینند. با ثبت نتیجه‌ها، بقیه‌ی بخش‌ها خودکار باز می‌شود. آزمون‌هایی که قبل از روشن شدن قفل برگزار شده‌اند، قفل نمی‌کنند.</div>
         <label style="display:flex;gap:8px;align-items:center;margin-bottom:10px"><input id="gateOn" type="checkbox"><b>قفل خودکار فعال باشد</b></label>
-        <div class="field"><label for="gateN">مهلت: چند روز مدرسه‌ای پس از پایان آزمون (پیش‌فرض ۳)</label><input id="gateN" type="text" inputmode="numeric" placeholder="۳"></div>
+        <div class="field"><label for="gateD">تاریخ مهلت (شمسی)</label><input id="gateD" type="text" inputmode="numeric" placeholder="۱۴۰۵/۰۷/۲۰"></div>
+        <div class="field" style="margin-top:8px"><label for="gateT">ساعت مهلت</label><input id="gateT" type="text" inputmode="numeric" placeholder="۲۳:۵۹"></div>
         <div class="mg-bar" style="margin-top:10px"><button id="gateSave" class="send" type="button" disabled>💾 ذخیره‌ی تنظیم قفل</button></div>
       </div>
       <div class="card" id="offCard">
         <div class="lbl" style="margin-bottom:8px">📅 روزهای تعطیل مدرسه</div>
-        <div class="now-sub" style="margin-bottom:10px">پنجشنبه و جمعه پیش‌فرض تعطیل‌اند. تعطیلات زیر در محاسبه‌ی مهلت قفل حساب نمی‌شوند. اگر یک پنجشنبه یا جمعه روز کاری است، آن را «روز کاری» ثبت کنید.</div>
+        <div class="now-sub" style="margin-bottom:10px">پنجشنبه و جمعه همیشه تعطیل‌اند و نیازی به حضور و غیاب ندارند. برای تعطیلی‌های یک‌روزه (مثلاً سیل یا ناترازی انرژی) تاریخ را ثبت کنید؛ در آن روز حضور و غیاب و برنامه‌ی کلاسی خالی می‌شود.</div>
         <div class="field"><label for="offDate">تاریخ (شمسی)</label><input id="offDate" type="text" inputmode="numeric" placeholder="۱۴۰۵/۰۷/۲۳"></div>
         <div class="field" style="margin-top:8px"><label for="offType">نوع روز</label><select id="offType"><option value="closed">تعطیل</option><option value="open">روز کاری (باز)</option></select></div>
         <div class="mg-bar" style="margin-top:10px"><button id="offAdd" class="send" type="button">➕ افزودن</button></div>
@@ -3535,7 +3537,7 @@ function calEditDlg(x, auth, done) {
   const dOf = () => { const q = jParse(pk.get()); return jGreg(q[0], q[1], q[2]); };
   const perFill = () => {
     const d = dOf(), cur = pS.value; pS.textContent = ''; perOpts(pS, d); pS.value = String(userPer && cur ? cur : (x.p || cur || 1));
-    if (d.getDay() === 5) { info.textContent = '⚠️ جمعه تعطیل است؛ روز دیگری انتخاب کنید.'; return; }
+    if (closedDay(d)) { info.textContent = '⚠️ این روز تعطیل است؛ روز دیگری انتخاب کنید.'; return; }
     const sh = shiftOfDate(d), per = +pS.value || 1; info.textContent = JWD[d.getDay()] + ' ' + fa(pk.get()) + ' | شیفت ' + SH_FA[sh] + (SHIFT_TIMES[sh][per - 1] ? ' | زنگ ' + fa(per) + ': ' + SHIFT_TIMES[sh][per - 1] : '');
   };
   pk = jPicker(dS, mS, yS, () => { if (pk) perFill(); }); pk.set(x.d); perFill();
@@ -3546,7 +3548,7 @@ function calEditDlg(x, auth, done) {
   cn.addEventListener('click', close); ov.addEventListener('click', e => { if (e.target === ov) close(); }); document.addEventListener('keydown', esc);
   let cg = false;                       // نسخه‌ی ۱٫۳۹: مدیر تغییرِ آزمونِ دارای نمره را تأیید کرده است
   sv.addEventListener('click', async () => {
-    const d = dOf(); if (d.getDay() === 5) return toast('جمعه تعطیل است؛ روز دیگری انتخاب کنید');
+    const d = dOf(); if (closedDay(d)) return toast('این روز تعطیل است؛ روز دیگری انتخاب کنید');
     const title = ti.value.trim(); if (!title) return toast('عنوان را بنویسید');
     const base = Object.assign({ action:'calEdit', date:x.d, cls:x.c, course:x.s, title:x.t, nd:pk.get(), nt:title, nk:kd.value, shift:SH_FA[shiftOfDate(d)], key:ACCESS_KEY, confirmGr:cg }, auth);
     if (userPer) base.np = +pS.value || 1;
@@ -4228,7 +4230,7 @@ setInterval(() => { if (getQ().length) flushQ(); }, 60000);
 function nextMySlot() {            // زنگ بعدیِ امروزِ همین دبیر طبق برنامه‌ی هفتگی
   if (ROLE !== 'teacher' || ISMGR) return null;
   const me = normT(S.teacher), now = new Date(), d = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  if (d.getDay() === 5) return null;
+  if (closedDay(d)) return null;
   const sh = shiftOfDate(d), day = (d.getDay() + 1) % 7;
   for (let i = 0; i < Math.min(SHIFT_TIMES[sh].length, dayN(d)); i++) {
     const h = toEn(SHIFT_TIMES[sh][i].split('–')[0]).split(':').map(Number), st = new Date(d.getFullYear(), d.getMonth(), d.getDate(), h[0], h[1]);
@@ -4400,7 +4402,7 @@ function schoolSub() {               // «متوسطه دوم · پسرانه ·
   ['#schoolSub', '#gSchoolSub'].forEach(q => { const e = document.querySelector(q); if (e) { e.textContent = t; e.hidden = !t; } });
 }
 function perOpts(sel, d) {           // گزینه‌های زنگ برای یک تاریخ، با ساعت هر زنگ
-  const sh = d.getDay() === 5 ? null : shiftOfDate(d), n = sh ? Math.min(SHIFT_TIMES[sh].length, dayN(d)) || SHIFT_TIMES[sh].length : NP();
+  const sh = closedDay(d) ? null : shiftOfDate(d), n = sh ? Math.min(SHIFT_TIMES[sh].length, dayN(d)) || SHIFT_TIMES[sh].length : NP();
   for (let p = 1; p <= n; p++) { const o = el('option', '', 'زنگ ' + fa(p) + (sh && SHIFT_TIMES[sh][p - 1] ? ' (' + SHIFT_TIMES[sh][p - 1] + ')' : '')); o.value = p; sel.append(o); }
 }
 const perMin = p => { const t = (SHIFT_ANCHOR.fixed === 'afternoon' ? SHIFT_TIMES.afternoon : SHIFT_TIMES.morning)[p - 1]; if (!t) return 80;
@@ -4617,7 +4619,7 @@ function slotNow(now = new Date(), skip = 0) {      // زنگ در حال برگ
   let left = skip;
   for (let k = 0; k < 8; k++) {
     const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() + k);
-    if (d.getDay() === 5) continue;       // جمعه تعطیل
+    if (closedDay(d)) continue;       // روز تعطیل
     const sh = shiftOfDate(d), t = SHIFT_TIMES[sh].slice(0, dayN(d));
     for (let i = 0; i < t.length; i++) {
       const q = t[i].split('–').map(x => { const h = toEn(x).split(':').map(Number); return new Date(d.getFullYear(), d.getMonth(), d.getDate(), h[0], h[1]); });
@@ -4730,7 +4732,7 @@ async function refreshDir() {
   if (!MG.pin || $('#mgBody').hidden) return;
   const r = await send({ action:'directory', pin:MG.pin, key:ACCESS_KEY });
   if (r.status !== 'ok') return;
-  const sig = JSON.stringify(r); if (sig === DIR_SIG) return;
+  if (Array.isArray(r.off)) SOFF = r.off; const sig = JSON.stringify(r); if (sig === DIR_SIG) return;
   DIR = r; DIR_SIG = sig; if (!document.querySelector('#dirList .dir-b input')) renderDir();   // فرم ویرایش باز است: بعد از ذخیره دوباره رسم می‌شود
 }
 setInterval(refreshDir, 60000);
@@ -4904,7 +4906,7 @@ $('#gGo').addEventListener('click', async () => {
     if (r.net) return fail('اینترنت در دسترس نیست.'); if (r.status !== 'ok') return fail(r.message || 'ورود ناموفق بود.');
     if (r.blocked) return gateBlock(r);
     if (r.first) { GFIRST = { nid:nid, sec:sec }; $('#gPName').textContent = 'سلام ' + (r.name || '') + (r.cls ? ' (' + r.cls + ')' : '') + ' 👋'; $('#gS').hidden = true; $('#gP').hidden = false; $('#gGo').textContent = 'ساخت رمز عبور و ورود'; b.disabled = false; $('#gP1').focus(); return; }
-    SD = r; SD.nid = nid; SD.sec = sec; ROLE = 'student'; STU_K = 'dash'; try { sessionStorage.setItem('sia_sess', JSON.stringify({ nid:nid, sec:sec })); } catch (e) {}
+    SOFF = Array.isArray(r.off) ? r.off : SOFF; SD = r; SD.nid = nid; SD.sec = sec; ROLE = 'student'; STU_K = 'dash'; try { sessionStorage.setItem('sia_sess', JSON.stringify({ nid:nid, sec:sec })); } catch (e) {}
   } else if (GM === 'c') {
     const pin = $('#gPin').value.trim(); if (!pin) return fail('رمز مشاور را بنویسید.');
     const r = await send({ action:'cnsLogin', cpin:pin, key:ACCESS_KEY });
@@ -5155,27 +5157,34 @@ async function miSave() {
 $('#miAdd').addEventListener('click', miAdd); $('#miNew').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); miAdd(); } });
 $('#miSave').addEventListener('click', miSave);
 $('#miDef').addEventListener('click', () => { MI = MI_DEF.slice(); miRender(); });
-/* ---------- قفل آزمون‌های آزمایشی و روزهای تعطیل: تنظیم مدیر (نسخه‌ی ۱٫۴۴) ---------- */
-const GATE_DEF_N = 3;
-const gateCur = () => (SU && SU.mockGate) || { on:false, n:GATE_DEF_N };
-const gateN = () => Math.floor(Number(en(String($('#gateN').value).trim())));
-function gateInit() { const g = gateCur(); if (!$('#gateOn')) return; $('#gateOn').checked = !!g.on; $('#gateN').value = fa(String(g.n || GATE_DEF_N)); gateMark(); offPaint(); }
+/* ---------- قفل آزمون‌های آزمایشی و روزهای تعطیل: تنظیم مدیر (نسخه‌ی ۱٫۴۲) ---------- */
+// تعطیل؟ پنجشنبه و جمعه ثابت تعطیل‌اند؛ تعطیلات دستی از فهرست مدیر (روز کاری = استثنا)
+function closedDay(d) { const j = g2j(d.getFullYear(), d.getMonth() + 1, d.getDate()), k = j[0] + '/' + pad(j[1]) + '/' + pad(j[2]), ov = SOFF.find(x => x.d === k); if (ov) return !ov.open; const w = d.getDay(); return w === 4 || w === 5; }
+const gateCur = () => (SU && SU.mockGate) || { on:false, d:'', t:'' };
+const gateDT = () => ({ d: en(String($('#gateD').value).trim()).replace(/[-.]/g, '/'), t: en(String($('#gateT').value).trim()).replace(/٫/g, ':') });
+function gateInit() {
+  const g = gateCur(); if (!$('#gateOn')) return;
+  if (SU && Array.isArray(SU.schoolOff)) SOFF = SU.schoolOff;
+  $('#gateOn').checked = !!g.on; $('#gateD').value = g.d ? fa(g.d) : ''; $('#gateT').value = g.t ? fa(g.t) : '';
+  gateMark(); offPaint();
+}
 function gateMark() {
-  const g = gateCur(), on = $('#gateOn'), n = $('#gateN'), b = $('#gateSave'); if (!on || !n || !b) return;
-  n.disabled = !on.checked;
-  b.disabled = on.checked === !!g.on && (!on.checked || gateN() === Number(g.n || GATE_DEF_N));
+  const g = gateCur(), on = $('#gateOn'), dd = $('#gateD'), tt = $('#gateT'), b = $('#gateSave'); if (!on || !dd || !tt || !b) return;
+  dd.disabled = tt.disabled = !on.checked;
+  const v = gateDT(), same = v.d === (g.d || '') && v.t === (g.t || '');
+  b.disabled = on.checked === !!g.on && (!on.checked || same);
 }
 async function gateSave() {
-  const on = $('#gateOn').checked, n = on ? gateN() : Number(gateCur().n || GATE_DEF_N);
-  if (on && !(n >= 1 && n <= 14)) return toast('تعداد روزهای مهلت باید بین ۱ تا ۱۴ باشد.');
-  const r = await suSend({ action:'setMockGate', on:on, n:n }, $('#gateSave')); if (!r) return;
+  const on = $('#gateOn').checked, v = gateDT();
+  if (on && (!/^\d{4}\/\d{1,2}\/\d{1,2}$/.test(v.d) || !/^\d{1,2}:\d{2}$/.test(v.t))) return toast('تاریخ و ساعت مهلت را کامل وارد کنید.');
+  const r = await suSend({ action:'setMockGate', on:on, d:on ? v.d : '', t:on ? v.t : '' }, $('#gateSave')); if (!r) return;
   SU = SU || {}; SU.mockGate = r.mockGate; gateInit(); suHub();
-  toast(on ? 'قفل روشن شد: مهلت ' + fa(n) + ' روز مدرسه‌ای پس از آزمون ✓' : 'قفل آزمون‌های آزمایشی خاموش شد ✓');
+  toast(on ? 'قفل روشن شد: مهلت ' + fa(v.d) + ' ساعت ' + fa(v.t) : 'قفل آزمون‌های آزمایشی خاموش شد ✓');
 }
 function offPaint() {
   const l = $('#offList'); if (!l) return; l.textContent = '';
   const list = (SU && SU.schoolOff) || [];
-  if (!list.length) l.append(el('div', 'now-sub', 'تعطیلی اضافه ثبت نشده است. پنجشنبه‌ها و جمعه‌ها به‌طور پیش‌فرض تعطیل‌اند.'));
+  if (!list.length) l.append(el('div', 'now-sub', 'تعطیلی یک‌روزه ثبت نشده است.'));
   list.forEach(x => {
     const row = el('div', ''), t = el('span', '', fa(x.d) + ' — ' + (x.open ? 'روز کاری (باز)' : 'تعطیل')), del = el('button', 'btn no', 'حذف');
     del.type = 'button'; row.style.cssText = 'display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--line)';
@@ -5185,7 +5194,7 @@ function offPaint() {
 }
 async function offSave(list, btn) {
   const r = await suSend({ action:'setSchoolOff', list:list }, btn); if (!r) return;
-  SU = SU || {}; SU.schoolOff = r.schoolOff; offPaint(); toast('روزهای تعطیل ذخیره شد ✓');
+  SU = SU || {}; SU.schoolOff = r.schoolOff; SOFF = r.schoolOff; offPaint(); toast('روزهای تعطیل ذخیره شد ✓');
 }
 function offAdd() {
   const raw = en(String($('#offDate').value).trim()).replace(/[-.]/g, '/');
@@ -5194,7 +5203,8 @@ function offAdd() {
   const open = $('#offType').value === 'open', list = ((SU && SU.schoolOff) || []).filter(x => x.d !== d).concat([{ d:d, open:open }]);
   offSave(list, $('#offAdd')).then(() => { $('#offDate').value = ''; });
 }
-$('#gateOn').addEventListener('change', gateMark); $('#gateN').addEventListener('input', gateMark); $('#gateSave').addEventListener('click', gateSave);
+$('#gateOn').addEventListener('change', gateMark); $('#gateD').addEventListener('input', gateMark); $('#gateT').addEventListener('input', gateMark);
+$('#gateSave').addEventListener('click', gateSave);
 $('#offAdd').addEventListener('click', offAdd);
 /* ======================= کمک به مدرسه (نسخه‌ی ۱٫۲۹) — مبلغ به تومان؛ همه‌ی بررسی‌ها در سرور ======================= */
 var DON_P = 0;                       // تعداد واریزهای در انتظار بررسی (var: پیش از اجرای این خط هم در دسترس است)
@@ -6994,7 +7004,7 @@ const ATT_GRACE_MIN = 15;            // اگر تا ۱۵ دقیقه بعد از 
 let TODAY = [], EXEMPT = [], SEEN = {};
 const isEx = (c, s, p) => EXEMPT.some(x => normT(x.c) === normT(c) && normT(x.s) === normT(s) && x.p === p);
 function periodsOf(d) {              // زنگ‌های امروز با توجه به شیفت هفته
-  if (d.getDay() === 5) return [];
+  if (closedDay(d)) return [];
   const sh = shiftOfDate(d);
   return SHIFT_TIMES[sh].slice(0, dayN(d)).map((t, i) => { const q = t.split('–').map(x => { const h = toEn(x).split(':').map(Number); return new Date(d.getFullYear(), d.getMonth(), d.getDate(), h[0], h[1]); }); return { p:i + 1, a:q[0], b:q[1], sh:sh, t:t }; });
 }
@@ -7236,6 +7246,7 @@ function stuMock(box) {
   const g = /انسانی/.test(SD.stream) ? 'hum' : /تجربی/.test(SD.stream) ? 'exp' : '', c = el('div', 'card'); c.append(el('div', 'lbl', '📝 ثبت نتیجه‌ی آزمون آزمایشی'));
   const exs = (SD.mockEx || []).filter(x => x.a <= en(dateStr())).reverse(), done = new Set((SD.mocks || []).map(x => x.x));
   if (mockLocked()) box.append(mockLockCard());
+  else if (SD.mockGate && SD.mockGate.on && SD.mockGate.dl) { const nc = el('div', 'card'); nc.append(el('div', 'lbl', '⏰ مهلت ثبت نتیجه‌ی آزمون‌های آزمایشی'), el('div', 'now-sub', 'تا ' + fa(SD.mockGate.dl) + ' نتیجه‌ی آزمون‌ها را ثبت کنید؛ بعد از آن، اگر ثبت نشده باشد، بقیه‌ی بخش‌ها بسته می‌شود.')); box.append(nc); }
   box.append(mockStrip(exs, done));
   if (SD.mockAna) { const a = el('div', 'card'); a.append(el('div', 'lbl', '🧠 تحلیل هوشمند وضعیت تو'), maBody(SD.mockAna)); box.append(a); }
   if (!exs.length) { c.append(el('div', 'empty', 'هنوز آزمونی برگزار نشده است؛ بعد از اولین آزمون، نتیجه را همین‌جا ثبت کن.')); box.append(c, mockHist()); return; }
@@ -7344,7 +7355,7 @@ function mgAttFor(r, p) {   // از تابلوی امروز: همان کلاس،
 function renderBoard() {
   const box = $('#boardBody'); if (!box) return; box.textContent = '';
   const now = new Date(), ps = periodsOf(now);
-  if (!ps.length) { box.append(el('div', 'empty', now.getDay() === 5 ? 'امروز جمعه است؛ کلاسی برگزار نمی‌شود.' : 'امروز طبق تنظیمات مدرسه کلاسی ندارد.')); return; }
+  if (!ps.length) { box.append(el('div', 'empty', closedDay(now) ? 'امروز تعطیل است؛ کلاسی برگزار نمی‌شود.' : 'امروز طبق تنظیمات مدرسه کلاسی ندارد.')); return; }
   const day = (now.getDay() + 1) % 7, sh = ps[0].sh, cls = uniq(allClasses().concat(SCH.map(r => r[0])).concat(TODAY.map(x => x.c))).sort((a, b) => a.localeCompare(b, 'fa'));
   if (!cls.length) { box.append(el('div', 'empty', 'کلاسی ثبت نشده است.')); return; }
   const g = el('div', 'brd'); g.style.gridTemplateColumns = '78px repeat(' + ps.length + ',minmax(64px,1fr))'; g.append(el('span'));
@@ -7558,7 +7569,7 @@ function plKey() { let h = 5381; const s = String(SD.nid || (SD.name + '|' + SD.
 function plLoad() { const st = lsGet(plKey(), {}); st.set = Object.assign({ n:3, len:45 }, st.set); st.days = st.days || {}; st.last = st.last || {}; PLS = st; return st; }
 function plSave(st) { const ks = Object.keys(st.days).sort(); ks.slice(0, Math.max(0, ks.length - 90)).forEach(k => { delete st.days[k]; }); lsSet(plKey(), st); }
 const plRows = (di, sh) => { const c = normT(SD.cls); return SCH.filter(r => normT(r[0]) === c && (di == null || r[1] === di) && (!sh || !r[5] || r[5] === SH_FA[sh])); };
-function plNext() { let d = plAdd(plMid(new Date()), 1); if (d.getDay() === 5) d = plAdd(d, 1); return d; }   // روز درسی بعد (جمعه رد می‌شود)
+function plNext() { let d = plAdd(plMid(new Date()), 1); while (closedDay(d)) d = plAdd(d, 1); return d; }   // روز درسی بعد (جمعه رد می‌شود)
 function plTomorrow() { const d = plNext(), r = plRows((d.getDay() + 1) % 7, shiftOfDate(d)).sort((a, b) => a[2] - b[2]), seen = {};
   return { lbl:plDays(plJ(d)) === 1 ? 'فردا' : plWdOf(d), list:r.map(x => x[3]).filter(c => { const k = normT(c); if (!k || seen[k]) return false; seen[k] = 1; return true; }) }; }
 
@@ -7566,7 +7577,7 @@ function plTomorrow() { const d = plNext(), r = plRows((d.getDay() + 1) % 7, shi
 function plWindow() {
   const n = new Date(), now = n.getHours() * 60 + n.getMinutes(), sh = shiftOfDate(n), T = SHIFT_TIMES[sh] || SHIFT_TIMES.morning;
   const ts = (en(T.join('|')).match(/\d{1,2}:\d{2}/g) || []).map(plMins), sS = ts[0] || 480, sE = ts[ts.length - 1] || 750;
-  const fri = n.getDay() === 5, any = plRows().length, school = !fri && (!any || plRows((n.getDay() + 1) % 7, sh).length > 0);
+  const fri = closedDay(n), any = plRows().length, school = !fri && (!any || plRows((n.getDay() + 1) % 7, sh).length > 0);
   let segs, msg, examToday = false;
   if (!school) { segs = [[570, 750], [960, 1350]]; msg = 'امروز مدرسه نداری؛ فرصت خوبی برای جبران و جلو افتادن است 🌿'; }
   else if (sh === 'afternoon') { segs = [[510, sS - 45], [sE + 60, 1350]]; examToday = now < sS - 45;
@@ -7837,7 +7848,7 @@ function printCert(b) {
 }
 /* --- دبیر: تقویم آزمون و تکلیف --- */
 let CALP = null, CALP_USER = false;
-const calTm = (d, p) => { const q = jParse(d); if (!q) return ''; const g = jGreg(q[0], q[1], q[2]); if (g.getDay() === 5 || !SHIFT_TIMES[shiftOfDate(g)][p - 1]) return ''; return ' (' + SHIFT_TIMES[shiftOfDate(g)][p - 1] + ')'; };
+const calTm = (d, p) => { const q = jParse(d); if (!q) return ''; const g = jGreg(q[0], q[1], q[2]); if (closedDay(g) || !SHIFT_TIMES[shiftOfDate(g)][p - 1]) return ''; return ' (' + SHIFT_TIMES[shiftOfDate(g)][p - 1] + ')'; };
 function calInit() {
   if (CALP) return;
   CALP = jPicker($('#calD'), $('#calM'), $('#calY'), () => { CALP_USER = false; if (CALP) calPerFill(); });
