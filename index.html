@@ -18,7 +18,7 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxzPr6P54uH4gV_rQrss
 // کلید دسترسی اختیاری (باید با ACCESS_KEY در Code.gs یکی باشد)
 const ACCESS_KEY = "";
 // نسخه‌ی برنامه — با هر به‌روزرسانی این عدد بالا می‌رود و در صفحه‌ی ورود و پایین صفحه نمایش داده می‌شود.
-const APP_VERSION = "1.41";
+const APP_VERSION = "1.42";
 // (اختیاری) لینک Google Sheet برای دکمه «باز کردن Google Sheet» در تب مدیر
 const SHEET_URL = "https://docs.google.com/spreadsheets/d/10i-IGQKyj078M6kJ7YhdAniuJInl6JemwVxAqs7FnrY/edit";
 const DEFAULT_MAX_SCORE = 20;
@@ -1664,6 +1664,8 @@ body:not(.in-mod) .lbl-ic{width:auto;height:auto;background:none;border:0;box-sh
 .mk-ed-b{display:flex;gap:8px;margin-top:6px}.mk-ed-b>*{flex:1}
 .mk-st.no[open]{color:var(--ink)}
 .mk-st.no summary{color:var(--absent)}
+.mk-st.warn{background:var(--late-bg);color:var(--late);border-color:color-mix(in srgb,var(--late) 40%,transparent)}
+.mk-st.warn summary{color:var(--late)}
 .gd-host{margin-bottom:12px}
 .gd-card{border-inline-start:5px solid var(--absent)!important}
 .gd-row{display:flex;align-items:center;gap:10px;margin-top:8px;padding:10px 12px;border-radius:14px;border:1px solid color-mix(in srgb,var(--absent) 30%,transparent);background:var(--absent-bg)}
@@ -2937,10 +2939,18 @@ body[data-mod="s:dsc"] .dsc-t{border-radius:16px}
       </div>
       <div class="card" id="gateCard">
         <div class="lbl" style="margin-bottom:8px">🔒 قفل آزمون‌های آزمایشی</div>
-        <div class="now-sub" style="margin-bottom:10px">اگر دانش‌آموزی تا پایان روز مهلت، نتیجه‌ی آزمون‌های آزمایشی آن هفته را ثبت نکرده باشد، از روز بعد فقط بخش «آزمون‌های آزمایشی» در پنلش باز است و بقیه‌ی بخش‌ها بسته می‌شود. به محض ثبت نتیجه‌ها، بقیه‌ی بخش‌ها خودکار باز می‌شود. ثبت «شرکت نکرده» هم به‌عنوان تکمیل حساب می‌شود. آزمون‌هایی که مهلتشان قبل از روشن شدن قفل گذشته، قفل نمی‌کنند.</div>
+        <div class="now-sub" style="margin-bottom:10px">اگر دانش‌آموزی تا پایان روز مهلت، نتیجه‌ی آزمون‌های آزمایشی آن هفته را ثبت نکرده باشد، از روز بعد فقط بخش «آزمون‌های آزمایشی» در پنلش باز است و بقیه‌ی بخش‌ها بسته می‌شود. به محض ثبت نتیجه‌ها، بقیه‌ی بخش‌ها خودکار باز می‌شود. ثبت «هیچکدام» هم به‌عنوان تکمیل حساب می‌شود. مهلت = چند روز مدرسه‌ای پس از پایان آزمون؛ پنجشنبه، جمعه و تعطیلات ثبت‌شده در کارت «روزهای تعطیل مدرسه» حساب نمی‌شوند. آزمون‌هایی که مهلتشان قبل از روشن شدن قفل گذشته، قفل نمی‌کنند.</div>
         <label style="display:flex;gap:8px;align-items:center;margin-bottom:10px"><input id="gateOn" type="checkbox"><b>قفل خودکار فعال باشد</b></label>
-        <div class="field"><label for="gateWd">مهلت ثبت نتیجه در هر هفته (تا پایان این روز)</label><select id="gateWd"><option value="0">شنبه</option><option value="1">یکشنبه</option><option value="2">دوشنبه</option><option value="3">سه‌شنبه</option><option value="4">چهارشنبه</option><option value="5">پنجشنبه</option><option value="6">جمعه</option></select></div>
+        <div class="field"><label for="gateN">مهلت: چند روز مدرسه‌ای پس از پایان آزمون (پیش‌فرض ۳)</label><input id="gateN" type="text" inputmode="numeric" placeholder="۳"></div>
         <div class="mg-bar" style="margin-top:10px"><button id="gateSave" class="send" type="button" disabled>💾 ذخیره‌ی تنظیم قفل</button></div>
+      </div>
+      <div class="card" id="offCard">
+        <div class="lbl" style="margin-bottom:8px">📅 روزهای تعطیل مدرسه</div>
+        <div class="now-sub" style="margin-bottom:10px">پنجشنبه و جمعه پیش‌فرض تعطیل‌اند. تعطیلات زیر در محاسبه‌ی مهلت قفل حساب نمی‌شوند. اگر یک پنجشنبه یا جمعه روز کاری است، آن را «روز کاری» ثبت کنید.</div>
+        <div class="field"><label for="offDate">تاریخ (شمسی)</label><input id="offDate" type="text" inputmode="numeric" placeholder="۱۴۰۵/۰۷/۲۳"></div>
+        <div class="field" style="margin-top:8px"><label for="offType">نوع روز</label><select id="offType"><option value="closed">تعطیل</option><option value="open">روز کاری (باز)</option></select></div>
+        <div class="mg-bar" style="margin-top:10px"><button id="offAdd" class="send" type="button">➕ افزودن</button></div>
+        <div id="offList" style="margin-top:12px"></div>
       </div>
       <div class="card" id="kfCard">
         <div class="lbl" style="margin-bottom:8px">۹. مشخصات کارنامه</div>
@@ -5145,22 +5155,47 @@ async function miSave() {
 $('#miAdd').addEventListener('click', miAdd); $('#miNew').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); miAdd(); } });
 $('#miSave').addEventListener('click', miSave);
 $('#miDef').addEventListener('click', () => { MI = MI_DEF.slice(); miRender(); });
-/* ---------- قفل آزمون‌های آزمایشی: تنظیم مدیر (نسخه‌ی ۱٫۴۲) ---------- */
-const GATE_WD = ['شنبه', 'یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنجشنبه', 'جمعه'];
-const gateCur = () => (SU && SU.mockGate) || { on:false, wd:5 };
-function gateInit() { const g = gateCur(); if (!$('#gateOn')) return; $('#gateOn').checked = !!g.on; $('#gateWd').value = String(g.wd == null ? 5 : g.wd); gateMark(); }
+/* ---------- قفل آزمون‌های آزمایشی و روزهای تعطیل: تنظیم مدیر (نسخه‌ی ۱٫۴۴) ---------- */
+const GATE_DEF_N = 3;
+const gateCur = () => (SU && SU.mockGate) || { on:false, n:GATE_DEF_N };
+const gateN = () => Math.floor(Number(en(String($('#gateN').value).trim())));
+function gateInit() { const g = gateCur(); if (!$('#gateOn')) return; $('#gateOn').checked = !!g.on; $('#gateN').value = fa(String(g.n || GATE_DEF_N)); gateMark(); offPaint(); }
 function gateMark() {
-  const g = gateCur(), on = $('#gateOn'), wd = $('#gateWd'), b = $('#gateSave'); if (!on || !wd || !b) return;
-  wd.disabled = !on.checked;
-  b.disabled = on.checked === !!g.on && (!on.checked || Number(wd.value) === Number(g.wd == null ? 5 : g.wd));
+  const g = gateCur(), on = $('#gateOn'), n = $('#gateN'), b = $('#gateSave'); if (!on || !n || !b) return;
+  n.disabled = !on.checked;
+  b.disabled = on.checked === !!g.on && (!on.checked || gateN() === Number(g.n || GATE_DEF_N));
 }
 async function gateSave() {
-  const on = $('#gateOn').checked, wd = Number($('#gateWd').value);
-  const r = await suSend({ action:'setMockGate', on:on, wd:wd }, $('#gateSave')); if (!r) return;
+  const on = $('#gateOn').checked, n = on ? gateN() : Number(gateCur().n || GATE_DEF_N);
+  if (on && !(n >= 1 && n <= 14)) return toast('تعداد روزهای مهلت باید بین ۱ تا ۱۴ باشد.');
+  const r = await suSend({ action:'setMockGate', on:on, n:n }, $('#gateSave')); if (!r) return;
   SU = SU || {}; SU.mockGate = r.mockGate; gateInit(); suHub();
-  toast(on ? 'قفل آزمون‌های آزمایشی روشن شد؛ از فردای مهلت هر «' + GATE_WD[wd] + '» اعمال می‌شود ✓' : 'قفل آزمون‌های آزمایشی خاموش شد ✓');
+  toast(on ? 'قفل روشن شد: مهلت ' + fa(n) + ' روز مدرسه‌ای پس از آزمون ✓' : 'قفل آزمون‌های آزمایشی خاموش شد ✓');
 }
-$('#gateOn').addEventListener('change', gateMark); $('#gateWd').addEventListener('change', gateMark); $('#gateSave').addEventListener('click', gateSave);
+function offPaint() {
+  const l = $('#offList'); if (!l) return; l.textContent = '';
+  const list = (SU && SU.schoolOff) || [];
+  if (!list.length) l.append(el('div', 'now-sub', 'تعطیلی اضافه ثبت نشده است. پنجشنبه‌ها و جمعه‌ها به‌طور پیش‌فرض تعطیل‌اند.'));
+  list.forEach(x => {
+    const row = el('div', ''), t = el('span', '', fa(x.d) + ' — ' + (x.open ? 'روز کاری (باز)' : 'تعطیل')), del = el('button', 'btn no', 'حذف');
+    del.type = 'button'; row.style.cssText = 'display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--line)';
+    del.addEventListener('click', () => offSave(list.filter(y => y.d !== x.d), del));
+    row.append(t, del); l.append(row);
+  });
+}
+async function offSave(list, btn) {
+  const r = await suSend({ action:'setSchoolOff', list:list }, btn); if (!r) return;
+  SU = SU || {}; SU.schoolOff = r.schoolOff; offPaint(); toast('روزهای تعطیل ذخیره شد ✓');
+}
+function offAdd() {
+  const raw = en(String($('#offDate').value).trim()).replace(/[-.]/g, '/');
+  const m = raw.match(/^(\d{4})\/(\d{1,2})\/(\d{1,2})$/); if (!m) return toast('تاریخ را مثل ۱۴۰۵/۰۷/۲۳ بنویسید.');
+  const d = m[1] + '/' + m[2].padStart(2, '0') + '/' + m[3].padStart(2, '0');
+  const open = $('#offType').value === 'open', list = ((SU && SU.schoolOff) || []).filter(x => x.d !== d).concat([{ d:d, open:open }]);
+  offSave(list, $('#offAdd')).then(() => { $('#offDate').value = ''; });
+}
+$('#gateOn').addEventListener('change', gateMark); $('#gateN').addEventListener('input', gateMark); $('#gateSave').addEventListener('click', gateSave);
+$('#offAdd').addEventListener('click', offAdd);
 /* ======================= کمک به مدرسه (نسخه‌ی ۱٫۲۹) — مبلغ به تومان؛ همه‌ی بررسی‌ها در سرور ======================= */
 var DON_P = 0;                       // تعداد واریزهای در انتظار بررسی (var: پیش از اجرای این خط هم در دسترس است)
 const DON_WHO = ['پدر', 'مادر', 'خود دانش‌آموز', 'سایر'], DON_ST = { p:'در انتظار بررسی', ok:'تأیید شده', no:'رد شده' };
@@ -7096,8 +7131,8 @@ function mkRender() {
     h.append(el('b', '', k.c), el('span', 'mk-cnt', '✓ ' + fa(ok) + ' از ' + fa(k.st.length)));
     i.style.width = Math.round(ok / k.st.length * 100) + '%'; bar.append(i); bar.setAttribute('role', 'img'); bar.setAttribute('aria-label', fa(ok) + ' نفر از ' + fa(k.st.length) + ' نفر نتیجه را ثبت کرده‌اند');
     k.st.forEach(x => {
-      const dd = el('details', 'mk-st ' + (x.ok ? 'ok' : 'no')), sm = el('summary'), body = el('div', 'dir-b'), ed = el('button', 'btn mk-edb', x.ok ? '✏️ ویرایش نتیجه' : '➕ درج نتیجه (مدیر)'); ed.type = 'button';
-      if (x.ok) { sm.append(el('span', '', '✓ ' + x.n), el('small', '', x.i + (x.z == null ? '' : ' · تراز ' + fa(x.z)) + (x.a ? ' · ' + x.a.lv : ''))); body.append(mkDet(x)); }
+      const dd = el('details', 'mk-st ' + (x.ok ? (x.i === MK_NONE ? 'warn' : 'ok') : 'no')), sm = el('summary'), body = el('div', 'dir-b'), ed = el('button', 'btn mk-edb', x.ok ? '✏️ ویرایش نتیجه' : '➕ درج نتیجه (مدیر)'); ed.type = 'button';
+      if (x.ok) { sm.append(el('span', '', (x.i === MK_NONE ? '⚠ ' : '✓ ') + x.n), el('small', '', x.i + (x.z == null ? '' : ' · تراز ' + fa(x.z)) + (x.a ? ' · ' + x.a.lv : ''))); body.append(mkDet(x)); }
       else { sm.append(el('span', '', '✗ ' + x.n)); body.append(el('div', 'now-sub', 'برای این آزمون نتیجه‌ای ثبت نشده است.')); }
       ed.addEventListener('click', () => mkEditor(k, x, body)); body.append(ed); dd.append(sm, body); g.append(dd);
     });
@@ -7109,7 +7144,7 @@ $('#mkPrint').addEventListener('click', () => {
   if (!MKB) return; const vc = $('#mkCls').value, ex = MKB.exams.find(x => x.id === MKB.exam), pa = $('#printArea'); pa.textContent = '';
   pa.append(el('h1', '', 'آزمون آزمایشی ' + ex.t + ' — وضعیت ثبت نتیجه'), el('div', '', SCHOOL_NAME + ' | ' + fa(dateStr())));
   MKB.classes.filter(x => !vc || x.c === vc).forEach(k => pa.append(el('h2', '', k.c + ' (' + fa(k.st.filter(x => x.ok).length) + ' از ' + fa(k.st.length) + ')'),
-    tbl(['نام و نام خانوادگی', 'وضعیت', 'مؤسسه', 'تراز کل'], k.st.map(x => [x.n, x.ok ? '✓ ثبت کرده' : '✗ ثبت نکرده', x.ok ? x.i : '', x.ok && x.z != null ? fa(x.z) : '']))));
+    tbl(['نام و نام خانوادگی', 'وضعیت', 'مؤسسه', 'تراز کل'], k.st.map(x => [x.n, x.ok ? (x.i === MK_NONE ? '⚠ هیچکدام' : '✓ ثبت کرده') : '✗ ثبت نکرده', x.ok ? x.i : '', x.ok && x.z != null ? fa(x.z) : '']))));
   document.body.classList.add('printing'); window.print();
 });
 // --- دانش‌آموز: فرم آزمون آزمایشی
