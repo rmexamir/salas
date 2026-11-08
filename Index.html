@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl"><head><base target="_top"><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f5f3ee;--c:#fff;--t:#17203a;--m:#667085;--p:#1f3a8a;--a:#e8a317;--b:#e3e0d8;--ok:#177a4b;--er:#b42318;color-scheme:light}
+@media(prefers-color-scheme:dark){:root{--bg:#0f1322;--c:#181e33;--t:#eef0f7;--m:#9aa3bd;--p:#8fa8ff;--a:#f0b429;--b:#2a3150;--ok:#4ade80;--er:#f97066;color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--t);font:400 15px/1.7 Vazirmatn,Tahoma,sans-serif}
+header{background:var(--p);color:#fff;padding:28px 16px 22px}
+@media(prefers-color-scheme:dark){header{background:#1a2350;color:#fff}}
+.w{max-width:860px;margin:auto;padding:0 14px}
+h1{margin:0;font-size:26px;font-weight:800}
+header p{margin:4px 0 0;opacity:.85}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+button,.btn,select,input{font:inherit}
+.btn,button{border:0;border-radius:8px;padding:8px 16px;background:var(--p);color:#fff;cursor:pointer;text-decoration:none;display:inline-block}
+@media(prefers-color-scheme:dark){.btn,button{color:#0f1322}}
+button.g{background:transparent;color:inherit;border:1px solid currentColor}
+button.d{background:var(--er);color:#fff}
+.f{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:16px 0}
+.f input{grid-column:1/-1}
+input,select{width:100%;padding:9px 10px;border:1px solid var(--b);border-radius:8px;background:var(--c);color:var(--t)}
+:focus-visible{outline:2px solid var(--a);outline-offset:2px}
+.item{background:var(--c);border:1px solid var(--b);border-inline-start:5px solid var(--a);border-radius:10px;padding:12px 14px;margin-bottom:10px;display:flex;gap:12px;align-items:center;justify-content:space-between}
+.item h3{margin:0;font-size:16px}
+.meta{color:var(--m);font-size:13px}
+.tag{display:inline-block;background:var(--bg);border-radius:6px;padding:0 8px;margin-inline-end:4px;font-size:12px}
+.empty{text-align:center;color:var(--m);padding:40px 0}
+.card{background:var(--c);border:1px solid var(--b);border-radius:10px;padding:14px;margin:14px 0}
+.card h2{margin:0 0 10px;font-size:17px}
+.row{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.chip{background:var(--bg);border-radius:20px;padding:2px 4px 2px 12px;font-size:13px;display:inline-flex;align-items:center;gap:4px}
+.chip b{cursor:pointer;color:var(--er);padding:0 6px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.msg{padding:8px 0;font-size:14px}
+.tabs{display:flex;gap:6px;margin:14px 0}
+.tabs button{background:var(--c);color:var(--t);border:1px solid var(--b)}
+.tabs button.on{background:var(--p);color:#fff;border-color:var(--p)}
+@media(prefers-color-scheme:dark){.tabs button.on{color:#0f1322}}
+@media(max-width:520px){.item{flex-direction:column;align-items:stretch}.item .btn{text-align:center}}
+[hidden]{display:none!important}
+</style></head><body>
+<header><div class="w top"><div><h1>دانلود فایل‌های درسی</h1><p>امتحان نهایی، کنکور و آزمون‌های آزمایشی</p></div>
+<button class="g" id="adm">مدیریت</button></div></header>
+
+<main class="w">
+<section id="pub">
+  <div class="f"><input id="q" placeholder="جستجوی عنوان…">
+    <select id="fg"></select><select id="fs"></select><select id="ft"></select><select id="fy"></select></div>
+  <div id="list"></div>
+</section>
+
+<section id="adminWrap" hidden>
+  <div id="login" class="card"><h2>ورود مدیر</h2>
+    <input id="pw" type="password" placeholder="رمز عبور"><div class="row"><button id="go">ورود</button><button class="g" id="back">بازگشت</button></div>
+    <div class="msg" id="lm"></div></div>
+  <div id="panel" hidden>
+    <div class="tabs"><button data-t="up" class="on">بارگذاری</button><button data-t="fl">فایل‌ها</button><button data-t="ct">دسته‌بندی‌ها</button><button id="out" class="g">خروج</button></div>
+
+    <div id="t-up" class="card"><h2 id="uh">بارگذاری فایل جدید</h2>
+      <input id="ti" placeholder="عنوان فایل"><div class="g2" style="margin-top:8px">
+      <select id="ug"></select><select id="us"></select><select id="ut"></select><input id="uy" placeholder="سال / نوبت (مثلاً خرداد ۱۴۰۴)"></div>
+      <input id="uf" type="file" style="margin-top:8px">
+      <div class="row"><button id="sv">ذخیره</button><button class="g" id="cl" hidden>انصراف از ویرایش</button></div>
+      <div class="msg" id="um"></div></div>
+
+    <div id="t-fl" hidden></div>
+
+    <div id="t-ct" class="card" hidden></div>
+  </div>
+</section>
+</main>
+
+<script>
+const $=s=>document.querySelector(s), esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const run=(fn,...a)=>new Promise((ok,no)=>google.script.run.withSuccessHandler(ok).withFailureHandler(no)[fn](...a));
+const K={grade:'مقطع',subject:'درس',type:'نوع فایل'}, fa=n=>Number(n).toLocaleString('fa');
+let D={files:[],cats:{grade:[],subject:[],type:[]}}, pass='', editId=null;
+const size=b=>b>1048576?fa((b/1048576).toFixed(1))+' مگابایت':fa(Math.max(1,Math.round(b/1024)))+' کیلوبایت';
+const opts=(a,ph)=>`<option value="">${ph}</option>`+a.map(x=>`<option>${esc(x)}</option>`).join('');
+
+async function load(){D=await run('getData');fill();show()}
+function fill(){
+  const years=[...new Set(D.files.map(f=>f.year).filter(Boolean))];
+  [['fg','grade'],['fs','subject'],['ft','type']].forEach(([i,k])=>{const v=$('#'+i).value;$('#'+i).innerHTML=opts(D.cats[k],'همه‌ی '+K[k]+'‌ها');$('#'+i).value=v});
+  const y=$('#fy').value;$('#fy').innerHTML=opts(years,'همه‌ی سال‌ها');$('#fy').value=y;
+  [['ug','grade'],['us','subject'],['ut','type']].forEach(([i,k])=>{const v=$('#'+i).value;$('#'+i).innerHTML=opts(D.cats[k],K[k]+' را انتخاب کنید');$('#'+i).value=v});
+}
+function show(){
+  const q=$('#q').value.trim(),g=$('#fg').value,s=$('#fs').value,t=$('#ft').value,y=$('#fy').value;
+  const r=D.files.filter(f=>(!q||f.title.includes(q))&&(!g||f.grade===g)&&(!s||f.subject===s)&&(!t||f.type===t)&&(!y||f.year===y));
+  $('#list').innerHTML=r.length?r.map(f=>`<div class="item"><div><h3>${esc(f.title)}</h3>
+   <div class="meta">${[f.grade,f.subject,f.type,f.year].filter(Boolean).map(x=>`<span class="tag">${esc(x)}</span>`).join('')}
+   ${size(f.size)} · ${fa(f.downloads)} دانلود</div></div>
+   <a class="btn" href="https://drive.google.com/uc?export=download&id=${esc(f.fileId)}" target="_blank" rel="noopener" onclick="hit('${esc(f.id)}')">دانلود</a></div>`).join('')
+   :'<div class="empty">فایلی با این فیلتر پیدا نشد.</div>';
+  if(pass)adminLists();
+}
+function hit(id){google.script.run.hit(id);const f=D.files.find(x=>x.id===id);if(f)f.downloads++}
+['q','fg','fs','ft','fy'].forEach(i=>$('#'+i).addEventListener('input',show));
+
+// ---- مدیر ----
+$('#adm').onclick=()=>{$('#pub').hidden=true;$('#adminWrap').hidden=false;$('#adm').hidden=true;$('#pw').focus()};
+$('#back').onclick=exit;
+function exit(){pass='';$('#panel').hidden=true;$('#login').hidden=false;$('#pw').value='';$('#adminWrap').hidden=true;$('#pub').hidden=false;$('#adm').hidden=false;load()}
+$('#out').onclick=exit;
+$('#go').onclick=async()=>{
+  $('#lm').textContent='در حال بررسی…';
+  try{await run('checkPass',$('#pw').value);pass=$('#pw').value;$('#login').hidden=true;$('#panel').hidden=false;$('#lm').textContent='';adminLists()}
+  catch(e){$('#lm').textContent=e.message||'خطا'}
+};
+$('#pw').addEventListener('keydown',e=>e.key==='Enter'&&$('#go').click());
+document.querySelectorAll('.tabs [data-t]').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.tabs [data-t]').forEach(x=>x.classList.toggle('on',x===b));
+  ['up','fl','ct'].forEach(t=>$('#t-'+t).hidden=t!==b.dataset.t)});
+
+function adminLists(){
+  $('#t-fl').innerHTML=D.files.length?D.files.map(f=>`<div class="item"><div><h3>${esc(f.title)}</h3><div class="meta">${[f.grade,f.subject,f.type,f.year].filter(Boolean).map(esc).join(' / ')} · ${fa(f.downloads)} دانلود</div></div>
+   <div class="row"><button onclick="edit('${esc(f.id)}')">ویرایش</button><button class="d" onclick="del('${esc(f.id)}')">حذف</button></div></div>`).join(''):'<div class="empty">هنوز فایلی بارگذاری نشده.</div>';
+  $('#t-ct').innerHTML=Object.keys(K).map(k=>`<h2>${K[k]}</h2><div class="row" style="margin:0 0 8px">${D.cats[k].map(n=>`<span class="chip">${esc(n)}<b onclick="dc('${k}','${esc(n).replace(/'/g,'')}')">×</b></span>`).join('')||'<span class="meta">موردی تعریف نشده</span>'}</div>
+   <div class="row" style="margin-bottom:16px"><input id="n-${k}" placeholder="افزودن ${K[k]}" style="flex:1"><button onclick="ac('${k}')">افزودن</button></div>`).join('');
+}
+async function ac(k){const v=$('#n-'+k).value.trim();if(!v)return;await run('addCat',pass,k,v);D.cats[k].push(v);fill();adminLists()}
+async function dc(k,n){if(!confirm('«'+n+'» حذف شود؟ فایل‌های این دسته حذف نمی‌شوند.'))return;await run('delCat',pass,k,n);D.cats[k]=D.cats[k].filter(x=>x!==n);fill();adminLists()}
+async function del(id){if(!confirm('این فایل برای همیشه حذف شود؟'))return;await run('deleteFile',pass,id);D.files=D.files.filter(f=>f.id!==id);adminLists()}
+function edit(id){
+  const f=D.files.find(x=>x.id===id);editId=id;
+  $('#ti').value=f.title;$('#ug').value=f.grade;$('#us').value=f.subject;$('#ut').value=f.type;$('#uy').value=f.year;
+  $('#uh').textContent='ویرایش اطلاعات فایل';$('#cl').hidden=false;$('#uf').hidden=true;
+  document.querySelector('[data-t=up]').click();window.scrollTo(0,0)
+}
+function reset(){editId=null;['ti','uy','uf'].forEach(i=>$('#'+i).value='');['ug','us','ut'].forEach(i=>$('#'+i).value='');$('#uh').textContent='بارگذاری فایل جدید';$('#cl').hidden=true;$('#uf').hidden=false}
+$('#cl').onclick=reset;
+$('#sv').onclick=async()=>{
+  const m={title:$('#ti').value.trim(),grade:$('#ug').value,subject:$('#us').value,type:$('#ut').value,year:$('#uy').value.trim()},um=$('#um'),file=$('#uf').files[0];
+  if(!m.title)return um.textContent='عنوان را وارد کنید.';
+  $('#sv').disabled=true;
+  try{
+    if(editId){await run('updateFile',pass,editId,m)}
+    else{
+      if(!file)throw new Error('یک فایل انتخاب کنید.');
+      if(file.size>30*1048576)throw new Error('حجم فایل بیشتر از ۳۰ مگابایت است.');
+      um.textContent='در حال بارگذاری… لطفاً صبر کنید.';
+      const b64=await new Promise((ok,no)=>{const r=new FileReader();r.onload=()=>ok(r.result.split(',')[1]);r.onerror=no;r.readAsDataURL(file)});
+      await run('addFile',pass,m,b64,file.name,file.type);
+    }
+    um.textContent='ذخیره شد.';reset();await load();adminLists();
+  }catch(e){um.textContent=e.message||'خطا در ذخیره'}
+  $('#sv').disabled=false;
+};
+load();
+</script></body></html>
