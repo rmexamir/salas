@@ -18,7 +18,23 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxzPr6P54uH4gV_rQrss
 // کلید دسترسی اختیاری (باید با ACCESS_KEY در Code.gs یکی باشد)
 const ACCESS_KEY = "";
 // نسخه‌ی برنامه — با هر به‌روزرسانی این عدد بالا می‌رود و در صفحه‌ی ورود و پایین صفحه نمایش داده می‌شود.
-const APP_VERSION = "1.43";
+const APP_VERSION = "1.45";
+const CHANGELOG=[
+  {v:'1.45',items:['بهبود گرافیک ماژول‌ها: هوور نرم، گلوی رنگی، آیکن پویا']},
+  {v:'1.44',items:['پشتیبان‌گیری کامل اطلاعات برای حالت آفلاین','تاریخچه‌ی نسخه‌ها در سامانه']},
+  {v:'1.43',items:['قانون غیبت: نمره‌ی صفر در همه‌ی ارزیابی‌های مشمول']},
+  {v:'1.42',items:['بهبودهای داخلی و رفع اشکال']},
+  {v:'1.41',items:['رمز مدیر، رمز و نام مشاور از کد حذف شد','ماژول‌های هم‌پوشان در پنل‌های گروه‌شده با زبانه','«انضباط من» برای دانش‌آموز ماژول جدا شد']},
+  {v:'1.40',items:['وزن شدت موارد انضباطی قابل تنظیم','درخواست بررسی مورد انضباطی توسط دانش‌آموز','یادآوری کنترل‌روم به دبیر، چاپ گزارش روزانه','پیامک هفتگی اولیا (پیش‌فرض خاموش)']},
+  {v:'1.39',items:['نمره‌ی صفر فقط برای غیبت غیرموجه در آزمون تقویم','شمارش روزانه‌ی غیبت در انضباط']},
+  {v:'1.38',items:['بازطراحی کامل ظاهر: نوار بالا، کارت‌ها، رنگ‌بندی صنعتی','اطلاعیه‌ی متنی و تصویری صفحه‌ی ورود','ویرایش تقویم آموزشی توسط دبیر']},
+  {v:'1.37',items:['نمرات مثبت و منفی','تکلیف و فعالیت‌های کلاسی']},
+  {v:'1.32',items:['انتقال به سال تحصیلی جدید با آرشیو','کش اطلاعات در سرور']},
+  {v:'1.30',items:['کارنامه‌ی فردی رسمی و کارنامه‌ی کلی کلاس']},
+  {v:'1.29',items:['کمک به مدرسه: پرداخت اولیا و مدیریت مبالغ']},
+  {v:'1.22',items:['کاشی‌های ماژولار قابل تنظیم','آپلود لوگو و سربرگ مدرسه']},
+  {v:'1.06',items:['ماژول انضباطی و پرورشی']},
+];
 let SOFF = []; // روزهای تعطیل دستی از سرور (مدیر ثبت می‌کند)
 // (اختیاری) لینک Google Sheet برای دکمه «باز کردن Google Sheet» در تب مدیر
 const SHEET_URL = "https://docs.google.com/spreadsheets/d/10i-IGQKyj078M6kJ7YhdAniuJInl6JemwVxAqs7FnrY/edit";
@@ -68,6 +84,24 @@ const STUDENTS = {
 .jc-d.sel{background:var(--primary);color:var(--on-primary)}
 .jc-d.wk{background:var(--present-bg);color:var(--present)}
 .jc-d.hol{background:var(--absent-bg);color:var(--absent)}
+
+/* ===== پشتیبان و تاریخچه‌ی نسخه‌ها ۱۴۴۱ ===== */
+.bak-t{border-collapse:collapse;width:100%;font-size:.8em}
+.bak-t th,.bak-t td{border:1px solid var(--border);padding:4px 8px;white-space:nowrap;text-align:right}
+.bak-t th{background:var(--surface2);font-weight:600;position:sticky;top:0;z-index:1}
+.bak-t tr:nth-child(even){background:var(--surface2)}
+.bak-scroll{overflow:auto;max-height:55vh;margin-top:8px}
+.bak-ov{position:fixed;inset:0;background:var(--bg);z-index:9999;overflow:auto;padding:16px 12px;direction:rtl}
+.bak-ov .bak-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:8px;flex-wrap:wrap}
+.bak-ov .bak-title{font-weight:700;font-size:.95em}
+.cl-row{padding-bottom:12px;margin-bottom:12px;border-bottom:1px solid var(--border)}
+.cl-row:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.cl-ver{font-weight:700;font-size:.95em;display:flex;align-items:center;gap:8px;margin-bottom:5px}
+.cl-cur .cl-ver{color:var(--accent)}
+.cl-badge{background:var(--accent);color:#fff;border-radius:20px;padding:1px 10px;font-size:.72em;font-weight:600}
+.cl-items{margin:0;padding-inline-end:20px;padding-inline-start:0}
+.cl-items li{font-size:.86em;color:var(--fg2);line-height:1.9}
+.cl-cur .cl-items li{color:var(--fg)}
 </style>
 <meta name="color-scheme" content="light dark">
 <style>
@@ -2361,6 +2395,60 @@ body[data-mod="s:dsc"] .dsc-t{border-radius:16px}
 .mgw.hot .mgw-t{color:var(--absent)}
 .mgw-p{font-size:13.5px;line-height:1.9;color:var(--ink)}
 .mgw-b{margin-top:10px;min-height:44px;padding:0 18px;border:0;border-radius:12px;background:var(--primary);color:var(--on-primary);font:inherit;font-weight:800;cursor:pointer}
+
+/* ===== بهبود گرافیک ماژول‌ها ۱٫۴۵ ===== */
+/* کاشی: سایه‌ی پایه سبک‌تر، transition نرم‌تر */
+.tile{
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 1px 2px rgba(12,24,48,.06),0 8px 20px -12px rgba(12,24,48,.28);
+  transition:transform .22s cubic-bezier(.2,.8,.2,1),box-shadow .22s;
+  animation-timing-function:cubic-bezier(.34,1.45,.64,1);
+  animation-duration:.48s;
+}
+/* کاشی hover: بدون rotateX — lift + glow رنگی */
+.tile:hover{
+  transform:translateY(-4px) scale(1.016);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.9),
+    0 0 0 1.5px color-mix(in srgb,var(--tc) 35%,var(--line)),
+    0 6px 16px -6px color-mix(in srgb,var(--tc) 45%,transparent),
+    0 20px 36px -18px rgba(12,24,48,.30);
+}
+/* کاشی active */
+.tile:active{transform:translateY(1px) scale(.99)!important;box-shadow:inset 0 2px 6px rgba(12,24,48,.14),0 2px 6px -4px rgba(12,24,48,.25)!important}
+/* آیکن: حذف translateZ، hover scale نرم */
+.ti-ic{
+  transform:none;
+  transition:transform .22s cubic-bezier(.2,.8,.2,1),box-shadow .22s;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 4px 10px -3px rgba(8,20,40,.4);
+}
+.tile:hover .ti-ic{transform:scale(1.08) translateY(-2px)}
+/* نوار پایین: همیشه ۳۵٪، روی hover کامل */
+.tile::after{transform:scaleX(.35);opacity:.5}
+.tile:hover::after,.tile:focus-visible::after{transform:scaleX(1);opacity:1}
+/* انیمیشن ورود فنری */
+@keyframes tileIn{from{opacity:0;transform:translateY(14px) scale(.96)}}
+/* dark mode کاشی */
+[data-theme="dark"] .tile{box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 8px 20px -12px rgba(0,0,0,.55)}
+[data-theme="dark"] .tile:hover{
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.08),
+    0 0 0 1.5px color-mix(in srgb,var(--tc) 40%,var(--line)),
+    0 6px 20px -6px color-mix(in srgb,var(--tc) 50%,transparent),
+    0 20px 36px -18px rgba(0,0,0,.7);
+}
+/* چیپ: hover رنگی نرم */
+.chip{transition:all .18s cubic-bezier(.2,.8,.2,1)}
+.chip:hover:not(.on):not(:disabled){
+  border-color:color-mix(in srgb,var(--primary) 50%,var(--line));
+  background:color-mix(in srgb,var(--primary) 7%,var(--input));
+  color:var(--ink);
+}
+/* دکمه: lift خفیف */
+.btn{transition:transform .15s,box-shadow .15s,background .15s,border-color .15s}
+.btn:hover:not(:disabled){transform:translateY(-1px)}
+.btn:active:not(:disabled){transform:translateY(1px)!important}
+/* تب ماژول active: glow */
+.mod-tab.on{box-shadow:0 4px 14px -6px color-mix(in srgb,var(--tc) 70%,transparent),0 0 0 1px var(--tc)}
 </style>
 </head>
 <body>
@@ -3236,6 +3324,16 @@ body[data-mod="s:dsc"] .dsc-t{border-radius:16px}
       </div>
       <div class="mg-sec" data-sec="sys" data-t="اطلاعات و سامانه" hidden>
       <div class="mg-sec-d">بانک اطلاعات دانش‌آموزان و دبیران، سابقه‌ی تغییرات و ابزارها.</div>
+      <div class="card" id="bakCard">
+        <div class="lbl" style="margin-bottom:8px">💾 پشتیبان کامل اطلاعات</div>
+        <div class="now-sub" style="margin-bottom:10px">در صورت قطعی اینترنت بین‌الملل، اطلاعات همه‌ی صفحات را دانلود کنید تا بدون اینترنت قابل مشاهده باشد. فیل پشتیبان فقط خواندنی است و چیزی ثبت نمی‌شود.</div>
+        <div class="mg-tools">
+          <button id="bakDlBtn" class="btn" type="button">⬇ دانلود پشتیبان</button>
+          <label class="btn" for="bakFileIn" style="cursor:pointer;text-align:center">📂 بارگذاری و مشاهده</label>
+          <input type="file" id="bakFileIn" accept=".json" hidden>
+        </div>
+        <div id="bakStatus" class="now-sub" style="margin-top:8px"></div>
+      </div>
       <div class="card">
         <div class="lbl" style="margin-bottom:8px">بانک اطلاعات (فقط مدیر)</div>
         <div id="dirTabs" class="chips" style="grid-template-columns:1fr 1fr;margin-bottom:10px"></div>
@@ -3269,6 +3367,10 @@ body[data-mod="s:dsc"] .dsc-t{border-radius:16px}
           <a id="mgOpen" class="btn" style="display:none" target="_blank" rel="noopener">📊 باز کردن Google Sheet</a>
         </div>
         <div id="mgStamp" class="now-sub" style="margin-top:10px;text-align:center"></div>
+      </div>
+      <div class="card" id="clCard">
+        <div class="lbl" style="margin-bottom:12px">📋 تاریخچه‌ی نسخه‌ها</div>
+        <div id="clList"></div>
       </div>
       </div>
     </div>
@@ -10344,6 +10446,73 @@ function bnPaint() {
   new MutationObserver(() => { bnPaint(); lkDraw(); }).observe(document.body, { attributes:true, attributeFilter:['data-mod', 'class'] }); bnPaint();
 })();
 if (!ROLE) gateMode();             // آیکون نقش‌ها روی صفحه‌ی ورود
+
+/* ===== پشتیبان کامل و تاریخچه‌ی نسخه‌ها ۱٫۴۴ ===== */
+async function bakDl_() {
+  const btn = document.getElementById('bakDlBtn');
+  if (btn) { btn.disabled = true; btn.textContent = '⧗ در حال دریافت...'; }
+  const st = document.getElementById('bakStatus'); if (st) st.textContent = '';
+  try {
+    const r = await send({action:'exportAll', pin:MG.pin, key:ACCESS_KEY});
+    if (!r.ok) { showModal({icon:'err', title:'خطا', msg:r.message || r.err || 'خطا در پشتیبان‌گیری'}); return; }
+    const blob = new Blob([JSON.stringify(r, null, 2)], {type:'application/json'});
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+    const ts = (r.ts || new Date().toISOString()).slice(0,10).replace(/-/g,'');
+    a.download = 'salas-backup-' + ts + '.json'; document.body.append(a); a.click(); a.remove(); URL.revokeObjectURL(a.href);
+    if (st) st.textContent = 'آخرین پشتیبان: ' + fa(new Date().toLocaleDateString('fa-IR'));
+  } catch(e) { showModal({icon:'err', title:'خطا', msg:'خطا: ' + e}); }
+  finally { if (btn) { btn.disabled = false; btn.textContent = '⬇ دانلود پشتیبان'; } }
+}
+function bakLoad_(file) {
+  const fr = new FileReader();
+  fr.onload = e => {
+    try {
+      const d = JSON.parse(e.target.result);
+      if (!d || !d.sheets) { showModal({icon:'warn', title:'فایل نامعتبر', msg:'فایل انتخاب‌شده پشتیبان معتبر نیست.'}); return; }
+      bakView_(d);
+    } catch { showModal({icon:'err', title:'خطا', msg:'خطا در خواندن فایل.'}); }
+  };
+  fr.readAsText(file);
+}
+function bakView_(d) {
+  const SH_FA = {att:'حضور و غیاب',gr:'نمرات',stu:'دانش‌آموزان',tch:'دبیران',sch:'برنامه',dsc:'انضباطی',cal:'تقویم',exc:'غیبت موجه',leave:'مرخصی',mock:'آزمون آزمایشی',qz:'آزمونک',qa:'پاسخ آزمونک',cns:'مشاوره',stf:'حضور همکاران',act:'فعالیت‌ها',don:'کمک مدرسه',pta:'جلسات اولیا',dap:'درخواست بررسی',beh:'رفتار',ng:'ویرایش نمره'};
+  const ov = el('div','bak-ov'); ov.id = 'bakOv';
+  const hd = el('div','bak-hd');
+  const title = el('div','bak-title'); title.textContent = '\u{1F4C2} پشتیبان — ' + (d.ts||'').slice(0,10) + ' | نسخه‌ی ' + fa(d.v||'');
+  const cls = el('button','btn'); cls.type='button'; cls.style.cssText='min-width:70px'; cls.textContent='× بستن'; cls.onclick=()=>ov.remove();
+  hd.append(title,cls); ov.append(hd);
+  const chips = el('div','chips'); chips.style.cssText='grid-template-columns:repeat(auto-fill,minmax(90px,1fr));margin-bottom:10px';
+  const tbl = el('div','bak-scroll'); ov.append(chips,tbl);
+  const keys = Object.keys(d.sheets||{});
+  const showSheet = k => {
+    chips.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.k===k));
+    const rows=d.sheets[k]||[]; if(!rows.length){tbl.textContent='داده‌ای نیست.';return;}
+    const t=document.createElement('table'); t.className='bak-t';
+    rows.slice(0,201).forEach((row,i)=>{const tr=document.createElement('tr');row.forEach(cell=>{const td=document.createElement(i===0?'th':'td');td.textContent=cell==null?'':cell;tr.append(td);});t.append(tr);});
+    tbl.innerHTML='';
+    if(rows.length>201){const n=el('div','now-sub');n.textContent=fa(rows.length-1)+' ردیف (نمایش ۲۰۰ ردیف اول)';n.style.marginBottom='4px';tbl.append(n);}
+    tbl.append(t);
+  };
+  keys.forEach(k=>{const b=el('button','chip',SH_FA[k]||k);b.dataset.k=k;b.type='button';b.onclick=()=>showSheet(k);chips.append(b);});
+  document.body.append(ov); if(keys.length) showSheet(keys[0]);
+}
+function renderChangelog_() {
+  const box = document.getElementById('clList'); if(!box||box.children.length) return;
+  CHANGELOG.forEach(({v,items})=>{
+    const row=el('div','cl-row'+(v===APP_VERSION?' cl-cur':''));
+    const h=el('div','cl-ver'); h.textContent='نسخه‌ی '+fa(v);
+    if(v===APP_VERSION){const badge=el('span','cl-badge','فعلی');h.append(badge);}
+    const ul=document.createElement('ul'); ul.className='cl-items';
+    items.forEach(item=>{const li=el('li','',item);ul.append(li);});
+    row.append(h,ul); box.append(row);
+  });
+}
+{ /* bakInit */
+  const dl=document.getElementById('bakDlBtn'); if(dl) dl.addEventListener('click',bakDl_);
+  const fi=document.getElementById('bakFileIn'); if(fi) fi.addEventListener('change',e=>{if(e.target.files[0])bakLoad_(e.target.files[0]);e.target.value='';});
+  renderChangelog_();
+}
+
 })();
 </script>
 <script>
