@@ -2742,8 +2742,7 @@ body[data-mod="s:dsc"] .dsc-t{border-radius:16px}
         <label for="customTitle">عنوان دلخواه</label>
         <input id="customTitle" type="text" autocomplete="off" placeholder="مثلاً آزمون فصل ۳">
       </div>
-      <p class="hint">فقط نمره‌های واردشده ارسال می‌شود؛ خانه خالی نادیده گرفته می‌شود. با «بعدی» کیبورد به نفر بعد می‌روید.</p>
-      <p class="hint">⚠️ علامت «غایب» برای دانش‌آموزی که در روز برگزاری آزمون (طبق تقویم آموزشی، نه روز ثبت نمره) غیبت موجه ندارد، در معدل و کارنامه نمره‌ی صفر حساب می‌شود. غیبت موجه (ثبت مدیر یا مرخصی تأییدشده) باید برای همان روز و زنگ آزمون ثبت شده باشد.</p>
+
       <div id="grSaved" class="card" hidden style="margin-bottom:10px"></div>
       <ul id="grList" class="list"></ul>
       <div id="grEmpty" class="empty">ابتدا رشته و کلاس را انتخاب کنید.</div>
@@ -2763,7 +2762,7 @@ body[data-mod="s:dsc"] .dsc-t{border-radius:16px}
     <div id="edPane" hidden>
       <div class="card">
         <div class="lbl" style="margin-bottom:4px">✏️ ویرایش نمره‌های ثبت‌شده</div>
-        <div class="now-sub" style="margin-bottom:8px">نمره‌ها را به تفکیک کلاس، درس و دبیر پیدا کنید و مستقیم ویرایش کنید. هر تغییر در «سابقه‌ی تغییرات» ثبت می‌شود. «غایب» بدون غیبت موجه در روز برگزاری آزمون (طبق تقویم آموزشی)، در معدل و کارنامه صفر حساب می‌شود؛ ثبت یا حذف غیبت موجهِ آن روز، خودکار روی معدل اثر می‌گذارد.</div>
+        <div class="now-sub" style="margin-bottom:8px"></div>
         <div class="grid2">
           <div class="field"><label for="gedCls">کلاس</label><select id="gedCls"></select></div>
           <div class="field"><label for="gedCourse">درس</label><select id="gedCourse"></select></div>
@@ -9342,7 +9341,6 @@ async function tlSubmit() {
     $('#tlWhy').value = ''; tlPaintMine(r.list); toast('درخواست ثبت شد؛ منتظر تأیید مدیر');
   } finally { TL.busy = false; b.disabled = false; }
 }
-
 
 /* --- گزارش مدیر: روزانه، هفتگی، ماهانه؛ دبیری که در آن روز یا زنگ کلاس نداشته محاسبه نمی‌شود --- */
 const slotMin = s => s.split('–').map(x => { const h = toEn(x).split(':').map(Number); return h[0] * 60 + h[1]; });
