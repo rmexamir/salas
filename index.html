@@ -3908,7 +3908,7 @@ function liveRender(r, ok) {
   // قهرمان: حضور امروز
   const hero = el('div', 'lv-hero'); hero.dataset.sky = skyOf(n0.getHours()).sky;
   hero.append(el('div', 'k', '👥 حضور امروز'));
-  const big = el('div', 'big'); big.append(el('b', '', A.rate == null ? '—' : fa(String(A.rate).replace('.', '٫')) + '٪'));
+  big.append(el('b', '', A.sc ? fa(A.pr + A.lt) + ' از ' + fa(A.sc) : '—'));
   if (A.delta != null) big.append(el('span', 'dl', (A.delta >= 0 ? '▲ ' : '▼ ') + fa(String(Math.abs(A.delta)).replace('.', '٫')) + ' نسبت به میانگین روزهای قبل'));
   hero.append(big, el('p', 'sub', A.sc ? fa(A.pr + A.lt) + ' نفر از ' + fa(A.sc) + ' دانش‌آموزِ کلاس‌های ثبت‌شده' + (A.ex ? ' (' + fa(A.ex) + ' غیبت موجه)' : '') : 'هنوز حضور و غیابی برای امروز ثبت نشده است.'));
   if (A.sc) {
@@ -3948,7 +3948,8 @@ function liveRender(r, ok) {
     A.pend.forEach(c => { const row = el('div', 'row'), done = (r.nudged || []).includes(c), b = el('button', 'btn', done ? 'یادآوری شد ✓' : '🔔 یادآوری به دبیر'); b.type = 'button'; b.disabled = done;
       b.addEventListener('click', async () => { b.disabled = true; const q = await send({ action:'liveNudge', pin:MG.pin, key:ACCESS_KEY, cls:c });
         if (q.status === 'ok') { b.textContent = 'یادآوری شد ✓'; toast('یادآوری برای ' + q.te.join('، ') + ' فرستاده شد'); if (LIVE.data) LIVE.data.nudged = (LIVE.data.nudged || []).concat([c]); } else { b.disabled = false; toast(q.message || 'انجام نشد'); } });
-      row.append(el('span', '', c), b); pb.append(row); });
+      const xb = el('button', 'btn', '🚫 معاف'); xb.type = 'button'; xb.hidden = ROLE !== 'manager'; xb.addEventListener('click', () => attExemptGo(c, r.d, xb));
+        row.append(el('span', '', c), b, xb); pb.append(row); });
     ac.append(pb);
   }
   box.append(ac);
@@ -3957,7 +3958,7 @@ function liveRender(r, ok) {
   const wk = el('div', 'lv-wk'), mx = Math.max.apply(null, r.week.map(w => w.n).concat([1]));
   r.week.forEach((w, i) => { const c = el('div', (i === 0 ? 't ' : '') + (w.n >= 4 ? 'h' : '')), b = el('i'); b.style.height = Math.max(4, w.n / Math.max(4, mx) * 72) + 'px'; c.append(el('span', '', fa(w.n)), b, el('small', '', i === 0 ? 'امروز' : LV_WD[w.wd])); wk.append(c); }); wc.append(wk); box.append(wc);
   // روند
-  const tc = el('div', 'card'); tc.append(el('div', 'lbl', '📈 روند معدل مدرسه (۸ هفته‌ی اخیر)'), liveSpark(r.trend)); box.append(tc);
+  const tc = el('div', 'card'); tc.append(el('div', 'lbl', '📈 روند معدل مدرسه (۸ هفته‌ی اخیر)'), (() => { const vals = r.trend.filter(x => x != null); return el('div', 'now-sub', vals.length ? 'معدل فعلی: ' + f2(vals[vals.length - 1]) : 'معدل هنوز ثبت نشده است'); })(), liveSpark(r.trend)); box.append(tc);
   const ft = el('div', 'lv-ft'), rb = el('button', 'btn', '🔄 تازه‌سازی'); rb.type = 'button'; rb.addEventListener('click', () => { rb.disabled = true; liveLoad(true).then(() => { rb.disabled = false; }); });
   const pr = el('button', 'btn', '🖨 چاپ گزارش امروز'); pr.type = 'button'; pr.addEventListener('click', () => kPrint([livePrintEl(r)]));
   ft.append(el('span', '', 'هر ۴۵ ثانیه خودکار بروز می‌شود'), pr, rb); box.append(ft);
@@ -4219,7 +4220,32 @@ async function grSavedLoad(force) {
     });
   });
 }
-setInterval(() => grSavedLoad(), 1500);   // با تغییر روز، زنگ، کلاس یا درس، فهرست نمرات ثبت‌شده به‌روز می‌شود
+setInterval(() => grSavedLoad(), 1500);
+let GRR_BOX = null;                       // ۵ درس اخیر با نمره‌ی ثبت‌شده (فقط مدیر)
+async function grRecentLoad() {
+  if (ROLE !== 'manager' || !MG.pin) return;
+  const sv = $('#grSaved'), pw = sv && sv.parentNode; if (!pw) return;
+  if (!GRR_BOX || !GRR_BOX.isConnected) { GRR_BOX = el('div', 'card'); pw.insertBefore(GRR_BOX, sv); }
+  const r = await send({ action:'grRecent', pin:MG.pin, key:ACCESS_KEY });
+  GRR_BOX.textContent = '';
+  GRR_BOX.append(el('div', 'lbl', '🕘 ۵ درس اخیر با نمره‌ی ثبت‌شده'));
+  if (r.net || r.status !== 'ok') { GRR_BOX.append(el('div', 'now-sub', r.message || 'بارگذاری نشد.')); return; }
+  if (!r.list.length) { GRR_BOX.append(el('div', 'now-sub', 'هنوز نمره‌ای ثبت نشده است.')); return; }
+  r.list.forEach(x => {
+    const row = el('div', 'dir-r');
+    row.append(el('span', '', x.s + ' — ' + x.e + ' (' + fa(x.n) + ' نفر)'), el('small', 'now-sub', 'کلاس ' + x.c + ' | دبیر: ' + x.te + ' | تاریخ آزمون: ' + fa(x.d) + ' | ثبت: ' + fa(x.ts)));
+    GRR_BOX.append(row);
+  });
+}
+grRecentLoad(); setInterval(grRecentLoad, 60000);
+async function attExemptGo(cls, date, btn) {
+  btn.disabled = true;
+  const r = await send({ action:'attExempt', pin:MG.pin, key:ACCESS_KEY, cls:cls, date:date });
+  btn.disabled = false;
+  if (r.net || r.status !== 'ok') { toast(r.message || 'معافیت ثبت نشد.'); return; }
+  toast(cls + ': از حضور و غیاب امروز معاف شد ✓');
+  liveLoad(true);
+}   // با تغییر روز، زنگ، کلاس یا درس، فهرست نمرات ثبت‌شده به‌روز می‌شود
 async function grSingleEdit(ex, x) {
   const v = prompt('نمره‌ی جدید برای ' + x.n + ' (۰ تا ' + fa(ex.max) + ') یا «غایب»:', x.abs ? 'غایب' : x.sc);
   if (v === null) return;
