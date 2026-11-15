@@ -10162,9 +10162,9 @@ function renderTiles() {
     }
     tl.push(t);
   });
-  tilesGroup(g, tl);                  // نسخه‌ی ۱٫۳۸: بخش‌های عنوان‌دار
-  const mgr = ROLE === 'manager' && !VIEWAS, eb = $('#tileEdit');
+  const mgr = ROLE === 'manager' && !VIEWAS, eb = $('#tileEdit');   // دکمه‌ی چیدمان پیش از هر خطای گروه‌بندی نمایش داده شود
   eb.hidden = !mgr; eb.textContent = TEDIT ? '✓ پایان چیدمان' : '✥ چیدمان ماژول‌ها'; $('#tileHint').hidden = !TEDIT;
+  try { tilesGroup(g, tl); } catch (e) { console.error('tilesGroup', e); g.classList.remove('grouped'); g.textContent = ''; tl.forEach(t => g.append(t)); }   // نسخه‌ی ۱٫۳۸: بخش‌های عنوان‌دار؛ در خطا فهرست ساده
   paintDots();
 }
 function tileDrag(e, t) {              // جابجایی با کشیدن (موس و لمس)
@@ -10453,9 +10453,9 @@ function mgrGroups(g, tiles) {          // نسخه‌ی ۱٫۴۸: دسته‌ه
     ks.forEach(k => { if (byK[k] && !used[k]) { used[k] = 1; w.append(byK[k]); } });
     s.append(h, w); return s;
   };
-  const rest = mk('rest', 'سایر', []), rw = rest.querySelector('.tg');
+  const real = TILE_GROUPS.map((x, i) => mk(x.id || ('g' + i), x.t || 'دسته', x.ks || []));   // ابتدا دسته‌ها کاشی‌های خود را برمی‌دارند
+  const rest = mk('rest', 'سایر', []), rw = rest.querySelector('.tg');                          // سپس باقی‌مانده‌ها به «سایر» می‌روند
   tiles.forEach(t => { if (!used[t.dataset.k]) { used[t.dataset.k] = 1; rw.append(t); } });
-  const real = TILE_GROUPS.map((x, i) => mk(x.id || ('g' + i), x.t || 'دسته', x.ks || []));
   real.forEach(s => g.append(s));
   g.append(rest);
   if (!TEDIT) { rest.hidden = !rw.children.length; return; }
