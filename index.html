@@ -2479,6 +2479,21 @@ body[data-mod="s:dsc"] .dsc-t{border-radius:16px}
 #tiles.edit .tile{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:132px;padding-bottom:46px}
 #tiles.edit .tile>.ti-t{margin-top:6px}
 #tiles.edit .tile>.ti-s{display:none}
+/* نسخه‌ی ۱٫۴۷-ب: موبایل — دو ستون، متن جا بگیرد */
+#tiles:not(.grouped):not(.edit){grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+@media (min-width:700px){#tiles:not(.grouped):not(.edit){grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}}
+@media (min-width:1100px){#tiles:not(.grouped):not(.edit){grid-template-columns:repeat(5,minmax(0,1fr))}}
+#tiles .tile{grid-template-columns:38px minmax(0,1fr);column-gap:9px;min-height:72px;padding:10px 9px;min-width:0}
+#tiles .tile>.ti-ic{width:38px;height:38px;grid-row:1 / span 2}
+#tiles .tile>.ti-ic svg{width:20px;height:20px}
+#tiles .tile>.ti-t{font-size:12.5px;line-height:1.45;overflow-wrap:anywhere;word-break:break-word;min-width:0}
+#tiles .tile>.ti-s{font-size:10.5px;line-height:1.5;overflow-wrap:anywhere;min-width:0}
+#tiles .tg{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:12px}
+/* نسخه‌ی ۱٫۴۸: ابزار دسته‌ها (فقط حالت ویرایش مدیر) */
+#tiles .tgrp-tools{display:flex;gap:8px;padding:8px 12px;border-top:1px dashed var(--line);background:var(--input)}
+#tiles .tgrp-tools .btn{font-size:12.5px;padding:6px 10px}
+#tiles .tile select.tile-grp{width:100%;margin-top:4px;padding:7px 8px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-size:12.5px}
+#tiles .tgrp-add{margin:0 0 16px;width:100%}
 </style>
 </head>
 <body>
@@ -4083,7 +4098,7 @@ function loadClass() {
 
 /* ---------- تب‌ها ---------- */
 /* وضعیت ماژول‌ها (کاشی‌ها)؛ پیش از setTab تعریف می‌شود چون setTab هنگام بارگذاری هم صدا زده می‌شود */
-let LAUNCH_ON = false, MODS_OK = false, MOD = null, TEDIT = false, TILES_ORD = lsGet('sia_tiles_v1', []);
+let LAUNCH_ON = false, MODS_OK = false, MOD = null, TEDIT = false, TILES_ORD = lsGet('sia_tiles_v1', []), TILE_GROUPS = lsGet('sia_tilegroups_v1', []);
 function setTab(t) {
   if (ROLE === 'student') return;      // دانش‌آموز هیچ‌وقت بخش‌های دبیر (کارتابل، ثبت آزمون و ...) را نمی‌بیند
   S.tab = t; P.tab = t; savePrefs();
@@ -4492,6 +4507,7 @@ function applyRoster(r) {
   if (r.mockInst) setInst(r.mockInst);                          // فهرست مؤسسه‌های آزمون آزمایشی
   if (r.img) imgSync(r.img);                                     // لوگو و سربرگ بارگذاری‌شده توسط مدیر
   if (Array.isArray(r.ntc)) ntcSync(r.ntc);                      // اطلاعیه‌های صفحه‌ی ورود (نسخه‌ی ۱٫۳۸)
+  if (Array.isArray(r.groups) && JSON.stringify(r.groups) !== JSON.stringify(TILE_GROUPS)) { TILE_GROUPS = r.groups; lsSet('sia_tilegroups_v1', r.groups); if (LAUNCH_ON && !TEDIT) renderTiles(); }
   if (Array.isArray(r.tiles) && JSON.stringify(r.tiles) !== JSON.stringify(TILES_ORD)) { TILES_ORD = r.tiles; lsSet('sia_tiles_v1', r.tiles); if (LAUNCH_ON && !TEDIT) renderTiles(); }
   if (r.cfg !== undefined && JSON.stringify(r.cfg || null) !== JSON.stringify(CFG)) { applyCfg(r.cfg); lsSet('sia_cfg_v1', r.cfg || null); cfgRerender(); }
   if (typeof r.cns === 'string') COUNSELOR_NAME = r.cns;
@@ -10100,6 +10116,7 @@ function tileKeys() {                 // کلیدهای کاشی: عضوهای �
   const mem = modKeys(), live = [], seen = {};
   mem.forEach(k => { const g = gOf(k) || k; if (!seen[g]) { seen[g] = 1; live.push(g); } });
   const mo = ROLE === 'manager' && !VIEWAS, cus = mo && TILES_ORD && TILES_ORD.length;
+  if (mo && TILE_GROUPS.length) { const ord = TILE_GROUPS.reduce((a, x) => a.concat(x.ks || []), []).filter((k, i, z) => seen[k] && z.indexOf(k) === i); return ord.concat(live.filter(k => !ord.includes(k))); }
   if (cus) return live;               // modKeys ترتیب دلخواه را (با کلید قدیمی یا گروه) اعمال کرده است
   const d = (GDEF[ROLE] || []).filter(k => seen[k]); return d.concat(live.filter(k => !d.includes(k)));
 }
@@ -10162,14 +10179,20 @@ function tileDrag(e, t) {              // جابجایی با کشیدن (موس
   window.addEventListener('pointermove', mv); window.addEventListener('pointerup', up); window.addEventListener('pointercancel', up);
 }
 $('#tileEdit').addEventListener('click', async () => {
-  if (!TEDIT) { TEDIT = true; renderTiles(); return; }
-  const order = $$('#tiles .tile').map(x => x.dataset.k); TEDIT = false; TILES_ORD = order; lsSet('sia_tiles_v1', order); renderTiles();
-  const r = await send({ action:'setTiles', pin:MG.pin, key:ACCESS_KEY, order:order });
+  if (!TEDIT) { if (ROLE === 'manager' && !VIEWAS && !TILE_GROUPS.length) TILE_GROUPS = (TGRP.manager || []).map((x, i) => ({ id:'d' + i, t:x[0], ks:x[1].slice() })); TEDIT = true; renderTiles(); return; }
+  let order = $$('#tiles .tile').map(x => x.dataset.k), groups = null;
+  if (ROLE === 'manager' && $('#tiles').classList.contains('grouped')) {
+    groups = $$('#tiles section.tgrp').filter(s => s.dataset.gid !== 'rest').map(s => ({ id:s.dataset.gid, t:(s.querySelector('.tg-h').textContent || '').trim() || 'دسته', ks:Array.from(s.querySelectorAll('.tile')).map(x => x.dataset.k) }));
+    order = groups.reduce((a, x) => a.concat(x.ks), []).concat(order.filter(k => !groups.some(x => x.ks.includes(k))));
+    TILE_GROUPS = groups; lsSet('sia_tilegroups_v1', groups);
+  }
+  TEDIT = false; TILES_ORD = order; lsSet('sia_tiles_v1', order); renderTiles();
+  const r = await send({ action:'setTiles', pin:MG.pin, key:ACCESS_KEY, order:order, groups:groups || undefined });
   toast(r.status === 'ok' ? 'چیدمان ماژول‌ها ذخیره شد ✓' : r.net ? 'چیدمان روی همین گوشی ماند؛ با اتصال اینترنت دوباره «چیدمان» را ذخیره کنید.' : (r.message || 'ذخیره نشد'));
 });
 $('#tileReset').addEventListener('click', async () => {
-  TILES_ORD = []; lsSet('sia_tiles_v1', []); TEDIT = false; renderTiles();
-  const r = await send({ action:'setTiles', pin:MG.pin, key:ACCESS_KEY, order:[] }); if (r.status === 'ok') toast('ترتیب پیش‌فرض ماژول‌ها برگشت');
+  TILES_ORD = []; lsSet('sia_tiles_v1', []); TILE_GROUPS = []; lsSet('sia_tilegroups_v1', []); TEDIT = false; renderTiles();
+  const r = await send({ action:'setTiles', pin:MG.pin, key:ACCESS_KEY, order:[], groups:[] }); if (r.status === 'ok') toast('ترتیب پیش‌فرض ماژول‌ها برگشت');
 });
 function paintDots() {                 // نشانگرهای زبانه‌ها و منوهای پنهان روی کاشی‌ها
   const on = {};
@@ -10420,7 +10443,70 @@ var TGRP = {                          // نسخه‌ی ۱٫۴۱: کاشی‌ها
   manager:[['کارهای روزانه', ['g:live', 'att', 'gr', 'inb', 'g:plan']], ['دانش‌آموزان و آموزش', ['m:stu', 'g:rep', 'm:dis']], ['کادر، اولیا و سامانه', ['m:tch', 'g:com', 'g:set']]],
   student:[['درس و نمره', ['s:prof', 's:dash', 'g:skar', 'g:sexm']], ['برنامه، حضور و انضباط', ['g:ssch', 'g:satt', 's:dsc', 'g:sfam']]]
 };
-function tilesGroup(g, tiles) {       // کاشی‌های ساخته‌شده ← بخش‌های عنوان‌دار (در حالت چیدمان، فهرست ساده)
+function mgrGroups(g, tiles) {          // نسخه‌ی ۱٫۴۸: دسته‌های مدیر — ساخت، نام‌گذاری، حذف و جابه‌جایی کاشی بین دسته‌ها
+  g.classList.add('grouped'); g.setAttribute('role', 'presentation');
+  const byK = {}, used = {};
+  tiles.forEach(t => { byK[t.dataset.k] = t; });
+  const mk = (id, title, ks) => {
+    const s = el('section', 'tgrp'), h = el('h2', 'tg-h', title), w = el('div', 'tg');
+    s.dataset.gid = id; w.setAttribute('role', 'list');
+    ks.forEach(k => { if (byK[k] && !used[k]) { used[k] = 1; w.append(byK[k]); } });
+    s.append(h, w); return s;
+  };
+  const rest = mk('rest', 'سایر', []), rw = rest.querySelector('.tg');
+  tiles.forEach(t => { if (!used[t.dataset.k]) { used[t.dataset.k] = 1; rw.append(t); } });
+  const real = TILE_GROUPS.map((x, i) => mk(x.id || ('g' + i), x.t || 'دسته', x.ks || []));
+  real.forEach(s => g.append(s));
+  g.append(rest);
+  if (!TEDIT) { rest.hidden = !rw.children.length; return; }
+  // ---- حالت ویرایش: نام، حذف، افزودن دسته و انتخاب دسته برای هر کاشی ----
+  const refresh = () => {
+    const secs = Array.from(g.querySelectorAll('section.tgrp'));
+    Array.from(g.querySelectorAll('.tile')).forEach(t => {
+      let sel = t.querySelector('select.tile-grp');
+      if (!sel) {
+        sel = el('select', 'tile-grp'); sel.setAttribute('aria-label', 'دسته‌ی این ماژول');
+        sel.addEventListener('change', () => {
+          const tgt = Array.from(g.querySelectorAll('section.tgrp')).find(x => x.dataset.gid === sel.value);
+          if (tgt) tgt.querySelector('.tg').append(t);
+          refresh();
+        });
+        t.append(sel);
+      }
+      sel.textContent = '';
+      secs.forEach(x => { const o = el('option', '', x.querySelector('.tg-h').textContent); o.value = x.dataset.gid; sel.append(o); });
+      const cur = t.closest('section.tgrp'); sel.value = cur ? cur.dataset.gid : 'rest';
+    });
+  };
+  const tools = s => {
+    const bar = el('div', 'tgrp-tools'), rn = el('button', 'btn', '✎ تغییر نام'), dl = el('button', 'btn', '🗑 حذف دسته');
+    rn.type = dl.type = 'button';
+    rn.addEventListener('click', () => {
+      const h = s.querySelector('.tg-h'), v = prompt('نام دسته', h.textContent);
+      if (v && v.trim()) { h.textContent = v.trim().slice(0, 40); refresh(); }
+    });
+    dl.addEventListener('click', () => {
+      if (!confirm('این دسته حذف شود؟ ماژول‌های آن به «سایر» می‌روند.')) return;
+      Array.from(s.querySelectorAll('.tile')).forEach(t => rw.append(t));
+      s.remove(); rest.hidden = false; refresh();
+    });
+    bar.append(rn, dl); return bar;
+  };
+  real.forEach(s => s.append(tools(s)));
+  const add = el('button', 'btn tgrp-add', '➕ دسته‌ی تازه');
+  add.type = 'button';
+  add.addEventListener('click', () => {
+    const v = prompt('نام دسته‌ی تازه'); if (!v || !v.trim()) return;
+    const s = el('section', 'tgrp'), h = el('h2', 'tg-h', v.trim().slice(0, 40)), w = el('div', 'tg');
+    s.dataset.gid = 'n' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
+    w.setAttribute('role', 'list'); s.append(h, w, tools(s));
+    g.insertBefore(s, rest); refresh();
+  });
+  g.append(add);
+  refresh();
+}
+function tilesGroup(g, tiles) {
+  if (ROLE === 'manager' && !VIEWAS && TILE_GROUPS.length) return mgrGroups(g, tiles);       // کاشی‌های ساخته‌شده ← بخش‌های عنوان‌دار (در حالت چیدمان، فهرست ساده)
   const mo = ROLE === 'manager' && !VIEWAS, gr = !TEDIT && TGRP && !(mo && TILES_ORD && TILES_ORD.length) && TGRP[mo ? 'manager' : ROLE];   // چیدمان دلخواه مدیر بر گروه‌بندی پیش‌فرض مقدم است
   g.classList.toggle('grouped', !!gr); g.setAttribute('role', gr ? 'presentation' : 'list');
   if (!gr) { tiles.forEach(t => g.append(t)); return; }
