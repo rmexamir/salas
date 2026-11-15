@@ -2494,6 +2494,15 @@ body[data-mod="s:dsc"] .dsc-t{border-radius:16px}
 #tiles .tgrp-tools .btn{font-size:12.5px;padding:6px 10px}
 #tiles .tile select.tile-grp{width:100%;margin-top:4px;padding:7px 8px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-size:12.5px}
 #tiles .tgrp-add{margin:0 0 16px;width:100%}
+/* نسخه‌ی ۱٫۴۹: کارت ۵ درس اخیر */
+.grr-list{display:grid;gap:10px;margin-top:10px}
+.grr-it{display:grid;gap:8px;padding:12px 14px;border-radius:14px;background:var(--card);border:1px solid var(--line);border-inline-start:4px solid #4C8DF6;box-shadow:0 1px 2px rgba(12,24,48,.05)}
+.grr-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.grr-c{font-size:14px;font-weight:900;line-height:1.5;min-width:0;overflow-wrap:anywhere}
+.grr-n{flex:none;font-size:11.5px;font-weight:800;padding:3px 10px;border-radius:999px;background:var(--present-bg);color:var(--present);white-space:nowrap}
+.grr-meta{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--muted)}
+.grr-meta b{color:var(--ink);font-weight:800}
+.grr-ts{font-size:11px;color:var(--muted);border-top:1px dashed var(--line);padding-top:6px}
 </style>
 </head>
 <body>
@@ -4274,11 +4283,20 @@ async function grRecentLoad() {
   GRR_BOX.append(el('div', 'lbl', '🕘 ۵ درس اخیر با نمره‌ی ثبت‌شده'));
   if (r.net || r.status !== 'ok') { GRR_BOX.append(el('div', 'now-sub', r.message || 'بارگذاری نشد.')); return; }
   if (!r.list.length) { GRR_BOX.append(el('div', 'now-sub', 'هنوز نمره‌ای ثبت نشده است.')); return; }
+  const lst = el('div', 'grr-list');
   r.list.forEach(x => {
-    const row = el('div', 'dir-r');
-    row.append(el('span', '', x.s + ' — ' + x.e + ' (' + fa(x.n) + ' نفر)'), el('small', 'now-sub', 'کلاس ' + x.c + ' | دبیر: ' + x.te + ' | تاریخ آزمون: ' + fa(x.d) + ' | ثبت: ' + fa(x.ts)));
-    GRR_BOX.append(row);
+    const it = el('div', 'grr-it');
+    const top = el('div', 'grr-top'), ttl = el('div', 'grr-c', x.s), cnt = el('span', 'grr-n', fa(x.n) + ' نفر');
+    top.append(ttl, cnt);
+    const meta = el('div', 'grr-meta');
+    const kv = (k, v) => { const sp = el('span', ''); sp.append(document.createTextNode(k + ' '), el('b', '', v)); return sp; };
+    meta.textContent = '';
+    meta.append(kv('کلاس', x.c), kv('دبیر', x.te), kv('آزمون', x.e + ' — ' + fa(x.d)));
+    const ts = el('div', 'grr-ts', 'ثبت: ' + fa(x.ts));
+    it.append(top, meta, ts);
+    lst.append(it);
   });
+  GRR_BOX.append(lst);
 }
 grRecentLoad(); setInterval(grRecentLoad, 60000);
 async function attExemptGo(cls, date, btn) {
