@@ -237,6 +237,8 @@ select{appearance:none;-webkit-appearance:none;padding-inline-end:38px;backgroun
 .score:disabled{opacity:.4}
 .abs-btn{flex:none;height:44px;padding:0 12px;border-radius:10px;border:1.5px solid var(--line);background:var(--card);font-weight:700;color:var(--muted);transition:all .15s}
 .abs-btn[aria-pressed="true"]{background:var(--absent);border-color:var(--absent);color:#fff}
+.abs-btn.ex-btn[hidden]{display:none}.abs-btn.ex-btn[aria-pressed="true"]{background:var(--excused);border-color:var(--excused);color:#fff}
+.grow.is-ex{background:var(--excused-bg);border-color:var(--excused)}
 .err-line{margin:6px 2px 0;font-size:13px;color:var(--absent);font-weight:600}
 input.bad{border-color:var(--absent)}
 
@@ -3725,18 +3727,21 @@ function edPaint() {
     sm.append(el('span', '', g.s + ' — ' + g.e), el('small', '', fa(g.d) + (g.t ? ' ' + fa(g.t) : '') + ' | ' + g.c + (g.te ? ' | ' + g.te : '') + ' | ' + fa(g.rows.length) + ' نفر | از ' + fa(g.m)));
     const L = [];
     g.rows.forEach(q => {
-      const row = el('div', 'ed-r'), inp = el('input'), cb = el('input'), lb = el('label');
-      inp.type = 'text'; inp.inputMode = 'decimal'; inp.autocomplete = 'off'; inp.value = q.a ? '' : fa(q.sc); inp.disabled = q.a; inp.setAttribute('aria-label', 'نمره‌ی ' + q.n + ' از ' + fa(g.m));
+      const row = el('div', 'ed-r'), inp = el('input'), cb = el('input'), lb = el('label'), ce = el('input'), le = el('label');
+      inp.type = 'text'; inp.inputMode = 'decimal'; inp.autocomplete = 'off'; inp.value = (q.a || q.ex) ? '' : fa(q.sc); inp.disabled = !!(q.a || q.ex); inp.setAttribute('aria-label', 'نمره‌ی ' + q.n + ' از ' + fa(g.m));
       cb.type = 'checkbox'; cb.checked = q.a; lb.append(cb, document.createTextNode('غایب'));
-      const mark = () => { const v = cb.checked ? null : edNum(inp.value); row.classList.toggle('ch', cb.checked !== q.a || (!cb.checked && v !== q.sc)); inp.classList.remove('bad'); };
-      cb.addEventListener('change', () => { inp.disabled = cb.checked; if (!cb.checked && !inp.value && q.sc !== '') inp.value = fa(q.sc); mark(); }); inp.addEventListener('input', mark);
-      row.append(el('span', '', q.n), inp, lb); b.append(row); L.push({ q:q, inp:inp, cb:cb });
+      ce.type = 'checkbox'; ce.checked = !!q.ex; le.append(ce, document.createTextNode('موجه'));
+      const mark = () => { const v = (cb.checked || ce.checked) ? null : edNum(inp.value); row.classList.toggle('ch', cb.checked !== q.a || ce.checked !== !!q.ex || (!cb.checked && !ce.checked && v !== q.sc)); inp.classList.remove('bad'); };
+      cb.addEventListener('change', () => { if (cb.checked) ce.checked = false; inp.disabled = cb.checked || ce.checked; if (!cb.checked && !ce.checked && !inp.value && q.sc !== '') inp.value = fa(q.sc); mark(); });
+      ce.addEventListener('change', () => { if (ce.checked) { cb.checked = false; inp.value = ''; } inp.disabled = cb.checked || ce.checked; if (!ce.checked && !inp.value && q.sc !== '') inp.value = fa(q.sc); mark(); }); inp.addEventListener('input', mark);
+      row.append(el('span', '', q.n), inp, lb, le); b.append(row); L.push({ q:q, inp:inp, cb:cb, ce:ce });
     });
     const sv = el('button', 'send', '💾 ذخیره‌ی تغییرات این ارزیابی'); sv.type = 'button'; sv.style.marginTop = '10px';
     sv.addEventListener('click', async () => {
       const edits = []; let bad = null;
       L.forEach(x => {
         if (x.cb.checked) { if (!x.q.a) edits.push({ student:x.q.n, absent:true }); return; }
+        if (x.ce.checked) { if (!x.q.ex) edits.push({ student:x.q.n, excused:true }); return; }
         const v = edNum(x.inp.value);
         if (v === null || v < 0 || v > g.m) { bad = bad || x; x.inp.classList.add('bad'); return; }
         if (x.q.a || v !== x.q.sc) edits.push({ student:x.q.n, absent:false, score:v });
@@ -4145,14 +4150,17 @@ function renderGr() {
     const inp = el('input', 'score'); inp.type = 'text'; inp.inputMode = 'decimal'; inp.autocomplete = 'off';
     inp.setAttribute('enterkeyhint', 'next'); inp.setAttribute('aria-label', 'نمره ' + name); inp.placeholder = '—';
     const ab = el('button', 'abs-btn', 'غایب'); ab.type = 'button'; ab.setAttribute('aria-pressed', 'false'); ab.title = 'غایب در آزمون';
-    li.append(el('span', 'num', fa(i + 1)), el('span', 'nm', name), inp, ab); ul.append(li); S.grRows.push(li);
+    const ex = el('button', 'abs-btn ex-btn', 'موجه'); ex.type = 'button'; ex.setAttribute('aria-pressed', 'false'); ex.title = 'غیبت موجه (فقط مدیر)'; ex.hidden = ROLE !== 'manager';
+    li.append(el('span', 'num', fa(i + 1)), el('span', 'nm', name), inp, ab, ex); ul.append(li); S.grRows.push(li);
   });
 }
 function paintGrRow(i) {
   const li = S.grRows[i], g = S.gr[i], inp = li.querySelector('.score'), r = parseScore(g.val, getMax());
-  li.classList.toggle('is-abs', g.absent); li.classList.toggle('has', g.absent || r.state === 'ok');
-  inp.disabled = g.absent; inp.classList.toggle('bad', !g.absent && r.state === 'bad'); inp.title = r.why || '';
-  const ab = li.querySelector('.abs-btn'); ab.setAttribute('aria-pressed', g.absent);
+  const off = !!(g.absent || g.excused);
+  li.classList.toggle('is-abs', !!g.absent); li.classList.toggle('is-ex', !!g.excused); li.classList.toggle('has', off || r.state === 'ok');
+  inp.disabled = off; inp.classList.toggle('bad', !off && r.state === 'bad'); inp.title = r.why || '';
+  li.querySelector('.abs-btn:not(.ex-btn)').setAttribute('aria-pressed', !!g.absent);
+  li.querySelector('.ex-btn').setAttribute('aria-pressed', !!g.excused);
 }
 function revalidateAll() { S.gr.forEach((_, i) => paintGrRow(i)); }
 $('#grList').addEventListener('input', e => {
@@ -4164,8 +4172,10 @@ $('#grList').addEventListener('keydown', e => {
 });
 $('#grList').addEventListener('click', e => {
   const b = e.target.closest('.abs-btn'); if (!b) return;
-  const i = +b.closest('.grow').dataset.i, g = S.gr[i]; g.absent = !g.absent;
-  if (g.absent) { g.val = ''; S.grRows[i].querySelector('.score').value = ''; }
+  const i = +b.closest('.grow').dataset.i, g = S.gr[i];
+  if (b.classList.contains('ex-btn')) { g.excused = !g.excused; if (g.excused) g.absent = false; }
+  else { g.absent = !g.absent; if (g.absent) g.excused = false; }
+  if (g.absent || g.excused) { g.val = ''; S.grRows[i].querySelector('.score').value = ''; }
   markDirty(); vib(); paintGrRow(i); updateGr();
 });
 function focusNext(i) {
@@ -4179,7 +4189,7 @@ function focusNext(i) {
 function gradeInfo() {
   const max = getMax(), vals = []; let abs = 0, bad = 0, firstBad = -1;
   S.gr.forEach((g, i) => {
-    if (g.absent) { abs++; return; }
+    if (g.absent || g.excused) { abs++; return; }
     const r = parseScore(g.val, max);
     if (r.state === 'ok') vals.push(r.v); else if (r.state === 'bad') { bad++; if (firstBad < 0) firstBad = i; }
   });
@@ -4205,7 +4215,7 @@ async function grSavedLoad(force) {
     ex.rows.forEach(x => {
       const row = el('div', 'dir-r'), b = el('button', 'btn', '✎ درخواست ویرایش'); b.type = 'button';
       b.addEventListener('click', () => grSingleEdit(ex, x));
-      row.append(el('span', '', x.n + ' — ' + (x.abs ? 'غایب' : fa(x.sc))), b); box.append(row);
+      row.append(el('span', '', x.n + ' — ' + (x.abs ? 'غایب' : x.ex ? 'غیبت موجه' : fa(x.sc))), b); box.append(row);
     });
   });
 }
@@ -4323,10 +4333,12 @@ $('#grSend').addEventListener('click', () => {
   const rows = [];
   S.gr.forEach((x, i) => {
     if (x.absent) rows.push({ name:students()[i], score:null, absent:true });
+    else if (x.excused) rows.push({ name:students()[i], score:null, absent:false, excused:true });
     else { const r = parseScore(x.val, g.max); if (r.state === 'ok') rows.push({ name:students()[i], score:r.v, absent:false }); }
   });
   if (!rows.length) { toast('نمره‌ای وارد نشده'); return; }
   const p = Object.assign(base(), { action:'grades', examType:title, max:g.max, rows, force:false });
+  if (rows.some(x => x.excused) && ROLE === 'manager' && MG.pin) p.pin = MG.pin;
   submit(p, { msg:'نمرات ' + fa(rows.length) + ' نفر ثبت شد.' });
 });
 
@@ -8666,7 +8678,7 @@ function gdRender() {
     const rows = groups[k], h = rows[0], d = el('details', 'dir-it'), sm = el('summary'), b = el('div', 'dir-b');
     sm.append(el('span', '', h[4] + ' — ' + h[7]), el('small', '', fa(h[0]) + ' | ' + fa(rows.length) + ' نفر'));
     rows.forEach(r => {
-      const row = el('div', 'dir-r'), v = String(r[9]) === 'غایب' ? 'غایب' : fa(r[10]) + ' از ' + fa(r[8]);
+      const row = el('div', 'dir-r'), v = ['غایب', 'غیبت موجه'].indexOf(String(r[9])) >= 0 ? String(r[9]) : fa(r[10]) + ' از ' + fa(r[8]);
       const ed = el('button', 'btn', 'ویرایش'); ed.type = 'button'; ed.addEventListener('click', () => gdEdit(r));
       const x = el('button', 'btn', 'حذف'); x.type = 'button'; x.setAttribute('aria-label', 'حذف نمره‌ی ' + r[6]);
       x.addEventListener('click', () => gdAsk(r, r[6]));
@@ -8678,7 +8690,7 @@ function gdRender() {
   });
 }
 async function gdEdit(r) {                     // مدیر: ویرایش مستقیم یک نمره
-  const cur = String(r[9]) === 'غایب' ? 'غایب' : String(r[10]);
+  const cur = ['غایب', 'غیبت موجه'].indexOf(String(r[9])) >= 0 ? String(r[9]) : String(r[10]);
   const v = prompt('نمره‌ی جدید «' + r[6] + '» (۰ تا ' + fa(r[8]) + ') یا «غایب»:', cur);
   if (v === null) return;
   const t = v.trim(); let extra;
