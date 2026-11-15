@@ -48,7 +48,7 @@ const SHIFT_TIMES = {
   afternoon: ["۱۳:۰۰–۱۴:۲۰","۱۴:۳۵–۱۵:۵۵","۱۶:۱۰–۱۷:۳۰"],
   morning:   ["۰۸:۰۰–۰۹:۲۰","۰۹:۳۵–۱۰:۵۵","۱۱:۱۰–۱۲:۳۰"]
 };
-const ASSESSMENT_TYPES = ["کوئیز", "آزمون کلاسی", "فعالیت کلاسی", "میان‌ترم", "پایانی", "سایر"];
+const ASSESSMENT_TYPES = ["میان‌ترم اول", "مستمر اول", "پایانی نوبت اول", "میان‌ترم دوم", "مستمر دوم", "پایانی نوبت دوم", "سایر"];   // «سایر» فقط برای انتقال خودکار از تقویم آزمون، آزمونک و نمره‌ی فعالیت (عنوان آن‌ها جداست)
 // فهرست پیش‌فرض کلاس‌ها. اسامی دانش‌آموزان از برگه «دانش‌آموزان» در Google Sheets خوانده می‌شود.
 const STUDENTS = {
   "تجربی": { "یازدهم تجربی ۲۰۱": [], "دوازدهم تجربی ۳۰۱": [] },
@@ -2498,6 +2498,9 @@ body[data-mod="s:dsc"] .dsc-t{border-radius:16px}
 .now-sub:empty,.cns-note:empty,.km-lg:empty,.kcmp-lg:empty,.gz-note:empty{display:none}
 .mg-sec-d{display:none!important}
 /* نسخه‌ی ۱٫۴۹: کارت ۵ درس اخیر */
+.grr-head{width:100%;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 14px;border-radius:14px;border:1px solid var(--line);background:var(--input);color:var(--ink);font:inherit;font-size:14px;font-weight:900;cursor:pointer;text-align:start}
+.grr-chev{font-size:16px;color:var(--muted)}
+.grr-card{padding:12px}
 .grr-list{display:grid;gap:10px;margin-top:10px}
 .grr-it{display:grid;gap:8px;padding:12px 14px;border-radius:14px;background:var(--card);border:1px solid var(--line);border-inline-start:4px solid #4C8DF6;box-shadow:0 1px 2px rgba(12,24,48,.05)}
 .grr-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
@@ -3221,7 +3224,7 @@ body[data-mod="s:dsc"] .dsc-t{border-radius:16px}
       </div>
       </div>
       <div class="mg-sec" data-sec="kar" data-t="کارنامه‌ها" hidden>
-      <div class="mg-sec-d">کارنامه‌ی هر دانش‌آموز به شکل کارنامه‌ی رسمی، و کارنامه‌ی کلی هر کلاس (همه‌ی دانش‌آموزان × همه‌ی دروس). فعلاً فقط ستون «مستمر نوبت اول» پر می‌شود: میانگین نمره‌های ثبت‌شده‌ی هر درس از ۱ مهر تا امروز، بدون آزمون پایانی و غیبت‌ها.</div>
+      <div class="mg-sec-d">کارنامه‌ی هر دانش‌آموز به شکل کارنامه‌ی رسمی، و کارنامه‌ی کلی هر کلاس (همه‌ی دانش‌آموزان × همه‌ی دروس). فعلاً فقط ستون «مستمر نوبت اول» پر می‌شود: میانگین نمره‌های ثبت‌شده‌ی هر درس (میان‌ترم و مستمر) از ۱ مهر تا ۳۰ دی، بدون ارزیابی پایانی و غیبت‌ها.</div>
       <div class="card" id="kaCmpCard">
         <div class="lbl" style="margin-bottom:4px">🏫 مقایسه‌ی کلاس‌ها</div>
         <div class="now-sub" id="kaCmpSub">میانگین معدل مستمر نوبت اول هر کلاس (از ۲۰)</div>
@@ -3809,6 +3812,15 @@ function edPaint() {
       if ((r.errors || []).length) showModal({ icon:'warn', title:'برخی نمره‌ها ذخیره نشد', msg:r.errors.slice(0, 6).join('\n') });
       edLoad(true); const rl = $('#mgReload'); rl && rl.click();
     });
+    const rt = el('div', 'ed-r'), rs = el('select'), rb = el('button', 'btn', 'تغییر نوع ارزیابی'); rt.style.marginTop = '10px'; rb.type = 'button';
+    ASSESSMENT_TYPES.filter(x => x !== 'سایر' && x !== g.e).forEach(x => { const o = el('option', '', x); o.value = x; rs.append(o); });
+    rb.addEventListener('click', async () => {
+      if (!confirm('نوع این ارزیابی (' + fa(g.rows.length) + ' نمره) از «' + g.e + '» به «' + rs.value + '» تغییر کند؟')) return;
+      rb.disabled = true; const r = await send({ action:'grRetype', pin:MG.pin, key:ACCESS_KEY, date:g.d, time:g.t, cls:g.c, course:g.s, examType:g.e, newType:rs.value }); rb.disabled = false;
+      if (r.net) return toast('اینترنت در دسترس نیست.'); if (r.status !== 'ok') return toast(r.message || 'تغییر نکرد');
+      toast('نوع ارزیابی عوض شد ✓'); edLoad(true); const rl = $('#mgReload'); rl && rl.click();
+    });
+    rt.append(el('span', '', 'نوع ارزیابی:'), rs, rb); b.append(rt);
     b.append(sv); d.append(sm, b); box.append(d);
   });
 }
@@ -3961,7 +3973,7 @@ function liveRender(r, ok) {
   top.lastChild.id = 'lvClk'; top.lastChild.style.fontVariantNumeric = 'tabular-nums'; box.append(top); liveClock();
   // قهرمان: حضور امروز
   const hero = el('div', 'lv-hero'); hero.dataset.sky = skyOf(n0.getHours()).sky;
-  hero.append(el('div', 'k', '👥 حضور امروز'));
+  hero.append(el('div', 'k', '👥 حضور امروز')); const big = el('div', 'big');
   big.append(el('b', '', A.sc ? fa(A.pr + A.lt) + ' از ' + fa(A.sc) : '—'));
   if (A.delta != null) big.append(el('span', 'dl', (A.delta >= 0 ? '▲ ' : '▼ ') + fa(String(Math.abs(A.delta)).replace('.', '٫')) + ' نسبت به میانگین روزهای قبل'));
   hero.append(big, el('p', 'sub', A.sc ? fa(A.pr + A.lt) + ' نفر از ' + fa(A.sc) + ' دانش‌آموزِ کلاس‌های ثبت‌شده' + (A.ex ? ' (' + fa(A.ex) + ' غیبت موجه)' : '') : 'هنوز حضور و غیابی برای امروز ثبت نشده است.'));
@@ -4276,13 +4288,19 @@ async function grSavedLoad(force) {
 }
 setInterval(() => grSavedLoad(), 1500);
 let GRR_BOX = null;                       // ۵ درس اخیر با نمره‌ی ثبت‌شده (فقط مدیر)
-async function grRecentLoad() {
-  if (ROLE !== 'manager' || !MG.pin) return;
-  const sv = $('#grSaved'), pw = sv && sv.parentNode; if (!pw) return;
-  if (!GRR_BOX || !GRR_BOX.isConnected) { GRR_BOX = el('div', 'card'); pw.insertBefore(GRR_BOX, sv); }
-  const r = await send({ action:'grRecent', pin:MG.pin, key:ACCESS_KEY });
+let GRR_OPEN = false, GRR_DATA = null;     // ۵ درس اخیر: منوی جدا و جمع‌شونده (فقط مدیر)
+function grRecentRender() {
+  if (!GRR_BOX) return;
   GRR_BOX.textContent = '';
-  GRR_BOX.append(el('div', 'lbl', '🕘 ۵ درس اخیر با نمره‌ی ثبت‌شده'));
+  const head = el('button', 'grr-head');
+  head.type = 'button';
+  head.append(el('span', '', '🕘 ۵ درس اخیر با نمره‌ی ثبت‌شده'), el('span', 'grr-chev', GRR_OPEN ? '▴' : '▾'));
+  head.setAttribute('aria-expanded', String(GRR_OPEN));
+  head.addEventListener('click', () => { GRR_OPEN = !GRR_OPEN; grRecentRender(); });
+  GRR_BOX.append(head);
+  if (!GRR_OPEN) return;
+  const r = GRR_DATA;
+  if (!r) { GRR_BOX.append(el('div', 'now-sub', 'در حال بارگذاری…')); return; }
   if (r.net || r.status !== 'ok') { GRR_BOX.append(el('div', 'now-sub', r.message || 'بارگذاری نشد.')); return; }
   if (!r.list.length) { GRR_BOX.append(el('div', 'now-sub', 'هنوز نمره‌ای ثبت نشده است.')); return; }
   const lst = el('div', 'grr-list');
@@ -4292,13 +4310,18 @@ async function grRecentLoad() {
     top.append(ttl, cnt);
     const meta = el('div', 'grr-meta');
     const kv = (k, v) => { const sp = el('span', ''); sp.append(document.createTextNode(k + ' '), el('b', '', v)); return sp; };
-    meta.textContent = '';
     meta.append(kv('کلاس', x.c), kv('دبیر', x.te), kv('آزمون', x.e + ' — ' + fa(x.d)));
-    const ts = el('div', 'grr-ts', 'ثبت: ' + fa(x.ts));
-    it.append(top, meta, ts);
+    it.append(top, meta, el('div', 'grr-ts', 'ثبت: ' + fa(x.ts)));
     lst.append(it);
   });
   GRR_BOX.append(lst);
+}
+async function grRecentLoad() {
+  if (ROLE !== 'manager' || !MG.pin) return;
+  const sv = $('#grSaved'), pw = sv && sv.parentNode; if (!pw) return;
+  if (!GRR_BOX || !GRR_BOX.isConnected) { GRR_BOX = el('div', 'card grr-card'); pw.insertBefore(GRR_BOX, sv); }
+  GRR_DATA = await send({ action:'grRecent', pin:MG.pin, key:ACCESS_KEY });
+  grRecentRender();
 }
 grRecentLoad(); setInterval(grRecentLoad, 60000);
 async function attExemptGo(cls, date, btn) {
@@ -7003,7 +7026,7 @@ function kCardEl(d, row, cp) {      // cp: نمای فشرده‌ی تلفن ه�
   ['', 'واحد اخذشده', 'واحد دارای نمره', 'جمع نمرات (نمره × واحد)', 'معدل مستمر نوبت اول'].forEach(x => sh.append(el('th', '', x)));
   [['تا امروز'], [fa(d.uT)], [fa(row.uG || 0)], [row.uG ? f2(row.s) : '—'], [f2(row.avg), 'b']].forEach(([x, c]) => sv.append(el('td', c || '', x)));
   sm.append(sh, sv);
-  const note = el('div', 'kc-note', 'در این کارنامه‌ی موقت فقط ستون «مستمر نوبت اول» پر شده است: میانگین نمره‌های ثبت‌شده‌ی هر درس از ۱ مهر تا امروز (بدون آزمون پایانی؛ غیبت غیرموجه در آزمونِ تقویم صفر است و بقیه‌ی غیبت‌ها در میانگین نمی‌آید). معدل فقط از دروس دارای نمره و بر اساس تعداد واحد حساب شده است ؛ نمره‌ی انضباط (۲ واحد) تا پایان نوبت موقت است و فقط نمایش داده می‌شود و از پایان نوبت، مانند کارنامه‌ی رسمی، در معدل می‌آید.');
+  const note = el('div', 'kc-note', 'در این کارنامه‌ی موقت فقط ستون «مستمر نوبت اول» پر شده است: میانگین نمره‌های ثبت‌شده‌ی هر درس از ۱ مهر تا امروز (میان‌ترم و مستمر، بدون ارزیابی پایانی؛ غیبت غیرموجه در آزمونِ تقویم صفر است و بقیه‌ی غیبت‌ها در میانگین نمی‌آید). معدل فقط از دروس دارای نمره و بر اساس تعداد واحد حساب شده است ؛ نمره‌ی انضباط (۲ واحد) تا پایان نوبت موقت است و فقط نمایش داده می‌شود و از پایان نوبت، مانند کارنامه‌ی رسمی، در معدل می‌آید.');
   const sg = el('div', 'kc-sign'), sb = (role, nm, s) => { const b = el('div'); b.append(el('div', 'kc-k', role), el('b', '', nm || ' '), el('small', '', s)); return b; };
   sg.append(sb('مسئول ثبت نمره / معاون اجرایی', h.g, 'امضاء'), sb('مدیر آموزشگاه', h.m, 'مهر و امضاء'));
   const ft = el('div', 'kc-ft'); ft.append(el('span', '', 'تاریخ: ' + fa(d.today || dateStr())), el('span', '', 'این کارنامه‌ی موقت توسط سامانه‌ی مدرسه برای اطلاع دانش‌آموز و اولیا صادر شده و ارزش رسمی ندارد.'));
