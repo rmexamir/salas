@@ -2494,6 +2494,9 @@ body[data-mod="s:dsc"] .dsc-t{border-radius:16px}
 #tiles .tgrp-tools .btn{font-size:12.5px;padding:6px 10px}
 #tiles .tile select.tile-grp{width:100%;margin-top:4px;padding:7px 8px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-size:12.5px}
 #tiles .tgrp-add{margin:0 0 16px;width:100%}
+/* نسخه‌ی ۱٫۵۰: حذف توضیح‌های بالای بخش‌های مدیر (شرح بخش) */
+.now-sub:empty,.cns-note:empty,.km-lg:empty,.kcmp-lg:empty,.gz-note:empty{display:none}
+.mg-sec-d{display:none!important}
 /* نسخه‌ی ۱٫۴۹: کارت ۵ درس اخیر */
 .grr-list{display:grid;gap:10px;margin-top:10px}
 .grr-it{display:grid;gap:8px;padding:12px 14px;border-radius:14px;background:var(--card);border:1px solid var(--line);border-inline-start:4px solid #4C8DF6;box-shadow:0 1px 2px rgba(12,24,48,.05)}
@@ -3826,7 +3829,7 @@ function dscTermEl(t) {               // کارت یک نوبت: نمره، نو
 function dscStuEl(D) {
   const c = el('div', 'card'); c.append(el('div', 'lbl', '🧭 نمره‌ی انضباط من'));
   (D || []).forEach(t => c.append(dscTermEl(t)));
-  c.append(el('div', 'now-sub', 'پایه‌ی نمره ۲۰ است. هر روز غیبت غیرموجه ۰٫۲۵ (هرچند زنگ)، هر دو روز تأخیر ۰٫۲۵ و هر مورد انضباطی بر اساس شدتش از آن کم می‌کند. غیبت موجه کسر ندارد.')); return c;
+  c.append(el('div', 'now-sub', '')); return c;
 }
 function dsrEl(list) {                // موارد انضباطی، تشویق و پرورشیِ ثبت‌شده برای دانش‌آموز (فقط خواندنی)
   const c = el('div', 'card'), n = (list || []).filter(x => x.k === 'انضباطی').length; c.append(el('div', 'lbl', '⚖️ پرونده‌ی رفتاری من'));
@@ -3838,7 +3841,7 @@ function dsrEl(list) {                // موارد انضباطی، تشویق 
     if (x.ds) d.append(el('div', 'ds-desc', x.ds));
     if (x.k === 'انضباطی' && x.id && ROLE === 'student' && SD) d.append(dapStuEl(x, c, list)); c.append(d);
   });
-  c.append(el('div', 'now-sub', 'اگر در موردی اشتباه یا ابهام وجود دارد، «درخواست بررسی» بفرست یا با مدیر یا مشاور مدرسه صحبت کن.')); return c;
+  c.append(el('div', 'now-sub', '')); return c;
 }
 function dapStuEl(x, card, list) {    // نسخه‌ی ۱٫۴۰: وضعیت یا فرم درخواست بررسی برای یک مورد انضباطی
   const w = el('div', 'ds-ap'), l = (SD.dap || []).filter(q => q.cid === x.id), last = l[l.length - 1];
@@ -3866,7 +3869,7 @@ async function dscLoad() {
   const cell = (t, k) => t.st === 'wait' ? '—' : fa(t[k]);
   const sc = t => t.st === 'wait' ? '—' : f2(t.sc);
   box.append(tbl(['دانش‌آموز', 'غیبت', 'تأخیر', 'مورد', 'کسر', 'نوبت اول', 'نوبت دوم'], r.rows.map(x => [x.n, fa(x.t[0].ab + x.t[1].ab), fa(x.t[0].lt + x.t[1].lt), fa(x.t[0].cs + x.t[1].cs), f2(x.t[0].ded + x.t[1].ded), sc(x.t[0]), sc(x.t[1])])));
-  box.append(el('div', 'now-sub', 'ستون‌های غیبت، تأخیر، مورد و کسر جمع دو نوبت است. «—» یعنی آن نوبت هنوز شروع نشده.'));
+  box.append(el('div', 'now-sub', ''));
   dscWPaint(r);
 }
 function dscWPaint(r) {               // نسخه‌ی ۱٫۴۰: کسرِ هر شدت (پیش‌فرض ۰٫۲۵)
@@ -3879,7 +3882,7 @@ function dscWPaint(r) {               // نسخه‌ی ۱٫۴۰: کسرِ هر �
     b.disabled = true; const q = await send({ action:'dscCfg', pin:MG.pin, key:ACCESS_KEY, w:o }); b.disabled = false;
     if (q.status === 'ok') { toast('کسرها ذخیره شد ✓'); dscLoad(); } else toast(q.message || 'ذخیره نشد');
   });
-  w.append(g, b, el('div', 'now-sub', 'عدد کسر برای هر مورد با آن شدت (۰ تا ۲). تغییر، نمره‌ی انضباط همه‌ی دانش‌آموزان را از نو حساب می‌کند و در گزارش سامانه ثبت می‌شود.'));
+  w.append(g, b, el('div', 'now-sub', ''));
 }
 async function dapLoad() {            // نسخه‌ی ۱٫۴۰: درخواست‌های بررسی (مدیر)
   const box = $('#dapBox'); if (!box) return; busy(box, 2);
@@ -3988,7 +3991,7 @@ function liveRender(r, ok) {
       const a = Math.max(0.14, Math.min(1, (c.v - 84) / 15)), t = el('div', 'c', fa(c.v));
       if (c.v < 75) { t.style.background = '#d03b3b'; t.style.color = '#fff'; } else { t.style.background = 'rgba(42,120,214,' + a.toFixed(2) + ')'; t.style.color = a > 0.55 ? '#fff' : 'inherit'; }
       t.addEventListener('click', () => toast(row.c + '، زنگ ' + fa(i + 1) + ': ' + fa(c.v) + '٪ حضور' + (c.ab ? ' | ' + fa(c.ab) + ' غایب' : '') + (c.ex ? ' | ' + fa(c.ex) + ' موجه' : '') + (c.te ? ' | ' + c.te : ''))); g.append(t); }); });
-    hc.append(g, el('div', 'now-sub', 'خانه‌ی قرمز یعنی حضور کمتر از ۷۵٪؛ با لمس هر خانه جزئیات را ببینید.'));
+    hc.append(g, el('div', 'now-sub', ''));
   }
   box.append(hc);
   // هشدارها
@@ -4262,7 +4265,7 @@ async function grSavedLoad(force) {
   box.textContent = '';
   if (r.status !== 'ok' || !r.list.length) { box.hidden = true; return; }
   box.hidden = false;
-  box.append(el('div', 'lbl', 'نمرات ثبت‌شده‌ی این روز و زنگ'), el('div', 'now-sub', 'برای تغییر هر نمره، درخواست ویرایش بدهید؛ پس از تأیید مدیر جایگزین می‌شود.'));
+  box.append(el('div', 'lbl', 'نمرات ثبت‌شده‌ی این روز و زنگ'), el('div', 'now-sub', ''));
   r.list.forEach(ex => {
     box.append(el('div', 'now-t', ex.et + ' | سقف ' + fa(ex.max)));
     ex.rows.forEach(x => {
@@ -4976,7 +4979,7 @@ function dirEdit(b, x, kind) {
   b.textContent = ''; const I = {};
   F.forEach(q => { const f = el('div', 'field'), lb = el('label', '', q[1]);
     if (q[3] === 'sel') { const sl = el('select'); STU_ST.forEach(o => { const op = el('option', '', o[1]); op.value = o[0]; sl.append(op); }); sl.value = q[2]; I[q[0]] = sl; f.append(lb, sl);
-      f.append(el('div', 'now-sub', 'انتقال رفته، ترک تحصیل و وقفه‌ی تحصیلی: از فهرست حضور و غیاب و نمره‌ی دبیر و مدیر حذف می‌شود. انتقال آمده فعال است.')); b.append(f); return; }
+      f.append(el('div', 'now-sub', '')); b.append(f); return; }
     const inp = el('input'); inp.type = 'text'; inp.value = q[2] || ''; inp.autocomplete = 'off';
     if (q[3] === 'num') { inp.inputMode = 'numeric'; inp.style.direction = 'ltr'; inp.style.textAlign = 'right'; } I[q[0]] = inp; f.append(lb, inp); b.append(f); });
   const P0 = {}; F.forEach(q => { P0[q[0]] = q[3] === 'num' ? digitsOnly(I[q[0]].value) : I[q[0]].value.trim(); });
@@ -5307,7 +5310,7 @@ function stuDash(box) {
   if (SD.courses && SD.courses.length) { const cc = el('div', 'card sd-courses'); cc.append(el('div', 'lbl', 'درس‌های من نسبت به میانگین کلاس'));
     SD.courses.forEach(x => { if (x.me == null) return; const r = el('div', 'cbar'), b = el('div', 'gbar'), f = el('i'); f.style.width = Math.min(100, x.me / 20 * 100) + '%'; f.style.background = x.cls != null && x.me < x.cls ? 'var(--late)' : 'var(--primary)'; b.append(f);
       if (x.cls != null) { const m = el('u'); m.style.insetInlineStart = Math.min(100, x.cls / 20 * 100) + '%'; b.append(m); }
-      r.append(el('span', '', x.c), b, el('b', '', f2(x.me))); cc.append(r); }); cc.append(el('div', 'now-sub', 'خط کوچک = میانگین کلاس؛ نوار نارنجی یعنی پایین‌تر از میانگین کلاس')); box.append(cc); }
+      r.append(el('span', '', x.c), b, el('b', '', f2(x.me))); cc.append(r); }); cc.append(el('div', 'now-sub', '')); box.append(cc); }
   if (SD.badges && SD.badges.length) { const bc = el('div', 'card'), g = el('div', 'sd-badges'); bc.append(el('div', 'lbl', '🏅 نشان‌های من'));
     SD.badges.slice(0, 6).forEach(b => { const x = el('div', 'sd-bd'); x.title = b.d || ''; x.append(el('span', 'sd-bd-i', b.i), el('span', 'sd-bd-t', b.t)); g.append(x); }); bc.append(g); box.append(bc); }
   // هدف شخصی
@@ -5322,7 +5325,7 @@ function stuDash(box) {
   rc.append(rl.length ? el('div', 'now-sub', rl.map(x => x.text).join(' | ')) : el('div', 'now-sub', 'تا دو روز آینده آزمون یا تکلیفی در تقویم نیست.'));
   if ('Notification' in window) { const on = lsGet('sia_rem_on', false) && Notification.permission === 'granted', nb = el('button', on ? 'btn' : 'send', on ? '✓ اعلان فعال است (خاموش کردن)' : 'فعال‌سازی اعلان یادآور'); nb.type = 'button'; nb.style.marginTop = '8px';
     nb.addEventListener('click', async () => { if (on) { lsSet('sia_rem_on', false); toast('اعلان خاموش شد'); stuNav('dash'); return; } const pm = await Notification.requestPermission(); if (pm !== 'granted') { toast('اجازه‌ی اعلان داده نشد.'); return; } lsSet('sia_rem_on', true); toast('اعلان فعال شد ✓'); remNotify(); stuNav('dash'); });
-    rc.append(nb, el('div', 'now-sub', 'اعلان وقتی نمایش داده می‌شود که برنامه را باز کنی؛ برای اطمینان بیشتر هر روز یک‌بار سر بزن.')); }
+    rc.append(nb, el('div', 'now-sub', '')); }
   else rc.append(el('div', 'now-sub', 'مرورگر این دستگاه اعلان را پشتیبانی نمی‌کند؛ یادآور بالای صفحه نمایش داده می‌شود.'));
   box.append(rc);
 }
@@ -5352,7 +5355,7 @@ function stuKar(box) {
   const bc = el('div', 'card'), c3 = el('div', 'card'), pr = el('button', 'btn', 'چاپ یا ذخیره‌ی کارنامه (PDF)');
   bc.append(el('div', 'lbl', 'نشان‌های شما'));
   if (SD.badges && SD.badges.length) SD.badges.forEach(b => { const d = el('div', 'dir-it'); d.style.padding = '10px 14px'; const cb = el('button', 'btn', '🏅 گواهی چاپی'); cb.type = 'button'; cb.style.marginTop = '8px'; cb.addEventListener('click', () => printCert(b)); d.append(el('div', 'now-t', b.i + ' ' + b.t), el('div', 'now-sub', b.d), cb); bc.append(d); });
-  else bc.append(el('div', 'now-sub', 'هر روز حضور و تلاش، یک نشان تازه می‌سازد. ادامه بده! 💪'));
+  else bc.append(el('div', 'now-sub', ''));
   c3.append(el('div', 'lbl', 'روند نمره در طول سال'));
   const sel = el('select'), fd = el('div', 'field'), hold = el('div');
   [''].concat(SD.courses.map(x => x.c)).forEach(c => { const o = el('option', '', c || 'همه درس‌ها'); o.value = c; sel.append(o); });
@@ -5570,7 +5573,7 @@ function donForm() {                 // فرم مشترک دانش‌آموز و
 const donBadge = st => el('span', 'don-st ' + (st === DON_ST.ok ? 'ok' : st === DON_ST.no ? 'no' : 'p'), (st === DON_ST.ok ? '✓ ' : st === DON_ST.no ? '✕ ' : '⏳ ') + st);
 function stuDon(box) {               // دانش‌آموز: شماره‌ی حساب مدرسه، ثبت واریز، واریزهای خودش
   const D = SD.don || { acc:{}, list:[] }, A = D.acc || {}, c = el('div', 'card');
-  c.append(el('div', 'lbl', '💚 کمک به مدرسه'), el('div', 'now-sub', 'کمک شما و خانواده‌تان صرف بهبود امکانات آموزشی و رفاهی مدرسه می‌شود. هر مبلغی ارزشمند است؛ سپاس از همراهی شما.'));
+  c.append(el('div', 'lbl', '💚 کمک به مدرسه'), el('div', 'now-sub', ''));
   const hist = el('div', 'card'); hist.append(el('div', 'lbl', '🧾 واریزهای ثبت‌شده‌ی تو'));
   if (!D.list.length) hist.append(el('div', 'now-sub', 'هنوز واریزی ثبت نکرده‌ای.'));
   D.list.forEach(x => { const row = el('div', 'don-row'), t = el('div', 'don-t'); t.append(el('b', '', toman(x.a)), el('small', '', fa(x.d) + ' | ' + x.w + (x.ref ? ' | پیگیری ' + fa(x.ref) : '') + (x.note ? ' | ' + x.note : ''))); row.append(t, donBadge(x.s)); hist.append(row); });
@@ -5579,7 +5582,7 @@ function stuDon(box) {               // دانش‌آموز: شماره‌ی ح�
   ac.append(el('small', '', /^IR/.test(A.acc) ? 'شماره‌ی شبا' : 'شماره‌ی حساب'), no, el('div', 'don-nm', 'به نام: ' + A.name), cp);
   cp.addEventListener('click', () => copyTxt(A.acc, 'شماره‌ی حساب کپی شد ✓')); c.append(ac);
   const f = el('div', 'card'), F = donForm(), msg = el('div', 'empty'), go = el('button', 'send', 'ثبت واریز'); go.type = 'button'; msg.hidden = true; msg.style.color = 'var(--absent)';
-  f.append(el('div', 'lbl', '➕ ثبت واریز'), el('div', 'now-sub', 'بعد از واریز، مشخصاتش را این‌جا ثبت کن تا مدیر مدرسه بررسی و تأیید کند.'), ...F.nodes, go, msg);
+  f.append(el('div', 'lbl', '➕ ثبت واریز'), el('div', 'now-sub', ''), ...F.nodes, go, msg);
   go.addEventListener('click', async () => {
     msg.hidden = true; const q = F.read(); if (q.err) { msg.textContent = q.err; msg.hidden = false; return; }
     go.disabled = true; const r = await send(Object.assign({ action:'donAdd', nid:SD.nid, secret:SD.sec || '', key:ACCESS_KEY }, q.v)); go.disabled = false;
@@ -5723,8 +5726,7 @@ function stuPwInit() {
   stuPwSum(); if (c.value) stuPwLoad();
 }
 function stuPwSum() {
-  $('#pwSum').textContent = 'نام کاربری و رمز اولیه‌ی هر دانش‌آموز کد ملی اوست؛ بعد از اولین ورود باید رمز تازه بسازد. اگر رمزش را فراموش کرد، رمز او را اینجا به کد ملی برگردانید.'
-    + (SU ? (SU.stuNoPass ? ' | ' + fa(SU.stuNoPass) + ' دانش‌آموز هنوز با کد ملی وارد می‌شوند.' : ' | همه‌ی دانش‌آموزان رمز تازه ساخته‌اند.') : '');
+  $('#pwSum').textContent = (SU ? (SU.stuNoPass ? fa(SU.stuNoPass) + ' دانش‌آموز هنوز با کد ملی وارد می‌شوند.' : 'همه‌ی دانش‌آموزان رمز تازه ساخته‌اند.') : '');
 }
 async function stuPwLoad(o) {
   const cls = $('#pwCls').value, box = $('#pwList'); $('#pwBar').hidden = !cls; if (!cls) { box.textContent = ''; PWL = []; return; }
@@ -5769,7 +5771,7 @@ function setOpen() {
   const fd = lb => { const f = el('div', 'field'), i = el('input'); i.type = 'password'; i.autocomplete = 'new-password'; f.append(el('label', '', lb), i); c.append(f); return i; };
   const cur = fd('رمز فعلی'), nw = fd('رمز جدید (دست‌کم ۶ نویسه)'), rp = fd('تکرار رمز جدید');
   const ok = el('button', 'send', 'ذخیره‌ی رمز جدید'); ok.type = 'button'; c.append(ok);
-  c.append(el('div', 'now-sub', 'رمز را جایی امن یادداشت کنید. اگر فراموش شد: در Apps Script ← Project Settings ← Script Properties ویژگی MANAGER_PIN را با رمز تازه بسازید و تابع resetManagerPin را از ویرایشگر اجرا کنید.'), el('div', 'now-sub', 'نگارش برنامه: ' + fa(APP_VERSION)));
+  c.append(el('div', 'now-sub', ''), el('div', 'now-sub', 'نگارش برنامه: ' + fa(APP_VERSION)));
   ok.addEventListener('click', async () => {
     if (!cur.value) { toast('رمز فعلی را بنویسید.'); return; } if (nw.value.length < 6) { toast('رمز جدید باید دست‌کم ۶ نویسه باشد.'); return; } if (nw.value !== rp.value) { toast('تکرار رمز با رمز جدید یکی نیست.'); return; }
     ok.disabled = true; const r = await send({ action:'mgPinChange', pin:cur.value.trim(), newPin:nw.value.trim(), key:ACCESS_KEY }); ok.disabled = false;
@@ -5830,7 +5832,7 @@ function ptForm(m) {
   const fd = (lb, v, ph) => { const f = el('div', 'field'), i = el('input'); i.type = 'text'; i.value = v || ''; if (ph) i.placeholder = ph; f.append(el('label', '', lb), i); c.append(f); return i; };
   const d = jdMark(fd('تاریخ جلسه', m ? m.d : dateStr()), 'تاریخ جلسه'), t = fd('عنوان جلسه', m ? m.t : '', 'مثلاً جلسه‌ی اولیا و مربیان — نیمسال اول'), note = fd('توضیحات (محل برگزاری و ...)', m ? m.note : '');
   d.style.direction = 'ltr'; d.style.textAlign = 'right';
-  c.append(el('div', 'now-sub', 'کلاس‌های دعوت‌شده (اگر هیچ‌کدام انتخاب نشود، همه‌ی کلاس‌ها):'));
+  c.append(el('div', 'now-sub', ''));
   const sel = {}, g = el('div', 'pt-g'); (m && !m.all ? m.cl : []).forEach(x => { sel[x] = 1; });
   PT.classes.forEach(x => { const b = el('button', 'chip' + (sel[x] ? ' on' : ''), fa(x)); b.type = 'button'; b.addEventListener('click', () => { sel[x] = !sel[x]; b.classList.toggle('on', !!sel[x]); }); g.append(b); }); c.append(g);
   const row = el('div'), ok = el('button', 'send', 'ذخیره'), no = el('button', 'btn', 'انصراف'); ok.type = no.type = 'button'; row.style.cssText = 'display:grid;grid-template-columns:2fr 1fr;gap:8px;margin-top:12px'; row.append(ok, no); c.append(row); h.append(c);
@@ -6028,7 +6030,7 @@ function hwPaint() {
       }
       day.append(r);
     });
-    if (past) day.append(el('div', 'now-sub', 'تکلیف‌های روزهای گذشته را فقط مدیر می‌تواند اصلاح یا حذف کند؛ تکلیف تازه می‌توانید ثبت کنید.'));
+    if (past) day.append(el('div', 'now-sub', ''));
   }
   const t = $('#hwTitle'); if (document.activeElement !== t) t.value = AC.hw.t;
   fillDatalist('hwSugL', d.sug || []);
@@ -6488,7 +6490,7 @@ async function qzLoad(x, list, sub) {
   QZ_OFF = r.now - Date.now(); const live = r.list.filter(q => qzState(q) === 'live').length;
   sub.textContent = r.list.length ? fa(r.list.length) + ' آزمونک' + (live ? '، ' + fa(live) + ' فعال' : '') : 'هنوز آزمونکی ساخته نشده';
   list.textContent = '';
-  if (!r.list.length) list.append(el('div', 'now-sub', 'آزمونک چندگزینه‌ای بسازید؛ دانش‌آموزان در همین برنامه پاسخ می‌دهند، تصحیح خودکار است و نمره‌ها با یک دکمه به برگه‌ی نمرات می‌روند.'));
+  if (!r.list.length) list.append(el('div', 'now-sub', ''));
   r.list.forEach(q => list.append(qzItem(x, q, () => qzLoad(x, list, sub))));
 }
 function qzItem(x, q, reload) {
@@ -6577,7 +6579,7 @@ function qzEdit(x, q, reload) {
     const ib = el('div', 'qz-imp'); ib.hidden = true; const it = el('textarea', 'ana-ta'); it.rows = 8; it.setAttribute('aria-label', 'متن سؤال‌ها');
     it.placeholder = '۱) پایتخت ایران کجاست؟\nالف) تهران *\nب) اصفهان\nج) شیراز\nد) تبریز\n\n۲) ۲ + ۳ = ؟\nالف) ۴\nب) ۵\nج) ۶\nپاسخ: ب';
     const go = el('button', 'btn primary', 'تبدیل به سؤال'); go.type = 'button';
-    ib.append(el('div', 'now-sub', 'سؤال‌ها را از Word یا پیام‌رسان کپی کنید. هر سؤال با شماره، هر گزینه با «الف)، ب)…» و گزینه‌ی درست با * یا یک خط «پاسخ: ب» مشخص شود.'), it, go);
+    ib.append(el('div', 'now-sub', ''), it, go);
     ad.addEventListener('click', () => { D.qs.push(blank()); keep(); paintQ(); qbox.lastChild.querySelector('textarea').focus(); });
     im.addEventListener('click', () => { ib.hidden = !ib.hidden; if (!ib.hidden) it.focus(); });
     go.addEventListener('click', () => {
@@ -6607,7 +6609,7 @@ function qzEdit(x, q, reload) {
   s3.append(S0.f, E0.f);
   const du = el('div', 'chips qz-du'); QZ_DUR.forEach(v => { const b = el('button', 'chip' + (D.du === v ? ' on' : ''), v ? fa(v) + ' دقیقه' : 'بدون محدودیت'); b.type = 'button'; b.disabled = locked;
     b.addEventListener('click', () => { D.du = v; keep(); Array.from(du.children).forEach(c => c.classList.toggle('on', c === b)); }); du.append(b); });
-  s3.append(el('span', 'lbl', 'وقت هر دانش‌آموز بعد از شروع'), du, el('div', 'now-sub', 'زمان هر دانش‌آموز از لحظه‌ای که «شروع» را می‌زند حساب می‌شود و در هر حال از «پایان مهلت» جلوتر نمی‌رود.'));
+  s3.append(el('span', 'lbl', 'وقت هر دانش‌آموز بعد از شروع'), du, el('div', 'now-sub', ''));
   // تنظیمات
   const s4 = qzSec(O.body, 'نمایش نتیجه به دانش‌آموز');
   QZ_RV.forEach(v => { const l = el('label', 'qz-rv'), r = el('input'); r.type = 'radio'; r.name = 'qzRv'; r.checked = D.rv === v[0]; r.addEventListener('change', () => { D.rv = v[0]; keep(); });
@@ -6664,7 +6666,7 @@ async function qzResults(id, reload) {
   // تحلیل سؤال‌ها
   if (done.length) {
     const s1 = qzSec(O.body, 'تحلیل سؤال‌ها'), pct = q.qs.map((z, i) => done.filter(d => d.an[i] === z.a).length / done.length * 100), hard = Math.min(...pct);
-    s1.append(el('div', 'now-sub', 'درصد پاسخ درست هر سؤال؛ سؤال‌های زیر ۴۰٪ احتمالاً نیاز به تدریس دوباره دارند.'));
+    s1.append(el('div', 'now-sub', ''));
     q.qs.forEach((z, i) => {
       const w = el('div', 'qz-ia'), t = el('div', 'qz-ia-t', fa(i + 1) + '. ' + z.q), br = el('div', 'ana-br'), bar = el('div', 'pbar'), f = el('i');
       f.style.cssText = 'width:' + pct[i] + '%;background:' + (pct[i] < 40 ? 'var(--absent)' : 'var(--primary)'); bar.append(f);
@@ -6810,7 +6812,7 @@ async function qzTake(id) {
     finished = true; O.body.textContent = ''; tm.remove();
     const res = el('div', 'qz-res');
     if (x2.sc != null) res.append(el('div', 'qz-big', f2(x2.sc)), el('div', 'now-t', 'از ۲۰'), el('div', 'now-sub', fa(x2.ok) + ' از ' + fa(x2.tot) + ' پاسخ درست' + (x2.sc >= 17 ? ' — عالی بود! 🎉' : x2.sc >= 10 ? ' — خوب بود 👏' : ' — با مرور دوباره بهتر می‌شود 💪')));
-    else res.append(el('div', 'qz-big', '✓'), el('div', 'now-t', 'پاسخ‌هایت ثبت شد'), el('div', 'now-sub', 'نمره بعد از پایان مهلت در همین بخش اعلام می‌شود.'));
+    else res.append(el('div', 'qz-big', '✓'), el('div', 'now-t', 'پاسخ‌هایت ثبت شد'), el('div', 'now-sub', ''));
     const bk = el('button', 'send', 'بازگشت به آزمونک‌ها'); bk.type = 'button'; bk.addEventListener('click', leave); res.append(bk); O.body.append(res);
     if (x2.key) O.body.append(qzReviewList(q.qs.map((z, i) => ({ q:z.q, o:z.o, a:x2.key[i] })), x2.ans || ans));
   };
@@ -6855,7 +6857,7 @@ function qzPaper(x, ti, qs) {
   const vc = el('div', 'chips'); vc.style.gridTemplateColumns = '1fr 1fr';
   [[1, 'یک نسخه'], [2, 'دو نسخه‌ی الف و ب']].forEach(v => { const b = el('button', 'chip' + (C.v === v[0] ? ' on' : ''), v[1]); b.type = 'button';
     b.addEventListener('click', () => { C.v = v[0]; Array.from(vc.children).forEach(c => c.classList.toggle('on', c === b)); }); vc.append(b); });
-  s.append(el('span', 'lbl', 'تعداد نسخه'), vc, el('div', 'now-sub', 'در نسخه‌ی «ب» ترتیب سؤال‌ها و گزینه‌ها جابه‌جا می‌شود تا نیمکت‌های کنار هم برگه‌ی متفاوت داشته باشند.'));
+  s.append(el('span', 'lbl', 'تعداد نسخه'), vc, el('div', 'now-sub', ''));
   const chk = (lbl, sub, k) => { const l = el('label', 'qz-rv'), c = el('input'), t = el('span'); c.type = 'checkbox'; c.checked = !!C[k]; c.addEventListener('change', () => { C[k] = c.checked; });
     t.append(el('b', '', lbl), el('small', '', sub)); l.append(c, t); s.append(l); };
   chk('پاسخ‌برگ جدولی', 'دانش‌آموز گزینه‌ها را در جدول علامت می‌زند و تصحیح با کلید چند ثانیه طول می‌کشد.', 'grid');
@@ -6948,7 +6950,7 @@ function trendSvg(rows) {         // rows: [{d, n, ca}] از قدیم به جد�
   const ix = N === 1 ? [0] : [0, N - 1];
   ix.forEach(i => svg.append(sv('text', { x:X(i), y:H - 8, 'text-anchor':'middle', 'font-size':10, style:'fill:var(--muted)' }, fa(String(rows[i].d).slice(5)))));
   wrap.append(svg, legend([['var(--c-me)', 'نمره‌ی شما'], ['var(--c-cls)', 'میانگین کلاس']]));
-  if (N === 1) wrap.append(el('div', 'now-sub', 'فقط یک نمره ثبت شده است؛ با ثبت نمره‌های بعدی، روند کامل نمایش داده می‌شود.'));
+  if (N === 1) wrap.append(el('div', 'now-sub', ''));
   return wrap;
 }
 const byDate = (a, b) => a.d < b.d ? -1 : a.d > b.d ? 1 : 0;
@@ -7043,7 +7045,7 @@ function kMatEl(d) {
     x.append(el('td', 'n', ''), el('td', 'n b', al.length ? f2(Math.round(al.reduce((a, b) => a + b, 0) / al.length * 100) / 100) : '—'), el('td', 'n', '')); fo.append(x); t.append(fo);
   }
   const sc = el('div', 'km-scroll'); sc.append(t);
-  w.append(sc, el('div', 'km-lg', 'هر خانه: میانگین نمره‌های آن درس از ۱ مهر تا امروز (بدون آزمون پایانی؛ غیبت غیرموجه در آزمونِ تقویم = صفر). «—» یعنی نمره‌ای ثبت نشده. نمره‌ی کمتر از ۱۰ قرمز و زیرخط‌دار است. معدل بر اساس تعداد واحد دروس دارای نمره است؛ انضباط (۲ واحد) تا پایان نوبت موقت است و از پایان نوبت، مانند کارنامه‌ی رسمی، در معدل می‌آید. ردیف‌ها به ترتیب رتبه‌اند؛ هم‌معدل‌ها رتبه‌ی یکسان دارند.'));
+  w.append(sc, el('div', 'km-lg', ''));
   return w;
 }
 function kCsv(d) {
@@ -7199,7 +7201,7 @@ function yrDraw() {
   if (r.y.warn) box.append(el('div', 'yr-warn', r.y.warn === 'mid' ? '⚠️ سال تحصیلی هنوز در جریان است: همه‌ی نمره‌ها و حضور و غیاب‌های تا امروز هم بایگانی و از برنامه پاک می‌شوند. بهترین زمان: تیر تا شهریور.'
     : '⚠️ مهر و آبان: اگر نمره یا حضور و غیاب سال تازه را ثبت کرده‌اید، آن‌ها هم بایگانی و پاک می‌شوند. بهترین زمان: تیر تا شهریور.'));
   if (r.last && r.last.length) { const h = el('div', 'yr-last'); h.append(el('b', '', '📂 بایگانی‌های قبلی: ')); r.last.slice().reverse().forEach(x => { const a = el('a', '', 'سال ' + fa(x.y) + ' (' + fa(x.d) + ')'); a.href = x.url; a.target = '_blank'; a.rel = 'noopener'; h.append(a, ' '); }); box.append(h); }
-  box.append(el('div', 'lbl yr-h', '۱. کلاس هر گروه در سال بعد'), el('div', 'now-sub', 'پیشنهاد برنامه را ببینید و اگر لازم است اصلاح کنید. «پایه‌ی آخر» یعنی دانش‌آموزان این کلاس دانش‌آموخته‌اند و از فهرست فعال برداشته می‌شوند (در بایگانی می‌مانند). مردودی‌ها را بعداً از «بانک اطلاعات» به کلاس درست ببرید.'));
+  box.append(el('div', 'lbl yr-h', '۱. کلاس هر گروه در سال بعد'), el('div', 'now-sub', ''));
   r.classes.forEach(c => {
     const row = el('div', 'yr-row'), inp = el('input'), cb = el('input'), lab = el('label', 'yr-g'), to = el('div', 'to'), hd = el('div', 'hd');
     inp.type = 'text'; inp.maxLength = 60; inp.autocomplete = 'off'; inp.value = c.to || ''; inp.setAttribute('aria-label', 'کلاس سال بعدِ ' + c.c); inp.placeholder = 'نام کلاس در سال ' + fa(r.y.next);
@@ -7214,9 +7216,9 @@ function yrDraw() {
   box.append(el('div', 'lbl yr-h', '۲. گزینه‌ها'), opt('yrKeep', 'برنامه‌ی هفتگی با نام تازه‌ی کلاس‌ها نگه داشته شود (بعداً دبیران را ویرایش کنید)', true),
     opt('yrOff', 'دانش‌آموزان «انتقال رفته»، «ترک تحصیل» و «وقفه‌ی تحصیلی» از فهرست برداشته شوند', true));
   const sh = el('div', 'yr-sh'); (r.sheets || []).forEach(x => sh.append(el('span', '', x.t + ' (' + fa(x.n) + ')')));
-  box.append(el('div', 'lbl yr-h', '۳. بایگانی و پاک شدن'), el('div', 'now-sub', 'اول یک نسخه‌ی کامل از همه‌ی اطلاعات در پوشه‌ی «بایگانی سال‌های تحصیلی سامانه مدرسه» در Google Drive ساخته و بررسی می‌شود؛ بعد این برگه‌ها خالی می‌شوند:'),
+  box.append(el('div', 'lbl yr-h', '۳. بایگانی و پاک شدن'), el('div', 'now-sub', ''),
     r.sheets && r.sheets.length ? sh : el('div', 'now-sub', '— (برگه‌ی سالانه‌ی پُری نیست)'),
-    el('div', 'now-sub', 'دست نمی‌خورند: دبیران، رمزها، کدهای ورود، تنظیمات مدرسه، تصاویر و پرونده‌ی دبیران. اگر وسط کار خطایی پیش بیاید، همه‌چیز خودکار به حالت قبل برمی‌گردد.'));
+    el('div', 'now-sub', ''));
   const cf = el('input'), go = el('button', 'send yr-go', '📦 بایگانی و انتقال به سال ' + fa(r.y.next)), hint = el('div', 'now-sub yr-hint');
   cf.id = 'yrCf'; cf.type = 'text'; cf.inputMode = 'numeric'; cf.autocomplete = 'off'; cf.dir = 'ltr'; cf.placeholder = fa(r.y.next); cf.setAttribute('aria-label', 'برای تأیید، سال تحصیلی تازه را بنویسید');
   go.id = 'yrGo'; go.type = 'button'; hint.id = 'yrHint';
@@ -7264,7 +7266,7 @@ function adInit() {
     }
     r.append(t, act); box.append(r);
   });
-  if (main) adForm(); else fm.append(el('div', 'now-sub', '🔒 فقط مدیر اصلی می‌تواند مدیران سامانه را تعریف یا ویرایش کند و رمز آن‌ها را عوض کند.'));
+  if (main) adForm(); else fm.append(el('div', 'now-sub', ''));
 }
 function adForm() {
   const fm = $('#adForm'), e = AD.ed; fm.textContent = '';
@@ -7295,8 +7297,8 @@ async function kaCmpLoad() {
   $('#kaCmpSub').textContent = 'میانگین معدل مستمر نوبت اول هر کلاس (از ۲۰) — سال تحصیلی ' + fa(r.year) + '، تا ' + fa(r.today);
   if (!r.list.length) { box.append(el('div', 'empty', 'هنوز برای هیچ کلاسی نمره‌ی مستمر ثبت نشده است.')); return; }
   const sc = el('div', 'kcmp-scroll'); box.append(sc); sc.append(kCmpSvg(r.list, sc.clientWidth));
-  if (sc.scrollWidth > sc.clientWidth + 4) box.append(el('div', 'kcmp-lg', '↔ برای دیدن همه‌ی کلاس‌ها، نمودار را به چپ بکشید.'));
-  box.append(el('div', 'kcmp-lg', '🏆 سبز: بهترین کلاس   ·   ⚠ قرمز: ضعیف‌ترین کلاس   ·   برای دیدن کارنامه‌ی کلی هر کلاس، روی ستونش بزنید.'));
+  if (sc.scrollWidth > sc.clientWidth + 4) box.append(el('div', 'kcmp-lg', ''));
+  box.append(el('div', 'kcmp-lg', ''));
   if (r.none.length) box.append(el('div', 'kcmp-lg', 'بدون نمره‌ی مستمر (در نمودار نیامده): ' + r.none.join('، ')));
 }
 function kCmpSvg(l, cw) {
@@ -7533,8 +7535,8 @@ function mockFields(g, x) {          // فیلدهای مشترک نتیجه (د
     grid.append(el('span'), el('span', 'now-sub', 'تراز'), el('span', 'now-sub', 'درصد'));
     subj = SUBJ[g].map(sn => { const t = mkIn('تراز'), q = mkIn('درصد'), o = x && (x.d || []).find(d => d.s === sn); if (o) { t.value = nv(o.t); q.value = nv(o.p); }
       grid.append(el('span', '', sn), t, q); return { s:sn, t:t, p:q }; });
-    nodes.push(grid, el('div', 'now-sub', 'درصد هر درس بین ۳۳٫۳۳- و ۱۰۰ است (درصد منفی یعنی پاسخ نادرست زیاد).'));
-  } else nodes.push(el('div', 'now-sub', 'برای این رشته تراز کل، رتبه و کارنامه ثبت می‌شود.'));
+    nodes.push(grid, el('div', 'now-sub', ''));
+  } else nodes.push(el('div', 'now-sub', ''));
   const tz = mkIn('تراز کل'), rk = mkIn('رتبه کشوری', 'numeric'); if (x) { tz.value = nv(x.z); rk.value = nv(x.k); }
   nodes.push(fld('تراز کل (الزامی)', tz), fld('رتبه‌ی کشوری (الزامی)', rk));
   const lockNone = () => { const nn = inst.value === MK_NONE; other.hidden = inst.value !== 'سایر';
@@ -7766,7 +7768,7 @@ function pfRender() {
   const c1 = el('div', 'card'); c1.append(el('div', 'lbl', 'وضعیت نمرات نسبت به کلاس و پایه/رشته (از ۲۰)'));
   if (!d.courses.length) c1.append(el('div', 'empty', 'نمره‌ای ثبت نشده است.'));
   else {                               // نسخه‌ی ۱٫۲۷: فقط دروس همین کلاس، نمودار ستونی
-    c1.append(el('div', 'now-sub', 'دروس کلاس ' + d.cls + ' | هر ستون: میانگین نمره از ۲۰' + (d.courses.length > 4 ? ' | برای دیدن همه‌ی دروس، نمودار را افقی بکشید.' : '')));
+    c1.append(el('div', 'now-sub', 'دروس کلاس ' + d.cls + ' | هر ستون: میانگین نمره از ۲۰' + (d.courses.length > 4 ? '' : '')));
     c1.append(colsSvg([Object.assign({ t:'معدل کل', sep:true }, d.overall)].concat(d.courses.map(x => Object.assign({ t:x.c }, x)))));
     c1.append(legend([['var(--c-me)', 'دانش‌آموز'], ['var(--c-cls)', 'میانگین کلاس'], ['var(--c-str)', 'میانگین پایه/رشته']]));
     const dn = el('details', 'dir-it'), ds = el('summary'); ds.append(el('span', '', 'جدول اعداد')); dn.style.marginTop = '8px';
@@ -8003,7 +8005,7 @@ function stuPlan(box, still) {
     : streak >= 3 ? '🔥 ' + fa(streak) + ' روز پیاپی درس خوانده‌ای؛ زنجیره را نشکن!'
     : done ? 'عالی پیش می‌روی؛ فقط ' + fa(items.length - done) + ' مورد دیگر مانده 💪' : 'از نوبت اول شروع کن؛ شروع کردن سخت‌ترین قسمت است 💪');
   hc.append(sg, pb); if (items.length) hc.append(note);
-  if (win.now >= 1290 && !all) hc.append(el('div', 'cns-note', '🌙 دیروقت است؛ امشب یک نوبت مرور کافی است. خواب کافی هم بخشی از درس خواندن است.'));
+  if (win.now >= 1290 && !all) hc.append(el('div', 'cns-note', ''));
   // نوبت‌ها
   const lc = mk('نوبت‌های امروز');
   if (!items.length) lc.append(el('div', 'empty', 'هنوز برنامه‌ی هفتگی، نمره یا آزمونی برای کلاس شما ثبت نشده است. به محض ثبت، برنامه‌ی مطالعه‌ات اینجا ساخته می‌شود 🌱'));
@@ -8035,9 +8037,9 @@ function stuPlan(box, still) {
   const apply = () => { plBuild(st, true); plSave(st); rr(); };
   set.append(chipRow('تعداد نوبت در روز', [2, 3, 4], st.set.n, v => fa(v) + ' نوبت', v => { st.set.n = v; apply(); }),
     chipRow('مدت هر نوبت', [30, 45, 60], st.set.len, v => fa(v) + ' دقیقه', v => { st.set.len = v; apply(); }),
-    el('div', 'now-sub', 'بین نوبت‌ها ۱۰ دقیقه استراحت در نظر گرفته می‌شود. نوبت‌های انجام‌شده‌ی امروز دست نمی‌خورند.'));
+    el('div', 'now-sub', ''));
   tools.append(re, sb);
-  const nx = items.find(x => !x.done); if (nx && win.now > nx.t0 + 60) lc.append(el('div', 'cns-note', '⏰ زمان نوبت‌ها گذشته است؟ «چیدن دوباره» را بزن تا باقی برنامه از همین حالا چیده شود.'));
+  const nx = items.find(x => !x.done); if (nx && win.now > nx.t0 + 60) lc.append(el('div', 'cns-note', ''));
   lc.append(tools, set);
   // شمارش معکوس
   const up = (SD.cal || []).map(x => Object.assign({ dd:plDays(x.d) }, x)).filter(x => x.dd != null && x.dd >= 0 && x.dd <= 14).sort((a, b) => a.dd - b.dd).slice(0, 5);
@@ -8047,7 +8049,7 @@ function stuPlan(box, still) {
   const wc = mk('📊 مطالعه‌ی این هفته'); wc.append(plWeek(st, goal));
   // نکته‌ی روز
   const n0 = new Date(), doy = Math.floor((plMid(n0) - new Date(n0.getFullYear(), 0, 1)) / 864e5), tc = mk('💡 نکته‌ی مطالعه‌ی امروز');
-  tc.append(el('div', 'pl-tip', PL_TIPS[doy % PL_TIPS.length]), el('div', 'now-sub', '🔒 این برنامه و سابقه‌ی مطالعه‌ات فقط روی همین گوشی ذخیره می‌شود.'));
+  tc.append(el('div', 'pl-tip', PL_TIPS[doy % PL_TIPS.length]), el('div', 'now-sub', ''));
   box.append.apply(box, cards);
   // تایمری که قبل از بستن برنامه در جریان بود
   if (st.run && $('#plOv') && !$('#plOv').hidden) return;
@@ -8637,7 +8639,7 @@ function suClsEdit(row, x) {
   row.textContent = ''; row.classList.add('ed');
   const n = el('input'), s = el('input'), ok = el('button', 'btn', 'ذخیره'), no = el('button', 'btn', 'انصراف'), g = el('div', 'grid2'), b = el('div', 'grid2');
   n.type = s.type = 'text'; n.value = x.c; s.value = x.st; s.setAttribute('list', 'suStL'); n.setAttribute('aria-label', 'نام کلاس'); s.setAttribute('aria-label', 'رشته'); ok.type = no.type = 'button';
-  g.append(n, s); b.append(ok, no); row.append(g, el('div', 'now-sub', 'نام کلاس در همه‌ی سوابق (حضور و غیاب، نمرات، برنامه‌ی هفتگی و …) هم عوض می‌شود.'), b);
+  g.append(n, s); b.append(ok, no); row.append(g, el('div', 'now-sub', ''), b);
   no.addEventListener('click', suClsList);
   ok.addEventListener('click', async () => {
     const nc = n.value.trim(), st = s.value.trim(); if (nc === x.c && st === x.st) return suClsList(); if (!st) return toast('رشته را بنویسید.');
@@ -9211,7 +9213,7 @@ function cmPaint() {
   } else {
     const g = {}; rows.forEach(x => { const k = x.c + '|' + x.n, o = g[k] = g[k] || { c:x.c, n:x.n, k:0, m:0, last:'' }; o.k++; if (x.st === 'پایان') o.m += x.du; if (x.d > o.last) o.last = x.d; });
     box.append(tbl(['دانش‌آموز', 'کلاس', 'جلسات', 'مجموع زمان (دقیقه)', 'آخرین مشاوره'], Object.keys(g).map(k => g[k]).sort((a, b) => a.last < b.last ? 1 : -1).map(o => [o.n, o.c, fa(o.k), fa(o.m), fa(o.last)])),
-      el('div', 'now-sub', 'برای دیدن جزئیات و تأیید، کلاس و دانش‌آموز را انتخاب کنید.'));
+      el('div', 'now-sub', ''));
   }
 }
 function cmPrint(rows, title) {
@@ -9547,7 +9549,7 @@ function abEdit(o, ds) {          // ویرایش (یا ثبت) حضور و غی
     const li = el('li', 'row'), m = el('button', 'row-main'); m.type = 'button'; m.append(el('span', 'num', fa(i + 1)), el('span', 'nm', x.n), el('span', 'badge', '')); li.append(m); ul.append(li); paint(li, x);
     m.addEventListener('click', () => { if (x.lock) return toast('غیبت موجه را از «ثبت غیبت موجه» یا بخش مرخصی تغییر دهید'); x.st = (x.st + 1) % 3; if (!x.st) x.note = ''; paint(li, x); });
   });
-  const hint = el('div', 'now-sub', 'هر تپ روی نام: غایب ← تأخیر ← حاضر | 🔒 غیبت موجه‌ی ثبت‌شده توسط مدیر');
+  const hint = el('div', 'now-sub', '');
   const bt = el('div', 'btns'), save = el('button', 'btn primary', 'ذخیره‌ی تغییرات'), no = el('button', 'btn', 'انصراف'); save.type = no.type = 'button';
   no.addEventListener('click', closeModal);
   save.addEventListener('click', async () => {
@@ -9810,7 +9812,7 @@ function dsViewNew(box) {
   } else {
     const eb = el('div', 'chips'); eb.style.cssText = 'grid-template-columns:repeat(3,1fr);margin:8px 0 6px';
     [['rec', 'ثبت مورد'], ['act', 'اقدام تربیتی'], ['fam', 'تماس با خانواده']].forEach(q => { const b = el('button', 'chip' + (E === q[0] ? ' on' : ''), q[1]); b.type = 'button'; b.addEventListener('click', () => { DIS.ent = q[0]; disRender(); }); eb.append(b); });
-    c.append(eb, el('div', 'now-sub', E === 'rec' ? 'مورد انضباطی، تشویق یا فعالیت پرورشی' : E === 'act' ? 'اقدام انجام‌شده برای دانش‌آموز (تذکر، احضار ولی، قرارداد رفتاری…)' : 'ثبت درخواست پیگیری یا نتیجه‌ی تماس با خانواده'));
+    c.append(eb, el('div', 'now-sub', E === 'rec' ? 'مورد انضباطی، تشویق یا فعالیت پرورشی' : E === 'act' ? '' : 'ثبت درخواست پیگیری یا نتیجه‌ی تماس با خانواده'));
     c.style.paddingBottom = '14px';
     const pk = el('div'); pk.style.marginTop = '10px'; c.append(pk);
     if (!dsPick(pk, DIS.sel, { onChange:() => { if (E !== 'rec') dsRelLoad(); } })) { box.append(c); return; }
@@ -10029,7 +10031,7 @@ function dsViewRep(box) {
 
 /* ---------- نمای «سابقه‌ی تغییرات» (مدیر) ---------- */
 function dsViewLog(box) {
-  const G = DIS.lg, c = el('div', 'card'), out = el('div'); c.append(el('div', 'lbl', 'سابقه‌ی تغییرات انضباطی و پرورشی (آخرین ۳۰۰ مورد)'), el('div', 'now-sub', 'هر ثبت، ویرایش، ابطال و بازگردانی با نام کاربر و مقدار قبلی و جدید ثبت می‌شود.'));
+  const G = DIS.lg, c = el('div', 'card'), out = el('div'); c.append(el('div', 'lbl', 'سابقه‌ی تغییرات انضباطی و پرورشی (آخرین ۳۰۰ مورد)'), el('div', 'now-sub', ''));
   const pk = el('div'); pk.style.marginTop = '8px'; c.append(pk); if (!dsPick(pk, G, { allCls:true, allStu:true, onChange:() => load() })) { box.append(c); return; }
   const b = el('button', 'btn', '🔄 بارگذاری'); b.type = 'button'; b.style.cssText = 'width:100%'; b.addEventListener('click', () => load()); c.append(b); box.append(c, out);
   async function load() {
