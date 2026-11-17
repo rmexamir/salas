@@ -6277,7 +6277,14 @@ function renderInb() {
   show(INB_TABS.some(t => t[0] === INB_TAB) ? INB_TAB : 'stu');
 }
 let CH_INIT = false;
-function chFillCls() { const g = $('#gdCls'), c = $('#chCls'); if (!g || !c || !g.options.length) return false; if (c.options.length !== g.options.length) c.innerHTML = g.innerHTML; return true; }
+function chFillCls() {                     // فهرست کلاس‌ها از نمرات بارگذاری‌شده‌ی مدیر (مستقل از بخش حذف نمره)
+  const c = $('#chCls'); if (!c || !MG.gr || !MG.gr.length) return false;
+  const cl = uniq(MG.gr.map(r => String(r[3]))).filter(Boolean).sort((a, b) => a.localeCompare(b, 'fa'));
+  const cur = c.value; c.textContent = '';
+  cl.forEach(x => { const o = el('option', '', x); o.value = x; c.append(o); });
+  if (cl.length) c.value = cl.includes(cur) ? cur : cl[0];
+  return cl.length > 0;
+}
 function chBar(label, pct, val, cls) {
   const row = el('div', 'ch-row'), tr = el('div', 'ch-track'), f = el('div', 'ch-fill ' + (cls || ''));
   f.style.width = Math.max(2, Math.min(100, pct)) + '%';
@@ -6323,17 +6330,20 @@ async function chDrawGrade() {
     box.append(card);
   });
 }
-function chInit() {
-  if (!chFillCls()) return;
-  $('#chCls').addEventListener('change', chClassLoad);
-  $('#chEx').addEventListener('change', chDrawExam);
-  $('#chGrade').addEventListener('change', chDrawGrade);
-  $('#chCls').addEventListener('focus', chFillCls);
+let CH_WIRED = false, CH_TRIES = 0;
+function chInit() {                        // اگر نمرات هنوز نیامده، چند بار دیگر تلاش می‌کند
+  if (!CH_WIRED) {
+    CH_WIRED = true;
+    $('#chCls').addEventListener('change', chClassLoad);
+    $('#chEx').addEventListener('change', chDrawExam);
+    $('#chGrade').addEventListener('change', chDrawGrade);
+  }
+  if (!chFillCls()) { if (++CH_TRIES < 30) setTimeout(chInit, 500); else $('#chClsBox').append(el('div', 'empty', 'نمره‌ای برای نمایش نمودار پیدا نشد.')); return; }
   chClassLoad(); chDrawGrade();
 }
 document.addEventListener('click', e => {
   const t = e.target && e.target.closest && e.target.closest('.mg-nb[data-sec="rep"]');
-  if (t && !CH_INIT && ROLE === 'manager') { CH_INIT = true; setTimeout(chInit, 300); }
+  if (t && ROLE === 'manager') { CH_TRIES = 0; setTimeout(chInit, 300); }
 });
 function sugCard(x) {                    // نمره‌ی مستمر پیشنهادی (مدیر): میانگین نوبت − غیبت غیرموجه (۱) − تأخیر (۰٫۵) برای هر درس
   const wrap = el('div', 'card sug-card'), sel = el('select', 'sug-term'), body = el('div', 'sug-body');
