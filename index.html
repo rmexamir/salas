@@ -6341,10 +6341,12 @@ function chInit() {                        // اگر نمرات هنوز نیا�
   if (!chFillCls()) { if (++CH_TRIES < 30) setTimeout(chInit, 500); else $('#chClsBox').append(el('div', 'empty', 'نمره‌ای برای نمایش نمودار پیدا نشد.')); return; }
   chClassLoad(); chDrawGrade();
 }
-document.addEventListener('click', e => {
-  const t = e.target && e.target.closest && e.target.closest('.mg-nb[data-sec="rep"]');
-  if (t && ROLE === 'manager') { CH_TRIES = 0; setTimeout(chInit, 300); }
-});
+let CH_SHOWN = false;                      // نمودار وقتی کارت دیده شود راه‌اندازی می‌شود (هر تب یا دکمه‌ای که آن را باز کند)
+setInterval(() => {
+  const c = $('#chCls'); if (!c || ROLE !== 'manager') return;
+  if (!c.offsetParent) { CH_SHOWN = false; return; }
+  if (!CH_SHOWN) { CH_SHOWN = true; CH_TRIES = 0; chInit(); }
+}, 800);
 function sugCard(x) {                    // نمره‌ی مستمر پیشنهادی (مدیر): میانگین نوبت − غیبت غیرموجه (۱) − تأخیر (۰٫۵) برای هر درس
   const wrap = el('div', 'card sug-card'), sel = el('select', 'sug-term'), body = el('div', 'sug-body');
   sel.setAttribute('aria-label', 'نوبت');
