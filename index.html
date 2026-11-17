@@ -18,8 +18,9 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxzPr6P54uH4gV_rQrss
 // کلید دسترسی اختیاری (باید با ACCESS_KEY در Code.gs یکی باشد)
 const ACCESS_KEY = "";
 // نسخه‌ی برنامه — با هر به‌روزرسانی این عدد بالا می‌رود و در صفحه‌ی ورود و پایین صفحه نمایش داده می‌شود.
-const APP_VERSION = "1.45";
+const APP_VERSION = "1.52";
 const CHANGELOG=[
+  {v:'1.52',items:['نمودار تحلیل آزمون‌ها در صفحه‌ی اصلی مدیر: فیلتر پایه، رشته و کلاس، ستون‌ها از کم به زیاد و پراکندگی نمرات (فقط حاضرین)','نمره‌ی مستمر پیشنهادی در کارتابل مدیر (غیبت غیرموجه ۱ و تأخیر ۰٫۵ کسر می‌شود)','ثبت مرخصی: یک درخواست منتظر یا تأییدشده برای هر کد ملی در یک روز','سه نفر برتر گزارش‌ها همان محاسبه‌ی صفحه‌ی ورود را دارد','ویرایش حضور و غیاب: وضعیت قبلی دیگر کنار وضعیت جدید باقی نمی‌ماند','۵ درس اخیر با نمره‌ی ثبت‌شده (تاریخ شمسی) در صفحه‌ی ثبت نمرات']},
   {v:'1.45',items:['بهبود گرافیک ماژول‌ها: هوور نرم، گلوی رنگی، آیکن پویا']},
   {v:'1.44',items:['پشتیبان‌گیری کامل اطلاعات برای حالت آفلاین','تاریخچه‌ی نسخه‌ها در سامانه']},
   {v:'1.43',items:['قانون غیبت: نمره‌ی صفر در همه‌ی ارزیابی‌های مشمول']},
@@ -7837,14 +7838,22 @@ function renderBoard() {
   });
   box.append(g);
 }
-function renderTop() {
-  const box = $('#topBox'); box.textContent = ''; const m = {}, mean = a => a.reduce((x, y) => x + y, 0) / a.length;
-  MG.gr.forEach(r => { const n = Number(r[11]); if (r[9] !== 'حاضر' || r[11] === '' || isNaN(n)) return; const c = String(r[3]), s = String(r[6]); m[c] = m[c] || {}; m[c][s] = m[c][s] || {}; (m[c][s][r[4]] = m[c][s][r[4]] || []).push(n); });
-  const cl = Object.keys(m).sort((a, b) => a.localeCompare(b, 'fa'));
-  if (!cl.length) { box.append(el('div', 'empty', 'هنوز نمره‌ای ثبت نشده است.')); return; }
-  cl.forEach(c => {
-    const rk = Object.keys(m[c]).map(s => ({ s:s, v:wMean(Object.keys(m[c][s]).map(k => [mean(m[c][s][k]), unitsOf(c, k)])) })).sort((a, b) => b.v - a.v).slice(0, 3), row = el('div', 'dir-it'); row.style.padding = '10px 14px';
-    row.append(el('div', 'now-t', c), el('div', 'now-sub', rk.map((x, i) => ['🥇', '🥈', '🥉'][i] + ' ' + x.s + ' (' + f2(x.v) + ')').join('  |  '))); box.append(row);
+async function renderTop() {              // همان داده‌ی صفحه‌ی ورود (سرور)، تا محاسبه‌ی معدل در همه‌جا یکسان باشد
+  const box = $('#topBox'); box.textContent = ''; box.append(el('div', 'now-sub', 'در حال محاسبه…'));
+  const r = await send({ action:'topList', key:ACCESS_KEY });
+  box.textContent = '';
+  if (r.net || r.status !== 'ok') { box.append(el('div', 'now-sub', r.message || 'محاسبه انجام نشد.')); return; }
+  const names = Object.keys(r.classes || {}).sort((x, y) => x.localeCompare(y, 'fa'));
+  if (!names.length) { box.append(el('div', 'empty', 'هنوز دانش‌آموزی با معدل ' + fa(r.min || 17) + ' و بالاتر نیست.')); return; }
+  names.forEach(c => {
+    const row = el('div', 'dir-it'); row.style.padding = '10px 14px';
+    let last = null, rank = 0; const parts = [];
+    r.classes[c].forEach(x => {
+      if (x.a !== last) { rank++; last = x.a; }
+      parts.push((['🥇', '🥈', '🥉'][rank - 1] || '') + ' ' + x.n + ' (' + f2(x.a) + ')');
+    });
+    row.append(el('div', 'now-t', c), el('div', 'now-sub', parts.join('  |  ')));
+    box.append(row);
   });
 }
 
