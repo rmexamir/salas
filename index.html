@@ -2514,6 +2514,12 @@ body[data-mod="s:dsc"] .dsc-t{border-radius:16px}
 .ch-val{font-size:12px;min-width:44px;text-align:left}
 .ch-course{border:1px solid var(--line);border-radius:14px;padding:10px 12px;margin:10px 0;background:var(--card)}
 .ch-ctitle{font-weight:900;font-size:13.5px;margin-bottom:4px}
+.ana-cols{display:flex;align-items:flex-end;gap:12px;overflow-x:auto;padding:12px 4px 2px;margin-top:12px;border-bottom:1px solid var(--line)}
+.ana-col{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;flex:0 0 66px;height:230px}
+.ana-val{font-size:12px;font-weight:900;margin-bottom:4px;color:var(--ink)}
+.ana-bar{width:100%;border-radius:10px 10px 4px 4px;min-height:4px}
+.ana-lbl{font-size:10.5px;line-height:1.5;margin:6px 0 0;text-align:center;color:var(--muted);height:44px;overflow:hidden;width:100%}
+#anaDist{margin-top:12px}
 .grr-head{width:100%;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 14px;border-radius:14px;border:1px solid var(--line);background:var(--input);color:var(--ink);font:inherit;font-size:14px;font-weight:900;cursor:pointer;text-align:start}
 .grr-chev{font-size:16px;color:var(--muted)}
 .grr-card{padding:12px}
@@ -3311,14 +3317,6 @@ body[data-mod="s:dsc"] .dsc-t{border-radius:16px}
         <div class="lbl" style="margin-bottom:8px">سه نفر برتر هر کلاس (بر اساس معدل)</div>
         <div id="topBox"></div>
       </div>
-      <div class="card" id="chCard">
-        <div class="lbl" style="margin-bottom:8px">📊 تحلیل آزمون‌ها به‌صورت نمودار</div>
-        <div class="field"><label for="chCls">کلاس</label><select id="chCls"></select></div>
-        <div class="field"><label for="chEx">ارزیابی</label><select id="chEx"></select></div>
-        <div id="chClsBox" class="ch-box"></div>
-        <div class="field" style="margin-top:14px"><label for="chGrade">پایه (پراکندگی نمرات همه‌ی دروس)</label><select id="chGrade"><option value="دهم">دهم</option><option value="یازدهم" selected>یازدهم</option><option value="دوازدهم">دوازدهم</option></select></div>
-        <div id="chGrBox" class="ch-box"></div>
-      </div>
       <div class="card" id="gdCard">
         <div class="lbl" style="margin-bottom:8px">حذف نمره‌ی ثبت‌شده (فقط مدیر)</div>
         <div class="now-sub" style="margin-bottom:8px">کلاس را انتخاب کنید، ارزیابی موردنظر را باز کنید و نمره‌ی یک دانش‌آموز یا کل آن ارزیابی را حذف کنید. حذف برگشت‌پذیر نیست و در «سابقه‌ی تغییرات» ثبت می‌شود.</div>
@@ -3327,6 +3325,16 @@ body[data-mod="s:dsc"] .dsc-t{border-radius:16px}
       </div>
       <div class="card"><details><summary class="lbl" style="cursor:pointer">جدول کامل حضور و غیاب (جدیدترین‌ها)</summary><div class="mg-wrap" style="margin-top:8px"><table class="mg-tbl" id="mgAtt"></table></div></details></div>
       <div class="card"><details><summary class="lbl" style="cursor:pointer">جدول کامل نمرات (جدیدترین‌ها)</summary><div class="mg-wrap" style="margin-top:8px"><table class="mg-tbl" id="mgGr"></table></div></details></div>
+      </div>
+<div class="mg-sec" data-sec="ana" data-t="تحلیل آزمون‌ها" hidden>
+      <div class="card">
+        <div class="lbl" style="margin-bottom:8px">📊 نمرات درس‌به‌درس یک پایه</div>
+        <div class="field"><label for="anaGr">پایه</label><select id="anaGr"><option value="دهم">دهم</option><option value="یازدهم" selected>یازدهم</option><option value="دوازدهم">دوازدهم</option></select></div>
+        <div class="field"><label for="anaStream">رشته</label><select id="anaStream"></select></div>
+        <div class="field"><label for="anaCls">کلاس</label><select id="anaCls"></select></div>
+        <div id="anaCols" class="ana-cols"></div>
+      </div>
+      <div id="anaDist"></div>
       </div>
       <div class="mg-sec" data-sec="dis" data-t="انضباطی و پرورشی" hidden>
       <div class="mg-sec-d">ثبت و مدیریت موارد انضباطی، تشویق‌ها و فعالیت‌های پرورشی، اقدامات تربیتی، پیگیری تماس با خانواده، پرونده‌ی دانش‌آموز و گزارش چاپی. همه‌ی تغییرات با قبل و بعد ثبت می‌شود.</div>
@@ -6277,76 +6285,65 @@ function renderInb() {
   show(INB_TABS.some(t => t[0] === INB_TAB) ? INB_TAB : 'stu');
 }
 let CH_INIT = false;
-function chFillCls() {                     // فهرست کلاس‌ها از نمرات بارگذاری‌شده‌ی مدیر (مستقل از بخش حذف نمره)
-  const c = $('#chCls'); if (!c || !MG.gr || !MG.gr.length) return false;
-  const cl = uniq(MG.gr.map(r => String(r[3]))).filter(Boolean).sort((a, b) => a.localeCompare(b, 'fa'));
-  const cur = c.value; c.textContent = '';
-  cl.forEach(x => { const o = el('option', '', x); o.value = x; c.append(o); });
-  if (cl.length) c.value = cl.includes(cur) ? cur : cl[0];
-  return cl.length > 0;
+let ANA_SHOWN = false;
+const anaUniq = a => [...new Set(a)];
+function anaFillFilters() {                // رشته و کلاس از روی پایه و رشته‌ی انتخاب‌شده ساخته می‌شوند
+  const grade = $('#anaGr').value, all = anaUniq(MG.gr.map(r => String(r[3]).trim())).filter(Boolean).sort((x, y) => x.localeCompare(y, 'fa'));
+  const inGrade = all.filter(c => c.split(' ')[0] === grade);
+  const st = $('#anaStream'), cs = $('#anaCls'), prevS = st.value, prevC = cs.value;
+  const streams = anaUniq(inGrade.map(c => c.split(' ')[1] || '')).filter(Boolean);
+  st.textContent = ''; st.append(el('option', '', 'همه‌ی رشته‌ها')); st.firstChild.value = '';
+  streams.forEach(x => { const o = el('option', '', x); o.value = x; st.append(o); });
+  st.value = streams.includes(prevS) ? prevS : '';
+  const curS = st.value, classes = inGrade.filter(c => !curS || (c.split(' ')[1] || '') === curS);
+  cs.textContent = ''; cs.append(el('option', '', 'همه‌ی کلاس‌ها')); cs.firstChild.value = '';
+  classes.forEach(x => { const o = el('option', '', x); o.value = x; cs.append(o); });
+  cs.value = classes.includes(prevC) ? prevC : '';
+  return inGrade.length > 0;
 }
-function chBar(label, pct, val, cls) {
-  const row = el('div', 'ch-row'), tr = el('div', 'ch-track'), f = el('div', 'ch-fill ' + (cls || ''));
-  f.style.width = Math.max(2, Math.min(100, pct)) + '%';
-  tr.append(f);
-  row.append(el('span', 'ch-name', label), tr, el('b', 'ch-val', val));
-  return row;
-}
-async function chDrawExam() {
-  const box = $('#chClsBox'); box.textContent = '';
-  const cls = $('#chCls').value, exKey = $('#chEx').value;
-  if (!cls || !exKey) return;
+async function anaLoad() {
+  const box = $('#anaCols'), dist = $('#anaDist'); if (!box) return;
+  box.textContent = ''; dist.textContent = '';
+  if (!MG.gr || !MG.gr.length) { box.append(el('div', 'empty', 'نمره‌ای برای نمایش پیدا نشد.')); return; }
   box.append(el('div', 'now-sub', 'در حال بارگذاری…'));
-  const r = await send({ action:'chartData', pin:MG.pin, key:ACCESS_KEY, mode:'class', cls:cls, exKey:exKey });
+  const r = await send({ action:'chartData', pin:MG.pin, key:ACCESS_KEY, mode:'grade', grade:$('#anaGr').value, stream:$('#anaStream').value, cls:$('#anaCls').value });
   box.textContent = '';
   if (r.net || r.status !== 'ok') { box.append(el('div', 'now-sub', r.message || 'بارگذاری نشد.')); return; }
-  if (!r.items || !r.items.length) { box.append(el('div', 'empty', 'نمره‌ای برای این ارزیابی نیست.')); return; }
-  box.append(el('div', 'now-sub', 'نمره‌ها از کم به زیاد (از ۲۰)'));
-  r.items.forEach(it => box.append(chBar(it.n, it.v / 20 * 100, fa(it.v), it.v < 10 ? 'bad' : it.v < 15 ? 'mid' : 'good')));
-}
-async function chClassLoad() {
-  chFillCls();
-  const cls = $('#chCls').value, ex = $('#chEx'); ex.textContent = '';
-  if (!cls) return;
-  const r = await send({ action:'chartData', pin:MG.pin, key:ACCESS_KEY, mode:'class', cls:cls });
-  if (r.net || r.status !== 'ok' || !r.exams.length) { const o = el('option', '', 'ارزیابی‌ای ثبت نشده'); o.value = ''; ex.append(o); $('#chClsBox').textContent = ''; return; }
-  r.exams.forEach(x => { const o = el('option', '', fa(x.d) + ' — ' + x.s + ' — ' + x.e + ' (' + fa(x.n) + ' نفر)'); o.value = x.key; ex.append(o); });
-  chDrawExam();
-}
-async function chDrawGrade() {
-  const box = $('#chGrBox'); box.textContent = '';
-  const grade = $('#chGrade').value;
-  box.append(el('div', 'now-sub', 'در حال بارگذاری…'));
-  const r = await send({ action:'chartData', pin:MG.pin, key:ACCESS_KEY, mode:'grade', grade:grade });
-  box.textContent = '';
-  if (r.net || r.status !== 'ok') { box.append(el('div', 'now-sub', r.message || 'بارگذاری نشد.')); return; }
-  if (!r.courses.length) { box.append(el('div', 'empty', 'برای این پایه نمره‌ای ثبت نشده است.')); return; }
-  const labels = ['۰ تا ۵', '۵ تا ۱۰', '۱۰ تا ۱۵', '۱۵ تا ۲۰'], cls = ['bad', 'warn', 'mid', 'good'];
-  r.courses.forEach(c => {
+  if (!r.courses.length) { box.append(el('div', 'empty', 'برای این انتخاب نمره‌ای ثبت نشده است.')); return; }
+  const list = r.courses.slice().sort((x, y) => x.avg - y.avg);            // از کم به زیاد
+  const colOf = v => v < 10 ? '#E5576B' : v < 15 ? '#E0A526' : '#22A06B'; // رنگ‌بندی بر اساس میانگین
+  list.forEach(c => {
+    const col = el('div', 'ana-col'), val = el('div', 'ana-val', f2(c.avg));
+    const bar = el('div', 'ana-bar'); bar.style.height = Math.max(4, c.avg / 20 * 150) + 'px'; bar.style.background = colOf(c.avg);
+    col.append(val, bar, el('div', 'ana-lbl', c.s));
+    box.append(col);
+  });
+  const dLabels = ['۰ تا ۵', '۵ تا ۱۰', '۱۰ تا ۱۵', '۱۵ تا ۲۰'], dCls = ['bad', 'warn', 'mid', 'good'];
+  list.forEach(c => {
     const max = Math.max.apply(null, c.bins.concat([1]));
     const card = el('div', 'ch-course');
     card.append(el('div', 'ch-ctitle', c.s + ' — میانگین ' + f2(c.avg) + ' (' + fa(c.n) + ' نمره)'));
-    c.bins.forEach((n, i) => card.append(chBar(labels[i], n / max * 100, fa(n) + ' نفر', cls[i])));
-    box.append(card);
+    c.bins.forEach((n, i) => {
+      const row = el('div', 'ch-row'), tr = el('div', 'ch-track'), f = el('div', 'ch-fill ' + dCls[i]);
+      f.style.width = Math.max(n ? 4 : 0, n / max * 100) + '%';
+      tr.append(f); row.append(el('span', 'ch-name', dLabels[i]), tr, el('b', 'ch-val', fa(n) + ' نفر'));
+      card.append(row);
+    });
+    dist.append(card);
   });
 }
-let CH_WIRED = false, CH_TRIES = 0;
-function chInit() {                        // اگر نمرات هنوز نیامده، چند بار دیگر تلاش می‌کند
-  if (!CH_WIRED) {
-    CH_WIRED = true;
-    $('#chCls').addEventListener('change', chClassLoad);
-    $('#chEx').addEventListener('change', chDrawExam);
-    $('#chGrade').addEventListener('change', chDrawGrade);
-  }
-  if (!chFillCls()) { if (++CH_TRIES < 30) setTimeout(chInit, 500); else $('#chClsBox').append(el('div', 'empty', 'نمره‌ای برای نمایش نمودار پیدا نشد.')); return; }
-  chClassLoad(); chDrawGrade();
-}
-let CH_SHOWN = false;                      // نمودار وقتی کارت دیده شود راه‌اندازی می‌شود (هر تب یا دکمه‌ای که آن را باز کند)
+function anaRefresh() { anaFillFilters(); anaLoad(); }
 setInterval(() => {
-  const c = $('#chCls'); if (!c || ROLE !== 'manager') return;
-  if (!c.offsetParent) { CH_SHOWN = false; return; }
-  if (!CH_SHOWN) { CH_SHOWN = true; CH_TRIES = 0; chInit(); }
+  const s = document.querySelector('.mg-sec[data-sec="ana"]'); if (!s || ROLE !== 'manager') return;
+  if (!s.offsetParent) { ANA_SHOWN = false; return; }
+  if (!ANA_SHOWN && MG.gr && MG.gr.length) { ANA_SHOWN = true; anaRefresh(); }
 }, 800);
+document.addEventListener('change', e => {
+  const id = e.target && e.target.id;
+  if (id === 'anaGr') anaRefresh();
+  else if (id === 'anaStream') { anaFillFilters(); anaLoad(); }
+  else if (id === 'anaCls') anaLoad();
+});
 function sugCard(x) {                    // نمره‌ی مستمر پیشنهادی (مدیر): میانگین نوبت − غیبت غیرموجه (۱) − تأخیر (۰٫۵) برای هر درس
   const wrap = el('div', 'card sug-card'), sel = el('select', 'sug-term'), body = el('div', 'sug-body');
   sel.setAttribute('aria-label', 'نوبت');
@@ -10202,7 +10199,7 @@ const TIC = {
   dis:'<path d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6z"/><path d="M9 12l2 2 4-4"/>',
   stf:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
   'm:today':'<path d="M4 16a8 8 0 1116 0"/><path d="M12 16l4-5"/><path d="M3 20h18"/>',
-  'm:cal':'<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/><path d="M8 14h3M13 14h3M8 17h3"/>',
+  'm:ana':'<circle cx="12" cy="12" r="8"/><path d="M12 4v8h8"/>', 'm:cal':'<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/><path d="M8 14h3M13 14h3M8 17h3"/>',
   'm:stu':'<circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M16 5a3 3 0 010 6M18 14c2 .8 3 2.8 3 6"/>',
   'm:setup':'<path d="M4 20V9l8-5 8 5v11"/><path d="M9 20v-6h6v6"/><path d="M3 20h18"/>',
   'm:live':'<path d="M3 12h4l3-8 4 16 3-8h4"/>',
@@ -10231,13 +10228,13 @@ const TIC = {
   'm:kar':'<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M3 14h18M9 4v16M15 4v16"/>'
 };
 TIC['s:sch'] = TIC.sch; TIC['s:cal'] = TIC['m:cal']; TIC['s:att'] = TIC.att;
-const TTONE = { att:'p', gr:'g', sch:'b', inb:'n', cns:'b', dis:'n', stf:'g', 'm:today':'n', 'm:cal':'b', 'm:stu':'p', 'm:setup':'g', 'm:set':'n', 'm:ntc':'g', 'm:live':'b', 'm:pta':'b', 'm:rep':'g', 'm:dis':'n', 'm:tch':'b', 'm:sys':'n', 'm:pw':'g', 'm:blk':'n',
+const TTONE = { att:'p', gr:'g', sch:'b', inb:'n', cns:'b', dis:'n', stf:'g', 'm:today':'n', 'm:cal':'b', 'm:stu':'p', 'm:setup':'g', 'm:set':'n', 'm:ntc':'g', 'm:live':'b', 'm:pta':'b', 'm:rep':'g', 'm:ana':'g', 'm:dis':'n', 'm:tch':'b', 'm:sys':'n', 'm:pw':'g', 'm:blk':'n',
   's:prof':'g', 's:dash':'n', 's:sch':'b', 's:plan':'p', 's:qz':'g', 's:kar':'n', 's:act':'g', 's:att':'p', 's:dsc':'n', 's:avg':'b', 's:mock':'g', 's:cal':'b', 's:leave':'n', 's:vis':'p', 's:don':'p', 'm:don':'p', 'm:kar':'b' };
 const TTITLE = { att:'حضور و غیاب', gr:'ثبت نمرات', sch:'برنامه هفتگی', inb:'کارتابل', cns:'مشاوره', dis:'انضباطی', stf:'ورود و خروج',
   's:prof':'تکمیل اطلاعات', 's:dash':'وضعیت من', 's:sch':'برنامه هفتگی', 's:plan':'برنامه مطالعه', 's:qz':'آزمونک‌ها', 's:kar':'کارنامه', 's:act':'فعالیت و تکالیف', 's:att':'حضور و غیاب', 's:dsc':'انضباط من', 's:avg':'میانگین کلاس',
   's:mock':'آزمون‌های آزمایشی', 's:cal':'تقویم آزمون و تکلیف', 's:leave':'درخواست مرخصی', 's:vis':'مراجعه‌ی اولیا', 's:don':'کمک به مدرسه' };
 const TDESC = { att:'غایبین و تأخیر هر زنگ', gr:'نمره‌ی آزمون‌ها و فعالیت‌ها', sch:'برنامه‌ی هفتگی و زنگ جاری', inb:'کلاس‌ها، تحلیل آزمون و تقویم', cns:'درخواست و پیگیری مشاوره', dis:'موارد انضباطی و تشویقی',
-  stf:'ورود، خروج و مرخصی', 'm:today':'غایبین، هشدارها و میز کار', 'm:cal':'آزمون‌ها و تکالیف همه‌ی کلاس‌ها', 'm:stu':'پرونده، مشاوره، آزمون آزمایشی', 'm:setup':'کلاس‌ها، دانش‌آموزان، دبیران، زنگ‌ها',
+  stf:'ورود، خروج و مرخصی', 'm:today':'غایبین، هشدارها و میز کار', 'm:cal':'آزمون‌ها و تکالیف همه‌ی کلاس‌ها', 'm:ana':'نمرات درس‌به‌درس هر پایه و پراکندگی', 'm:stu':'پرونده، مشاوره، آزمون آزمایشی', 'm:setup':'کلاس‌ها، دانش‌آموزان، دبیران، زنگ‌ها',
   'm:set':'لوگو و سربرگ مدرسه', 'm:ntc':'اطلاعیه‌ی متنی و تصویری صفحه‌ی ورود', 'm:live':'وضعیت زنده‌ی مدرسه با یک نگاه', 'm:pw':'رمز مدیر، کد دبیران، رمز دانش‌آموزان', 'm:blk':'بستن موقت ورود به علت خاص', 'm:don':'کمک‌های اولیا (تومان)', 'm:kar':'کارنامه‌ی فردی و کلی هر کلاس', 'm:pta':'جلسات و حضور اولیا', 'm:rep':'گزارش‌ها، نمودارها و آمار', 'm:dis':'پرونده‌ی انضباطی و پرورشی', 'm:tch':'مرخصی، عدم حضور و برنامه‌ی دبیران', 'm:sys':'بانک اطلاعات و سامانه',
   's:prof':'پیش از همه، این بخش را کامل کن', 's:dash':'معدل، رتبه و نشان‌ها', 's:sch':'کلاس‌های هر روز', 's:plan':'برنامه‌ی روزانه‌ی درس خواندن', 's:qz':'آزمون‌های آنلاین کلاس', 's:kar':'کارنامه‌ی نوبت اول و نمره‌ی آزمون‌ها', 's:act':'مثبت، منفی و تکالیف هر درس',
   's:att':'غیبت‌ها و تأخیرهای من', 's:dsc':'نمره‌ی انضباط، پرونده و درخواست بررسی', 's:avg':'مقایسه با میانگین کلاس', 's:mock':'تراز و رتبه‌ی آزمون‌ها', 's:cal':'آزمون‌ها و تکالیف پیش رو', 's:leave':'درخواست مرخصی از مدرسه', 's:vis':'نوبت مراجعه‌ی اولیا', 's:don':'شماره‌ی حساب مدرسه و ثبت واریز' };
@@ -10248,7 +10245,7 @@ function modKeys() {
   if (ROLE === 'student') return ['s:dash', 's:sch', 's:plan', 's:qz', 's:kar', 's:act', 's:att', 's:dsc', 's:avg', 's:mock', 's:cal', 's:leave', 's:vis', 's:don'];
   if (ROLE === 'counselor') return ['cns', 'sch'];
   if (ROLE === 'manager') {
-    const def = ['m:live', 'm:today', 'att', 'gr', 'm:stu', 'm:kar', 'm:cal', 'm:ntc', 'sch', 'inb', 'm:tch', 'm:dis', 'm:pta', 'm:rep', 'm:setup', 'm:sys', 'm:pw', 'm:blk', 'm:don', 'm:set'];
+    const def = ['m:live', 'm:today', 'att', 'gr', 'm:stu', 'm:kar', 'm:cal', 'm:ntc', 'sch', 'inb', 'm:tch', 'm:dis', 'm:pta', 'm:rep', 'm:ana', 'm:setup', 'm:sys', 'm:pw', 'm:blk', 'm:don', 'm:set'];
     const all = def.concat($$('#mgBody .mg-sec').map(x => 'm:' + x.dataset.sec).filter(k => !def.includes(k))), o = [];
     TILES_ORD.forEach(k => (MGRP[k] ? MGRP[k].tabs.map(t => t[1]) : [k]).forEach(m => { if (all.includes(m) && !o.includes(m)) o.push(m); }));   // نسخه‌ی ۱٫۴۱: گروه ← عضوها
     return o.concat(all.filter(k => !o.includes(k)));
@@ -10290,7 +10287,7 @@ function grpBar(k) {                  // نوار زبانه‌های گروهِ
     b.addEventListener('click', () => { lsSet('sia_grp_' + g, m); if (MOD !== m) { openMod(m); window.scrollTo({ top:0 }); } }); nav.append(b); });   // فقط انتخاب کاربر به خاطر سپرده می‌شود
   const on = nav.querySelector('.on'); if (on && on.scrollIntoView) on.scrollIntoView({ block:'nearest', inline:'center' });
 }
-const TACC = { att:'#22A06B', gr:'#E0A526', sch:'#4C8DF6', inb:'#8B6CF0', cns:'#1BB5C4', dis:'#E5576B', stf:'#E58A2B', 'm:today':'#4C8DF6', 'm:cal':'#8B6CF0', 'm:stu':'#22A06B', 'm:setup':'#E0A526', 'm:set':'#6B7A99', 'm:ntc':'#E5576B', 'm:live':'#2A78D6', 'm:pta':'#1BB5C4', 'm:rep':'#E58A2B', 'm:dis':'#E5576B', 'm:tch':'#4C8DF6', 'm:sys':'#6B7A99', 'm:pw':'#E0A526', 'm:blk':'#6B7A99' };
+const TACC = { att:'#22A06B', gr:'#E0A526', sch:'#4C8DF6', inb:'#8B6CF0', cns:'#1BB5C4', dis:'#E5576B', stf:'#E58A2B', 'm:today':'#4C8DF6', 'm:cal':'#8B6CF0', 'm:ana':'#4C8DF6', 'm:stu':'#22A06B', 'm:setup':'#E0A526', 'm:set':'#6B7A99', 'm:ntc':'#E5576B', 'm:live':'#2A78D6', 'm:pta':'#1BB5C4', 'm:rep':'#E58A2B', 'm:dis':'#E5576B', 'm:tch':'#4C8DF6', 'm:sys':'#6B7A99', 'm:pw':'#E0A526', 'm:blk':'#6B7A99' };
 const TPAL = ['#4C8DF6', '#22A06B', '#E0A526', '#8B6CF0', '#1BB5C4', '#E5576B', '#E58A2B', '#6B7A99'];
 Object.keys(MGRP).forEach(g => { const i = MGRP[g].ic; TIC[g] = TIC[i]; TDESC[g] = MGRP[g].d; TTONE[g] = TTONE[i]; if (TACC[i]) TACC[g] = TACC[i]; });
 const accentOf = k => TACC[k] || TPAL[[...String(k)].reduce((a, c) => a + c.charCodeAt(0), 0) % TPAL.length];      // رنگ هویتیِ هر ماژول
@@ -10844,7 +10841,7 @@ function renderChangelog_() {
   var head = mk('div', 'mg-nh'), lg = $('#logo');
   if (lg && lg.getAttribute('src')) { var im = mk('img'); im.alt = ''; im.src = lg.getAttribute('src'); head.append(im); }
   var ht = mk('div'); ht.append(mk('b', '', 'پنل مدیریت'), mk('small', '', typeof SCHOOL_NAME !== 'undefined' ? SCHOOL_NAME : '')); head.append(ht);
-  var groups = [['میز کار', ['live', 'today', 'cal', 'ntc']], ['دانش‌آموزان و اولیا', ['stu', 'dis', 'pta']], ['کادر آموزشی', ['tch']], ['گزارش و سامانه', ['rep', 'sys']], ['راه‌اندازی و تنظیمات', ['setup', 'set']]], used = {}, frag = d.createDocumentFragment();
+  var groups = [['میز کار', ['live', 'today', 'cal', 'ntc']], ['دانش‌آموزان و اولیا', ['stu', 'dis', 'pta']], ['کادر آموزشی', ['tch']], ['گزارش و سامانه', ['rep', 'ana', 'sys']], ['راه‌اندازی و تنظیمات', ['setup', 'set']]], used = {}, frag = d.createDocumentFragment();
   frag.append(head);
   groups.forEach(function(g){
     var items = g[1].map(btn).filter(Boolean); if (!items.length) return;
