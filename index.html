@@ -5393,11 +5393,14 @@ function stuNav(k) {
   if (stuLocked()) k = 'prof';           // تا تکمیل اطلاعات، سایر منوها بسته است
   else if (mockLocked()) k = 'mock';     // قفل آزمون‌های آزمایشی: فقط همین بخش باز است
   STU_K = k; modAfter('s:' + k); const nv = $('#stuNav'); nv.textContent = '';
-  (stuLocked() ? [['prof', '📝 تکمیل اطلاعات']] : []).concat([['dash', '📊 وضعیت من'], ['sch', 'برنامه هفتگی'], ['plan', '📖 برنامه مطالعه'], ['qz', '📝 آزمونک‌ها'], ['kar', 'کارنامه'], ['act', '⭐ فعالیت و تکالیف'], ['att', 'حضور و غیاب'], ['dsc', '⚖️ انضباط من'], ['avg', 'میانگین کلاس'], ['mock', 'آزمون‌های آزمایشی'], ['cal', 'تقویم آزمون و تکلیف'], ['leave', 'درخواست مرخصی'], ['vis', '👪 مراجعه‌ی اولیا'], ['don', '💚 کمک به مدرسه']].map(q => stuLocked() || (mockLocked() && q[0] !== 'mock') ? [q[0], '🔒 ' + q[1], 1] : q)).forEach(q => { const b = el('button', 'chip' + (k === q[0] ? ' on' : ''), q[1]); b.type = 'button'; b.dataset.k = q[0]; if (q[2]) { b.disabled = true; b.style.opacity = '.5'; } b.addEventListener('click', () => stuNav(q[0])); nv.append(b); }); qzBadge();
+  (stuLocked() ? [['prof', '📝 تکمیل اطلاعات']] : []).concat([['dash', '📊 وضعیت من'], ['sch', 'برنامه هفتگی'], ['plan', '📖 برنامه مطالعه'], ['qz', '📝 آزمونک‌ها'], ['kar', 'کارنامه'], ['sug', '⭐ نمره‌ی مستمر پیشنهادی'], ['act', '⭐ فعالیت و تکالیف'], ['att', 'حضور و غیاب'], ['dsc', '⚖️ انضباط من'], ['avg', 'میانگین کلاس'], ['mock', 'آزمون‌های آزمایشی'], ['cal', 'تقویم آزمون و تکلیف'], ['leave', 'درخواست مرخصی'], ['vis', '👪 مراجعه‌ی اولیا'], ['don', '💚 کمک به مدرسه']].map(q => stuLocked() || (mockLocked() && q[0] !== 'mock') ? [q[0], '🔒 ' + q[1], 1] : q)).forEach(q => { const b = el('button', 'chip' + (k === q[0] ? ' on' : ''), q[1]); b.type = 'button'; b.dataset.k = q[0]; if (q[2]) { b.disabled = true; b.style.opacity = '.5'; } b.addEventListener('click', () => stuNav(q[0])); nv.append(b); }); qzBadge();
   stuBanner(); remNotify();
   const sch = k === 'sch'; $('#p-sch').hidden = !sch; $('#stuBody').hidden = sch;
   if (sch) { Z.who = 'c:' + SD.cls; renderSch(); return; }
-  const box = $('#stuBody'); box.textContent = ''; ({ dash:stuDash, vis:stuVis, prof:stuProf, plan:stuPlan, qz:stuQz, kar:stuKar, act:stuAct, att:stuAtt, dsc:stuDsc, avg:stuAvg, mock:stuMock, cal:stuCal, leave:stuLeave, don:stuDon })[k](box);
+  const box = $('#stuBody'); box.textContent = ''; ({ dash:stuDash, vis:stuVis, prof:stuProf, plan:stuPlan, qz:stuQz, kar:stuKar, sug:stuSug, act:stuAct, att:stuAtt, dsc:stuDsc, avg:stuAvg, mock:stuMock, cal:stuCal, leave:stuLeave, don:stuDon })[k](box);
+}
+function stuSug(box) {                   // پنل دانش‌آموز: نمره‌ی مستمر پیشنهادی خودش (فقط مشاهده)
+  box.append(sugMineCard());
 }
 function stuKar(box) {
   const c1 = el('div', 'card'), c2 = el('div', 'card'); c1.append(el('div', 'lbl', SD.card && SD.card.rows ? 'کارنامه — مستمر نوبت اول تا امروز' : 'کارنامه — میانگین هر درس (از ۲۰)')); c2.append(el('div', 'lbl', 'نمره‌های هر آزمون'));
@@ -5415,7 +5418,7 @@ function stuKar(box) {
   const draw = () => { hold.textContent = ''; hold.append(trendSvg(SD.grades.filter(g => g.n != null && (!sel.value || g.c === sel.value)).sort(byDate))); };
   sel.addEventListener('change', draw); fd.append(sel); c3.append(fd, hold); draw();
   pr.type = 'button'; pr.style.width = '100%'; pr.addEventListener('click', () => SD.card && SD.card.rows ? printK(SD.card) : printCard(SD));
-  box.append(c1, sugMineCard(), pr, bc, c3, c2);
+  box.append(c1, pr, bc, c3, c2);
 }
 function stuAtt(box) {
   const a = SD.att, c = el('div', 'card'), g = el('div'); c.append(el('div', 'lbl', 'وضعیت حضور و غیاب'));
